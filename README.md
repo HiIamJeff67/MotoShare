@@ -1,1 +1,1 @@
-# Ride-sharing-System
+# MotoShare - a ride-sharing software
