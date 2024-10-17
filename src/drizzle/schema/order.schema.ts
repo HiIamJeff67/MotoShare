@@ -4,7 +4,8 @@ import { relations } from "drizzle-orm";
 import { RidderTable } from "./ridder.schema";
 import { PassengerTable } from "./passenger.schema";
 
-export const orderStatusEnum = pgEnum("status", ["UNSTARTED", "STARTED"]);
+import { orderStatusEnum } from "./enums";
+// const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED"]);
 
 export const OrderTable = pgTable("order", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -22,7 +23,7 @@ export const OrderTable = pgTable("order", {
     status: orderStatusEnum().notNull().default("UNSTARTED"),
 });
 
-export const OrderRelation = relations(OrderTable, ({ one, many }) => ({
+export const OrderRelation = relations(OrderTable, ({ one }) => ({
     passenger: one(PassengerTable, {
         fields: [OrderTable.passengerId],
         references: [PassengerTable.id],

@@ -8,7 +8,7 @@ export const RidderCollectionTable = pgTable("ridderCollection", {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade',
-    }).unique(),
+    }).notNull().unique(),
 });
 
 // this table is for the internal node for the many-to-many relationship between PassengerCollectionTable and SupplyOrderTable

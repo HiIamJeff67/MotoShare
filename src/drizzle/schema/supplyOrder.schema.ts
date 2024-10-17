@@ -1,10 +1,11 @@
-import { integer, pgTable, text, timestamp, uuid, geometry } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid, geometry, pgEnum } from "drizzle-orm/pg-core";
 import { RidderTable } from "./ridder.schema";
 import { relations } from "drizzle-orm";
 
-import { postedStatusEnum } from "./purchaseOrder.schema";
+import { postedStatusEnum } from "./enums";
+// postedStatusEnum = pgEnum('postStatus', ["POSTED", "CANCEL", "EXPIRED"]); // same on purchaseOrder.schema
+
 import { PassengerCollectionsToOrders } from "./passengerCollection.schema";
-// postedStatusEnum = pgEnum('status', ["POSTED", "CANCEL", "EXPIRED"]);
 
 export const SupplyOrderTable = pgTable("supplyOrder", {
     id: uuid("id").primaryKey().defaultRandom(),

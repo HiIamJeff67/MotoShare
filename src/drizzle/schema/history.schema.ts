@@ -3,8 +3,9 @@ import { RidderTable } from "./ridder.schema";
 import { PassengerTable } from "./passenger.schema";
 import { relations } from "drizzle-orm";
 
-export const historyStatusEnum = pgEnum("status", ["FINISHED", "EXPIRED", "CANCEL"])
-export const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"])
+import { historyStatusEnum, starRatingEnum } from "./enums";
+// const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"])
+// const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"])
 
 export const HistoryTable = pgTable("history", {
     id: uuid("id").primaryKey(),
