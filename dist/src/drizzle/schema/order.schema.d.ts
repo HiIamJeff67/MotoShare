@@ -1,0 +1,164 @@
+export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumns<{
+    name: "order";
+    schema: undefined;
+    columns: {
+        id: import("drizzle-orm/pg-core").PgColumn<{
+            name: "id";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        passengerId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerId";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        ridderId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "ridderId";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        finalPrice: import("drizzle-orm/pg-core").PgColumn<{
+            name: "finalPrice";
+            tableName: "order";
+            dataType: "number";
+            columnType: "PgInteger";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        passengerStartCord: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerStartCord";
+            tableName: "order";
+            dataType: "json";
+            columnType: "PgGeometryObject";
+            data: {
+                x: number;
+                y: number;
+            };
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        passengerEndCord: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerEndCord";
+            tableName: "order";
+            dataType: "json";
+            columnType: "PgGeometryObject";
+            data: {
+                x: number;
+                y: number;
+            };
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        ridderStartCord: import("drizzle-orm/pg-core").PgColumn<{
+            name: "ridderStartCord";
+            tableName: "order";
+            dataType: "json";
+            columnType: "PgGeometryObject";
+            data: {
+                x: number;
+                y: number;
+            };
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        startAfter: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAfter";
+            tableName: "order";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        status: import("drizzle-orm/pg-core").PgColumn<{
+            name: "status";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "UNSTARTED" | "STARTED";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["UNSTARTED", "STARTED"];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "pg";
+}>;
+export declare const OrderRelation: import("drizzle-orm").Relations<"order", {
+    passenger: import("drizzle-orm").One<"passenger", false>;
+    ridder: import("drizzle-orm").One<"ridder", false>;
+}>;
