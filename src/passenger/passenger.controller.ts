@@ -34,6 +34,7 @@ export class PassengerController {
 
   @Get('test')
   getTest() {
+    console.log("test")
     return 'test';
   }
 }

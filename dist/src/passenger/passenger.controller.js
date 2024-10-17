@@ -37,6 +37,7 @@ let PassengerController = class PassengerController {
         return this.passengerService.deletePassengerById(id);
     }
     getTest() {
+        console.log("test");
         return 'test';
     }
 };
