@@ -20,4 +20,5 @@ export declare class PassengerController {
         id: string;
     }[]>;
     deletePassengerById(id: string): Promise<import("pg").QueryResult<never>>;
+    getTest(): string;
 }

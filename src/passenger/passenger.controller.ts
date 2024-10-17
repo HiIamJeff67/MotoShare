@@ -31,4 +31,9 @@ export class PassengerController {
   deletePassengerById(@Param('id') id: string) {
     return this.passengerService.deletePassengerById(id);
   }
+
+  @Get('test')
+  getTest() {
+    return 'test';
+  }
 }
