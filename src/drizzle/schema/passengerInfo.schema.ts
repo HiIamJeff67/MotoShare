@@ -7,7 +7,7 @@ export const PassengerInfoTable = pgTable("passengerInfo", {
     userId: uuid("userId").references(() => PassengerTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(), // one-to-one
-    isOnline: boolean("isOnline").notNull().default(false),
+    isOnline: boolean("isOnline").notNull().default(true),
     age: integer("age"),
     phoneNumber: text("phoneNumber").unique(),
     selfIntroduction: text("selfIntroduction"),

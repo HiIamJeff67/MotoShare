@@ -13,8 +13,9 @@ const app_service_1 = require("./app.service");
 const drizzle_module_1 = require("./drizzle/drizzle.module");
 const passenger_module_1 = require("./passenger/passenger.module");
 const config_1 = require("@nestjs/config");
-const passengerInfo_module_1 = require("./passengerInfo/passengerInfo.module");
 const purchaseOrder_module_1 = require("./purchaseOrder/purchaseOrder.module");
+const ridder_module_1 = require("./ridder/ridder.module");
+const supplyOrder_module_1 = require("./supplyOrder/supplyOrder.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,8 +25,9 @@ exports.AppModule = AppModule = __decorate([
             drizzle_module_1.DrizzleModule,
             passenger_module_1.PassengerModule,
             config_1.ConfigModule.forRoot({ isGlobal: true }),
-            passengerInfo_module_1.PassengerInfoModule,
             purchaseOrder_module_1.PurchaseOrderModule,
+            ridder_module_1.RidderModule,
+            supplyOrder_module_1.SupplyOrderModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

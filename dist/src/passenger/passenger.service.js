@@ -17,18 +17,35 @@ const common_1 = require("@nestjs/common");
 const drizzle_orm_1 = require("drizzle-orm");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
+const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
+const passengerCollection_schema_1 = require("../drizzle/schema/passengerCollection.schema");
 let PassengerService = class PassengerService {
     constructor(db) {
         this.db = db;
     }
     async createPassenger(createPassengerDto) {
-        return await this.db.insert(passenger_schema_1.PassengerTable)
-            .values({
+        return await this.db.insert(passenger_schema_1.PassengerTable).values({
             userName: createPassengerDto.userName,
             email: createPassengerDto.email,
             password: createPassengerDto.password,
         }).returning({
-            id: passenger_schema_1.PassengerTable.id
+            id: passenger_schema_1.PassengerTable.id,
+        });
+    }
+    async createPassengerInfoByUserId(userId) {
+        return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+            userId: userId
+        }).returning({
+            id: passengerInfo_schema_1.PassengerInfoTable.id,
+            userId: passengerInfo_schema_1.PassengerInfoTable.userId,
+        });
+    }
+    async createPassengerCollectionByUserId(userId) {
+        return await this.db.insert(passengerCollection_schema_1.PassengerCollectionTable).values({
+            userId: userId
+        }).returning({
+            id: passengerCollection_schema_1.PassengerCollectionTable.id,
+            userId: passengerCollection_schema_1.PassengerCollectionTable.userId,
         });
     }
     async getPassengerById(id) {
@@ -39,13 +56,29 @@ let PassengerService = class PassengerService {
         }).from(passenger_schema_1.PassengerTable)
             .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id));
     }
+    async getPassengerWithInfoByUserId(userId) {
+        return await this.db.query.PassengerTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId),
+            with: {
+                info: true,
+            }
+        });
+    }
+    async getPassengerWithCollectionByUserId(userId) {
+        return await this.db.query.PassengerTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId),
+            with: {
+                collection: true,
+            }
+        });
+    }
     async getAllPassengers() {
         return await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
         }).from(passenger_schema_1.PassengerTable);
     }
-    async getPaginationPassengerIdAndName(limit, offset) {
+    async getPaginationPassengers(limit, offset) {
         return await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
@@ -58,8 +91,21 @@ let PassengerService = class PassengerService {
             userName: updatePassengerDto.userName,
             email: updatePassengerDto.email,
             password: updatePassengerDto.password,
-        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id)).returning({
+        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            .returning({
             id: passenger_schema_1.PassengerTable.id,
+        });
+    }
+    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto) {
+        return await this.db.update(passengerInfo_schema_1.PassengerInfoTable).set({
+            isOnline: updatePassengerInfoDto.isOnline ?? false,
+            age: updatePassengerInfoDto.age ?? undefined,
+            phoneNumber: updatePassengerInfoDto.phoneNumber ?? undefined,
+            selfIntroduction: updatePassengerInfoDto.selfIntroduction ?? undefined,
+            avatorUrl: updatePassengerInfoDto.avatorUrl ?? undefined,
+        }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId))
+            .returning({
+            id: passengerInfo_schema_1.PassengerInfoTable.id,
         });
     }
     async deletePassengerById(id) {

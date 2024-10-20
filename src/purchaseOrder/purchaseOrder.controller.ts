@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, Query } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
@@ -7,33 +7,65 @@ import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 export class PurchaseOrderController {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
-  @Post('createPurchaseOrder')
-  createPurchaseOrder(@Body() createPurchaseOrderDto: CreatePurchaseOrderDto) {
-    return this.purchaseOrderService.createPurchaseOrder(createPurchaseOrderDto);
+  /* ================================= Create operations ================================= */
+  @Post('createPurchaseOrderByCreatorId')
+  createPurchaseOrderByCreatorId(
+    @Query('id') id: string,
+    @Body() createPurchaseOrderDto: CreatePurchaseOrderDto,
+  ) { 
+    return this.purchaseOrderService.createPurchaseOrderByCreatorId(id, createPurchaseOrderDto);
   }
+  /* ================================= Create operations ================================= */
 
-  @Get('getPurchaseOrderById/:id')
-  getPurchaseOrderById(@Param('id') id: string) {
+
+  /* ================================= Get operations ================================= */
+  @Get('getPurchaseOrderById')
+  getPurchaseOrderById(@Query('id') id: string) {
     return this.purchaseOrderService.getPurchaseOrderById(id);
   }
   
-  @Get('getPurchaseOrderByCreatorId/:creatorId')
-  getPurchaseOrderByCreatorId(@Param('creatorId') creatorId: string) {
-    return this.purchaseOrderService.getPurchaseOrderByCreatorId(creatorId);
+  @Get('getPurchaseOrdersByCreatorId')
+  getPurchaseOrdersByCreatorId(
+    @Query('id') id: string,
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+  ) {
+    return this.purchaseOrderService.getPurchaseOrdersByCreatorId(id, +limit, +offset);
   }
 
+  @Get('getPurchaseOrders')
+  getPurchaseOrders(
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+  ) {
+    return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
+  }
+  /* ================================= Get operations ================================= */
+  
+
+  /* ================================= Update operations ================================= */
+  @Patch('updatePurchaseOrderById')
+  updatePurchaseOrderById(
+    @Query('id') id: string, 
+    @Body() updatePurchaseOrderDto: UpdatePurchaseOrderDto,
+  ) {
+    return this.purchaseOrderService.updatePurchaseOrderById(id, updatePurchaseOrderDto);
+  }
+  /* ================================= Update operations ================================= */
+
+
+  /* ================================= Delete operations ================================= */
+  @Delete('deletePurchaseOrderById')
+  deletePurchaseOrderById(@Query('id') id: string) {
+    return this.purchaseOrderService.deletePurchaseOrderById(id);
+  }
+  /* ================================= Delete operations ================================= */
+
+
+  /* ================================= Other operations ================================= */
   @Get('getAllPurchaseOrders')
   getAllPurchaseOrders() {
     return this.purchaseOrderService.getAllPurchaseOrders();
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePurchaseOrderDto: UpdatePurchaseOrderDto) {
-    return this.purchaseOrderService.update(+id, updatePurchaseOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.purchaseOrderService.remove(+id);
-  }
+  /* ================================= Other operations ================================= */
 }

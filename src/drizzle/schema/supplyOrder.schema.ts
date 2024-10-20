@@ -2,10 +2,10 @@ import { integer, pgTable, text, timestamp, uuid, geometry, pgEnum } from "drizz
 import { RidderTable } from "./ridder.schema";
 import { relations } from "drizzle-orm";
 
+import { PassengerCollectionsToOrders } from "./passengerCollection.schema";
+
 import { postedStatusEnum } from "./enums";
 // postedStatusEnum = pgEnum('postStatus', ["POSTED", "CANCEL", "EXPIRED"]); // same on purchaseOrder.schema
-
-import { PassengerCollectionsToOrders } from "./passengerCollection.schema";
 
 export const SupplyOrderTable = pgTable("supplyOrder", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -19,7 +19,7 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
-    stauts: postedStatusEnum().notNull().default("POSTED"),
+    status: postedStatusEnum().notNull().default("POSTED"),
 });
 
 export const SupplyOrderRelation = relations(SupplyOrderTable, ({ one, many }) => ({

@@ -98,6 +98,22 @@ export declare const RidderInfoTable: import("drizzle-orm/pg-core").PgTableWithC
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        avatorUrl: import("drizzle-orm/pg-core").PgColumn<{
+            name: "avatorUrl";
+            tableName: "ridderInfo";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         motocycleLicense: import("drizzle-orm/pg-core").PgColumn<{
             name: "motocycleLicense";
             tableName: "ridderInfo";
@@ -116,22 +132,6 @@ export declare const RidderInfoTable: import("drizzle-orm/pg-core").PgTableWithC
         }, {}, {}>;
         motocyclePhotoUrl: import("drizzle-orm/pg-core").PgColumn<{
             name: "motocyclePhotoUrl";
-            tableName: "ridderInfo";
-            dataType: "string";
-            columnType: "PgText";
-            data: string;
-            driverParam: string;
-            notNull: false;
-            hasDefault: false;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: [string, ...string[]];
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        avatorUrl: import("drizzle-orm/pg-core").PgColumn<{
-            name: "avatorUrl";
             tableName: "ridderInfo";
             dataType: "string";
             columnType: "PgText";

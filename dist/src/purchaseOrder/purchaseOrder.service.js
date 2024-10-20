@@ -21,9 +21,9 @@ let PurchaseOrderService = class PurchaseOrderService {
     constructor(db) {
         this.db = db;
     }
-    async createPurchaseOrder(createPurchaseOrderDto) {
+    async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
         return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
-            creatorId: createPurchaseOrderDto.creatorId,
+            creatorId: creatorId,
             description: createPurchaseOrderDto.description ?? undefined,
             initPrice: createPurchaseOrderDto.initPrice,
             startCord: {
@@ -34,14 +34,13 @@ let PurchaseOrderService = class PurchaseOrderService {
                 x: createPurchaseOrderDto.endCordLongitude,
                 y: createPurchaseOrderDto.endCordLatitude,
             },
-            createdAt: createPurchaseOrderDto.createdAt ?? undefined,
-            updatedAt: createPurchaseOrderDto.updatedAt ?? undefined,
             startAfter: createPurchaseOrderDto.startAfter ?? undefined,
             isUrgent: createPurchaseOrderDto.isUrgent ?? undefined,
-            status: createPurchaseOrderDto.status ?? undefined,
         }).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
     }
     async getPurchaseOrderById(id) {
@@ -51,6 +50,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
             startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
             endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
             updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
@@ -58,38 +58,73 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id));
     }
-    async getPurchaseOrderByCreatorId(creatorId) {
+    async getPurchaseOrdersByCreatorId(creatorId, limit, offset) {
         return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
             startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
             endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
             updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId));
+            .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))
+            .orderBy(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt)
+            .limit(limit)
+            .offset(offset);
     }
-    async getAllPurchaseOrders() {
+    async getPurchaseOrders(limit, offset) {
         return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
             startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
             endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
             updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
-        }).from(purchaseOrder_schema_1.PurchaseOrderTable);
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .orderBy(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt)
+            .limit(limit)
+            .offset(offset);
     }
-    update(id, updatePurchaseOrderDto) {
-        return `This action updates a #${id} purchaseOrder`;
+    async updatePurchaseOrderById(id, updatePurchaseOrderDto) {
+        const newStartCord = (updatePurchaseOrderDto.startCordLongitude !== undefined
+            && updatePurchaseOrderDto.startCordLatitude !== undefined)
+            ? { x: updatePurchaseOrderDto.startCordLongitude, y: updatePurchaseOrderDto.startCordLatitude, }
+            : undefined;
+        const newEndCord = (updatePurchaseOrderDto.endCordLongitude !== undefined
+            && updatePurchaseOrderDto.endCordLatitude !== undefined)
+            ? { x: updatePurchaseOrderDto.endCordLongitude, y: updatePurchaseOrderDto.endCordLatitude }
+            : undefined;
+        return await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+            description: updatePurchaseOrderDto.description,
+            initPrice: updatePurchaseOrderDto.initPrice,
+            startCord: newStartCord,
+            endCord: newEndCord,
+            updatedAt: new Date(),
+            startAfter: updatePurchaseOrderDto.startAfter,
+            isUrgent: updatePurchaseOrderDto.isUrgent,
+            status: updatePurchaseOrderDto.status,
+        }).where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id))
+            .returning({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        });
     }
-    remove(id) {
-        return `This action removes a #${id} purchaseOrder`;
+    async deletePurchaseOrderById(id) {
+        return await this.db.delete(purchaseOrder_schema_1.PurchaseOrderTable)
+            .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id));
+    }
+    async getAllPurchaseOrders() {
+        return await this.db.select().from(purchaseOrder_schema_1.PurchaseOrderTable);
     }
 };
 exports.PurchaseOrderService = PurchaseOrderService;

@@ -4,16 +4,18 @@ import { AppService } from './app.service';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { PassengerModule } from './passenger/passenger.module';
 import { ConfigModule } from '@nestjs/config';
-import { PassengerInfoModule } from './passengerInfo/passengerInfo.module';
 import { PurchaseOrderModule } from './purchaseOrder/purchaseOrder.module';
+import { RidderModule } from './ridder/ridder.module';
+import { SupplyOrderModule } from './supplyOrder/supplyOrder.module';
 
 @Module({
   imports: [
     DrizzleModule, 
     PassengerModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    PassengerInfoModule,
     PurchaseOrderModule,
+    RidderModule,
+    SupplyOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -224,7 +224,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             tableName: "history";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "FINISHED" | "EXPIRED" | "CANCEL";
+            data: "EXPIRED" | "CANCEL" | "FINISHED";
             driverParam: string;
             notNull: true;
             hasDefault: true;

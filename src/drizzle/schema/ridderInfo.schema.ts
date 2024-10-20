@@ -7,13 +7,13 @@ export const RidderInfoTable = pgTable("ridderInfo", {
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(),    // one-to-one
-    isOnline: boolean("isOnline").notNull().default(false),
+    isOnline: boolean("isOnline").notNull().default(true),
     age: integer("age"),
     phoneNumber: text("phoneNumber").unique(),
     selfIntroduction: text("selfIntroduction"),
+    avatorUrl: text("avatorUrl"),
     motocycleLicense: text("motocycleLicense").unique(),
     motocyclePhotoUrl: text("motocyclePhotoUrl"),
-    avatorUrl: text("avatorUrl"),
 });
 
 export const RidderInfoRelation = relations(RidderInfoTable, ({ one }) => ({

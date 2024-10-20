@@ -152,12 +152,12 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        stauts: import("drizzle-orm/pg-core").PgColumn<{
-            name: "stauts";
+        status: import("drizzle-orm/pg-core").PgColumn<{
+            name: "status";
             tableName: "supplyOrder";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "EXPIRED" | "CANCEL" | "POSTED";
+            data: "POSTED" | "EXPIRED" | "CANCEL";
             driverParam: string;
             notNull: true;
             hasDefault: true;

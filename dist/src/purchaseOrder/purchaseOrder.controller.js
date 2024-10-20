@@ -21,68 +21,82 @@ let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
     }
-    createPurchaseOrder(createPurchaseOrderDto) {
-        return this.purchaseOrderService.createPurchaseOrder(createPurchaseOrderDto);
+    createPurchaseOrderByCreatorId(id, createPurchaseOrderDto) {
+        return this.purchaseOrderService.createPurchaseOrderByCreatorId(id, createPurchaseOrderDto);
     }
     getPurchaseOrderById(id) {
         return this.purchaseOrderService.getPurchaseOrderById(id);
     }
-    getPurchaseOrderByCreatorId(creatorId) {
-        return this.purchaseOrderService.getPurchaseOrderByCreatorId(creatorId);
+    getPurchaseOrdersByCreatorId(id, limit, offset) {
+        return this.purchaseOrderService.getPurchaseOrdersByCreatorId(id, +limit, +offset);
+    }
+    getPurchaseOrders(limit, offset) {
+        return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
+    }
+    updatePurchaseOrderById(id, updatePurchaseOrderDto) {
+        return this.purchaseOrderService.updatePurchaseOrderById(id, updatePurchaseOrderDto);
+    }
+    deletePurchaseOrderById(id) {
+        return this.purchaseOrderService.deletePurchaseOrderById(id);
     }
     getAllPurchaseOrders() {
         return this.purchaseOrderService.getAllPurchaseOrders();
     }
-    update(id, updatePurchaseOrderDto) {
-        return this.purchaseOrderService.update(+id, updatePurchaseOrderDto);
-    }
-    remove(id) {
-        return this.purchaseOrderService.remove(+id);
-    }
 };
 exports.PurchaseOrderController = PurchaseOrderController;
 __decorate([
-    (0, common_1.Post)('createPurchaseOrder'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Post)('createPurchaseOrderByCreatorId'),
+    __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_purchaseOrder_dto_1.CreatePurchaseOrderDto]),
+    __metadata("design:paramtypes", [String, create_purchaseOrder_dto_1.CreatePurchaseOrderDto]),
     __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "createPurchaseOrder", null);
+], PurchaseOrderController.prototype, "createPurchaseOrderByCreatorId", null);
 __decorate([
-    (0, common_1.Get)('getPurchaseOrderById/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('getPurchaseOrderById'),
+    __param(0, (0, common_1.Query)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
 __decorate([
-    (0, common_1.Get)('getPurchaseOrderByCreatorId/:creatorId'),
-    __param(0, (0, common_1.Param)('creatorId')),
+    (0, common_1.Get)('getPurchaseOrdersByCreatorId'),
+    __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "getPurchaseOrdersByCreatorId", null);
+__decorate([
+    (0, common_1.Get)('getPurchaseOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "getPurchaseOrders", null);
+__decorate([
+    (0, common_1.Patch)('updatePurchaseOrderById'),
+    __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_purchaseOrder_dto_1.UpdatePurchaseOrderDto]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "updatePurchaseOrderById", null);
+__decorate([
+    (0, common_1.Delete)('deletePurchaseOrderById'),
+    __param(0, (0, common_1.Query)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "getPurchaseOrderByCreatorId", null);
+], PurchaseOrderController.prototype, "deletePurchaseOrderById", null);
 __decorate([
     (0, common_1.Get)('getAllPurchaseOrders'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PurchaseOrderController.prototype, "getAllPurchaseOrders", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_purchaseOrder_dto_1.UpdatePurchaseOrderDto]),
-    __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "remove", null);
 exports.PurchaseOrderController = PurchaseOrderController = __decorate([
     (0, common_1.Controller)('purchaseOrder'),
     __metadata("design:paramtypes", [purchaseOrder_service_1.PurchaseOrderService])

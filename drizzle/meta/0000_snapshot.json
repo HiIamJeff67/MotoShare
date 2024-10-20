@@ -1,5 +1,5 @@
 {
-  "id": "fa5f7e56-c52e-41c3-b480-513a1543a031",
+  "id": "98f778b6-978d-4185-98fb-b6a6c3580e2d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -402,7 +402,7 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": true
         },
         "age": {
           "name": "age",
@@ -734,7 +734,7 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": true
         },
         "age": {
           "name": "age",
@@ -754,6 +754,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "avatorUrl": {
+          "name": "avatorUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "motocycleLicense": {
           "name": "motocycleLicense",
           "type": "text",
@@ -762,12 +768,6 @@
         },
         "motocyclePhotoUrl": {
           "name": "motocyclePhotoUrl",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "avatorUrl": {
-          "name": "avatorUrl",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -876,8 +876,8 @@
           "notNull": true,
           "default": "now()"
         },
-        "stauts": {
-          "name": "stauts",
+        "status": {
+          "name": "status",
           "type": "postStatus",
           "typeSchema": "public",
           "primaryKey": false,
@@ -905,46 +905,7 @@
       "uniqueConstraints": {}
     }
   },
-  "enums": {
-    "public.historyStatus": {
-      "name": "historyStatus",
-      "schema": "public",
-      "values": [
-        "FINISHED",
-        "EXPIRED",
-        "CANCEL"
-      ]
-    },
-    "public.starRating": {
-      "name": "starRating",
-      "schema": "public",
-      "values": [
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5"
-      ]
-    },
-    "public.orderStatus": {
-      "name": "orderStatus",
-      "schema": "public",
-      "values": [
-        "UNSTARTED",
-        "STARTED"
-      ]
-    },
-    "public.postStatus": {
-      "name": "postStatus",
-      "schema": "public",
-      "values": [
-        "POSTED",
-        "EXPIRED",
-        "CANCEL"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "_meta": {

@@ -9,7 +9,7 @@ exports.PassengerInfoTable = (0, pg_core_1.pgTable)("passengerInfo", {
     userId: (0, pg_core_1.uuid)("userId").references(() => passenger_schema_1.PassengerTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(),
-    isOnline: (0, pg_core_1.boolean)("isOnline").notNull().default(false),
+    isOnline: (0, pg_core_1.boolean)("isOnline").notNull().default(true),
     age: (0, pg_core_1.integer)("age"),
     phoneNumber: (0, pg_core_1.text)("phoneNumber").unique(),
     selfIntroduction: (0, pg_core_1.text)("selfIntroduction"),

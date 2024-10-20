@@ -9,13 +9,13 @@ exports.RidderInfoTable = (0, pg_core_1.pgTable)("ridderInfo", {
     userId: (0, pg_core_1.uuid)("userId").references(() => ridder_schema_1.RidderTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(),
-    isOnline: (0, pg_core_1.boolean)("isOnline").notNull().default(false),
+    isOnline: (0, pg_core_1.boolean)("isOnline").notNull().default(true),
     age: (0, pg_core_1.integer)("age"),
     phoneNumber: (0, pg_core_1.text)("phoneNumber").unique(),
     selfIntroduction: (0, pg_core_1.text)("selfIntroduction"),
+    avatorUrl: (0, pg_core_1.text)("avatorUrl"),
     motocycleLicense: (0, pg_core_1.text)("motocycleLicense").unique(),
     motocyclePhotoUrl: (0, pg_core_1.text)("motocyclePhotoUrl"),
-    avatorUrl: (0, pg_core_1.text)("avatorUrl"),
 });
 exports.RidderInfoRelation = (0, drizzle_orm_1.relations)(exports.RidderInfoTable, ({ one }) => ({
     user: one(ridder_schema_1.RidderTable, {
