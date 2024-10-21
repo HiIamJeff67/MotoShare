@@ -18,6 +18,7 @@ exports.SupplyOrderTable = (0, pg_core_1.pgTable)("supplyOrder", {
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
+    tolerableRDV: (0, pg_core_1.doublePrecision)("tolerableRDV").notNull().default(5),
     status: (0, enums_1.postedStatusEnum)().notNull().default("POSTED"),
 });
 exports.SupplyOrderRelation = (0, drizzle_orm_1.relations)(exports.SupplyOrderTable, ({ one, many }) => ({

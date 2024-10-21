@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Delete, Query } from '@nestjs/commo
 import { SupplyOrderService } from './supplyOrder.service';
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
-import { GetCurAdjacentSupplyOrderDto } from './dto/get-supplyOrder.dto';
+import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dto/get-supplyOrder.dto';
 
 @Controller('supplyOrder')
 export class SupplyOrderController {
@@ -46,9 +46,27 @@ export class SupplyOrderController {
   getCurAdjacentSupplyOrders(
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
-    @Body() getCurAdjacentSupplyOrderDto: GetCurAdjacentSupplyOrderDto,
+    @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto,
   ) {
-    return this.supplyOrderService.getCurAdjacentSupplyOrders(+limit, +offset, getCurAdjacentSupplyOrderDto);
+    return this.supplyOrderService.getCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+  }
+
+  @Get('getDestAdjacentSupplyOrders')
+  getDestAdjacentSupplyOrders(
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
+  ) {
+    return this.supplyOrderService.getDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+  }
+
+  @Get('getSimilarRouteSupplyOrders')
+  getSimilarRouteSupplyOrders(
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Body() getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto,
+  ) {
+    return this.supplyOrderService.getSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
   }
   /* ================================= Get operations ================================= */
 

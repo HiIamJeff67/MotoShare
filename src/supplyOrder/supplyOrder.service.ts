@@ -5,8 +5,10 @@ import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { SupplyOrderTable } from 'src/drizzle/schema/supplyOrder.schema';
 import { desc, eq, sql } from 'drizzle-orm';
-import { point } from 'src/interfaces/point.interface';
-import { GetCurAdjacentSupplyOrderDto } from './dto/get-supplyOrder.dto';
+import { 
+  GetAdjacentSupplyOrdersDto, 
+  GetSimilarRouteSupplyOrdersDto 
+} from './dto/get-supplyOrder.dto';
 
 @Injectable()
 export class SupplyOrderService {
@@ -27,6 +29,7 @@ export class SupplyOrderService {
         4326
       )`,
       startAfter: createSupplyOrderDto.startAfter ?? undefined,
+      tolerableRDV: createSupplyOrderDto.tolerableRDV ?? undefined,
     }) .returning({
       id: SupplyOrderTable.id,
       creatorId: SupplyOrderTable.creatorId,
@@ -48,6 +51,7 @@ export class SupplyOrderService {
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
       status: SupplyOrderTable.status,
     }).from(SupplyOrderTable)
       .where(eq(SupplyOrderTable.id, id));
@@ -67,6 +71,7 @@ export class SupplyOrderService {
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
       status: SupplyOrderTable.status,
     }).from(SupplyOrderTable)
       .where(eq(SupplyOrderTable.creatorId, creatorId))
@@ -85,6 +90,7 @@ export class SupplyOrderService {
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
       status: SupplyOrderTable.status,
     }).from(SupplyOrderTable)
       .orderBy(SupplyOrderTable.updatedAt)
@@ -95,7 +101,7 @@ export class SupplyOrderService {
   async getCurAdjacentSupplyOrders(
     limit: number, 
     offset: number,
-    getCurAdjacentSupplyOrderDto: GetCurAdjacentSupplyOrderDto
+    getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
     return await this.db.select({
       id: SupplyOrderTable.id,
@@ -106,18 +112,107 @@ export class SupplyOrderService {
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
       status: SupplyOrderTable.status,
       distance: sql`ST_Distance(
         ${SupplyOrderTable.startCord}, 
-        ST_SetSRID(ST_MakePoint(${getCurAdjacentSupplyOrderDto.curLongitude}, ${getCurAdjacentSupplyOrderDto.curLatitude}), 4326)
+        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
     }).from(SupplyOrderTable)
       .orderBy(sql`ST_Distance(
         ${SupplyOrderTable.startCord}, 
-        ST_SetSRID(ST_MakePoint(${getCurAdjacentSupplyOrderDto.curLongitude}, ${getCurAdjacentSupplyOrderDto.curLatitude}), 4326)
+        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`)
       .limit(limit)
       .offset(offset);
+  }
+
+  async getDestAdjacentSupplyOrders(
+    limit: number,
+    offset: number,
+    getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
+  ) {
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      creatorId: SupplyOrderTable.creatorId,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      status: SupplyOrderTable.status,
+      distance: sql`ST_Distance(
+        ${SupplyOrderTable.endCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
+      )`
+    }).from(SupplyOrderTable)
+      .orderBy(sql`ST_Distance(
+        ${SupplyOrderTable.endCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
+      )`)
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getSimilarRouteSupplyOrders(
+    limit: number,
+    offset: number,
+    getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto
+  ) {
+    // consider the similarity of the given route and every other passible route in SupplyOrderTable
+    // RDV = (|ridder.start - passenger.start| + |passenger.start - passenger.end| + |passenger.end - ridder.end|) - (|ridder.start - ridder.end|)
+
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      creatorId: SupplyOrderTable.creatorId,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      status: SupplyOrderTable.status,
+      RDV: sql`
+          ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326),
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326),
+            ${SupplyOrderTable.endCord}
+          ) 
+        - ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ${SupplyOrderTable.endCord}
+          )
+      `,
+    }).from(SupplyOrderTable)
+      .orderBy(sql`
+          ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326),
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326),
+            ${SupplyOrderTable.endCord}
+          ) 
+        - ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ${SupplyOrderTable.endCord}
+          )
+      `).limit(limit)
+        .offset(offset);
   }
   /* ================================= Get operations ================================= */
 
@@ -143,6 +238,7 @@ export class SupplyOrderService {
       endCord: sql`${newEndCordQuery}`,
       updatedAt: new Date(),
       startAfter: updateSupplyOrderDto.startAfter,
+      tolerableRDV: updateSupplyOrderDto.tolerableRDV,
       status: updateSupplyOrderDto.status,
     }).where(eq(SupplyOrderTable.id, id))
       .returning({

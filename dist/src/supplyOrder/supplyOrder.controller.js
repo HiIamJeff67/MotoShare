@@ -34,8 +34,14 @@ let SupplyOrderController = class SupplyOrderController {
     getSupplyOrders(limit = "10", offset = "0") {
         return this.supplyOrderService.getSupplyOrders(+limit, +offset);
     }
-    getCurAdjacentSupplyOrders(limit = "10", offset = "0", getCurAdjacentSupplyOrderDto) {
-        return this.supplyOrderService.getCurAdjacentSupplyOrders(+limit, +offset, getCurAdjacentSupplyOrderDto);
+    getCurAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto) {
+        return this.supplyOrderService.getCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+    }
+    getDestAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto) {
+        return this.supplyOrderService.getDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+    }
+    getSimilarRouteSupplyOrders(limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto) {
+        return this.supplyOrderService.getSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
     }
     updateSupplyOrderById(id, updateSupplyOrderDto) {
         return this.supplyOrderService.updateSupplyOrderById(id, updateSupplyOrderDto);
@@ -83,9 +89,27 @@ __decorate([
     __param(1, (0, common_1.Query)('offset')),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetCurAdjacentSupplyOrderDto]),
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto]),
     __metadata("design:returntype", void 0)
 ], SupplyOrderController.prototype, "getCurAdjacentSupplyOrders", null);
+__decorate([
+    (0, common_1.Get)('getDestAdjacentSupplyOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto]),
+    __metadata("design:returntype", void 0)
+], SupplyOrderController.prototype, "getDestAdjacentSupplyOrders", null);
+__decorate([
+    (0, common_1.Get)('getSimilarRouteSupplyOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto]),
+    __metadata("design:returntype", void 0)
+], SupplyOrderController.prototype, "getSimilarRouteSupplyOrders", null);
 __decorate([
     (0, common_1.Patch)('updateSupplyOrderById'),
     __param(0, (0, common_1.Query)('id')),

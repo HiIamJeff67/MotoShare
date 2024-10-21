@@ -1,11 +1,29 @@
 import { IsNotEmpty, IsNumber } from "class-validator";
 
-export class GetCurAdjacentSupplyOrderDto {
+export class GetAdjacentSupplyOrdersDto {
     @IsNotEmpty()
     @IsNumber()
-    curLongitude: number
+    cordLongitude: number
 
     @IsNotEmpty()
     @IsNumber()
-    curLatitude: number
+    cordLatitude: number
+}
+
+export class GetSimilarRouteSupplyOrdersDto {
+    @IsNotEmpty()
+    @IsNumber()
+    startCordLongitude: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    startCordLatitude: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    endCordLongitude: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    endCordLatitude: number
 }

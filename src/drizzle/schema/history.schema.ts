@@ -1,4 +1,4 @@
-import { geometry, integer, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { RidderTable } from "./ridder.schema";
 import { PassengerTable } from "./passenger.schema";
 import { relations } from "drizzle-orm";

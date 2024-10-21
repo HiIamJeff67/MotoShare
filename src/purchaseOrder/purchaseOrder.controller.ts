@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Delete, Query } from '@nestjs/commo
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
+import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
 
 @Controller('purchaseOrder')
 export class PurchaseOrderController {
@@ -40,6 +41,33 @@ export class PurchaseOrderController {
   ) {
     return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
   }
+
+  @Get('getCurAdjacentPurchaseOrders')
+  getCurAdjacentPurchaseOrders(
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+    @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
+  ) {
+    return this.purchaseOrderService.getCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+  }
+
+  @Get('getDestAdjacentPurchaseOrders')
+  getDestAdjacentPurchaseOrders(
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+    @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
+  ) {
+    return this.purchaseOrderService.getDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+  }
+
+  @Get('getSimilarRoutePurchaseOrders')
+  getSimilarRoutePurchaseOrders(
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+    @Body() getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto,
+  ) {
+    return this.purchaseOrderService.getSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);
+  }
   /* ================================= Get operations ================================= */
   
 
@@ -62,10 +90,10 @@ export class PurchaseOrderController {
   /* ================================= Delete operations ================================= */
 
 
-  /* ================================= Other operations ================================= */
+  /* ================================= Test operations ================================= */
   @Get('getAllPurchaseOrders')
   getAllPurchaseOrders() {
     return this.purchaseOrderService.getAllPurchaseOrders();
   }
-  /* ================================= Other operations ================================= */
+  /* ================================= Test operations ================================= */
 }

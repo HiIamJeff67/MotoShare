@@ -49,4 +49,9 @@ __decorate([
     (0, class_validator_1.IsDate)(),
     __metadata("design:type", Date)
 ], CreateSupplyOrderDto.prototype, "startAfter", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateSupplyOrderDto.prototype, "tolerableRDV", void 0);
 //# sourceMappingURL=create-supplyOrder.dto.js.map

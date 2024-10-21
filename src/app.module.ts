@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PurchaseOrderModule } from './purchaseOrder/purchaseOrder.module';
 import { RidderModule } from './ridder/ridder.module';
 import { SupplyOrderModule } from './supplyOrder/supplyOrder.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SupplyOrderModule } from './supplyOrder/supplyOrder.module';
     PurchaseOrderModule,
     RidderModule,
     SupplyOrderModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

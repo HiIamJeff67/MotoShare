@@ -16,6 +16,7 @@ const config_1 = require("@nestjs/config");
 const purchaseOrder_module_1 = require("./purchaseOrder/purchaseOrder.module");
 const ridder_module_1 = require("./ridder/ridder.module");
 const supplyOrder_module_1 = require("./supplyOrder/supplyOrder.module");
+const order_module_1 = require("./order/order.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,6 +29,7 @@ exports.AppModule = AppModule = __decorate([
             purchaseOrder_module_1.PurchaseOrderModule,
             ridder_module_1.RidderModule,
             supplyOrder_module_1.SupplyOrderModule,
+            order_module_1.OrderModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

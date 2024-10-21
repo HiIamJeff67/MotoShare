@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, uuid, geometry, pgEnum } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision } from "drizzle-orm/pg-core";
 import { RidderTable } from "./ridder.schema";
 import { relations } from "drizzle-orm";
 
@@ -19,8 +19,10 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
+    tolerableRDV: doublePrecision("tolerableRDV").notNull().default(5),    // unit: kilometers(km)
     status: postedStatusEnum().notNull().default("POSTED"),
 });
+// consider to use a index on startCord and endCord to optimize the query
 
 export const SupplyOrderRelation = relations(SupplyOrderTable, ({ one, many }) => ({
     creator: one(RidderTable, {

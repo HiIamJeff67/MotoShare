@@ -9,19 +9,42 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetCurAdjacentSupplyOrderDto = void 0;
+exports.GetSimilarRouteSupplyOrdersDto = exports.GetAdjacentSupplyOrdersDto = void 0;
 const class_validator_1 = require("class-validator");
-class GetCurAdjacentSupplyOrderDto {
+class GetAdjacentSupplyOrdersDto {
 }
-exports.GetCurAdjacentSupplyOrderDto = GetCurAdjacentSupplyOrderDto;
+exports.GetAdjacentSupplyOrdersDto = GetAdjacentSupplyOrdersDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
-], GetCurAdjacentSupplyOrderDto.prototype, "curLongitude", void 0);
+], GetAdjacentSupplyOrdersDto.prototype, "cordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
-], GetCurAdjacentSupplyOrderDto.prototype, "curLatitude", void 0);
+], GetAdjacentSupplyOrdersDto.prototype, "cordLatitude", void 0);
+class GetSimilarRouteSupplyOrdersDto {
+}
+exports.GetSimilarRouteSupplyOrdersDto = GetSimilarRouteSupplyOrdersDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetSimilarRouteSupplyOrdersDto.prototype, "startCordLongitude", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetSimilarRouteSupplyOrdersDto.prototype, "startCordLatitude", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetSimilarRouteSupplyOrdersDto.prototype, "endCordLongitude", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetSimilarRouteSupplyOrdersDto.prototype, "endCordLatitude", void 0);
 //# sourceMappingURL=get-supplyOrder.dto.js.map

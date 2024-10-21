@@ -26,14 +26,14 @@ let PurchaseOrderService = class PurchaseOrderService {
             creatorId: creatorId,
             description: createPurchaseOrderDto.description ?? undefined,
             initPrice: createPurchaseOrderDto.initPrice,
-            startCord: {
-                x: createPurchaseOrderDto.startCordLongitude,
-                y: createPurchaseOrderDto.startCordLatitude,
-            },
-            endCord: {
-                x: createPurchaseOrderDto.endCordLongitude,
-                y: createPurchaseOrderDto.endCordLatitude,
-            },
+            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+        ST_MakePoint(${createPurchaseOrderDto.startCordLongitude}, ${createPurchaseOrderDto.startCordLatitude}),
+        4326
+      )`,
+            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+        ST_MakePoint(${createPurchaseOrderDto.endCordLongitude}, ${createPurchaseOrderDto.endCordLatitude}),
+        4326
+      )`,
             startAfter: createPurchaseOrderDto.startAfter ?? undefined,
             isUrgent: createPurchaseOrderDto.isUrgent ?? undefined,
         }).returning({
@@ -91,6 +91,105 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .orderBy(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt)
             .limit(limit)
+            .offset(offset);
+    }
+    async getCurAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+      )`
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+      )`)
+            .limit(limit)
+            .offset(offset);
+    }
+    async getDestAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+      )`
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+        ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+      )`)
+            .limit(limit)
+            .offset(offset);
+    }
+    async getSimilarRoutePurchaseOrders(limit, offset, getSimilarRoutePurchaseOrdersDto) {
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            RDV: (0, drizzle_orm_1.sql) `
+          ST_Distance(
+            ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326),
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.endCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.endCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.endCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.endCordLatitude}), 4326),
+            ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+          ) 
+        - ST_Distance(
+            ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+            ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+          )
+      `,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .orderBy((0, drizzle_orm_1.sql) `
+          ST_Distance(
+            ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326),
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.endCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.endCordLatitude}), 4326)
+          ) 
+        + ST_Distance(
+            ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.endCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.endCordLatitude}), 4326),
+            ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+          ) 
+        - ST_Distance(
+            ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+            ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+          )
+      `).limit(limit)
             .offset(offset);
     }
     async updatePurchaseOrderById(id, updatePurchaseOrderDto) {

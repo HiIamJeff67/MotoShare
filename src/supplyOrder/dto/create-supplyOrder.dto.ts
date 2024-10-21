@@ -39,6 +39,10 @@ export class CreateSupplyOrderDto {
     @IsDate()
     startAfter?: Date   // but at most case, should be specify
 
+    @IsOptional()
+    @IsNumber()
+    tolerableRDV?: number
+
     // @IsOptional()
     // @IsString()
     // status?: PostedStatusType

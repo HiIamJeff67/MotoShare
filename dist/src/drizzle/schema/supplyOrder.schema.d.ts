@@ -152,6 +152,22 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        tolerableRDV: import("drizzle-orm/pg-core").PgColumn<{
+            name: "tolerableRDV";
+            tableName: "supplyOrder";
+            dataType: "number";
+            columnType: "PgDoublePrecision";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         status: import("drizzle-orm/pg-core").PgColumn<{
             name: "status";
             tableName: "supplyOrder";

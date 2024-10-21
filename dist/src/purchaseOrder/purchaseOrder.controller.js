@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const purchaseOrder_service_1 = require("./purchaseOrder.service");
 const create_purchaseOrder_dto_1 = require("./dto/create-purchaseOrder.dto");
 const update_purchaseOrder_dto_1 = require("./dto/update-purchaseOrder.dto");
+const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
 let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
@@ -32,6 +33,15 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     getPurchaseOrders(limit, offset) {
         return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
+    }
+    getCurAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+        return this.purchaseOrderService.getCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+    }
+    getDestAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+        return this.purchaseOrderService.getDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+    }
+    getSimilarRoutePurchaseOrders(limit, offset, getSimilarRoutePurchaseOrdersDto) {
+        return this.purchaseOrderService.getSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);
     }
     updatePurchaseOrderById(id, updatePurchaseOrderDto) {
         return this.purchaseOrderService.updatePurchaseOrderById(id, updatePurchaseOrderDto);
@@ -76,6 +86,33 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], PurchaseOrderController.prototype, "getPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('getCurAdjacentPurchaseOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "getCurAdjacentPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('getDestAdjacentPurchaseOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "getDestAdjacentPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('getSimilarRoutePurchaseOrders'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrderController.prototype, "getSimilarRoutePurchaseOrders", null);
 __decorate([
     (0, common_1.Patch)('updatePurchaseOrderById'),
     __param(0, (0, common_1.Query)('id')),

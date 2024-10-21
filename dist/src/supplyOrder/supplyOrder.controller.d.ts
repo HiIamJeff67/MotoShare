@@ -1,7 +1,7 @@
 import { SupplyOrderService } from './supplyOrder.service';
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
-import { GetCurAdjacentSupplyOrderDto } from './dto/get-supplyOrder.dto';
+import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dto/get-supplyOrder.dto';
 export declare class SupplyOrderController {
     private readonly supplyOrderService;
     constructor(supplyOrderService: SupplyOrderService);
@@ -26,6 +26,7 @@ export declare class SupplyOrderController {
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
+        tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
     getSupplyOrdersByCreatorId(id: string, limit?: string, offset?: string): Promise<{
@@ -43,6 +44,7 @@ export declare class SupplyOrderController {
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
+        tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
     getSupplyOrders(limit?: string, offset?: string): Promise<{
@@ -60,9 +62,10 @@ export declare class SupplyOrderController {
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
+        tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    getCurAdjacentSupplyOrders(limit: string | undefined, offset: string | undefined, getCurAdjacentSupplyOrderDto: GetCurAdjacentSupplyOrderDto): Promise<{
+    getCurAdjacentSupplyOrders(limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
         id: string;
         creatorId: string | null;
         initPrice: number;
@@ -77,8 +80,47 @@ export declare class SupplyOrderController {
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
+        tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
+    }[]>;
+    getDestAdjacentSupplyOrders(limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
+        id: string;
+        creatorId: string | null;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
+        distance: unknown;
+    }[]>;
+    getSimilarRouteSupplyOrders(limit: string | undefined, offset: string | undefined, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto): Promise<{
+        id: string;
+        creatorId: string | null;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
+        RDV: unknown;
     }[]>;
     updateSupplyOrderById(id: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
         id: string;

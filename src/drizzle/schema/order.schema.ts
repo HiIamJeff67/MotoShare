@@ -1,4 +1,4 @@
-import { geometry, integer, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { RidderTable } from "./ridder.schema";
@@ -19,6 +19,7 @@ export const OrderTable = pgTable("order", {
     passengerStartCord: geometry("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    // note that there's no need to specify the end cord of ridder
     startAfter: timestamp("startAfter").notNull().defaultNow(),
     status: orderStatusEnum().notNull().default("UNSTARTED"),
 });
