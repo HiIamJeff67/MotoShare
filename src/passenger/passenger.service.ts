@@ -5,7 +5,7 @@ import { DrizzleDB } from 'src/drizzle/types/drizzle'
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { SignInPassengerDto } from './dto/signin-passenger.dto';
+import { SignInPassengerDto } from './dto/signIn-passenger.dto';
 
 import { PassengerTable } from 'src/drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from 'src/drizzle/schema/passengerInfo.schema';

@@ -18,7 +18,7 @@ const passenger_service_1 = require("./passenger.service");
 const create_passenger_dto_1 = require("./dto/create-passenger.dto");
 const update_passenger_dto_1 = require("./dto/update-passenger.dto");
 const update_info_dto_1 = require("./dto/update-info.dto");
-const signin_passenger_dto_1 = require("./dto/signin-passenger.dto");
+const signIn_passenger_dto_1 = require("./dto/signIn-passenger.dto");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -74,10 +74,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "createPassengerWithInfoAndCollection", null);
 __decorate([
-    (0, common_1.Get)('signInPassengerByEamilAndPassword'),
+    (0, common_1.Post)('signInPassengerByEamilAndPassword'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signin_passenger_dto_1.SignInPassengerDto]),
+    __metadata("design:paramtypes", [signIn_passenger_dto_1.SignInPassengerDto]),
     __metadata("design:returntype", void 0)
 ], PassengerController.prototype, "signInPassengerByEamilAndPassword", null);
 __decorate([

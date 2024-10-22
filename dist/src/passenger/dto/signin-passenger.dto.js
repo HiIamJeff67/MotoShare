@@ -24,4 +24,4 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SignInPassengerDto.prototype, "password", void 0);
-//# sourceMappingURL=signin-passenger.dto.js.map
+//# sourceMappingURL=signIn-passenger.dto.js.map

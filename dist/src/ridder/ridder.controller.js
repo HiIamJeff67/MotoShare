@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "createRidderWithInfoAndCollection", null);
 __decorate([
-    (0, common_1.Get)('signInRidderByEamilAndPassword'),
+    (0, common_1.Post)('signInRidderByEamilAndPassword'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [signIn_ridder_dto_1.SignInRidderDto]),

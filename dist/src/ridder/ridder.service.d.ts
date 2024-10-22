@@ -28,10 +28,10 @@ export declare class RidderService {
         email: string;
     }[]>;
     getRidderWithInfoByUserId(userId: string): Promise<{
+        password: string;
         id: string;
         userName: string;
         email: string;
-        password: string;
         info: {
             id: string;
             userId: string;
@@ -45,10 +45,10 @@ export declare class RidderService {
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(userId: string): Promise<{
+        password: string;
         id: string;
         userName: string;
         email: string;
-        password: string;
         collection: {
             id: string;
             userId: string;

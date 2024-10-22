@@ -2,7 +2,7 @@ import { PassengerService } from './passenger.service';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { SignInPassengerDto } from './dto/signin-passenger.dto';
+import { SignInPassengerDto } from './dto/signIn-passenger.dto';
 export declare class PassengerController {
     private readonly passengerService;
     constructor(passengerService: PassengerService);

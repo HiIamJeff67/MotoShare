@@ -22,10 +22,10 @@ export declare class RidderController {
         email: string;
     }[]>;
     getRidderWithInfoByUserId(id: string): Promise<{
+        password: string;
         id: string;
         userName: string;
         email: string;
-        password: string;
         info: {
             id: string;
             userId: string;
@@ -39,10 +39,10 @@ export declare class RidderController {
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(id: string): Promise<{
+        password: string;
         id: string;
         userName: string;
         email: string;
-        password: string;
         collection: {
             id: string;
             userId: string;
