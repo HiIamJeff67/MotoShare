@@ -100,7 +100,7 @@ export class SupplyOrderService {
   
   async getCurAdjacentSupplyOrders(
     limit: number, 
-    offset: number,
+    offset: number, 
     getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
     return await this.db.select({

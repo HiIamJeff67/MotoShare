@@ -28,19 +28,19 @@ let PurchaseOrderController = class PurchaseOrderController {
     getPurchaseOrderById(id) {
         return this.purchaseOrderService.getPurchaseOrderById(id);
     }
-    getPurchaseOrdersByCreatorId(id, limit, offset) {
+    getPurchaseOrdersByCreatorId(id, limit = "10", offset = "0") {
         return this.purchaseOrderService.getPurchaseOrdersByCreatorId(id, +limit, +offset);
     }
-    getPurchaseOrders(limit, offset) {
+    getPurchaseOrders(limit = "10", offset = "0") {
         return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
     }
-    getCurAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+    getCurAdjacentPurchaseOrders(limit = "10", offset = "0", getAdjacentPurchaseOrdersDto) {
         return this.purchaseOrderService.getCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
     }
-    getDestAdjacentPurchaseOrders(limit, offset, getAdjacentPurchaseOrdersDto) {
+    getDestAdjacentPurchaseOrders(limit = "10", offset = "0", getAdjacentPurchaseOrdersDto) {
         return this.purchaseOrderService.getDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
     }
-    getSimilarRoutePurchaseOrders(limit, offset, getSimilarRoutePurchaseOrdersDto) {
+    getSimilarRoutePurchaseOrders(limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto) {
         return this.purchaseOrderService.getSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);
     }
     updatePurchaseOrderById(id, updatePurchaseOrderDto) {

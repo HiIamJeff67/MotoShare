@@ -3,6 +3,7 @@ import { PassengerService } from './passenger.service';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
+import { SignInPassengerDto } from './dto/signin-passenger.dto';
 
 @Controller('passenger')
 export class PassengerController {
@@ -21,6 +22,14 @@ export class PassengerController {
     };
   }
   /* ================================= Create operations ================================= */
+
+
+  /* ================================= Auth validate operations ================================= */
+  @Get('signInPassengerByEamilAndPassword')
+  signInPassengerByEamilAndPassword(@Body() signInPassengerDto: SignInPassengerDto) {
+    return this.passengerService.signInPassengerByEamilAndPassword(signInPassengerDto);
+  }
+  /* ================================= Auth validate operations ================================= */
 
 
   /* ================================= Get operations ================================= */

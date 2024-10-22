@@ -2,6 +2,7 @@ import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { SignInRidderDto } from './dto/signIn-ridder.dto';
 export declare class RidderService {
     private db;
     constructor(db: DrizzleDB);
@@ -16,16 +17,21 @@ export declare class RidderService {
         id: string;
         userId: string;
     }[]>;
+    signInRidderByEamilAndPassword(signInRidderDto: SignInRidderDto): Promise<{
+        id: string;
+        userName: string;
+        email: string;
+    }[]>;
     getRidderById(id: string): Promise<{
         id: string;
         userName: string;
         email: string;
     }[]>;
     getRidderWithInfoByUserId(userId: string): Promise<{
-        password: string;
         id: string;
         userName: string;
         email: string;
+        password: string;
         info: {
             id: string;
             userId: string;
@@ -39,10 +45,10 @@ export declare class RidderService {
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(userId: string): Promise<{
-        password: string;
         id: string;
         userName: string;
         email: string;
+        password: string;
         collection: {
             id: string;
             userId: string;

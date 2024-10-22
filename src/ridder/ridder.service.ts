@@ -4,10 +4,11 @@ import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { RidderTable } from 'src/drizzle/schema/ridder.schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { RidderInfoTable } from 'src/drizzle/schema/ridderInfo.schema';
 import { RidderCollectionTable } from 'src/drizzle/schema/ridderCollection.schema';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { SignInRidderDto } from './dto/signIn-ridder.dto';
 
 @Injectable()
 export class RidderService {
@@ -44,6 +45,20 @@ export class RidderService {
   /* ================================= Create operations ================================= */
 
 
+  /* ================================= Auth validate operations ================================= */
+  async signInRidderByEamilAndPassword(signInRidderDto: SignInRidderDto) {
+    // since email is unique variable, there should be only one response
+    return await this.db.select({
+      id: RidderTable.id,
+      userName: RidderTable.userName,
+      email: RidderTable.email,
+    }).from(RidderTable)
+      .where(and(eq(RidderTable.email, signInRidderDto.email), eq(RidderTable.password, signInRidderDto.password)))
+      .limit(1);
+  }
+  /* ================================= Auth validate operations ================================= */
+
+
   /* ================================= Get operations ================================= */
   async getRidderById(id: string) {
     return await this.db.select({
@@ -51,7 +66,8 @@ export class RidderService {
       userName: RidderTable.userName,
       email: RidderTable.email,
     }).from(RidderTable)
-      .where(eq(RidderTable.id, id));
+      .where(eq(RidderTable.id, id))
+      .limit(1);
   }
 
   async getRidderWithInfoByUserId(userId: string) {

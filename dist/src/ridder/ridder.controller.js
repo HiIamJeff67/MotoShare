@@ -18,6 +18,7 @@ const ridder_service_1 = require("./ridder.service");
 const create_ridder_dto_1 = require("./dto/create-ridder.dto");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("../passenger/dto/update-info.dto");
+const signIn_ridder_dto_1 = require("./dto/signIn-ridder.dto");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;
@@ -31,6 +32,9 @@ let RidderController = class RidderController {
             infoId: infoResponse[0].id,
             collectionId: collectionResponse[0].id,
         };
+    }
+    signInRidderByEamilAndPassword(signInRidderDto) {
+        return this.ridderService.signInRidderByEamilAndPassword(signInRidderDto);
     }
     getRidderById(id) {
         return this.ridderService.getRidderById(id);
@@ -65,6 +69,13 @@ __decorate([
     __metadata("design:paramtypes", [create_ridder_dto_1.CreateRidderDto]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "createRidderWithInfoAndCollection", null);
+__decorate([
+    (0, common_1.Get)('signInRidderByEamilAndPassword'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [signIn_ridder_dto_1.SignInRidderDto]),
+    __metadata("design:returntype", void 0)
+], RidderController.prototype, "signInRidderByEamilAndPassword", null);
 __decorate([
     (0, common_1.Get)('getRidderById'),
     __param(0, (0, common_1.Query)('id')),

@@ -48,13 +48,23 @@ let RidderService = class RidderService {
             userId: ridderCollection_schema_1.RidderCollectionTable.userId,
         });
     }
+    async signInRidderByEamilAndPassword(signInRidderDto) {
+        return await this.db.select({
+            id: ridder_schema_1.RidderTable.id,
+            userName: ridder_schema_1.RidderTable.userName,
+            email: ridder_schema_1.RidderTable.email,
+        }).from(ridder_schema_1.RidderTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInRidderDto.email), (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.password, signInRidderDto.password)))
+            .limit(1);
+    }
     async getRidderById(id) {
         return await this.db.select({
             id: ridder_schema_1.RidderTable.id,
             userName: ridder_schema_1.RidderTable.userName,
             email: ridder_schema_1.RidderTable.email,
         }).from(ridder_schema_1.RidderTable)
-            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id));
+            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+            .limit(1);
     }
     async getRidderWithInfoByUserId(userId) {
         return await this.db.query.RidderTable.findFirst({

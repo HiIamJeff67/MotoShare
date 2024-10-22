@@ -2,6 +2,7 @@ import { RidderService } from './ridder.service';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdatePassengerInfoDto } from 'src/passenger/dto/update-info.dto';
+import { SignInRidderDto } from './dto/signIn-ridder.dto';
 export declare class RidderController {
     private readonly ridderService;
     constructor(ridderService: RidderService);
@@ -10,16 +11,21 @@ export declare class RidderController {
         infoId: string;
         collectionId: string;
     }>;
+    signInRidderByEamilAndPassword(signInRidderDto: SignInRidderDto): Promise<{
+        id: string;
+        userName: string;
+        email: string;
+    }[]>;
     getRidderById(id: string): Promise<{
         id: string;
         userName: string;
         email: string;
     }[]>;
     getRidderWithInfoByUserId(id: string): Promise<{
-        password: string;
         id: string;
         userName: string;
         email: string;
+        password: string;
         info: {
             id: string;
             userId: string;
@@ -33,10 +39,10 @@ export declare class RidderController {
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(id: string): Promise<{
-        password: string;
         id: string;
         userName: string;
         email: string;
+        password: string;
         collection: {
             id: string;
             userId: string;

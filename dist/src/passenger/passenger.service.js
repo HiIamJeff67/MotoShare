@@ -48,13 +48,23 @@ let PassengerService = class PassengerService {
             userId: passengerCollection_schema_1.PassengerCollectionTable.userId,
         });
     }
+    async signInPassengerByEamilAndPassword(signInPassengerDto) {
+        return await this.db.select({
+            id: passenger_schema_1.PassengerTable.id,
+            userName: passenger_schema_1.PassengerTable.userName,
+            email: passenger_schema_1.PassengerTable.email,
+        }).from(passenger_schema_1.PassengerTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInPassengerDto.email), (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.password, signInPassengerDto.password)))
+            .limit(1);
+    }
     async getPassengerById(id) {
         return await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
             email: passenger_schema_1.PassengerTable.email,
         }).from(passenger_schema_1.PassengerTable)
-            .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id));
+            .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            .limit(1);
     }
     async getPassengerWithInfoByUserId(userId) {
         return await this.db.query.PassengerTable.findFirst({

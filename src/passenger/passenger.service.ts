@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle'
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { UpdatePassengerInfoDto } from './dto/update-info.dto';
+import { SignInPassengerDto } from './dto/signin-passenger.dto';
 
 import { PassengerTable } from 'src/drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from 'src/drizzle/schema/passengerInfo.schema';
 import { PassengerCollectionTable } from 'src/drizzle/schema/passengerCollection.schema';
-import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 
 @Injectable()
 export class PassengerService {
@@ -45,6 +46,20 @@ export class PassengerService {
   /* ================================= Create operations ================================= */
 
 
+  /* ================================= Auth validate operations ================================= */
+  async signInPassengerByEamilAndPassword(signInPassengerDto: SignInPassengerDto) {
+    // since email is unique variable, there should be only one response
+    return await this.db.select({
+      id: PassengerTable.id,
+      userName: PassengerTable.userName,
+      email: PassengerTable.email,
+    }).from(PassengerTable)
+      .where(and(eq(PassengerTable.email, signInPassengerDto.email), eq(PassengerTable.password, signInPassengerDto.password)))
+      .limit(1);
+  }
+  /* ================================= Auth validate operations ================================= */
+
+
   /* ================================= Get operations ================================= */
   async getPassengerById(id: string) {
     return await this.db.select({
@@ -52,7 +67,8 @@ export class PassengerService {
       userName: PassengerTable.userName,
       email: PassengerTable.email,
     }).from(PassengerTable)
-      .where(eq(PassengerTable.id, id));
+      .where(eq(PassengerTable.id, id))
+      .limit(1);
   }
 
   async getPassengerWithInfoByUserId(userId: string) {

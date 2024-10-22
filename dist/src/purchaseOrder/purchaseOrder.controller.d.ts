@@ -29,7 +29,7 @@ export declare class PurchaseOrderController {
         isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    getPurchaseOrdersByCreatorId(id: string, limit: string, offset: string): Promise<{
+    getPurchaseOrdersByCreatorId(id: string, limit?: string, offset?: string): Promise<{
         id: string;
         creatorId: string | null;
         initPrice: number;
@@ -47,7 +47,7 @@ export declare class PurchaseOrderController {
         isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    getPurchaseOrders(limit: string, offset: string): Promise<{
+    getPurchaseOrders(limit?: string, offset?: string): Promise<{
         id: string;
         creatorId: string | null;
         initPrice: number;
@@ -65,26 +65,7 @@ export declare class PurchaseOrderController {
         isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    getCurAdjacentPurchaseOrders(limit: string, offset: string, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
-        id: string;
-        creatorId: string | null;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
-        distance: unknown;
-    }[]>;
-    getDestAdjacentPurchaseOrders(limit: string, offset: string, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
+    getCurAdjacentPurchaseOrders(limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorId: string | null;
         initPrice: number;
@@ -103,7 +84,26 @@ export declare class PurchaseOrderController {
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
     }[]>;
-    getSimilarRoutePurchaseOrders(limit: string, offset: string, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
+    getDestAdjacentPurchaseOrders(limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
+        id: string;
+        creatorId: string | null;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
+        distance: unknown;
+    }[]>;
+    getSimilarRoutePurchaseOrders(limit: string | undefined, offset: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
         id: string;
         creatorId: string | null;
         initPrice: number;

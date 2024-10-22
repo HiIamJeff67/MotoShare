@@ -28,24 +28,24 @@ export class PurchaseOrderController {
   @Get('getPurchaseOrdersByCreatorId')
   getPurchaseOrdersByCreatorId(
     @Query('id') id: string,
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
   ) {
     return this.purchaseOrderService.getPurchaseOrdersByCreatorId(id, +limit, +offset);
   }
 
   @Get('getPurchaseOrders')
   getPurchaseOrders(
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
   ) {
     return this.purchaseOrderService.getPurchaseOrders(+limit, +offset);
   }
 
   @Get('getCurAdjacentPurchaseOrders')
   getCurAdjacentPurchaseOrders(
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
   ) {
     return this.purchaseOrderService.getCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
@@ -53,8 +53,8 @@ export class PurchaseOrderController {
 
   @Get('getDestAdjacentPurchaseOrders')
   getDestAdjacentPurchaseOrders(
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
   ) {
     return this.purchaseOrderService.getDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
@@ -62,8 +62,8 @@ export class PurchaseOrderController {
 
   @Get('getSimilarRoutePurchaseOrders')
   getSimilarRoutePurchaseOrders(
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
     @Body() getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto,
   ) {
     return this.purchaseOrderService.getSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);

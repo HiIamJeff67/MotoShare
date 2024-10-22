@@ -2,6 +2,7 @@ import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
+import { SignInPassengerDto } from './dto/signin-passenger.dto';
 export declare class PassengerService {
     private db;
     constructor(db: DrizzleDB);
@@ -15,6 +16,11 @@ export declare class PassengerService {
     createPassengerCollectionByUserId(userId: string): Promise<{
         id: string;
         userId: string;
+    }[]>;
+    signInPassengerByEamilAndPassword(signInPassengerDto: SignInPassengerDto): Promise<{
+        id: string;
+        userName: string;
+        email: string;
     }[]>;
     getPassengerById(id: string): Promise<{
         id: string;

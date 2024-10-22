@@ -3,6 +3,7 @@ import { RidderService } from './ridder.service';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdatePassengerInfoDto } from 'src/passenger/dto/update-info.dto';
+import { SignInRidderDto } from './dto/signIn-ridder.dto';
 
 @Controller('ridder')
 export class RidderController {
@@ -21,6 +22,14 @@ export class RidderController {
     }
   }
   /* ================================= Create operations ================================= */
+
+
+  /* ================================= Auth validate operations ================================= */
+  @Get('signInRidderByEamilAndPassword')
+  signInRidderByEamilAndPassword(@Body() signInRidderDto: SignInRidderDto) {
+    return this.ridderService.signInRidderByEamilAndPassword(signInRidderDto);
+  }
+  /* ================================= Auth validate operations ================================= */
 
 
   /* ================================= Get operations ================================= */
