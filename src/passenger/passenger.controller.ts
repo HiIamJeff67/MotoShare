@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, Query } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { SignInPassengerDto } from './dto/signin-passenger.dto';
+import { SignInPassengerDto } from './dto/signIn-passenger.dto';
 
 @Controller('passenger')
 export class PassengerController {
