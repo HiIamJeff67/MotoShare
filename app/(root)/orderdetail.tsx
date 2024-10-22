@@ -25,12 +25,11 @@ const OrderDetail = () => {
 
             <View style={styles.card}>
                 <View style={styles.header}>
-                    <Text style={styles.orderNumber}>訂單編號: xxxxxxxxxxxxx</Text>
+                    <Text style={styles.orderNumber}>車主資料:</Text>
                 </View>
         
                 <View style={styles.body}>
-                    <Text style={styles.textBase}>訂單日期: 2024/10/17 | 未知</Text>
-                    <Text style={styles.title}>機車型號：Yamaha EC-05</Text>
+                    <Text style={styles.title}></Text>
                     <Text style={styles.title}>車牌號碼：ABC-1234</Text>
                     <Text style={styles.title}>起點：台灣海洋大學</Text>
                     <Text style={styles.title}>終點：基隆火車站</Text>
@@ -39,23 +38,6 @@ const OrderDetail = () => {
                 </View>
             </View>
 
-            <View className="h-10"></View>
-
-            <View style={styles.card}>
-                <View style={styles.header}>
-                    <Text style={styles.orderNumber}>訂單編號: xxxxxxxxxxxxx</Text>
-                </View>
-        
-                <View style={styles.body}>
-                    <Text style={styles.textBase}>訂單日期: 2024/10/17 | 未知</Text>
-                    <Text style={styles.title}>機車型號：Yamaha EC-05</Text>
-                    <Text style={styles.title}>車牌號碼：ABC-1234</Text>
-                    <Text style={styles.title}>起點：台灣海洋大學</Text>
-                    <Text style={styles.title}>終點：基隆火車站</Text>
-                    <Text style={styles.title}>開始時間：2024-10-16 14:30</Text>
-                    <Text style={styles.title}>到達時間：2024-10-16 14:31</Text>
-                </View>
-            </View>
           </SafeAreaView>
         </ScrollView>
     );
@@ -100,6 +82,6 @@ const styles = StyleSheet.create({
       fontWeight: '600',
       color: '#333',
     },
-  });
+});
 
 export default OrderDetail;

@@ -11,10 +11,10 @@ const WelcomeScreen = () => {
                     <Image
                         source={require('../../assets/images/vecteezy_electric-scooter-transparent.png')}
                         style={{ 
-                            width: 200, 
-                            height: 200,
+                            width: 250, 
+                            height: 250,
                             position: 'absolute',
-                            top: 200,
+                            top: 125,
                         }}
                         resizeMode="contain"
                     />
@@ -22,7 +22,7 @@ const WelcomeScreen = () => {
 
                 <View className="justify-center items-center"
                     style={{ 
-                        top: 450,
+                        top: 420,
                     }}>
                     
                     <Text className="text-white text-4xl pb-5 font-bold">讓我們開始吧!</Text>
@@ -36,7 +36,7 @@ const WelcomeScreen = () => {
                             width: 300,
                             height: 50,
                             position: 'absolute',
-                            top: 480,
+                            top: 450,
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}
@@ -49,11 +49,11 @@ const WelcomeScreen = () => {
 
                 <View className="justify-center items-center"
                     style={{ 
-                        top: 550,
+                        top: 520,
                     }}>
                     
                     <Pressable 
-                        onPress={() => router.push("./login")}
+                        onPress={() => router.push("./choose")}
                     >
                         <Text className="text-white text-lg">已經有帳號了?</Text>
                     </Pressable>
