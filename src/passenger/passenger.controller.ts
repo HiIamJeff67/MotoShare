@@ -25,7 +25,7 @@ export class PassengerController {
 
 
   /* ================================= Auth validate operations ================================= */
-  @Get('signInPassengerByEamilAndPassword')
+  @Post('signInPassengerByEamilAndPassword')
   signInPassengerByEamilAndPassword(@Body() signInPassengerDto: SignInPassengerDto) {
     return this.passengerService.signInPassengerByEamilAndPassword(signInPassengerDto);
   }

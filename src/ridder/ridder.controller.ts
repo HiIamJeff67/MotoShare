@@ -25,7 +25,7 @@ export class RidderController {
 
 
   /* ================================= Auth validate operations ================================= */
-  @Get('signInRidderByEamilAndPassword')
+  @Post('signInRidderByEamilAndPassword')
   signInRidderByEamilAndPassword(@Body() signInRidderDto: SignInRidderDto) {
     return this.ridderService.signInRidderByEamilAndPassword(signInRidderDto);
   }
