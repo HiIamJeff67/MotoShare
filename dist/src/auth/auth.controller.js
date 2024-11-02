@@ -25,10 +25,7 @@ let AuthController = class AuthController {
     async signUpPassengerWithEmailAndPassword(signUpDto, response) {
         try {
             if (signUpDto.userName && signUpDto.userName.length > 20) {
-                throw {
-                    name: "userNameTooLong",
-                    message: "User name cannot be longer than 20 characters"
-                };
+                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
             }
             const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
             response.status(axios_1.HttpStatusCode.Created).send({
@@ -36,22 +33,19 @@ let AuthController = class AuthController {
             });
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.BadRequest).send({
+            response.status(error instanceof common_1.PayloadTooLargeException
+                ? axios_1.HttpStatusCode.PayloadTooLarge
+                : (error instanceof common_1.ConflictException
+                    ? axios_1.HttpStatusCode.Conflict
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
-            });
-            const duplicateField = error.constraint.split("_")[1];
-            response.status(axios_1.HttpStatusCode.Conflict).send({
-                message: `Duplicate ${duplicateField} detected`,
             });
         }
     }
     async signInPassengerWithAccountAndPassword(signInDto, response) {
         try {
             if (signInDto.userName && signInDto.userName.length > 20) {
-                throw {
-                    name: "userNameTooLong",
-                    message: "User name cannot be longer than 20 characters"
-                };
+                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
             }
             const passengerRespose = await this.authService.signInPassengerEmailAndPassword(signInDto);
             response.status(axios_1.HttpStatusCode.Ok).send({
@@ -59,7 +53,11 @@ let AuthController = class AuthController {
             });
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.BadRequest).send({
+            response.status(error instanceof common_1.PayloadTooLargeException
+                ? axios_1.HttpStatusCode.PayloadTooLarge
+                : (error instanceof common_1.ConflictException
+                    ? axios_1.HttpStatusCode.Conflict
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }

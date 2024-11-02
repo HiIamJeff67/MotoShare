@@ -30,60 +30,52 @@ let AuthService = class AuthService {
         this.jwt = jwt;
     }
     async signUpPassengerWithEmailAndPassword(signUpDto) {
-        try {
-            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
-            const response = await this.db.insert(passenger_schema_1.PassengerTable).values({
-                userName: signUpDto.userName,
-                email: signUpDto.email,
-                password: hash,
-            }).returning({
-                id: passenger_schema_1.PassengerTable.id,
-                email: passenger_schema_1.PassengerTable.email,
-            });
-            this.createPassengerInfoByUserId(response[0].id);
-            return this.signToken(response[0].id, response[0].email);
+        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+        const response = await this.db.insert(passenger_schema_1.PassengerTable).values({
+            userName: signUpDto.userName,
+            email: signUpDto.email,
+            password: hash,
+        }).returning({
+            id: passenger_schema_1.PassengerTable.id,
+            email: passenger_schema_1.PassengerTable.email,
+        });
+        if (!response) {
+            throw new common_1.ConflictException(`Duplicate userName or email detected`);
         }
-        catch (error) {
-            throw error;
+        const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
+        if (!responseOfCreatingInfo) {
+            throw new Error('Cannot create the info for current passenger');
         }
+        return this.signToken(response[0].id, response[0].email);
     }
     async createPassengerInfoByUserId(userId) {
-        try {
-            return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
-                userId: userId
-            });
-        }
-        catch (error) {
-            throw error;
-        }
+        return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+            userId: userId
+        });
     }
     async signUpRidderWithEmailAndPassword(signUpDto) {
-        try {
-            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
-            const response = await this.db.insert(ridder_schema_1.RidderTable).values({
-                userName: signUpDto.userName,
-                email: signUpDto.email,
-                password: hash,
-            }).returning({
-                id: ridder_schema_1.RidderTable.id,
-                email: ridder_schema_1.RidderTable.email,
-            });
-            this.createRidderInfoByUserId(response[0].id);
-            return this.signToken(response[0].id, response[0].email);
+        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+        const response = await this.db.insert(ridder_schema_1.RidderTable).values({
+            userName: signUpDto.userName,
+            email: signUpDto.email,
+            password: hash,
+        }).returning({
+            id: ridder_schema_1.RidderTable.id,
+            email: ridder_schema_1.RidderTable.email,
+        });
+        if (!response) {
+            throw new common_1.ConflictException(`Duplicate userName or email detected`);
         }
-        catch (error) {
-            throw error;
+        const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
+        if (!responseOfCreatingInfo) {
+            throw new Error('Cannot create the info for current passenger');
         }
+        return this.signToken(response[0].id, response[0].email);
     }
     async createRidderInfoByUserId(userId) {
-        try {
-            return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
-                userId: userId
-            });
-        }
-        catch (error) {
-            throw error;
-        }
+        return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
+            userId: userId
+        });
     }
     async signInPassengerEmailAndPassword(signInDto) {
         let userResponse = null;

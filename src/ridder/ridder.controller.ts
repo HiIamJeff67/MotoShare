@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Delete, Query, Res } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { response, Response } from 'express';
-import { HttpStatusCode } from 'axios/index';
+import { HttpStatusCode } from 'axios';
 
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';

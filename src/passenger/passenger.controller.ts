@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Delete, Query, Res, UseGuards, Req, NotFoundException, ConflictException } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Request, Response } from 'express';
-import { HttpStatusCode } from 'axios/index';
+import { HttpStatusCode } from 'axios';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { JwtPassengerGuard } from 'src/auth/guard/jwt-passenger.guard';
@@ -53,7 +53,7 @@ export class PassengerController {
         ? HttpStatusCode.Unauthorized 
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError
+          : HttpStatusCode.UnknownError ?? 520
         )
       ).send({
         message: error.message,
@@ -86,7 +86,7 @@ export class PassengerController {
         ? HttpStatusCode.Unauthorized 
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError
+          : HttpStatusCode.UnknownError ?? 520
         )
       ).send({
         message: error.message,
@@ -113,7 +113,7 @@ export class PassengerController {
     } catch (error) {
       response.status(error instanceof NotFoundException 
         ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError
+        : HttpStatusCode.UnknownError ?? 520
       ).send({
         message: error.message,
       });
@@ -137,7 +137,7 @@ export class PassengerController {
     } catch (error) {
       response.status(error instanceof NotFoundException 
         ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError
+        : HttpStatusCode.UnknownError ?? 520
       ).send({
         message: error.message,
       });
@@ -180,7 +180,7 @@ export class PassengerController {
           ? HttpStatusCode.NotFound
           : (error instanceof ConflictException
             ? HttpStatusCode.Conflict
-            : HttpStatusCode.UnknownError
+            : HttpStatusCode.UnknownError ?? 520
           )
         )
       ).send({
@@ -218,7 +218,7 @@ export class PassengerController {
         ? HttpStatusCode.Unauthorized
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError
+          : HttpStatusCode.UnknownError ?? 520
         )
       ).send({
         message: error.message,
@@ -257,7 +257,7 @@ export class PassengerController {
         ? HttpStatusCode.Unauthorized
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError
+          : HttpStatusCode.UnknownError ?? 520
         )
       ).send({
         message: error.message,

@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { ForbiddenException, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotAcceptableException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -27,38 +27,38 @@ export class AuthService {
     async signUpPassengerWithEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType> {
         // hash the password, then provide hash value to create the user
         // const hash = await bcrypt.hash(createPassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
-        try {
-            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")))
-    
-            const response = await this.db.insert(PassengerTable).values({
-                userName: signUpDto.userName,
-                email: signUpDto.email,
-                password: hash,
-            }).returning({
-                id: PassengerTable.id,  // require a token
-                email: PassengerTable.email,
-            });
+        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")))
 
-            this.createPassengerInfoByUserId(response[0].id);
-    
-            return this.signToken(response[0].id, response[0].email);
-        } catch (error) {
-            throw error;
+        const response = await this.db.insert(PassengerTable).values({
+            userName: signUpDto.userName,
+            email: signUpDto.email,
+            password: hash,
+        }).returning({
+            id: PassengerTable.id,  // require a token
+            email: PassengerTable.email,
+        });
+
+        if (!response) {
+            throw new ConflictException(`Duplicate userName or email detected`)
         }
+
+        const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
+        
+        if (!responseOfCreatingInfo) {
+            throw new Error('Cannot create the info for current passenger')
+        }
+
+        return this.signToken(response[0].id, response[0].email);
     }
     async createPassengerInfoByUserId(userId: string) {
-        try {
-          return await this.db.insert(PassengerInfoTable).values({
-            userId: userId
-          })
+        return await this.db.insert(PassengerInfoTable).values({
+        userId: userId
+        })
         // we don't return anything here, since we don't have to
         //   .returning({
         //     id: PassengerInfoTable.id,
         //     userId: PassengerInfoTable.userId,
         //   });
-        } catch (error) {
-          throw error;
-        }
     }
     /* ================================= Sign Up Passenger Operations ================================= */
 
@@ -68,38 +68,38 @@ export class AuthService {
     async signUpRidderWithEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType> {
         // hash the password, then provide hash value to create the user
         // const hash = await bcrypt.hash(createPassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
-        try {
-            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")))
-    
-            const response = await this.db.insert(RidderTable).values({
-                userName: signUpDto.userName,
-                email: signUpDto.email,
-                password: hash,
-            }).returning({
-                id: RidderTable.id,  // require a token
-                email: RidderTable.email,
-            });
+        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")))
 
-            this.createRidderInfoByUserId(response[0].id);
-    
-            return this.signToken(response[0].id, response[0].email);
-        } catch (error) {
-            throw error;
+        const response = await this.db.insert(RidderTable).values({
+            userName: signUpDto.userName,
+            email: signUpDto.email,
+            password: hash,
+        }).returning({
+            id: RidderTable.id,  // require a token
+            email: RidderTable.email,
+        });
+
+        if (!response) {
+            throw new ConflictException(`Duplicate userName or email detected`)
         }
+
+        const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
+        
+        if (!responseOfCreatingInfo) {
+            throw new Error('Cannot create the info for current passenger')
+        }
+
+        return this.signToken(response[0].id, response[0].email);
     }
     async createRidderInfoByUserId(userId: string) {
-        try {
-          return await this.db.insert(RidderInfoTable).values({
-            userId: userId
-          })
+        return await this.db.insert(RidderInfoTable).values({
+        userId: userId
+        })
         // we don't return anything here, since we don't have to
         //   .returning({
         //     id: RidderInfoTable.id,
         //     userId: RidderInfoTable.userId,
         //   });
-        } catch (error) {
-          throw error;
-        }
     }
     /* ================================= Sign Up Ridder Operations ================================= */
 

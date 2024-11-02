@@ -48,7 +48,7 @@ let PassengerController = class PassengerController {
                 ? axios_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
                     ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError)).send({
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -69,7 +69,7 @@ let PassengerController = class PassengerController {
                 ? axios_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
                     ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError)).send({
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -85,7 +85,7 @@ let PassengerController = class PassengerController {
         catch (error) {
             response.status(error instanceof common_1.NotFoundException
                 ? axios_1.HttpStatusCode.NotFound
-                : axios_1.HttpStatusCode.UnknownError).send({
+                : axios_1.HttpStatusCode.UnknownError ?? 520).send({
                 message: error.message,
             });
         }
@@ -101,7 +101,7 @@ let PassengerController = class PassengerController {
         catch (error) {
             response.status(error instanceof common_1.NotFoundException
                 ? axios_1.HttpStatusCode.NotFound
-                : axios_1.HttpStatusCode.UnknownError).send({
+                : axios_1.HttpStatusCode.UnknownError ?? 520).send({
                 message: error.message,
             });
         }
@@ -125,7 +125,7 @@ let PassengerController = class PassengerController {
                     ? axios_1.HttpStatusCode.NotFound
                     : (error instanceof common_1.ConflictException
                         ? axios_1.HttpStatusCode.Conflict
-                        : axios_1.HttpStatusCode.UnknownError))).send({
+                        : axios_1.HttpStatusCode.UnknownError ?? 520))).send({
                 message: error.message,
             });
         }
@@ -147,7 +147,7 @@ let PassengerController = class PassengerController {
                 ? axios_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
                     ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError)).send({
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -169,7 +169,7 @@ let PassengerController = class PassengerController {
                 ? axios_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
                     ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError)).send({
+                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
