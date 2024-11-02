@@ -14,8 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplyOrderService = void 0;
 const common_1 = require("@nestjs/common");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
-const supplyOrder_schema_1 = require("../drizzle/schema/supplyOrder.schema");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const supplyOrder_schema_1 = require("../../src/drizzle/schema/supplyOrder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
 let SupplyOrderService = class SupplyOrderService {
     constructor(db) {

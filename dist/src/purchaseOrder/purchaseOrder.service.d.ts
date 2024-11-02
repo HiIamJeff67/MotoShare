@@ -1,4 +1,4 @@
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
@@ -130,10 +130,12 @@ export declare class PurchaseOrderService {
     }[]>;
     deletePurchaseOrderById(id: string): Promise<import("pg").QueryResult<never>>;
     getAllPurchaseOrders(): Promise<{
-        id: string;
         description: string | null;
-        creatorId: string | null;
         initPrice: number;
+        startAfter: Date;
+        isUrgent: boolean;
+        id: string;
+        creatorId: string | null;
         startCord: {
             x: number;
             y: number;
@@ -144,8 +146,6 @@ export declare class PurchaseOrderService {
         };
         createdAt: Date;
         updatedAt: Date;
-        startAfter: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
-        isUrgent: boolean;
     }[]>;
 }

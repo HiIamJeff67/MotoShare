@@ -17,9 +17,9 @@ const bcrypt = require("bcrypt");
 const common_1 = require("@nestjs/common");
 const drizzle_orm_1 = require("drizzle-orm");
 const config_1 = require("@nestjs/config");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
-const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
-const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
+const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 let PassengerService = class PassengerService {
     constructor(config, db) {
         this.config = config;

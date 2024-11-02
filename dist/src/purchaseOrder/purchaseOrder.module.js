@@ -10,7 +10,7 @@ exports.PurchaseOrderModule = void 0;
 const common_1 = require("@nestjs/common");
 const purchaseOrder_service_1 = require("./purchaseOrder.service");
 const purchaseOrder_controller_1 = require("./purchaseOrder.controller");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 let PurchaseOrderModule = class PurchaseOrderModule {
 };
 exports.PurchaseOrderModule = PurchaseOrderModule;

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 export declare class PassengerService {

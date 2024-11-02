@@ -1,12 +1,12 @@
 import * as bcrypt from 'bcrypt'
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DRIZZLE } from 'src/drizzle/drizzle.module';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DRIZZLE } from '../../src/drizzle/drizzle.module';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { and, eq } from 'drizzle-orm';
 
-import { RidderTable } from 'src/drizzle/schema/ridder.schema';
-import { RidderInfoTable } from 'src/drizzle/schema/ridderInfo.schema';
+import { RidderTable } from '../../src/drizzle/schema/ridder.schema';
+import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';

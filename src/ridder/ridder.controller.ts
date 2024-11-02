@@ -5,7 +5,7 @@ import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
-import { UpdatePassengerInfoDto } from 'src/passenger/dto/update-info.dto';
+import { UpdatePassengerInfoDto } from '../../src/passenger/dto/update-info.dto';
 
 @Controller('ridder')
 export class RidderController {

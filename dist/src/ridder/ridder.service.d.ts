@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';

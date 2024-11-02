@@ -4,8 +4,8 @@ import { Request, Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { JwtPassengerGuard } from 'src/auth/guard/jwt-passenger.guard';
-import { User } from 'src/interfaces/auth.interface';
+import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
+import { User } from '../../src/interfaces/auth.interface';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 

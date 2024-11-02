@@ -10,7 +10,7 @@ exports.SupplyOrderModule = void 0;
 const common_1 = require("@nestjs/common");
 const supplyOrder_service_1 = require("./supplyOrder.service");
 const supplyOrder_controller_1 = require("./supplyOrder.controller");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 let SupplyOrderModule = class SupplyOrderModule {
 };
 exports.SupplyOrderModule = SupplyOrderModule;

@@ -130,10 +130,12 @@ export declare class PurchaseOrderController {
     }[]>;
     deletePurchaseOrderById(id: string): Promise<import("pg").QueryResult<never>>;
     getAllPurchaseOrders(): Promise<{
-        id: string;
         description: string | null;
-        creatorId: string | null;
         initPrice: number;
+        startAfter: Date;
+        isUrgent: boolean;
+        id: string;
+        creatorId: string | null;
         startCord: {
             x: number;
             y: number;
@@ -144,8 +146,6 @@ export declare class PurchaseOrderController {
         };
         createdAt: Date;
         updatedAt: Date;
-        startAfter: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
-        isUrgent: boolean;
     }[]>;
 }

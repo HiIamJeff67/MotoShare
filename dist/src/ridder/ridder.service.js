@@ -16,10 +16,10 @@ exports.RidderService = void 0;
 const bcrypt = require("bcrypt");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const drizzle_orm_1 = require("drizzle-orm");
-const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
-const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
+const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
+const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
 let RidderService = class RidderService {
     constructor(config, db) {
         this.config = config;

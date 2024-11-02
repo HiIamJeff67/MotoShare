@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const jwt_passenger_strategy_1 = require("./strategy/jwt-passenger.strategy");

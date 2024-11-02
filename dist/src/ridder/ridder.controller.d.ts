@@ -2,7 +2,7 @@ import { RidderService } from './ridder.service';
 import { Response } from 'express';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
-import { UpdatePassengerInfoDto } from 'src/passenger/dto/update-info.dto';
+import { UpdatePassengerInfoDto } from '../../src/passenger/dto/update-info.dto';
 export declare class RidderController {
     private readonly ridderService;
     constructor(ridderService: RidderService);

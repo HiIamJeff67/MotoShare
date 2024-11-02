@@ -1,6 +1,6 @@
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dto/get-supplyOrder.dto';
 export declare class SupplyOrderService {
     private db;

@@ -3,17 +3,17 @@ import { ConflictException, ForbiddenException, Inject, Injectable } from "@nest
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { DRIZZLE } from "src/drizzle/drizzle.module";
-import { DrizzleDB } from "src/drizzle/types/drizzle";
+import { DRIZZLE } from "../../src/drizzle/drizzle.module";
+import { DrizzleDB } from "../../src/drizzle/types/drizzle";
 import { SignInDto } from "./dto/signIn.dto";
 import { SignUpDto } from "./dto/signUp.dto";
 
-import { PassengerTable } from "src/drizzle/schema/passenger.schema";
-import { PassengerInfoTable } from 'src/drizzle/schema/passengerInfo.schema';
-import { RidderTable } from 'src/drizzle/schema/ridder.schema';
-import { RidderInfoTable } from 'src/drizzle/schema/ridderInfo.schema';
+import { PassengerTable } from "../../src/drizzle/schema/passenger.schema";
+import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schema';
+import { RidderTable } from '../../src/drizzle/schema/ridder.schema';
+import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 
-import { AuthTokenType } from 'src/interfaces/auth.interface';
+import { AuthTokenType } from '../../src/interfaces/auth.interface';
 
 @Injectable()
 export class AuthService {

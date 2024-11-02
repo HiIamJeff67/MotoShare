@@ -18,8 +18,8 @@ const config_1 = require("@nestjs/config");
 const passport_1 = require("@nestjs/passport");
 const passport_jwt_1 = require("passport-jwt");
 const drizzle_orm_1 = require("drizzle-orm");
-const drizzle_module_1 = require("../../drizzle/drizzle.module");
-const passenger_schema_1 = require("../../drizzle/schema/passenger.schema");
+const drizzle_module_1 = require("../../../src/drizzle/drizzle.module");
+const passenger_schema_1 = require("../../../src/drizzle/schema/passenger.schema");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-passenger') {
     constructor(config, db) {
         super({

@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
-import { DRIZZLE } from 'src/drizzle/drizzle.module';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
-import { SupplyOrderTable } from 'src/drizzle/schema/supplyOrder.schema';
+import { DRIZZLE } from '../../src/drizzle/drizzle.module';
+import { DrizzleDB } from '../../src/drizzle/types/drizzle';
+import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
 import { desc, eq, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 

@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PurchaseOrderService = void 0;
 const common_1 = require("@nestjs/common");
 const drizzle_orm_1 = require("drizzle-orm");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
-const purchaseOrder_schema_1 = require("../drizzle/schema/purchaseOrder.schema");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const purchaseOrder_schema_1 = require("../../src/drizzle/schema/purchaseOrder.schema");
 let PurchaseOrderService = class PurchaseOrderService {
     constructor(db) {
         this.db = db;

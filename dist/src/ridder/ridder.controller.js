@@ -18,7 +18,7 @@ const ridder_service_1 = require("./ridder.service");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const create_ridder_dto_1 = require("./dto/create-ridder.dto");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
-const update_info_dto_1 = require("../passenger/dto/update-info.dto");
+const update_info_dto_1 = require("../../src/passenger/dto/update-info.dto");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;

@@ -10,7 +10,7 @@ exports.RidderModule = void 0;
 const common_1 = require("@nestjs/common");
 const ridder_service_1 = require("./ridder.service");
 const ridder_controller_1 = require("./ridder.controller");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
+const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 let RidderModule = class RidderModule {
 };
 exports.RidderModule = RidderModule;
