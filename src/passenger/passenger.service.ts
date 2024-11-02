@@ -1,79 +1,44 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import * as bcrypt from 'bcrypt';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { and, eq, like } from 'drizzle-orm';
+import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle'
-import { CreatePassengerDto } from './dto/create-passenger.dto';
-import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { SignInPassengerDto } from './dto/signIn-passenger.dto';
 
 import { PassengerTable } from 'src/drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from 'src/drizzle/schema/passengerInfo.schema';
-import { PassengerCollectionTable } from 'src/drizzle/schema/passengerCollection.schema';
+import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { JwtPassengerGuard } from 'src/auth/guard/jwt-passenger.guard';
 
 @Injectable()
 export class PassengerService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
-
-  /* ================================= Create operations ================================= */
-  async createPassenger(createPassengerDto: CreatePassengerDto) {
-    return await this.db.insert(PassengerTable).values({
-      userName: createPassengerDto.userName,
-      email: createPassengerDto.email,
-      password: createPassengerDto.password,
-    }).returning({
-      id: PassengerTable.id,
-    });
-  }
-
-  async createPassengerInfoByUserId(userId: string) {
-    return await this.db.insert(PassengerInfoTable).values({
-      userId: userId
-    }).returning({
-      id: PassengerInfoTable.id,
-      userId: PassengerInfoTable.userId,
-    });
-  }
-
-  async createPassengerCollectionByUserId(userId: string) {
-    return await this.db.insert(PassengerCollectionTable).values({
-      userId: userId
-    }).returning({
-      id: PassengerCollectionTable.id,
-      userId: PassengerCollectionTable.userId,
-    });
-  }
-  /* ================================= Create operations ================================= */
-
-
-  /* ================================= Auth validate operations ================================= */
-  async signInPassengerByEamilAndPassword(signInPassengerDto: SignInPassengerDto) {
-    // since email is unique variable, there should be only one response
-    return await this.db.select({
-      id: PassengerTable.id,
-      userName: PassengerTable.userName,
-      email: PassengerTable.email,
-    }).from(PassengerTable)
-      .where(and(eq(PassengerTable.email, signInPassengerDto.email), eq(PassengerTable.password, signInPassengerDto.password)))
-      .limit(1);
-  }
-  /* ================================= Auth validate operations ================================= */
-
-
+  constructor(
+    private config: ConfigService,
+    @Inject(DRIZZLE) private db: DrizzleDB
+  ) {}
   /* ================================= Get operations ================================= */
-  async getPassengerById(id: string) {
-    return await this.db.select({
+  private async getPassengerById(id: string) {
+    const response = await this.db.select({
       id: PassengerTable.id,
       userName: PassengerTable.userName,
       email: PassengerTable.email,
+      hash: PassengerTable.password,
     }).from(PassengerTable)
       .where(eq(PassengerTable.id, id))
       .limit(1);
+    
+    return response && response.length > 0 ? response[0] : undefined;
   }
 
   async getPassengerWithInfoByUserId(userId: string) {
+    // should specify the interface of response here
     return await this.db.query.PassengerTable.findFirst({
       where: eq(PassengerTable.id, userId),
+      columns: {
+        userName: true,
+        email: true,
+      },
       with: {
         info: true,
       }
@@ -81,29 +46,61 @@ export class PassengerService {
   }
   
   async getPassengerWithCollectionByUserId(userId: string) {
+    // should specify the interface of response here
     return await this.db.query.PassengerTable.findFirst({
       where: eq(PassengerTable.id, userId),
+      columns: {
+        userName: true,
+      },
       with: {
         collection: true,
       }
     });
   }
 
-  async getAllPassengers() {
-    return await this.db.select({
-      id: PassengerTable.id,
-      userName: PassengerTable.userName,
-    }).from(PassengerTable);
+  /* ================= Search operations ================= */
+  // usually used by ridder(to search the passengers)
+  async searchPassengersByUserName(userName: string, limit: number, offset: number) {
+    return await this.db.query.PassengerTable.findMany({
+      where: like(PassengerTable.userName, userName + "%"), // using entire prefix matching to search relative users
+      columns: {
+        userName: true,
+        email: true,
+      },
+      with: {
+        info: {
+          columns: {
+            selfIntroduction: true,
+            avatorUrl: true,
+          }
+        }
+      },
+      limit: limit,
+      offset: offset,
+    });
   }
 
   async getPaginationPassengers(limit: number, offset: number) {
-    return await this.db.select({
-      id: PassengerTable.id,
-      userName: PassengerTable.userName,
-    }).from(PassengerTable)
-      .limit(limit)
-      .offset(offset);
+    return await this.db.query.PassengerTable.findMany({
+      columns: {
+        userName: true,
+        email: true,
+      },
+      with: {
+        info: {
+          columns: {
+            selfIntroduction: true,
+            avatorUrl: true,
+          }
+        }
+      },
+      orderBy: PassengerTable.userName,
+      limit: limit,
+      offset: offset,
+    });
   }
+  /* ================= Search operations ================= */
+
   /* ================================= Get operations ================================= */
 
 
@@ -112,13 +109,41 @@ export class PassengerService {
     id: string, 
     updatePassengerDto: UpdatePassengerDto,
   ) {
+    // check if the new password is same as the previous one
+    const user = await this.getPassengerById(id);
+    if (!user) {
+      throw new NotFoundException(`Cannot find the passenger with given id`);
+    }
+
+    if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {  // if the user want to update its userName
+      const unMatches = updatePassengerDto.userName === user.userName;  // check if the userName matches the previous one
+      if (unMatches) {
+        throw new ConflictException(`Duplicated userName ${updatePassengerDto.userName} detected, please use a different userName`);
+      }
+    }
+    if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {  // if the user want to update its email
+      const emMatches = updatePassengerDto.email === user.email;  // check of the email matches the previous one
+      if (emMatches) {
+        throw new ConflictException(`Duplicated email ${updatePassengerDto.email} detected, please use a different email`);
+      }
+    }
+    if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {  // if the user want to update its password
+      const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash); // check if the password matches the previous one
+      if (pwMatches) {
+        throw new ConflictException(`Duplicated credential detected, please use a different password`);
+      }
+    }
+
+    const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
+
     return await this.db.update(PassengerTable).set({
       userName: updatePassengerDto.userName,
       email: updatePassengerDto.email,
-      password: updatePassengerDto.password,
+      password: hash,
     }).where(eq(PassengerTable.id, id))
       .returning({
-        id: PassengerTable.id,
+        userName: PassengerTable.userName,
+        eamil: PassengerTable.email,
     });
   }
 
@@ -127,24 +152,36 @@ export class PassengerService {
     updatePassengerInfoDto: UpdatePassengerInfoDto,
   ) {
     return await this.db.update(PassengerInfoTable).set({
-      isOnline: updatePassengerInfoDto.isOnline ?? false,
-      age: updatePassengerInfoDto.age ?? undefined,
-      phoneNumber: updatePassengerInfoDto.phoneNumber ?? undefined,
-      selfIntroduction: updatePassengerInfoDto.selfIntroduction ?? undefined,
-      avatorUrl: updatePassengerInfoDto.avatorUrl ?? undefined,
+      isOnline: updatePassengerInfoDto.isOnline,
+      age: updatePassengerInfoDto.age,
+      phoneNumber: updatePassengerInfoDto.phoneNumber,
+      selfIntroduction: updatePassengerInfoDto.selfIntroduction,
+      avatorUrl: updatePassengerInfoDto.avatorUrl,
     }).where(eq(PassengerInfoTable.userId, userId))
-      .returning({
-        id: PassengerInfoTable.id,
-      });
   }
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
 
 
   /* ================================= Delete operations ================================= */
-  async deletePassengerById(id: string) { // maybe require a password to validate user operation
+  async deletePassengerById(id: string) {
     return await this.db.delete(PassengerTable)
       .where(eq(PassengerTable.id, id))
+      .returning({
+        id: PassengerTable.id,
+        userName: PassengerTable.userName,
+        email: PassengerTable.email
+      });
   }
   /* ================================= Delete operations ================================= */
+
+
+  /* ================================= Other operations ================================= */
+  async getAllPassengers() {
+    return await this.db.select({
+      id: PassengerTable.id,
+      userName: PassengerTable.userName,
+    }).from(PassengerTable);
+  }
+  /* ================================= Other operations ================================= */
 }

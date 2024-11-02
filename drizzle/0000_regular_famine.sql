@@ -36,16 +36,10 @@ CREATE TABLE IF NOT EXISTS "passenger" (
 	CONSTRAINT "passenger_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "passengerCollection" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userId" uuid NOT NULL,
-	CONSTRAINT "passengerCollection_userId_unique" UNIQUE("userId")
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "passengerCollectionsToOrders" (
-	"collectionId" uuid NOT NULL,
+	"userId" uuid NOT NULL,
 	"orderId" uuid NOT NULL,
-	CONSTRAINT "passengerCollectionsToOrders_collectionId_orderId_pk" PRIMARY KEY("collectionId","orderId")
+	CONSTRAINT "passengerCollectionsToOrders_userId_orderId_pk" PRIMARY KEY("userId","orderId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "passengerInfo" (
@@ -83,16 +77,10 @@ CREATE TABLE IF NOT EXISTS "ridder" (
 	CONSTRAINT "ridder_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "ridderCollection" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userId" uuid NOT NULL,
-	CONSTRAINT "ridderCollection_userId_unique" UNIQUE("userId")
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "ridderCollectionsToOrders" (
-	"collectionId" uuid NOT NULL,
+	"userId" uuid NOT NULL,
 	"orderId" uuid NOT NULL,
-	CONSTRAINT "ridderCollectionsToOrders_collectionId_orderId_pk" PRIMARY KEY("collectionId","orderId")
+	CONSTRAINT "ridderCollectionsToOrders_userId_orderId_pk" PRIMARY KEY("userId","orderId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "ridderInfo" (
@@ -120,6 +108,7 @@ CREATE TABLE IF NOT EXISTS "supplyOrder" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"startAfter" timestamp DEFAULT now() NOT NULL,
+	"tolerableRDV" double precision DEFAULT 5 NOT NULL,
 	"status" "postStatus" DEFAULT 'POSTED' NOT NULL
 );
 --> statement-breakpoint
@@ -148,13 +137,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "passengerCollection" ADD CONSTRAINT "passengerCollection_userId_passenger_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."passenger"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "passengerCollectionsToOrders" ADD CONSTRAINT "passengerCollectionsToOrders_collectionId_passengerCollection_id_fk" FOREIGN KEY ("collectionId") REFERENCES "public"."passengerCollection"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "passengerCollectionsToOrders" ADD CONSTRAINT "passengerCollectionsToOrders_userId_passenger_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."passenger"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -178,13 +161,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "ridderCollection" ADD CONSTRAINT "ridderCollection_userId_ridder_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."ridder"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "ridderCollectionsToOrders" ADD CONSTRAINT "ridderCollectionsToOrders_collectionId_ridderCollection_id_fk" FOREIGN KEY ("collectionId") REFERENCES "public"."ridderCollection"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "ridderCollectionsToOrders" ADD CONSTRAINT "ridderCollectionsToOrders_userId_ridder_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."ridder"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

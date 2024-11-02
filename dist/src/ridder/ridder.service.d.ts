@@ -1,26 +1,19 @@
+import { ConfigService } from '@nestjs/config';
+import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
-import { SignInRidderDto } from './dto/signIn-ridder.dto';
 export declare class RidderService {
+    private config;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(config: ConfigService, db: DrizzleDB);
     createRidder(createRidderDto: CreateRidderDto): Promise<{
         id: string;
+        userName: string;
     }[]>;
     createRidderInfoByUserId(userId: string): Promise<{
         id: string;
         userId: string;
-    }[]>;
-    createRidderCollectionByUserId(userId: string): Promise<{
-        id: string;
-        userId: string;
-    }[]>;
-    signInRidderByEamilAndPassword(signInRidderDto: SignInRidderDto): Promise<{
-        id: string;
-        userName: string;
-        email: string;
     }[]>;
     getRidderById(id: string): Promise<{
         id: string;
@@ -50,9 +43,9 @@ export declare class RidderService {
         userName: string;
         email: string;
         collection: {
-            id: string;
             userId: string;
-        } | null;
+            orderId: string;
+        }[];
     } | undefined>;
     getAllRidders(): Promise<{
         id: string;
@@ -69,4 +62,9 @@ export declare class RidderService {
         id: string;
     }[]>;
     deleteRiddderById(id: string): Promise<import("pg").QueryResult<never>>;
+    testBcryptHashing(secretText: string, hash: string | undefined): Promise<{
+        originalData: string;
+        hashData: string;
+        isMatch: boolean;
+    }>;
 }

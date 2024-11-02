@@ -17,6 +17,7 @@ const purchaseOrder_module_1 = require("./purchaseOrder/purchaseOrder.module");
 const ridder_module_1 = require("./ridder/ridder.module");
 const supplyOrder_module_1 = require("./supplyOrder/supplyOrder.module");
 const order_module_1 = require("./order/order.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,6 +25,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             drizzle_module_1.DrizzleModule,
+            auth_module_1.AuthModule,
             passenger_module_1.PassengerModule,
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             purchaseOrder_module_1.PurchaseOrderModule,

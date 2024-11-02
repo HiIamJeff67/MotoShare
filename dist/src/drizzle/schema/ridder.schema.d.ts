@@ -71,7 +71,7 @@ export declare const RidderTable: import("drizzle-orm/pg-core").PgTableWithColum
 }>;
 export declare const RidderRelation: import("drizzle-orm").Relations<"ridder", {
     info: import("drizzle-orm").One<"ridderInfo", false>;
-    collection: import("drizzle-orm").One<"ridderCollection", false>;
+    collection: import("drizzle-orm").Many<"ridderCollectionsToOrders">;
     supplyOrder: import("drizzle-orm").Many<"supplyOrder">;
     order: import("drizzle-orm").Many<"order">;
     history: import("drizzle-orm").Many<"history">;

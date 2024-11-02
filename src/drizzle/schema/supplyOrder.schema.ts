@@ -2,7 +2,7 @@ import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision } fr
 import { RidderTable } from "./ridder.schema";
 import { relations } from "drizzle-orm";
 
-import { PassengerCollectionsToOrders } from "./passengerCollection.schema";
+import { PassengerCollectionsToOrders } from "./passengerCollectionToOrders.schema";
 
 import { postedStatusEnum } from "./enums";
 // postedStatusEnum = pgEnum('postStatus', ["POSTED", "CANCEL", "EXPIRED"]); // same on purchaseOrder.schema

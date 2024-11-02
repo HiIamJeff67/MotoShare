@@ -6,5 +6,5 @@ export * from "./purchaseOrder.schema";
 export * from "./supplyOrder.schema";
 export * from "./order.schema";
 export * from "./history.schema";
-export * from "./passengerCollection.schema";
+export * from "./passengerCollectionToOrders.schema";
 export * from "./ridderCollection.schema";

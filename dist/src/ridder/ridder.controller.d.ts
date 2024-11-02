@@ -1,66 +1,18 @@
 import { RidderService } from './ridder.service';
+import { Response } from 'express';
 import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdatePassengerInfoDto } from 'src/passenger/dto/update-info.dto';
-import { SignInRidderDto } from './dto/signIn-ridder.dto';
 export declare class RidderController {
     private readonly ridderService;
     constructor(ridderService: RidderService);
-    createRidderWithInfoAndCollection(createRidderDto: CreateRidderDto): Promise<{
-        ridderId: string;
-        infoId: string;
-        collectionId: string;
-    }>;
-    signInRidderByEamilAndPassword(signInRidderDto: SignInRidderDto): Promise<{
-        id: string;
-        userName: string;
-        email: string;
-    }[]>;
-    getRidderById(id: string): Promise<{
-        id: string;
-        userName: string;
-        email: string;
-    }[]>;
-    getRidderWithInfoByUserId(id: string): Promise<{
-        password: string;
-        id: string;
-        userName: string;
-        email: string;
-        info: {
-            id: string;
-            userId: string;
-            isOnline: boolean;
-            age: number | null;
-            phoneNumber: string | null;
-            selfIntroduction: string | null;
-            avatorUrl: string | null;
-            motocycleLicense: string | null;
-            motocyclePhotoUrl: string | null;
-        } | null;
-    } | undefined>;
-    getRidderWithCollectionByUserId(id: string): Promise<{
-        password: string;
-        id: string;
-        userName: string;
-        email: string;
-        collection: {
-            id: string;
-            userId: string;
-        } | null;
-    } | undefined>;
-    getPaginationRidders(limit: string, offset: string): Promise<{
-        id: string;
-        userName: string;
-    }[]>;
-    getAllRidders(): Promise<{
-        id: string;
-        userName: string;
-    }[]>;
-    updateRidderById(id: string, updateRidderDto: UpdateRidderDto): Promise<{
-        id: string;
-    }[]>;
-    updateRidderInfoByUserId(id: string, updatePassengerInfoDto: UpdatePassengerInfoDto): Promise<{
-        id: string;
-    }[]>;
-    deleteRidderById(id: string): Promise<import("pg").QueryResult<never>>;
+    createRidderWithInfoAndCollection(createRidderDto: CreateRidderDto, response: Response): Promise<void>;
+    getRidderById(id: string, response: Response): Promise<void>;
+    getRidderWithInfoByUserId(id: string, response: Response): Promise<void>;
+    getRidderWithCollectionByUserId(id: string, response: Response): Promise<void>;
+    getPaginationRidders(limit: string, offset: string, response: Response): Promise<void>;
+    getAllRidders(response: Response): Promise<void>;
+    updateRidderById(id: string, updateRidderDto: UpdateRidderDto, response: Response): Promise<void>;
+    updateRidderInfoByUserId(id: string, updatePassengerInfoDto: UpdatePassengerInfoDto, response: Response): Promise<void>;
+    deleteRidderById(id: string, response: Response): Promise<void>;
 }

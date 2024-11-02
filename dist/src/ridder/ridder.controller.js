@@ -15,124 +15,208 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderController = void 0;
 const common_1 = require("@nestjs/common");
 const ridder_service_1 = require("./ridder.service");
+const axios_1 = require("axios");
 const create_ridder_dto_1 = require("./dto/create-ridder.dto");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("../passenger/dto/update-info.dto");
-const signIn_ridder_dto_1 = require("./dto/signIn-ridder.dto");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;
     }
-    async createRidderWithInfoAndCollection(createRidderDto) {
-        const ridderReponse = await this.ridderService.createRidder(createRidderDto);
-        const infoResponse = await this.ridderService.createRidderInfoByUserId(ridderReponse[0].id);
-        const collectionResponse = await this.ridderService.createRidderCollectionByUserId(ridderReponse[0].id);
-        return {
-            ridderId: ridderReponse[0].id,
-            infoId: infoResponse[0].id,
-            collectionId: collectionResponse[0].id,
-        };
+    async createRidderWithInfoAndCollection(createRidderDto, response) {
+        try {
+            if (createRidderDto.userName.length > 20) {
+                throw {
+                    name: "userNameTooLong",
+                    message: "User name cannot be longer than 20 characters"
+                };
+            }
+            const ridderReponse = await this.ridderService.createRidder(createRidderDto);
+            const infoResponse = await this.ridderService.createRidderInfoByUserId(ridderReponse[0].id);
+            response.status(axios_1.HttpStatusCode.Created).send({
+                ridderId: ridderReponse[0].id,
+                ridderName: ridderReponse[1].id,
+                infoId: infoResponse[0].id,
+            });
+        }
+        catch (error) {
+            if (!error.constraint) {
+                response.status(axios_1.HttpStatusCode.BadRequest).send({
+                    message: "Unknown error",
+                });
+            }
+            const duplicateField = error.constraint.split("_")[1];
+            response.status(axios_1.HttpStatusCode.Conflict).send({
+                message: `Duplicate ${duplicateField} detected`,
+            });
+        }
     }
-    signInRidderByEamilAndPassword(signInRidderDto) {
-        return this.ridderService.signInRidderByEamilAndPassword(signInRidderDto);
+    async getRidderById(id, response) {
+        try {
+            const res = await this.ridderService.getRidderById(id);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id",
+            });
+        }
     }
-    getRidderById(id) {
-        return this.ridderService.getRidderById(id);
+    async getRidderWithInfoByUserId(id, response) {
+        try {
+            const res = await this.ridderService.getRidderWithInfoByUserId(id);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id",
+            });
+        }
     }
-    getRidderWithInfoByUserId(id) {
-        return this.ridderService.getRidderWithInfoByUserId(id);
+    async getRidderWithCollectionByUserId(id, response) {
+        try {
+            const res = await this.ridderService.getRidderWithCollectionByUserId(id);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id",
+            });
+        }
     }
-    getRidderWithCollectionByUserId(id) {
-        return this.ridderService.getRidderWithCollectionByUserId(id);
+    async getPaginationRidders(limit, offset, response) {
+        try {
+            const res = await this.ridderService.getPaginationRidders(+limit, +offset);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find any ridders",
+            });
+        }
     }
-    getPaginationRidders(limit, offset) {
-        return this.ridderService.getPaginationRidders(+limit, +offset);
+    async getAllRidders(response) {
+        try {
+            const res = await this.ridderService.getAllRidders();
+            response.status(axios_1.HttpStatusCode.Ok).send({
+                alert: "This route is currently only for debugging",
+                ...res
+            });
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find any ridders",
+            });
+        }
     }
-    getAllRidders() {
-        return this.ridderService.getAllRidders();
+    async updateRidderById(id, updateRidderDto, response) {
+        try {
+            const res = await this.ridderService.updateRidderById(id, updateRidderDto);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id to update",
+            });
+        }
     }
-    updateRidderById(id, updateRidderDto) {
-        return this.ridderService.updateRidderById(id, updateRidderDto);
+    async updateRidderInfoByUserId(id, updatePassengerInfoDto, response) {
+        try {
+            const res = await this.ridderService.updateRidderInfoByUserId(id, updatePassengerInfoDto);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id to update",
+            });
+        }
     }
-    updateRidderInfoByUserId(id, updatePassengerInfoDto) {
-        return this.ridderService.updateRidderInfoByUserId(id, updatePassengerInfoDto);
-    }
-    deleteRidderById(id) {
-        return this.ridderService.deleteRiddderById(id);
+    async deleteRidderById(id, response) {
+        try {
+            const res = await this.ridderService.deleteRiddderById(id);
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find the ridder with given id to delete",
+            });
+        }
     }
 };
 exports.RidderController = RidderController;
 __decorate([
     (0, common_1.Post)('createRidderWithInfoAndCollection'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_ridder_dto_1.CreateRidderDto]),
+    __metadata("design:paramtypes", [create_ridder_dto_1.CreateRidderDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "createRidderWithInfoAndCollection", null);
 __decorate([
-    (0, common_1.Post)('signInRidderByEamilAndPassword'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signIn_ridder_dto_1.SignInRidderDto]),
-    __metadata("design:returntype", void 0)
-], RidderController.prototype, "signInRidderByEamilAndPassword", null);
-__decorate([
     (0, common_1.Get)('getRidderById'),
     __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getRidderById", null);
 __decorate([
     (0, common_1.Get)('getRidderWithInfoByUserId'),
     __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getRidderWithInfoByUserId", null);
 __decorate([
     (0, common_1.Get)('getRidderWithCollectionByUserId'),
     __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getRidderWithCollectionByUserId", null);
 __decorate([
     (0, common_1.Get)('getPaginationRidders'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getPaginationRidders", null);
 __decorate([
     (0, common_1.Get)('getAllRidders'),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getAllRidders", null);
 __decorate([
     (0, common_1.Patch)('updateRidderById'),
     __param(0, (0, common_1.Query)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_ridder_dto_1.UpdateRidderDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, update_ridder_dto_1.UpdateRidderDto, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "updateRidderById", null);
 __decorate([
     (0, common_1.Patch)('updateRidderInfoByUserId'),
     __param(0, (0, common_1.Query)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_info_dto_1.UpdatePassengerInfoDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, update_info_dto_1.UpdatePassengerInfoDto, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "updateRidderInfoByUserId", null);
 __decorate([
     (0, common_1.Delete)('deleteRidderById'),
     __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], RidderController.prototype, "deleteRidderById", null);
 exports.RidderController = RidderController = __decorate([
     (0, common_1.Controller)('ridder'),

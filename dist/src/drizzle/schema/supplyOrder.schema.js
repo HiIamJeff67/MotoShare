@@ -4,7 +4,7 @@ exports.SupplyOrderRelation = exports.SupplyOrderTable = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const ridder_schema_1 = require("./ridder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
-const passengerCollection_schema_1 = require("./passengerCollection.schema");
+const passengerCollectionToOrders_schema_1 = require("./passengerCollectionToOrders.schema");
 const enums_1 = require("./enums");
 exports.SupplyOrderTable = (0, pg_core_1.pgTable)("supplyOrder", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
@@ -26,6 +26,6 @@ exports.SupplyOrderRelation = (0, drizzle_orm_1.relations)(exports.SupplyOrderTa
         fields: [exports.SupplyOrderTable.creatorId],
         references: [ridder_schema_1.RidderTable.id],
     }),
-    collectionsToOrders: many(passengerCollection_schema_1.PassengerCollectionsToOrders),
+    collectionsToOrders: many(passengerCollectionToOrders_schema_1.PassengerCollectionsToOrders),
 }));
 //# sourceMappingURL=supplyOrder.schema.js.map

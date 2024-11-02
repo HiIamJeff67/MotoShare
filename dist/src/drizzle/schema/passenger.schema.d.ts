@@ -71,7 +71,7 @@ export declare const PassengerTable: import("drizzle-orm/pg-core").PgTableWithCo
 }>;
 export declare const PassengerRelation: import("drizzle-orm").Relations<"passenger", {
     info: import("drizzle-orm").One<"passengerInfo", false>;
-    collection: import("drizzle-orm").One<"passengerCollection", false>;
+    collection: import("drizzle-orm").Many<"passengerCollectionsToOrders">;
     purchaseOrders: import("drizzle-orm").Many<"purchaseOrder">;
     orders: import("drizzle-orm").Many<"order">;
     historyOrders: import("drizzle-orm").Many<"history">;

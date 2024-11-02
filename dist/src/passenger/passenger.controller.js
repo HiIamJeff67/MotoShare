@@ -15,135 +15,276 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerController = void 0;
 const common_1 = require("@nestjs/common");
 const passenger_service_1 = require("./passenger.service");
-const create_passenger_dto_1 = require("./dto/create-passenger.dto");
-const update_passenger_dto_1 = require("./dto/update-passenger.dto");
+const axios_1 = require("axios");
 const update_info_dto_1 = require("./dto/update-info.dto");
-const signIn_passenger_dto_1 = require("./dto/signIn-passenger.dto");
+const jwt_passenger_guard_1 = require("../auth/guard/jwt-passenger.guard");
+const jwt_1 = require("@nestjs/jwt");
+const update_passenger_dto_1 = require("./dto/update-passenger.dto");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
     }
-    async createPassengerWithInfoAndCollection(createPassengerDto) {
-        const passengerReponse = await this.passengerService.createPassenger(createPassengerDto);
-        const infoReponse = await this.passengerService.createPassengerInfoByUserId(passengerReponse[0].id);
-        const collectionReponse = await this.passengerService.createPassengerCollectionByUserId(passengerReponse[0].id);
-        return {
-            passengerId: passengerReponse[0].id,
-            infoId: infoReponse[0].id,
-            collectionId: collectionReponse[0].id,
-        };
+    getMe(request, response) {
+        try {
+            response.status(axios_1.HttpStatusCode.Ok).send(request.user);
+        }
+        catch (error) {
+            throw error;
+        }
     }
-    signInPassengerByEamilAndPassword(signInPassengerDto) {
-        return this.passengerService.signInPassengerByEamilAndPassword(signInPassengerDto);
+    async getPassengerInfo(request, response) {
+        try {
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.passengerService.getPassengerWithInfoByUserId(user.id);
+            if (!res)
+                throw new Error("Cannot find the passenger with given id");
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? axios_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? axios_1.HttpStatusCode.NotFound
+                    : axios_1.HttpStatusCode.UnknownError)).send({
+                message: error.message,
+            });
+        }
     }
-    getPassengerById(id) {
-        return this.passengerService.getPassengerById(id);
+    async getPassengerCollection(request, response) {
+        try {
+            if (!request.user || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.passengerService.getPassengerWithCollectionByUserId(user.id);
+            if (!res)
+                throw new common_1.NotFoundException("Cannot find the passenger with given id");
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? axios_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? axios_1.HttpStatusCode.NotFound
+                    : axios_1.HttpStatusCode.UnknownError)).send({
+                message: error.message,
+            });
+        }
     }
-    getPassengerWithInfoByUserId(id) {
-        return this.passengerService.getPassengerWithInfoByUserId(id);
+    async searchPassengersByUserName(userName, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.passengerService.searchPassengersByUserName(userName, +limit, +offset);
+            if (!res || res.length == 0) {
+                throw new common_1.NotFoundException("Cannot find any passengers");
+            }
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? axios_1.HttpStatusCode.NotFound
+                : axios_1.HttpStatusCode.UnknownError).send({
+                message: error.message,
+            });
+        }
     }
-    getPassengerWithCollectionByUserId(id) {
-        return this.passengerService.getPassengerWithCollectionByUserId(id);
+    async getPaginationPassengers(limit = "10", offset = "0", response) {
+        try {
+            const res = await this.passengerService.getPaginationPassengers(+limit, +offset);
+            if (!res || res.length == 0) {
+                throw new common_1.NotFoundException("Cannot find any passengers");
+            }
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? axios_1.HttpStatusCode.NotFound
+                : axios_1.HttpStatusCode.UnknownError).send({
+                message: error.message,
+            });
+        }
     }
-    getPaginationPassengers(limit, offset) {
-        return this.passengerService.getPaginationPassengers(+limit, +offset);
+    async updateMe(request, updatePassengerDto, response) {
+        try {
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.passengerService.updatePassengerById(user.id, updatePassengerDto);
+            if (!res) {
+                throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
+            }
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? axios_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? axios_1.HttpStatusCode.NotFound
+                    : (error instanceof common_1.ConflictException
+                        ? axios_1.HttpStatusCode.Conflict
+                        : axios_1.HttpStatusCode.UnknownError))).send({
+                message: error.message,
+            });
+        }
     }
-    getAllPassengers() {
-        return this.passengerService.getAllPassengers();
+    async updateMyInfo(request, updatePassengerInfoDto, response) {
+        try {
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.passengerService.updatePassengerInfoByUserId(user.id, updatePassengerInfoDto);
+            if (!res) {
+                throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
+            }
+            response.status(axios_1.HttpStatusCode.Ok).send({});
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? axios_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? axios_1.HttpStatusCode.NotFound
+                    : axios_1.HttpStatusCode.UnknownError)).send({
+                message: error.message,
+            });
+        }
     }
-    updatePassengerById(id, updatePassengerDto) {
-        return this.passengerService.updatePassengerById(id, updatePassengerDto);
+    async deleteMe(request, response) {
+        try {
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.passengerService.deletePassengerById(user.id);
+            if (!res) {
+                throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
+            }
+            response.status(axios_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? axios_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? axios_1.HttpStatusCode.NotFound
+                    : axios_1.HttpStatusCode.UnknownError)).send({
+                message: error.message,
+            });
+        }
     }
-    updatePassengerInfoByUserId(id, updatePassengerInfoDto) {
-        return this.passengerService.updatePassengerInfoByUserId(id, updatePassengerInfoDto);
+    getTest(response) {
+        response.status(axios_1.HttpStatusCode.Ok).send({
+            alert: "This route is currently only for debugging",
+            message: "test",
+        });
     }
-    deletePassengerById(id) {
-        return this.passengerService.deletePassengerById(id);
-    }
-    getTest() {
-        console.log("test");
-        return 'test';
+    async getAllPassengers(response) {
+        try {
+            const res = await this.passengerService.getAllPassengers();
+            response.status(axios_1.HttpStatusCode.Ok).send({
+                alert: "This route is currently only for debugging",
+                ...res
+            });
+        }
+        catch (error) {
+            response.status(axios_1.HttpStatusCode.NotFound).send({
+                message: "Cannot find any passengers",
+            });
+        }
     }
 };
 exports.PassengerController = PassengerController;
 __decorate([
-    (0, common_1.Post)('createPassengerWithInfoAndCollection'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('getMe'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_passenger_dto_1.CreatePassengerDto]),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], PassengerController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('getMyInfo'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], PassengerController.prototype, "createPassengerWithInfoAndCollection", null);
+], PassengerController.prototype, "getPassengerInfo", null);
 __decorate([
-    (0, common_1.Post)('signInPassengerByEamilAndPassword'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('getMyCollection'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signIn_passenger_dto_1.SignInPassengerDto]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "signInPassengerByEamilAndPassword", null);
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "getPassengerCollection", null);
 __decorate([
-    (0, common_1.Get)('getPassengerById'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.Get)('searchPassengersByUserName'),
+    __param(0, (0, common_1.Query)('userName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "getPassengerById", null);
-__decorate([
-    (0, common_1.Get)('getPassengerWithInfoByUserId'),
-    __param(0, (0, common_1.Query)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "getPassengerWithInfoByUserId", null);
-__decorate([
-    (0, common_1.Get)('getPassengerWithCollectionByUserId'),
-    __param(0, (0, common_1.Query)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "getPassengerWithCollectionByUserId", null);
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "searchPassengersByUserName", null);
 __decorate([
     (0, common_1.Get)('getPaginationPassengers'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "getPaginationPassengers", null);
 __decorate([
-    (0, common_1.Get)('getAllPassengers'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "getAllPassengers", null);
-__decorate([
-    (0, common_1.Patch)('updatePassengerById'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('updateMe'),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_passenger_dto_1.UpdatePassengerDto]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "updatePassengerById", null);
+    __metadata("design:paramtypes", [Object, update_passenger_dto_1.UpdatePassengerDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "updateMe", null);
 __decorate([
-    (0, common_1.Patch)('updatePassengerInfoByUserId'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('updateMyInfo'),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_info_dto_1.UpdatePassengerInfoDto]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "updatePassengerInfoByUserId", null);
+    __metadata("design:paramtypes", [Object, update_info_dto_1.UpdatePassengerInfoDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "updateMyInfo", null);
 __decorate([
-    (0, common_1.Delete)('deletePassengerById'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Delete)('deleteMe'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PassengerController.prototype, "deletePassengerById", null);
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "deleteMe", null);
 __decorate([
     (0, common_1.Get)('test'),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], PassengerController.prototype, "getTest", null);
+__decorate([
+    (0, common_1.Get)('getAllPassengers'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "getAllPassengers", null);
 exports.PassengerController = PassengerController = __decorate([
     (0, common_1.Controller)('passenger'),
     __metadata("design:paramtypes", [passenger_service_1.PassengerService])

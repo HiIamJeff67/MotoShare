@@ -16,7 +16,7 @@ exports.RidderTable = (0, pg_core_1.pgTable)("ridder", {
 });
 exports.RidderRelation = (0, drizzle_orm_1.relations)(exports.RidderTable, ({ one, many }) => ({
     info: one(ridderInfo_schema_1.RidderInfoTable),
-    collection: one(ridderCollection_schema_1.RidderCollectionTable),
+    collection: many(ridderCollection_schema_1.RidderCollectionsToOrders),
     supplyOrder: many(supplyOrder_schema_1.SupplyOrderTable),
     order: many(order_schema_1.OrderTable),
     history: many(history_schema_1.HistoryTable),

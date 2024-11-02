@@ -13,62 +13,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerService = void 0;
+const bcrypt = require("bcrypt");
 const common_1 = require("@nestjs/common");
 const drizzle_orm_1 = require("drizzle-orm");
+const config_1 = require("@nestjs/config");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
-const passengerCollection_schema_1 = require("../drizzle/schema/passengerCollection.schema");
 let PassengerService = class PassengerService {
-    constructor(db) {
+    constructor(config, db) {
+        this.config = config;
         this.db = db;
     }
-    async createPassenger(createPassengerDto) {
-        return await this.db.insert(passenger_schema_1.PassengerTable).values({
-            userName: createPassengerDto.userName,
-            email: createPassengerDto.email,
-            password: createPassengerDto.password,
-        }).returning({
-            id: passenger_schema_1.PassengerTable.id,
-        });
-    }
-    async createPassengerInfoByUserId(userId) {
-        return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
-            userId: userId
-        }).returning({
-            id: passengerInfo_schema_1.PassengerInfoTable.id,
-            userId: passengerInfo_schema_1.PassengerInfoTable.userId,
-        });
-    }
-    async createPassengerCollectionByUserId(userId) {
-        return await this.db.insert(passengerCollection_schema_1.PassengerCollectionTable).values({
-            userId: userId
-        }).returning({
-            id: passengerCollection_schema_1.PassengerCollectionTable.id,
-            userId: passengerCollection_schema_1.PassengerCollectionTable.userId,
-        });
-    }
-    async signInPassengerByEamilAndPassword(signInPassengerDto) {
-        return await this.db.select({
-            id: passenger_schema_1.PassengerTable.id,
-            userName: passenger_schema_1.PassengerTable.userName,
-            email: passenger_schema_1.PassengerTable.email,
-        }).from(passenger_schema_1.PassengerTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInPassengerDto.email), (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.password, signInPassengerDto.password)))
-            .limit(1);
-    }
     async getPassengerById(id) {
-        return await this.db.select({
+        const response = await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
             email: passenger_schema_1.PassengerTable.email,
+            hash: passenger_schema_1.PassengerTable.password,
         }).from(passenger_schema_1.PassengerTable)
             .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
             .limit(1);
+        return response && response.length > 0 ? response[0] : undefined;
     }
     async getPassengerWithInfoByUserId(userId) {
         return await this.db.query.PassengerTable.findFirst({
             where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId),
+            columns: {
+                userName: true,
+                email: true,
+            },
             with: {
                 info: true,
             }
@@ -77,9 +51,102 @@ let PassengerService = class PassengerService {
     async getPassengerWithCollectionByUserId(userId) {
         return await this.db.query.PassengerTable.findFirst({
             where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId),
+            columns: {
+                userName: true,
+            },
             with: {
                 collection: true,
             }
+        });
+    }
+    async searchPassengersByUserName(userName, limit, offset) {
+        return await this.db.query.PassengerTable.findMany({
+            where: (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, userName + "%"),
+            columns: {
+                userName: true,
+                email: true,
+            },
+            with: {
+                info: {
+                    columns: {
+                        selfIntroduction: true,
+                        avatorUrl: true,
+                    }
+                }
+            },
+            limit: limit,
+            offset: offset,
+        });
+    }
+    async getPaginationPassengers(limit, offset) {
+        return await this.db.query.PassengerTable.findMany({
+            columns: {
+                userName: true,
+                email: true,
+            },
+            with: {
+                info: {
+                    columns: {
+                        selfIntroduction: true,
+                        avatorUrl: true,
+                    }
+                }
+            },
+            orderBy: passenger_schema_1.PassengerTable.userName,
+            limit: limit,
+            offset: offset,
+        });
+    }
+    async updatePassengerById(id, updatePassengerDto) {
+        const user = await this.getPassengerById(id);
+        if (!user) {
+            throw new common_1.NotFoundException(`Cannot find the passenger with given id`);
+        }
+        if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {
+            const unMatches = updatePassengerDto.userName === user.userName;
+            if (unMatches) {
+                throw new common_1.ConflictException(`Duplicated userName ${updatePassengerDto.userName} detected, please use a different userName`);
+            }
+        }
+        if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {
+            const emMatches = updatePassengerDto.email === user.email;
+            if (emMatches) {
+                throw new common_1.ConflictException(`Duplicated email ${updatePassengerDto.email} detected, please use a different email`);
+            }
+        }
+        if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {
+            const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash);
+            if (pwMatches) {
+                throw new common_1.ConflictException(`Duplicated credential detected, please use a different password`);
+            }
+        }
+        const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
+        return await this.db.update(passenger_schema_1.PassengerTable).set({
+            userName: updatePassengerDto.userName,
+            email: updatePassengerDto.email,
+            password: hash,
+        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            .returning({
+            userName: passenger_schema_1.PassengerTable.userName,
+            eamil: passenger_schema_1.PassengerTable.email,
+        });
+    }
+    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto) {
+        return await this.db.update(passengerInfo_schema_1.PassengerInfoTable).set({
+            isOnline: updatePassengerInfoDto.isOnline,
+            age: updatePassengerInfoDto.age,
+            phoneNumber: updatePassengerInfoDto.phoneNumber,
+            selfIntroduction: updatePassengerInfoDto.selfIntroduction,
+            avatorUrl: updatePassengerInfoDto.avatorUrl,
+        }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+    }
+    async deletePassengerById(id) {
+        return await this.db.delete(passenger_schema_1.PassengerTable)
+            .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            .returning({
+            id: passenger_schema_1.PassengerTable.id,
+            userName: passenger_schema_1.PassengerTable.userName,
+            email: passenger_schema_1.PassengerTable.email
         });
     }
     async getAllPassengers() {
@@ -88,45 +155,11 @@ let PassengerService = class PassengerService {
             userName: passenger_schema_1.PassengerTable.userName,
         }).from(passenger_schema_1.PassengerTable);
     }
-    async getPaginationPassengers(limit, offset) {
-        return await this.db.select({
-            id: passenger_schema_1.PassengerTable.id,
-            userName: passenger_schema_1.PassengerTable.userName,
-        }).from(passenger_schema_1.PassengerTable)
-            .limit(limit)
-            .offset(offset);
-    }
-    async updatePassengerById(id, updatePassengerDto) {
-        return await this.db.update(passenger_schema_1.PassengerTable).set({
-            userName: updatePassengerDto.userName,
-            email: updatePassengerDto.email,
-            password: updatePassengerDto.password,
-        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
-            .returning({
-            id: passenger_schema_1.PassengerTable.id,
-        });
-    }
-    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto) {
-        return await this.db.update(passengerInfo_schema_1.PassengerInfoTable).set({
-            isOnline: updatePassengerInfoDto.isOnline ?? false,
-            age: updatePassengerInfoDto.age ?? undefined,
-            phoneNumber: updatePassengerInfoDto.phoneNumber ?? undefined,
-            selfIntroduction: updatePassengerInfoDto.selfIntroduction ?? undefined,
-            avatorUrl: updatePassengerInfoDto.avatorUrl ?? undefined,
-        }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId))
-            .returning({
-            id: passengerInfo_schema_1.PassengerInfoTable.id,
-        });
-    }
-    async deletePassengerById(id) {
-        return await this.db.delete(passenger_schema_1.PassengerTable)
-            .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id));
-    }
 };
 exports.PassengerService = PassengerService;
 exports.PassengerService = PassengerService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService, Object])
 ], PassengerService);
 //# sourceMappingURL=passenger.service.js.map

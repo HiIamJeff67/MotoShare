@@ -5,7 +5,7 @@ import { PassengerInfoTable } from "./passengerInfo.schema";
 import { PurchaseOrderTable } from "./purchaseOrder.schema";
 import { OrderTable } from "./order.schema";
 import { HistoryTable } from "./history.schema";
-import { PassengerCollectionTable } from "./passengerCollection.schema";
+import { PassengerCollectionsToOrders } from "./passengerCollectionToOrders.schema";
 
 export const PassengerTable = pgTable("passenger", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -16,7 +16,7 @@ export const PassengerTable = pgTable("passenger", {
 
 export const PassengerRelation = relations(PassengerTable, ({ one, many }) => ({
     info: one(PassengerInfoTable),  // no need to specify the relation to info, since fk is not here
-    collection: one(PassengerCollectionTable),
+    collection: many(PassengerCollectionsToOrders),
     purchaseOrders: many(PurchaseOrderTable),
     orders: many(OrderTable),
     historyOrders: many(HistoryTable),

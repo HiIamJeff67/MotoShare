@@ -1,5 +1,5 @@
 {
-  "id": "98f778b6-978d-4185-98fb-b6a6c3580e2d",
+  "id": "992d3c41-1c22-4701-abf6-3d7510fdf328",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -278,57 +278,12 @@
         }
       }
     },
-    "public.passengerCollection": {
-      "name": "passengerCollection",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "userId": {
-          "name": "userId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "passengerCollection_userId_passenger_id_fk": {
-          "name": "passengerCollection_userId_passenger_id_fk",
-          "tableFrom": "passengerCollection",
-          "tableTo": "passenger",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "passengerCollection_userId_unique": {
-          "name": "passengerCollection_userId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "userId"
-          ]
-        }
-      }
-    },
     "public.passengerCollectionsToOrders": {
       "name": "passengerCollectionsToOrders",
       "schema": "",
       "columns": {
-        "collectionId": {
-          "name": "collectionId",
+        "userId": {
+          "name": "userId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -342,12 +297,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "passengerCollectionsToOrders_collectionId_passengerCollection_id_fk": {
-          "name": "passengerCollectionsToOrders_collectionId_passengerCollection_id_fk",
+        "passengerCollectionsToOrders_userId_passenger_id_fk": {
+          "name": "passengerCollectionsToOrders_userId_passenger_id_fk",
           "tableFrom": "passengerCollectionsToOrders",
-          "tableTo": "passengerCollection",
+          "tableTo": "passenger",
           "columnsFrom": [
-            "collectionId"
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -370,10 +325,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "passengerCollectionsToOrders_collectionId_orderId_pk": {
-          "name": "passengerCollectionsToOrders_collectionId_orderId_pk",
+        "passengerCollectionsToOrders_userId_orderId_pk": {
+          "name": "passengerCollectionsToOrders_userId_orderId_pk",
           "columns": [
-            "collectionId",
+            "userId",
             "orderId"
           ]
         }
@@ -610,57 +565,12 @@
         }
       }
     },
-    "public.ridderCollection": {
-      "name": "ridderCollection",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "userId": {
-          "name": "userId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "ridderCollection_userId_ridder_id_fk": {
-          "name": "ridderCollection_userId_ridder_id_fk",
-          "tableFrom": "ridderCollection",
-          "tableTo": "ridder",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "ridderCollection_userId_unique": {
-          "name": "ridderCollection_userId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "userId"
-          ]
-        }
-      }
-    },
     "public.ridderCollectionsToOrders": {
       "name": "ridderCollectionsToOrders",
       "schema": "",
       "columns": {
-        "collectionId": {
-          "name": "collectionId",
+        "userId": {
+          "name": "userId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -674,12 +584,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "ridderCollectionsToOrders_collectionId_ridderCollection_id_fk": {
-          "name": "ridderCollectionsToOrders_collectionId_ridderCollection_id_fk",
+        "ridderCollectionsToOrders_userId_ridder_id_fk": {
+          "name": "ridderCollectionsToOrders_userId_ridder_id_fk",
           "tableFrom": "ridderCollectionsToOrders",
-          "tableTo": "ridderCollection",
+          "tableTo": "ridder",
           "columnsFrom": [
-            "collectionId"
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -702,10 +612,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "ridderCollectionsToOrders_collectionId_orderId_pk": {
-          "name": "ridderCollectionsToOrders_collectionId_orderId_pk",
+        "ridderCollectionsToOrders_userId_orderId_pk": {
+          "name": "ridderCollectionsToOrders_userId_orderId_pk",
           "columns": [
-            "collectionId",
+            "userId",
             "orderId"
           ]
         }
@@ -875,6 +785,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "tolerableRDV": {
+          "name": "tolerableRDV",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
         },
         "status": {
           "name": "status",

@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1729354197927,
-      "tag": "0000_omniscient_puff_adder",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1729515638780,
-      "tag": "0001_minor_wolf_cub",
+      "when": 1730467211028,
+      "tag": "0000_regular_famine",
       "breakpoints": true
     }
   ]

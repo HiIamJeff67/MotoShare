@@ -1,1 +1,0 @@
-ALTER TABLE "supplyOrder" ADD COLUMN "tolerableRDV" double precision DEFAULT 5 NOT NULL;

@@ -22,6 +22,6 @@ __exportStar(require("./purchaseOrder.schema"), exports);
 __exportStar(require("./supplyOrder.schema"), exports);
 __exportStar(require("./order.schema"), exports);
 __exportStar(require("./history.schema"), exports);
-__exportStar(require("./passengerCollection.schema"), exports);
+__exportStar(require("./passengerCollectionToOrders.schema"), exports);
 __exportStar(require("./ridderCollection.schema"), exports);
 //# sourceMappingURL=schema.js.map

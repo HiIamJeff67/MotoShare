@@ -7,7 +7,7 @@ const passengerInfo_schema_1 = require("./passengerInfo.schema");
 const purchaseOrder_schema_1 = require("./purchaseOrder.schema");
 const order_schema_1 = require("./order.schema");
 const history_schema_1 = require("./history.schema");
-const passengerCollection_schema_1 = require("./passengerCollection.schema");
+const passengerCollectionToOrders_schema_1 = require("./passengerCollectionToOrders.schema");
 exports.PassengerTable = (0, pg_core_1.pgTable)("passenger", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     userName: (0, pg_core_1.text)("userName").notNull().unique(),
@@ -16,7 +16,7 @@ exports.PassengerTable = (0, pg_core_1.pgTable)("passenger", {
 });
 exports.PassengerRelation = (0, drizzle_orm_1.relations)(exports.PassengerTable, ({ one, many }) => ({
     info: one(passengerInfo_schema_1.PassengerInfoTable),
-    collection: one(passengerCollection_schema_1.PassengerCollectionTable),
+    collection: many(passengerCollectionToOrders_schema_1.PassengerCollectionsToOrders),
     purchaseOrders: many(purchaseOrder_schema_1.PurchaseOrderTable),
     orders: many(order_schema_1.OrderTable),
     historyOrders: many(history_schema_1.HistoryTable),

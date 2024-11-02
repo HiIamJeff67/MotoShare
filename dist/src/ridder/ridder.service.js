@@ -13,122 +13,171 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderService = void 0;
+const bcrypt = require("bcrypt");
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
-const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
-const ridderCollection_schema_1 = require("../drizzle/schema/ridderCollection.schema");
 let RidderService = class RidderService {
-    constructor(db) {
+    constructor(config, db) {
+        this.config = config;
         this.db = db;
     }
     async createRidder(createRidderDto) {
-        return await this.db.insert(ridder_schema_1.RidderTable).values({
-            userName: createRidderDto.userName,
-            email: createRidderDto.email,
-            password: createRidderDto.password,
-        }).returning({
-            id: ridder_schema_1.RidderTable.id,
-        });
+        try {
+            const hash = await bcrypt.hash(createRidderDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            const response = await this.db.insert(ridder_schema_1.RidderTable).values({
+                userName: createRidderDto.userName,
+                email: createRidderDto.email,
+                password: hash,
+            }).returning({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+            });
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async createRidderInfoByUserId(userId) {
-        return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
-            userId: userId
-        }).returning({
-            id: ridderInfo_schema_1.RidderInfoTable.id,
-            userId: ridderInfo_schema_1.RidderInfoTable.userId,
-        });
-    }
-    async createRidderCollectionByUserId(userId) {
-        return await this.db.insert(ridderCollection_schema_1.RidderCollectionTable).values({
-            userId: userId,
-        }).returning({
-            id: ridderCollection_schema_1.RidderCollectionTable.id,
-            userId: ridderCollection_schema_1.RidderCollectionTable.userId,
-        });
-    }
-    async signInRidderByEamilAndPassword(signInRidderDto) {
-        return await this.db.select({
-            id: ridder_schema_1.RidderTable.id,
-            userName: ridder_schema_1.RidderTable.userName,
-            email: ridder_schema_1.RidderTable.email,
-        }).from(ridder_schema_1.RidderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInRidderDto.email), (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.password, signInRidderDto.password)))
-            .limit(1);
+        try {
+            return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
+                userId: userId
+            }).returning({
+                id: ridderInfo_schema_1.RidderInfoTable.id,
+                userId: ridderInfo_schema_1.RidderInfoTable.userId,
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getRidderById(id) {
-        return await this.db.select({
-            id: ridder_schema_1.RidderTable.id,
-            userName: ridder_schema_1.RidderTable.userName,
-            email: ridder_schema_1.RidderTable.email,
-        }).from(ridder_schema_1.RidderTable)
-            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-            .limit(1);
+        try {
+            return await this.db.select({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+                email: ridder_schema_1.RidderTable.email,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .limit(1);
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getRidderWithInfoByUserId(userId) {
-        return await this.db.query.RidderTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, userId),
-            with: {
-                info: true,
-            }
-        });
+        try {
+            return await this.db.query.RidderTable.findFirst({
+                where: (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, userId),
+                with: {
+                    info: true,
+                }
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getRidderWithCollectionByUserId(userId) {
-        return await this.db.query.RidderTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, userId),
-            with: {
-                collection: true,
-            }
-        });
+        try {
+            return await this.db.query.RidderTable.findFirst({
+                where: (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, userId),
+                with: {
+                    collection: true,
+                }
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getAllRidders() {
-        return await this.db.select({
-            id: ridder_schema_1.RidderTable.id,
-            userName: ridder_schema_1.RidderTable.userName,
-        }).from(ridder_schema_1.RidderTable);
+        try {
+            return await this.db.select({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+            }).from(ridder_schema_1.RidderTable);
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async getPaginationRidders(limit, offset) {
-        return await this.db.select({
-            id: ridder_schema_1.RidderTable.id,
-            userName: ridder_schema_1.RidderTable.userName,
-        }).from(ridder_schema_1.RidderTable)
-            .limit(limit)
-            .offset(offset);
+        try {
+            return await this.db.select({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+            }).from(ridder_schema_1.RidderTable)
+                .limit(limit)
+                .offset(offset);
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async updateRidderById(id, updateRidderDto) {
-        return await this.db.update(ridder_schema_1.RidderTable).set({
-            userName: updateRidderDto.userName,
-            email: updateRidderDto.email,
-            password: updateRidderDto.password,
-        }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-            .returning({
-            id: ridder_schema_1.RidderTable.id,
-        });
+        try {
+            return await this.db.update(ridder_schema_1.RidderTable).set({
+                userName: updateRidderDto.userName,
+                email: updateRidderDto.email,
+                password: updateRidderDto.password,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning({
+                id: ridder_schema_1.RidderTable.id,
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async updateRidderInfoByUserId(userId, updateRidderInfoDto) {
-        return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
-            isOnline: updateRidderInfoDto.isOnline ?? false,
-            age: updateRidderInfoDto.age ?? undefined,
-            phoneNumber: updateRidderInfoDto.phoneNumber ?? undefined,
-            selfIntroduction: updateRidderInfoDto.selfIntroduction ?? undefined,
-            motocycleLicense: updateRidderInfoDto.motocycleLicense ?? undefined,
-            motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl ?? undefined,
-            avatorUrl: updateRidderInfoDto.avatorUrl ?? undefined,
-        }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId))
-            .returning({
-            id: ridderInfo_schema_1.RidderInfoTable.id,
-        });
+        try {
+            return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
+                isOnline: updateRidderInfoDto.isOnline ?? false,
+                age: updateRidderInfoDto.age ?? undefined,
+                phoneNumber: updateRidderInfoDto.phoneNumber ?? undefined,
+                selfIntroduction: updateRidderInfoDto.selfIntroduction ?? undefined,
+                motocycleLicense: updateRidderInfoDto.motocycleLicense ?? undefined,
+                motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl ?? undefined,
+                avatorUrl: updateRidderInfoDto.avatorUrl ?? undefined,
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId))
+                .returning({
+                id: ridderInfo_schema_1.RidderInfoTable.id,
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async deleteRiddderById(id) {
-        return await this.db.delete(ridder_schema_1.RidderTable)
-            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id));
+        try {
+            return await this.db.delete(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id));
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async testBcryptHashing(secretText, hash) {
+        if (!hash) {
+            hash = await bcrypt.hash(secretText, Number(this.config.get("SALT_OR_ROUND")));
+        }
+        const isMatch = await bcrypt.compare(secretText, hash);
+        return {
+            originalData: secretText,
+            hashData: hash,
+            isMatch: isMatch,
+        };
     }
 };
 exports.RidderService = RidderService;
 exports.RidderService = RidderService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService, Object])
 ], RidderService);
 //# sourceMappingURL=ridder.service.js.map

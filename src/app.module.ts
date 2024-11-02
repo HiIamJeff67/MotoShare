@@ -8,10 +8,12 @@ import { PurchaseOrderModule } from './purchaseOrder/purchaseOrder.module';
 import { RidderModule } from './ridder/ridder.module';
 import { SupplyOrderModule } from './supplyOrder/supplyOrder.module';
 import { OrderModule } from './order/order.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     DrizzleModule, 
+    AuthModule,
     PassengerModule,
     ConfigModule.forRoot({ isGlobal: true }),
     PurchaseOrderModule,
