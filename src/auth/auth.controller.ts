@@ -2,7 +2,7 @@ import { Body, Controller, Post, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignUpDto } from "./dto/signUp.dto";
 import { Response } from "express";
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "axios/index";
 import { SignInDto } from "./dto/signIn.dto";
 
 @Controller('auth')
