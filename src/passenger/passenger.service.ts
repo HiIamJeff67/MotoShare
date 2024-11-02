@@ -39,7 +39,15 @@ export class PassengerService {
         email: true,
       },
       with: {
-        info: true,
+        info: {
+          columns: {
+            isOnline: true,
+            age: true,
+            phoneNumber: true,
+            selfIntroduction: true,
+            avatorUrl: true,
+          }
+        },
       }
     });
   }
@@ -52,7 +60,31 @@ export class PassengerService {
         userName: true,
       },
       with: {
-        collection: true,
+        collection: {
+          with: {
+            order: {
+              columns: {
+                id: true,
+                description: true,
+                initPrice: true,
+                startCord: true,
+                endCord: true,
+                createdAt: true,
+                updatedAt: true,
+                startAfter: true,
+                tolerableRDV: true,
+                status: true,
+              },
+              with: {
+                creator: {
+                  columns: {
+                    userName: true,
+                  }
+                }
+              }
+            }
+          }
+        },
       }
     });
   }
@@ -131,14 +163,22 @@ export class PassengerService {
       if (pwMatches) {
         throw new ConflictException(`Duplicated credential detected, please use a different password`);
       }
-    }
 
-    const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
+      const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
+      return await this.db.update(PassengerTable).set({
+        userName: updatePassengerDto.userName,
+        email: updatePassengerDto.email,
+        password: hash,
+      }).where(eq(PassengerTable.id, id))
+        .returning({
+          userName: PassengerTable.userName,
+          eamil: PassengerTable.email,
+      });
+    }
 
     return await this.db.update(PassengerTable).set({
       userName: updatePassengerDto.userName,
       email: updatePassengerDto.email,
-      password: hash,
     }).where(eq(PassengerTable.id, id))
       .returning({
         userName: PassengerTable.userName,

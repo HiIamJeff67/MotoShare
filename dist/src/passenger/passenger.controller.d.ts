@@ -13,6 +13,6 @@ export declare class PassengerController {
     updateMe(request: Request, updatePassengerDto: UpdatePassengerDto, response: Response): Promise<void>;
     updateMyInfo(request: Request, updatePassengerInfoDto: UpdatePassengerInfoDto, response: Response): Promise<void>;
     deleteMe(request: Request, response: Response): Promise<void>;
-    getTest(response: Response): void;
+    getTest(): void;
     getAllPassengers(response: Response): Promise<void>;
 }

@@ -22,9 +22,21 @@ export class PassengerController {
   ) {  
     // will throw "401, unauthorized" if the bearer token is invalid or expired
     try {
-      response.status(HttpStatusCode.Ok).send(request.user);
+      if (!request || !request.user) {
+        throw new TokenExpiredError(
+          "access token has expired, please try to login again", 
+          new Date()
+        );
+      }
+      const user = request.user as User;
+      response.status(HttpStatusCode.Ok).send(user);
     } catch (error) {
-      throw error;
+      response.status(error instanceof TokenExpiredError
+        ? HttpStatusCode.Unauthorized
+        : HttpStatusCode.UnknownError ?? 520
+      ).send({
+        message: error.message,
+      });
     }
   }
 
@@ -45,7 +57,7 @@ export class PassengerController {
 
       const res = await this.passengerService.getPassengerWithInfoByUserId(user.id);
 
-      if (!res) throw new Error("Cannot find the passenger with given id");
+      if (!res) throw new NotFoundException("Cannot find the passenger with given id");
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
@@ -168,11 +180,11 @@ export class PassengerController {
 
       const res = await this.passengerService.updatePassengerById(user.id, updatePassengerDto);
 
-      if (!res) {
+      if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find the passenger with given id to update")
       }
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
       response.status(error instanceof TokenExpiredError 
         ? HttpStatusCode.Unauthorized
@@ -247,11 +259,11 @@ export class PassengerController {
 
       const res = await this.passengerService.deletePassengerById(user.id);
 
-      if (!res) {
+      if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find the passenger with given id to update")
       }
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
       response.status(error instanceof TokenExpiredError
         ? HttpStatusCode.Unauthorized

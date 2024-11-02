@@ -18,12 +18,33 @@ const purchaseOrder_service_1 = require("./purchaseOrder.service");
 const create_purchaseOrder_dto_1 = require("./dto/create-purchaseOrder.dto");
 const update_purchaseOrder_dto_1 = require("./dto/update-purchaseOrder.dto");
 const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
+const jwt_passenger_guard_1 = require("../auth/guard/jwt-passenger.guard");
+const jwt_1 = require("@nestjs/jwt");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
     }
-    createPurchaseOrderByCreatorId(id, createPurchaseOrderDto) {
-        return this.purchaseOrderService.createPurchaseOrderByCreatorId(id, createPurchaseOrderDto);
+    async createPurchaseOrder(request, createPurchaseOrderDto, response) {
+        try {
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(user.id, createPurchaseOrderDto);
+            if (!res) {
+                throw new common_1.NotFoundException("Cannot find the passenger with given id");
+            }
+        }
+        catch (error) {
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
     }
     getPurchaseOrderById(id) {
         return this.purchaseOrderService.getPurchaseOrderById(id);
@@ -55,13 +76,15 @@ let PurchaseOrderController = class PurchaseOrderController {
 };
 exports.PurchaseOrderController = PurchaseOrderController;
 __decorate([
-    (0, common_1.Post)('createPurchaseOrderByCreatorId'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('createPurchaseOrder'),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_purchaseOrder_dto_1.CreatePurchaseOrderDto]),
-    __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "createPurchaseOrderByCreatorId", null);
+    __metadata("design:paramtypes", [Object, create_purchaseOrder_dto_1.CreatePurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "createPurchaseOrder", null);
 __decorate([
     (0, common_1.Get)('getPurchaseOrderById'),
     __param(0, (0, common_1.Query)('id')),

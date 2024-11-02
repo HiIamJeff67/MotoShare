@@ -2,15 +2,11 @@ import { PurchaseOrderService } from './purchaseOrder.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
+import { Request, Response } from 'express';
 export declare class PurchaseOrderController {
     private readonly purchaseOrderService;
     constructor(purchaseOrderService: PurchaseOrderService);
-    createPurchaseOrderByCreatorId(id: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
-        id: string;
-        creatorId: string | null;
-        createdAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
-    }[]>;
+    createPurchaseOrder(request: Request, createPurchaseOrderDto: CreatePurchaseOrderDto, response: Response): Promise<void>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         creatorId: string | null;
@@ -130,12 +126,10 @@ export declare class PurchaseOrderController {
     }[]>;
     deletePurchaseOrderById(id: string): Promise<import("pg").QueryResult<never>>;
     getAllPurchaseOrders(): Promise<{
-        description: string | null;
-        initPrice: number;
-        startAfter: Date;
-        isUrgent: boolean;
         id: string;
         creatorId: string | null;
+        description: string | null;
+        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -146,6 +140,8 @@ export declare class PurchaseOrderController {
         };
         createdAt: Date;
         updatedAt: Date;
+        startAfter: Date;
+        isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
 }

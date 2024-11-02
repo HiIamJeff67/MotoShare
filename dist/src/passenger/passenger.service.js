@@ -44,7 +44,15 @@ let PassengerService = class PassengerService {
                 email: true,
             },
             with: {
-                info: true,
+                info: {
+                    columns: {
+                        isOnline: true,
+                        age: true,
+                        phoneNumber: true,
+                        selfIntroduction: true,
+                        avatorUrl: true,
+                    }
+                },
             }
         });
     }
@@ -55,7 +63,31 @@ let PassengerService = class PassengerService {
                 userName: true,
             },
             with: {
-                collection: true,
+                collection: {
+                    with: {
+                        order: {
+                            columns: {
+                                id: true,
+                                description: true,
+                                initPrice: true,
+                                startCord: true,
+                                endCord: true,
+                                createdAt: true,
+                                updatedAt: true,
+                                startAfter: true,
+                                tolerableRDV: true,
+                                status: true,
+                            },
+                            with: {
+                                creator: {
+                                    columns: {
+                                        userName: true,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
             }
         });
     }
@@ -119,12 +151,20 @@ let PassengerService = class PassengerService {
             if (pwMatches) {
                 throw new common_1.ConflictException(`Duplicated credential detected, please use a different password`);
             }
+            const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            return await this.db.update(passenger_schema_1.PassengerTable).set({
+                userName: updatePassengerDto.userName,
+                email: updatePassengerDto.email,
+                password: hash,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning({
+                userName: passenger_schema_1.PassengerTable.userName,
+                eamil: passenger_schema_1.PassengerTable.email,
+            });
         }
-        const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
         return await this.db.update(passenger_schema_1.PassengerTable).set({
             userName: updatePassengerDto.userName,
             email: updatePassengerDto.email,
-            password: hash,
         }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
             .returning({
             userName: passenger_schema_1.PassengerTable.userName,

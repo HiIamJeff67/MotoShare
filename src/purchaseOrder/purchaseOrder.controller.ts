@@ -1,20 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, Query, UseGuards, Req, Res, NotFoundException } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
+import { JwtPassengerGuard } from '../auth/guard/jwt-passenger.guard';
+import { TokenExpiredError } from '@nestjs/jwt';
+import { Request, Response } from 'express';
+import { User } from '../interfaces/auth.interface';
+import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 
 @Controller('purchaseOrder')
 export class PurchaseOrderController {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
   /* ================================= Create operations ================================= */
-  @Post('createPurchaseOrderByCreatorId')
-  createPurchaseOrderByCreatorId(
-    @Query('id') id: string,
+  @UseGuards(JwtPassengerGuard)
+  @Post('createPurchaseOrder')
+  async createPurchaseOrder(
+    @Req() request: Request,
     @Body() createPurchaseOrderDto: CreatePurchaseOrderDto,
+    @Res() response: Response,
   ) { 
-    return this.purchaseOrderService.createPurchaseOrderByCreatorId(id, createPurchaseOrderDto);
+    try {
+      if (!request || !request.user) {
+        throw new TokenExpiredError(
+          "access token has expired, please try to login again", 
+          new Date()
+        );
+      }
+      const user = request.user as User;
+  
+      const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(user.id, createPurchaseOrderDto);
+
+      if (!res) {
+        throw new NotFoundException("Cannot find the passenger with given id")
+      }
+    } catch (error) {
+      response.status(error instanceof TokenExpiredError 
+        ? HttpStatusCode.Unauthorized 
+        : (error instanceof NotFoundException
+          ? HttpStatusCode.NotFound
+          : HttpStatusCode.UnknownError ?? 520
+        )
+      ).send({
+        message: error.message,
+      });
+    }
   }
   /* ================================= Create operations ================================= */
 

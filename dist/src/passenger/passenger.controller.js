@@ -26,10 +26,18 @@ let PassengerController = class PassengerController {
     }
     getMe(request, response) {
         try {
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(request.user);
+            if (!request || !request.user) {
+                throw new jwt_1.TokenExpiredError("access token has expired, please try to login again", new Date());
+            }
+            const user = request.user;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(user);
         }
         catch (error) {
-            throw error;
+            response.status(error instanceof jwt_1.TokenExpiredError
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
         }
     }
     async getPassengerInfo(request, response) {
@@ -40,7 +48,7 @@ let PassengerController = class PassengerController {
             const user = request.user;
             const res = await this.passengerService.getPassengerWithInfoByUserId(user.id);
             if (!res)
-                throw new Error("Cannot find the passenger with given id");
+                throw new common_1.NotFoundException("Cannot find the passenger with given id");
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
@@ -113,10 +121,10 @@ let PassengerController = class PassengerController {
             }
             const user = request.user;
             const res = await this.passengerService.updatePassengerById(user.id, updatePassengerDto);
-            if (!res) {
+            if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
@@ -159,10 +167,10 @@ let PassengerController = class PassengerController {
             }
             const user = request.user;
             const res = await this.passengerService.deletePassengerById(user.id);
-            if (!res) {
+            if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
@@ -174,11 +182,8 @@ let PassengerController = class PassengerController {
             });
         }
     }
-    getTest(response) {
-        response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
-            alert: "This route is currently only for debugging",
-            message: "test",
-        });
+    getTest() {
+        console.log("test");
     }
     async getAllPassengers(response) {
         try {
@@ -273,9 +278,8 @@ __decorate([
 ], PassengerController.prototype, "deleteMe", null);
 __decorate([
     (0, common_1.Get)('test'),
-    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PassengerController.prototype, "getTest", null);
 __decorate([

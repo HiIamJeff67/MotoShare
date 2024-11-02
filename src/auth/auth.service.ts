@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { ConflictException, ForbiddenException, Inject, Injectable } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -130,7 +130,7 @@ export class AuthService {
         }
             
         if (!userResponse || userResponse.length === 0) {
-            throw new ForbiddenException('Credential incorrect');
+            throw new NotFoundException('Credential incorrect');
         }
 
         const user = userResponse[0];
@@ -138,7 +138,7 @@ export class AuthService {
         delete user.hash;
 
         if (!pwMatches) {
-            throw new ForbiddenException('Credential incorrect');
+            throw new NotFoundException('Credential incorrect');
         }
 
         return this.signToken(user.id, user.email);

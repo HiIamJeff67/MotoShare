@@ -57,10 +57,14 @@ let AuthController = class AuthController {
                 ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
                 : (error instanceof common_1.ConflictException
                     ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    : (error instanceof common_1.NotFoundException
+                        ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
                 message: error.message,
             });
         }
+    }
+    async signUpRidderWithEmailAndPassword(signUpDto, response) {
     }
 };
 exports.AuthController = AuthController;
@@ -80,6 +84,14 @@ __decorate([
     __metadata("design:paramtypes", [signIn_dto_1.SignInDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signInPassengerWithAccountAndPassword", null);
+__decorate([
+    (0, common_1.Post)('signUpRidder'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [signUp_dto_1.SignUpDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signUpRidderWithEmailAndPassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

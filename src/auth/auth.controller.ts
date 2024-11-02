@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, PayloadTooLargeException, Post, Res } from "@nestjs/common";
+import { Body, ConflictException, Controller, NotFoundException, PayloadTooLargeException, Post, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignUpDto } from "./dto/signUp.dto";
 import { Response } from "express";
@@ -50,6 +50,8 @@ export class AuthController {
 
             const passengerRespose = await this.authService.signInPassengerEmailAndPassword(signInDto);
 
+
+
             response.status(HttpStatusCode.Ok).send({
                 ...passengerRespose,
             })
@@ -59,11 +61,22 @@ export class AuthController {
                 ? HttpStatusCode.PayloadTooLarge
                 : (error instanceof ConflictException
                     ? HttpStatusCode.Conflict
-                    : HttpStatusCode.UnknownError ?? 520
+                    : (error instanceof NotFoundException
+                        ? HttpStatusCode.NotFound
+                        : HttpStatusCode.UnknownError ?? 520
+                    )
                 )
             ).send({
                 message: error.message,
             });
         }
+    }
+
+    @Post('signUpRidder')
+    async signUpRidderWithEmailAndPassword(
+        @Body() signUpDto: SignUpDto,
+        @Res() response: Response,
+    ) {
+
     }
 }

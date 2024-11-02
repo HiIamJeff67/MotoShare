@@ -98,13 +98,13 @@ let AuthService = class AuthService {
                 .limit(1);
         }
         if (!userResponse || userResponse.length === 0) {
-            throw new common_1.ForbiddenException('Credential incorrect');
+            throw new common_1.NotFoundException('Credential incorrect');
         }
         const user = userResponse[0];
         const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
         delete user.hash;
         if (!pwMatches) {
-            throw new common_1.ForbiddenException('Credential incorrect');
+            throw new common_1.NotFoundException('Credential incorrect');
         }
         return this.signToken(user.id, user.email);
     }

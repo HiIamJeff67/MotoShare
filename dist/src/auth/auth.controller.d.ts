@@ -7,4 +7,5 @@ export declare class AuthController {
     constructor(authService: AuthService);
     signUpPassengerWithEmailAndPassword(signUpDto: SignUpDto, response: Response): Promise<void>;
     signInPassengerWithAccountAndPassword(signInDto: SignInDto, response: Response): Promise<void>;
+    signUpRidderWithEmailAndPassword(signUpDto: SignUpDto, response: Response): Promise<void>;
 }

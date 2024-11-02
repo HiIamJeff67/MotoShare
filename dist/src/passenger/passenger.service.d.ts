@@ -11,8 +11,6 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
-            id: string;
-            userId: string;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
@@ -25,6 +23,27 @@ export declare class PassengerService {
         collection: {
             userId: string;
             orderId: string;
+            order: {
+                id: string;
+                description: string | null;
+                initPrice: number;
+                startCord: {
+                    x: number;
+                    y: number;
+                };
+                endCord: {
+                    x: number;
+                    y: number;
+                };
+                createdAt: Date;
+                updatedAt: Date;
+                startAfter: Date;
+                tolerableRDV: number;
+                status: "POSTED" | "EXPIRED" | "CANCEL";
+                creator: {
+                    userName: string;
+                } | null;
+            };
         }[];
     } | undefined>;
     searchPassengersByUserName(userName: string, limit: number, offset: number): Promise<{
