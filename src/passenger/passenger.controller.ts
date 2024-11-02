@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Delete, Query, Res, UseGuards, Req, NotFoundException, ConflictException } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Request, Response } from 'express';
-import { HttpStatusCode } from 'axios';
+import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { JwtPassengerGuard } from 'src/auth/guard/jwt-passenger.guard';

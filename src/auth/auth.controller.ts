@@ -2,7 +2,7 @@ import { Body, ConflictException, Controller, PayloadTooLargeException, Post, Re
 import { AuthService } from "./auth.service";
 import { SignUpDto } from "./dto/signUp.dto";
 import { Response } from "express";
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { SignInDto } from "./dto/signIn.dto";
 
 @Controller('auth')
