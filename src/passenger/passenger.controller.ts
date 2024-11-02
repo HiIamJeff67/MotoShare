@@ -269,11 +269,12 @@ export class PassengerController {
 
   /* ================================= Other operations ================================= */
   @Get('test')
-  getTest(@Res() response: Response) {
-    response.status(HttpStatusCode.Ok).send({
-      alert: "This route is currently only for debugging",
-      message: "test",
-    });
+  getTest() {
+    console.log("test")
+    // response.status(HttpStatusCode.Ok).send({
+    //   alert: "This route is currently only for debugging",
+    //   message: "test",
+    // });
   }
 
   @Get('getAllPassengers')
