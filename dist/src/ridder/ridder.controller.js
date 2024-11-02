@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderController = void 0;
 const common_1 = require("@nestjs/common");
 const ridder_service_1 = require("./ridder.service");
-const axios_1 = require("axios");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const create_ridder_dto_1 = require("./dto/create-ridder.dto");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("../passenger/dto/update-info.dto");
@@ -33,7 +33,7 @@ let RidderController = class RidderController {
             }
             const ridderReponse = await this.ridderService.createRidder(createRidderDto);
             const infoResponse = await this.ridderService.createRidderInfoByUserId(ridderReponse[0].id);
-            response.status(axios_1.HttpStatusCode.Created).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
                 ridderId: ridderReponse[0].id,
                 ridderName: ridderReponse[1].id,
                 infoId: infoResponse[0].id,
@@ -41,12 +41,12 @@ let RidderController = class RidderController {
         }
         catch (error) {
             if (!error.constraint) {
-                response.status(axios_1.HttpStatusCode.BadRequest).send({
+                response.status(HttpStatusCode_enum_1.HttpStatusCode.BadRequest).send({
                     message: "Unknown error",
                 });
             }
             const duplicateField = error.constraint.split("_")[1];
-            response.status(axios_1.HttpStatusCode.Conflict).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Conflict).send({
                 message: `Duplicate ${duplicateField} detected`,
             });
         }
@@ -54,10 +54,10 @@ let RidderController = class RidderController {
     async getRidderById(id, response) {
         try {
             const res = await this.ridderService.getRidderById(id);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id",
             });
         }
@@ -65,10 +65,10 @@ let RidderController = class RidderController {
     async getRidderWithInfoByUserId(id, response) {
         try {
             const res = await this.ridderService.getRidderWithInfoByUserId(id);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id",
             });
         }
@@ -76,10 +76,10 @@ let RidderController = class RidderController {
     async getRidderWithCollectionByUserId(id, response) {
         try {
             const res = await this.ridderService.getRidderWithCollectionByUserId(id);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id",
             });
         }
@@ -87,10 +87,10 @@ let RidderController = class RidderController {
     async getPaginationRidders(limit, offset, response) {
         try {
             const res = await this.ridderService.getPaginationRidders(+limit, +offset);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find any ridders",
             });
         }
@@ -98,13 +98,13 @@ let RidderController = class RidderController {
     async getAllRidders(response) {
         try {
             const res = await this.ridderService.getAllRidders();
-            response.status(axios_1.HttpStatusCode.Ok).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 alert: "This route is currently only for debugging",
                 ...res
             });
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find any ridders",
             });
         }
@@ -112,10 +112,10 @@ let RidderController = class RidderController {
     async updateRidderById(id, updateRidderDto, response) {
         try {
             const res = await this.ridderService.updateRidderById(id, updateRidderDto);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id to update",
             });
         }
@@ -123,10 +123,10 @@ let RidderController = class RidderController {
     async updateRidderInfoByUserId(id, updatePassengerInfoDto, response) {
         try {
             const res = await this.ridderService.updateRidderInfoByUserId(id, updatePassengerInfoDto);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id to update",
             });
         }
@@ -134,10 +134,10 @@ let RidderController = class RidderController {
     async deleteRidderById(id, response) {
         try {
             const res = await this.ridderService.deleteRiddderById(id);
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find the ridder with given id to delete",
             });
         }

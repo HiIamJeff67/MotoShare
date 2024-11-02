@@ -16,7 +16,7 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const signUp_dto_1 = require("./dto/signUp.dto");
-const axios_1 = require("axios");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const signIn_dto_1 = require("./dto/signIn.dto");
 let AuthController = class AuthController {
     constructor(authService) {
@@ -28,16 +28,16 @@ let AuthController = class AuthController {
                 throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
             }
             const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
-            response.status(axios_1.HttpStatusCode.Created).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
                 ...passengerResponse,
             });
         }
         catch (error) {
             response.status(error instanceof common_1.PayloadTooLargeException
-                ? axios_1.HttpStatusCode.PayloadTooLarge
+                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
                 : (error instanceof common_1.ConflictException
-                    ? axios_1.HttpStatusCode.Conflict
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -48,16 +48,16 @@ let AuthController = class AuthController {
                 throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
             }
             const passengerRespose = await this.authService.signInPassengerEmailAndPassword(signInDto);
-            response.status(axios_1.HttpStatusCode.Ok).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 ...passengerRespose,
             });
         }
         catch (error) {
             response.status(error instanceof common_1.PayloadTooLargeException
-                ? axios_1.HttpStatusCode.PayloadTooLarge
+                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
                 : (error instanceof common_1.ConflictException
-                    ? axios_1.HttpStatusCode.Conflict
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerController = void 0;
 const common_1 = require("@nestjs/common");
 const passenger_service_1 = require("./passenger.service");
-const axios_1 = require("axios");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const update_info_dto_1 = require("./dto/update-info.dto");
 const jwt_passenger_guard_1 = require("../auth/guard/jwt-passenger.guard");
 const jwt_1 = require("@nestjs/jwt");
@@ -26,7 +26,7 @@ let PassengerController = class PassengerController {
     }
     getMe(request, response) {
         try {
-            response.status(axios_1.HttpStatusCode.Ok).send(request.user);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(request.user);
         }
         catch (error) {
             throw error;
@@ -41,14 +41,14 @@ let PassengerController = class PassengerController {
             const res = await this.passengerService.getPassengerWithInfoByUserId(user.id);
             if (!res)
                 throw new Error("Cannot find the passenger with given id");
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
-                ? axios_1.HttpStatusCode.Unauthorized
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
-                    ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -62,14 +62,14 @@ let PassengerController = class PassengerController {
             const res = await this.passengerService.getPassengerWithCollectionByUserId(user.id);
             if (!res)
                 throw new common_1.NotFoundException("Cannot find the passenger with given id");
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
-                ? axios_1.HttpStatusCode.Unauthorized
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
-                    ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -80,12 +80,12 @@ let PassengerController = class PassengerController {
             if (!res || res.length == 0) {
                 throw new common_1.NotFoundException("Cannot find any passengers");
             }
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof common_1.NotFoundException
-                ? axios_1.HttpStatusCode.NotFound
-                : axios_1.HttpStatusCode.UnknownError ?? 520).send({
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
                 message: error.message,
             });
         }
@@ -96,12 +96,12 @@ let PassengerController = class PassengerController {
             if (!res || res.length == 0) {
                 throw new common_1.NotFoundException("Cannot find any passengers");
             }
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof common_1.NotFoundException
-                ? axios_1.HttpStatusCode.NotFound
-                : axios_1.HttpStatusCode.UnknownError ?? 520).send({
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
                 message: error.message,
             });
         }
@@ -116,16 +116,16 @@ let PassengerController = class PassengerController {
             if (!res) {
                 throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
             }
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
-                ? axios_1.HttpStatusCode.Unauthorized
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
-                    ? axios_1.HttpStatusCode.NotFound
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
                     : (error instanceof common_1.ConflictException
-                        ? axios_1.HttpStatusCode.Conflict
-                        : axios_1.HttpStatusCode.UnknownError ?? 520))).send({
+                        ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
+                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
                 message: error.message,
             });
         }
@@ -140,14 +140,14 @@ let PassengerController = class PassengerController {
             if (!res) {
                 throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
             }
-            response.status(axios_1.HttpStatusCode.Ok).send({});
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({});
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
-                ? axios_1.HttpStatusCode.Unauthorized
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
-                    ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
@@ -162,20 +162,20 @@ let PassengerController = class PassengerController {
             if (!res) {
                 throw new common_1.NotFoundException("Cannot find the passenger with given id to update");
             }
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status(error instanceof jwt_1.TokenExpiredError
-                ? axios_1.HttpStatusCode.Unauthorized
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
                 : (error instanceof common_1.NotFoundException
-                    ? axios_1.HttpStatusCode.NotFound
-                    : axios_1.HttpStatusCode.UnknownError ?? 520)).send({
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
                 message: error.message,
             });
         }
     }
     getTest(response) {
-        response.status(axios_1.HttpStatusCode.Ok).send({
+        response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
             alert: "This route is currently only for debugging",
             message: "test",
         });
@@ -183,13 +183,13 @@ let PassengerController = class PassengerController {
     async getAllPassengers(response) {
         try {
             const res = await this.passengerService.getAllPassengers();
-            response.status(axios_1.HttpStatusCode.Ok).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 alert: "This route is currently only for debugging",
                 ...res
             });
         }
         catch (error) {
-            response.status(axios_1.HttpStatusCode.NotFound).send({
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
                 message: "Cannot find any passengers",
             });
         }

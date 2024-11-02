@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotAcceptableException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";

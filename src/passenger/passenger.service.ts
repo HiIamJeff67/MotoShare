@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
-import { and, eq, like } from 'drizzle-orm';
+import { ConflictException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { eq, like } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle'
@@ -9,7 +9,6 @@ import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { PassengerTable } from 'src/drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from 'src/drizzle/schema/passengerInfo.schema';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
-import { JwtPassengerGuard } from 'src/auth/guard/jwt-passenger.guard';
 
 @Injectable()
 export class PassengerService {
