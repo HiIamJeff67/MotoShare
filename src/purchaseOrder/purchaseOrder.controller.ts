@@ -35,6 +35,8 @@ export class PurchaseOrderController {
       if (!res) {
         throw new NotFoundException("Cannot find the passenger with given id")
       }
+
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       response.status(error instanceof TokenExpiredError 
         ? HttpStatusCode.Unauthorized 
@@ -51,10 +53,10 @@ export class PurchaseOrderController {
 
 
   /* ================================= Get operations ================================= */
-  @Get('getPurchaseOrderById')
-  getPurchaseOrderById(@Query('id') id: string) {
-    return this.purchaseOrderService.getPurchaseOrderById(id);
-  }
+  // @Get('getPurchaseOrderById')
+  // getPurchaseOrderById(@Query('id') id: string) {
+  //   return this.purchaseOrderService.getPurchaseOrderById(id);
+  // }
   
   @Get('getPurchaseOrdersByCreatorId')
   getPurchaseOrdersByCreatorId(
