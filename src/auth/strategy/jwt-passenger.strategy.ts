@@ -9,7 +9,7 @@ import { DrizzleDB } from "../../../src/drizzle/types/drizzle";
 import { PassengerTable } from "../../../src/drizzle/schema/passenger.schema";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(
+export class JwtPassengerStrategy extends PassportStrategy(
     Strategy, 
     'jwt-passenger',  // use in JwtGuard default to be 'jwt'
 ) {
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(
     }
 
     async validate(
-        payload: {
+        payload: {  // since we use id + email to generate the token
             sub: string,
             email: string,
         }

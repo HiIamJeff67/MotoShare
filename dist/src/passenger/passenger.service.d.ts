@@ -7,6 +7,17 @@ export declare class PassengerService {
     private db;
     constructor(config: ConfigService, db: DrizzleDB);
     private getPassengerById;
+    getPassengerWithInfoByUserName(userName: string): Promise<{
+        userName: string;
+        email: string;
+        info: {
+            isOnline: boolean;
+            age: number | null;
+            phoneNumber: string | null;
+            selfIntroduction: string | null;
+            avatorUrl: string | null;
+        } | null;
+    } | undefined>;
     getPassengerWithInfoByUserId(userId: string): Promise<{
         userName: string;
         email: string;
@@ -54,7 +65,7 @@ export declare class PassengerService {
             avatorUrl: string | null;
         } | null;
     }[]>;
-    getPaginationPassengers(limit: number, offset: number): Promise<{
+    searchPaginationPassengers(limit: number, offset: number): Promise<{
         userName: string;
         email: string;
         info: {

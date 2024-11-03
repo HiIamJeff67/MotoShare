@@ -5,8 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { DRIZZLE } from "../../src/drizzle/drizzle.module";
 import { DrizzleDB } from "../../src/drizzle/types/drizzle";
-import { SignInDto } from "./dto/signIn.dto";
-import { SignUpDto } from "./dto/signUp.dto";
+import { SignInDto, SignUpDto } from "./dto/index";
 
 import { PassengerTable } from "../../src/drizzle/schema/passenger.schema";
 import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schema';
@@ -156,6 +155,7 @@ export class AuthService {
             userResponse = await this.db.select({
                 id: RidderTable.id,
                 email: RidderTable.email,
+                hash: RidderTable.password,
             }).from(RidderTable)
             .where(eq(RidderTable.userName, signInDto.userName))
             .limit(1);
@@ -164,20 +164,22 @@ export class AuthService {
             userResponse = await this.db.select({
                 id: RidderTable.id,
                 email: RidderTable.email,
+                hash: RidderTable.password,
             }).from(RidderTable)
             .where(eq(RidderTable.email, signInDto.email))
             .limit(1);
         }
             
         if (!userResponse || userResponse.length === 0) {
-            throw new ForbiddenException('Credential incorrect');
+            throw new NotFoundException('Credential incorrect');
         }
 
         const user = userResponse[0];
         const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
+        delete user.hash;
 
         if (!pwMatches) {
-            throw new ForbiddenException('Credential incorrect');
+            throw new NotFoundException('Credential incorrect');
         }
 
         return this.signToken(user.id, user.email);

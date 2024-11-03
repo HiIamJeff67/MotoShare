@@ -12,7 +12,7 @@ const jwt_1 = require("@nestjs/jwt");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
-const jwt_passenger_strategy_1 = require("./strategy/jwt-passenger.strategy");
+const strategy_1 = require("./strategy");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -20,7 +20,7 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [drizzle_module_1.DrizzleModule, jwt_1.JwtModule.register({})],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, jwt_passenger_strategy_1.JwtStrategy],
+        providers: [auth_service_1.AuthService, strategy_1.JwtPassengerStrategy, strategy_1.JwtRidderStrategy],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

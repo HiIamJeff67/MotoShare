@@ -15,9 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
-const signUp_dto_1 = require("./dto/signUp.dto");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
-const signIn_dto_1 = require("./dto/signIn.dto");
+const index_1 = require("./dto/index");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -28,6 +27,26 @@ let AuthController = class AuthController {
                 throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
             }
             const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
+                ...passengerResponse,
+            });
+        }
+        catch (error) {
+            response.status(error instanceof common_1.PayloadTooLargeException
+                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
+                : (error instanceof common_1.ConflictException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
+    }
+    async signUpRidderWithEmailAndPassword(signUpDto, response) {
+        try {
+            if (signUpDto.userName && signUpDto.userName.length > 20) {
+                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
+            }
+            const passengerResponse = await this.authService.signUpRidderWithEmailAndPassword(signUpDto);
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
                 ...passengerResponse,
             });
@@ -64,7 +83,27 @@ let AuthController = class AuthController {
             });
         }
     }
-    async signUpRidderWithEmailAndPassword(signUpDto, response) {
+    async signInRidderWithAccountAndPassword(signInDto, response) {
+        try {
+            if (signInDto.userName && signInDto.userName.length > 20) {
+                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
+            }
+            const ridderResponse = await this.authService.signInRidderByEmailAndPassword(signInDto);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                ...ridderResponse,
+            });
+        }
+        catch (error) {
+            response.status(error instanceof common_1.PayloadTooLargeException
+                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
+                : (error instanceof common_1.ConflictException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
+                    : (error instanceof common_1.NotFoundException
+                        ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
+                message: error.message,
+            });
+        }
     }
 };
 exports.AuthController = AuthController;
@@ -73,25 +112,33 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signUp_dto_1.SignUpDto, Object]),
+    __metadata("design:paramtypes", [index_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUpPassengerWithEmailAndPassword", null);
-__decorate([
-    (0, common_1.Post)('signInPassenger'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signIn_dto_1.SignInDto, Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "signInPassengerWithAccountAndPassword", null);
 __decorate([
     (0, common_1.Post)('signUpRidder'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signUp_dto_1.SignUpDto, Object]),
+    __metadata("design:paramtypes", [index_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUpRidderWithEmailAndPassword", null);
+__decorate([
+    (0, common_1.Post)('signInPassenger'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.SignInDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signInPassengerWithAccountAndPassword", null);
+__decorate([
+    (0, common_1.Post)('signInRidder'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.SignInDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signInRidderWithAccountAndPassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

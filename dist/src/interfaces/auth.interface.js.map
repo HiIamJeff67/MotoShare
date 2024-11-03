@@ -1,1 +1,1 @@
-{"version":3,"file":"auth.interface.js","sourceRoot":"","sources":["../../../src/interfaces/auth.interface.ts"],"names":[],"mappings":";;;AAAA,MAAa,aAAa;CAGzB;AAHD,sCAGC;AAED,MAAa,IAAI;CAIhB;AAJD,oBAIC"}
+{"version":3,"file":"auth.interface.js","sourceRoot":"","sources":["../../../src/interfaces/auth.interface.ts"],"names":[],"mappings":";;;AAAA,MAAa,aAAa;CAGzB;AAHD,sCAGC;AAED,MAAa,aAAa;CAIzB;AAJD,sCAIC;AAED,MAAa,UAAU;CAItB;AAJD,gCAIC"}

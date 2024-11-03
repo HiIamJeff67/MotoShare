@@ -1,13 +1,14 @@
 import * as bcrypt from 'bcrypt';
-import { ConflictException, Inject, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle'
-import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 
 import { PassengerTable } from '../../src/drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schema';
+
+import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class PassengerService {
     private config: ConfigService,
     @Inject(DRIZZLE) private db: DrizzleDB
   ) {}
+  
   /* ================================= Get operations ================================= */
   private async getPassengerById(id: string) {
     const response = await this.db.select({
@@ -30,8 +32,31 @@ export class PassengerService {
     return response && response.length > 0 ? response[0] : undefined;
   }
 
+  // once a ridder want to find a passenger, he/she first do a search
+  // then specify a passenger with his/her userName,
+  // finally use this userName to get the info of that passenger
+  async getPassengerWithInfoByUserName(userName: string) {
+    return await this.db.query.PassengerTable.findFirst({
+      where: eq(PassengerTable.userName, userName),
+      columns: {
+        userName: true,
+        email: true,
+      },
+      with: {
+        info: {
+          columns: {
+            isOnline: true,
+            age: true,
+            phoneNumber: true,
+            selfIntroduction: true,
+            avatorUrl: true,
+          }
+        },
+      }
+    });
+  }
+
   async getPassengerWithInfoByUserId(userId: string) {
-    // should specify the interface of response here
     return await this.db.query.PassengerTable.findFirst({
       where: eq(PassengerTable.id, userId),
       columns: {
@@ -53,7 +78,6 @@ export class PassengerService {
   }
   
   async getPassengerWithCollectionByUserId(userId: string) {
-    // should specify the interface of response here
     return await this.db.query.PassengerTable.findFirst({
       where: eq(PassengerTable.id, userId),
       columns: {
@@ -91,7 +115,11 @@ export class PassengerService {
 
   /* ================= Search operations ================= */
   // usually used by ridder(to search the passengers)
-  async searchPassengersByUserName(userName: string, limit: number, offset: number) {
+  async searchPassengersByUserName(
+    userName: string, 
+    limit: number, 
+    offset: number,
+  ) {
     return await this.db.query.PassengerTable.findMany({
       where: like(PassengerTable.userName, userName + "%"), // using entire prefix matching to search relative users
       columns: {
@@ -111,7 +139,7 @@ export class PassengerService {
     });
   }
 
-  async getPaginationPassengers(limit: number, offset: number) {
+  async searchPaginationPassengers(limit: number, offset: number) {
     return await this.db.query.PassengerTable.findMany({
       columns: {
         userName: true,
@@ -135,6 +163,7 @@ export class PassengerService {
   /* ================================= Get operations ================================= */
 
 
+
   /* ================================= Update operations ================================= */
   async updatePassengerById(
     id: string, 
@@ -143,7 +172,7 @@ export class PassengerService {
     // check if the new password is same as the previous one
     const user = await this.getPassengerById(id);
     if (!user) {
-      throw new NotFoundException(`Cannot find the passenger with given id`);
+      throw new NotFoundException(`Cannot find the passenger with the given id`);
     }
 
     if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {  // if the user want to update its userName
@@ -202,6 +231,7 @@ export class PassengerService {
   /* ================================= Update operations ================================= */
 
 
+
   /* ================================= Delete operations ================================= */
   async deletePassengerById(id: string) {
     return await this.db.delete(PassengerTable)
@@ -209,18 +239,19 @@ export class PassengerService {
       .returning({
         id: PassengerTable.id,
         userName: PassengerTable.userName,
-        email: PassengerTable.email
+        email: PassengerTable.email,
       });
   }
   /* ================================= Delete operations ================================= */
 
 
-  /* ================================= Other operations ================================= */
+
+  /* ================================= Test operations ================================= */
   async getAllPassengers() {
     return await this.db.select({
       id: PassengerTable.id,
       userName: PassengerTable.userName,
     }).from(PassengerTable);
   }
-  /* ================================= Other operations ================================= */
+  /* ================================= Test operations ================================= */
 }

@@ -1,8 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { DrizzleDB } from "../../src/drizzle/types/drizzle";
-import { SignInDto } from "./dto/signIn.dto";
-import { SignUpDto } from "./dto/signUp.dto";
+import { SignInDto, SignUpDto } from "./dto/index";
 import { AuthTokenType } from '../../src/interfaces/auth.interface';
 export declare class AuthService {
     private config;

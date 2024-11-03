@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JwtStrategy = void 0;
+exports.JwtPassengerStrategy = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const passport_1 = require("@nestjs/passport");
@@ -20,7 +20,7 @@ const passport_jwt_1 = require("passport-jwt");
 const drizzle_orm_1 = require("drizzle-orm");
 const drizzle_module_1 = require("../../../src/drizzle/drizzle.module");
 const passenger_schema_1 = require("../../../src/drizzle/schema/passenger.schema");
-let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-passenger') {
+let JwtPassengerStrategy = class JwtPassengerStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-passenger') {
     constructor(config, db) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -41,10 +41,10 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         return user;
     }
 };
-exports.JwtStrategy = JwtStrategy;
-exports.JwtStrategy = JwtStrategy = __decorate([
+exports.JwtPassengerStrategy = JwtPassengerStrategy;
+exports.JwtPassengerStrategy = JwtPassengerStrategy = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
     __metadata("design:paramtypes", [config_1.ConfigService, Object])
-], JwtStrategy);
+], JwtPassengerStrategy);
 //# sourceMappingURL=jwt-passenger.strategy.js.map

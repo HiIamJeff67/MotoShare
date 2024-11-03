@@ -36,6 +36,26 @@ let PassengerService = class PassengerService {
             .limit(1);
         return response && response.length > 0 ? response[0] : undefined;
     }
+    async getPassengerWithInfoByUserName(userName) {
+        return await this.db.query.PassengerTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, userName),
+            columns: {
+                userName: true,
+                email: true,
+            },
+            with: {
+                info: {
+                    columns: {
+                        isOnline: true,
+                        age: true,
+                        phoneNumber: true,
+                        selfIntroduction: true,
+                        avatorUrl: true,
+                    }
+                },
+            }
+        });
+    }
     async getPassengerWithInfoByUserId(userId) {
         return await this.db.query.PassengerTable.findFirst({
             where: (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId),
@@ -110,7 +130,7 @@ let PassengerService = class PassengerService {
             offset: offset,
         });
     }
-    async getPaginationPassengers(limit, offset) {
+    async searchPaginationPassengers(limit, offset) {
         return await this.db.query.PassengerTable.findMany({
             columns: {
                 userName: true,
@@ -132,7 +152,7 @@ let PassengerService = class PassengerService {
     async updatePassengerById(id, updatePassengerDto) {
         const user = await this.getPassengerById(id);
         if (!user) {
-            throw new common_1.NotFoundException(`Cannot find the passenger with given id`);
+            throw new common_1.NotFoundException(`Cannot find the passenger with the given id`);
         }
         if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {
             const unMatches = updatePassengerDto.userName === user.userName;
@@ -186,7 +206,7 @@ let PassengerService = class PassengerService {
             .returning({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
-            email: passenger_schema_1.PassengerTable.email
+            email: passenger_schema_1.PassengerTable.email,
         });
     }
     async getAllPassengers() {

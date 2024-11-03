@@ -15,6 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplyOrderController = void 0;
 const common_1 = require("@nestjs/common");
 const supplyOrder_service_1 = require("./supplyOrder.service");
+const jwt_1 = require("@nestjs/jwt");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const guard_1 = require("../auth/guard");
+const auth_interface_1 = require("../interfaces/auth.interface");
+const decorator_1 = require("../auth/decorator");
 const create_supplyOrder_dto_1 = require("./dto/create-supplyOrder.dto");
 const update_supplyOrder_dto_1 = require("./dto/update-supplyOrder.dto");
 const get_supplyOrder_dto_1 = require("./dto/get-supplyOrder.dto");
@@ -22,109 +27,286 @@ let SupplyOrderController = class SupplyOrderController {
     constructor(supplyOrderService) {
         this.supplyOrderService = supplyOrderService;
     }
-    create(id, createSupplyOrderDto) {
-        return this.supplyOrderService.createSupplyOrderByCreatorId(id, createSupplyOrderDto);
+    async createSupplyOrder(ridder, createSupplyOrderDto, response) {
+        try {
+            const res = await this.supplyOrderService.createSupplyOrderByCreatorId(ridder.id, createSupplyOrderDto);
+            if (!res || res.length === 0) {
+                throw new common_1.BadRequestException("Cannot create supply order by the current ridder");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.BadRequestException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.BadRequest
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
     }
-    getSupplyOrderById(id) {
-        return this.supplyOrderService.getSupplyOrderById(id);
+    async getMySupplyOrders(ridder, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.supplyOrderService.getSupplyOrdersByCreatorId(ridder.id, +limit, +offset);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException("Cannot find the supply orders of the current ridder");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
     }
-    getSupplyOrdersByCreatorId(id, limit = "10", offset = "0") {
-        return this.supplyOrderService.getSupplyOrdersByCreatorId(id, +limit, +offset);
+    async getSupplyOrderById(ridder, id, response) {
+        try {
+            const res = await this.supplyOrderService.getSupplyOrderById(id);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException(`Cannot find the supply order with the given orderId: ${id}`);
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
     }
-    getSupplyOrders(limit = "10", offset = "0") {
-        return this.supplyOrderService.getSupplyOrders(+limit, +offset);
+    async searchSupplyOrdersByCreatorName(userName, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.supplyOrderService.searchSupplyOrderByCreatorName(userName, +limit, +offset);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException(`Cannot find the ridder with the given userName: ${userName}`);
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
+        }
     }
-    getCurAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto) {
-        return this.supplyOrderService.getCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+    async searchPaginationSupplyOrders(limit = "10", offset = "0", response) {
+        try {
+            const res = await this.supplyOrderService.searchPaginationSupplyOrders(+limit, +offset);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException("Cannot find any purchase orders");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
+        }
     }
-    getDestAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto) {
-        return this.supplyOrderService.getDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+    async searchCurAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+        try {
+            const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException("Cannot find any supply orders");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
+        }
     }
-    getSimilarRouteSupplyOrders(limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto) {
-        return this.supplyOrderService.getSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
+    async searchDestAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+        try {
+            const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException("Cannot find any supply orders");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
+        }
     }
-    updateSupplyOrderById(id, updateSupplyOrderDto) {
-        return this.supplyOrderService.updateSupplyOrderById(id, updateSupplyOrderDto);
+    async searchSimilarRouteSupplyOrders(limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
+        try {
+            const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException("Cannot find any supply orders");
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            response.status(error instanceof common_1.NotFoundException
+                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
+                message: error.message,
+            });
+        }
     }
-    deleteSupplyOrderById(id) {
-        return this.supplyOrderService.deleteSupplyOrderById(id);
+    async updateMySupplyOrderById(ridder, id, updateSupplyOrderDto, response) {
+        try {
+            const res = await this.supplyOrderService.updateSupplyOrderById(id, ridder.id, updateSupplyOrderDto);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException(`
+          Cannot find any supply orders with the given orderId: ${id}, 
+          or the current ridder cannot update the order which is not created by himself/herself
+        `);
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
+    }
+    async deleteMySupplyOrderById(ridder, id, response) {
+        try {
+            const res = await this.supplyOrderService.deleteSupplyOrderById(id, ridder.id);
+            if (!res || res.length === 0) {
+                throw new common_1.NotFoundException(`
+          Cannot find any supply orders with the given orderId: ${id}, 
+          or the current ridder cannot delete the order which is not created by himself/herself
+        `);
+            }
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
+                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
+                : (error instanceof common_1.NotFoundException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
+                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                message: error.message,
+            });
+        }
     }
 };
 exports.SupplyOrderController = SupplyOrderController;
 __decorate([
-    (0, common_1.Post)('createSupplyOrderByCreatorId'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('createSupplyOrder'),
+    __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_supplyOrder_dto_1.CreateSupplyOrderDto]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "create", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType,
+        create_supplyOrder_dto_1.CreateSupplyOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "createSupplyOrder", null);
 __decorate([
-    (0, common_1.Get)('getSupplyOrderById'),
-    __param(0, (0, common_1.Query)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getSupplyOrderById", null);
-__decorate([
-    (0, common_1.Get)('getSupplyOrdersByCreatorId'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('getMySupplyOrders'),
+    __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getSupplyOrdersByCreatorId", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "getMySupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('getSupplyOrders'),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('getSupplyOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "getSupplyOrderById", null);
+__decorate([
+    (0, common_1.Get)('searchSupplyOrdersByCreatorName'),
+    __param(0, (0, common_1.Query)('userName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchSupplyOrdersByCreatorName", null);
+__decorate([
+    (0, common_1.Get)('searchPaginationSupplyOrders'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getSupplyOrders", null);
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchPaginationSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('getCurAdjacentSupplyOrders'),
+    (0, common_1.Get)('searchCurAdjacentSupplyOrders'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
     __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getCurAdjacentSupplyOrders", null);
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchCurAdjacentSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('getDestAdjacentSupplyOrders'),
+    (0, common_1.Get)('searchDestAdjacentSupplyOrders'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
     __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getDestAdjacentSupplyOrders", null);
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchDestAdjacentSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('getSimilarRouteSupplyOrders'),
+    (0, common_1.Get)('searchSimilarRouteSupplyOrders'),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('offset')),
     __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "getSimilarRouteSupplyOrders", null);
+    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchSimilarRouteSupplyOrders", null);
 __decorate([
-    (0, common_1.Patch)('updateSupplyOrderById'),
-    __param(0, (0, common_1.Query)('id')),
-    __param(1, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Patch)('updateMySupplyOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_supplyOrder_dto_1.UpdateSupplyOrderDto]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "updateSupplyOrderById", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, update_supplyOrder_dto_1.UpdateSupplyOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "updateMySupplyOrderById", null);
 __decorate([
-    (0, common_1.Delete)('deleteSupplyOrderById'),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Delete)('deleteMySupplyOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], SupplyOrderController.prototype, "deleteSupplyOrderById", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "deleteMySupplyOrderById", null);
 exports.SupplyOrderController = SupplyOrderController = __decorate([
     (0, common_1.Controller)('supplyOrder'),
     __metadata("design:paramtypes", [supplyOrder_service_1.SupplyOrderService])

@@ -3,7 +3,13 @@ export class AuthTokenType {
     expiredIn: string
 }
 
-export class User {
+export class PassengerType {
+    id: string
+    userName: string
+    email: string
+}
+
+export class RidderType {
     id: string
     userName: string
     email: string

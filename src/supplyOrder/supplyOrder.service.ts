@@ -4,11 +4,14 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
 } from './dto/get-supplyOrder.dto';
+import { RidderTable } from '../drizzle/schema/ridder.schema';
+import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
+import { point } from '../interfaces/point.interface';
 
 @Injectable()
 export class SupplyOrderService {
@@ -32,7 +35,6 @@ export class SupplyOrderService {
       tolerableRDV: createSupplyOrderDto.tolerableRDV ?? undefined,
     }) .returning({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
       createdAt: SupplyOrderTable.createdAt,
       status: SupplyOrderTable.status,
     });
@@ -40,23 +42,8 @@ export class SupplyOrderService {
   /* ================================= Create operations ================================= */
 
 
+  
   /* ================================= Get operations ================================= */
-  async getSupplyOrderById(id: string) {
-    return await this.db.select({
-      id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
-      initPrice: SupplyOrderTable.initPrice,
-      startCord: SupplyOrderTable.startCord,
-      endCord: SupplyOrderTable.endCord,
-      createdAt: SupplyOrderTable.createdAt,
-      updatedAt: SupplyOrderTable.updatedAt,
-      startAfter: SupplyOrderTable.startAfter,
-      tolerableRDV: SupplyOrderTable.tolerableRDV,
-      status: SupplyOrderTable.status,
-    }).from(SupplyOrderTable)
-      .where(eq(SupplyOrderTable.id, id));
-  }
-
   async getSupplyOrdersByCreatorId(
     creatorId: string, 
     limit: number, 
@@ -64,7 +51,6 @@ export class SupplyOrderService {
   ) {
     return await this.db.select({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
@@ -80,10 +66,11 @@ export class SupplyOrderService {
       .offset(offset);
   }
 
-  async getSupplyOrders(limit: number, offset: number) {
+  async getSupplyOrderById(id: string) {
     return await this.db.select({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
@@ -93,19 +80,68 @@ export class SupplyOrderService {
       tolerableRDV: SupplyOrderTable.tolerableRDV,
       status: SupplyOrderTable.status,
     }).from(SupplyOrderTable)
+      .where(eq(SupplyOrderTable.id, id))
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
+      .limit(1);
+  }
+
+  /* ================= Search operations ================= */
+  async searchSupplyOrderByCreatorName(
+    creatorName: string,
+    limit: number, 
+    offset: number,
+  ) {
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      status: SupplyOrderTable.status,
+    }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .where(eq(RidderTable.userName, creatorName))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
       .orderBy(SupplyOrderTable.updatedAt)
       .limit(limit)
       .offset(offset);
   }
+
+  async searchPaginationSupplyOrders(limit: number, offset: number) {
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      status: SupplyOrderTable.status,
+    }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
+      .limit(limit)
+      .offset(offset);
+  }
   
-  async getCurAdjacentSupplyOrders(
+  async searchCurAdjacentSupplyOrders(
     limit: number, 
     offset: number, 
     getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
     return await this.db.select({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
@@ -119,6 +155,8 @@ export class SupplyOrderService {
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
     }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
       .orderBy(sql`ST_Distance(
         ${SupplyOrderTable.startCord}, 
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
@@ -127,14 +165,15 @@ export class SupplyOrderService {
       .offset(offset);
   }
 
-  async getDestAdjacentSupplyOrders(
+  async searchDestAdjacentSupplyOrders(
     limit: number,
     offset: number,
     getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
     return await this.db.select({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
@@ -148,6 +187,8 @@ export class SupplyOrderService {
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
     }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
       .orderBy(sql`ST_Distance(
         ${SupplyOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
@@ -156,7 +197,7 @@ export class SupplyOrderService {
       .offset(offset);
   }
 
-  async getSimilarRouteSupplyOrders(
+  async searchSimilarRouteSupplyOrders(
     limit: number,
     offset: number,
     getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto
@@ -166,7 +207,8 @@ export class SupplyOrderService {
 
     return await this.db.select({
       id: SupplyOrderTable.id,
-      creatorId: SupplyOrderTable.creatorId,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
@@ -194,6 +236,8 @@ export class SupplyOrderService {
           )
       `,
     }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+      .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
       .orderBy(sql`
           ST_Distance(
             ${SupplyOrderTable.startCord},
@@ -211,39 +255,46 @@ export class SupplyOrderService {
             ${SupplyOrderTable.startCord},
             ${SupplyOrderTable.endCord}
           )
-      `).limit(limit)
-        .offset(offset);
+      `)
+      .limit(limit)
+      .offset(offset);
   }
+  /* ================= Search operations ================= */
+
   /* ================================= Get operations ================================= */
 
 
+
   /* ================================= Update operations ================================= */
-  async updateSupplyOrderById(id: string, updateSupplyOrderDto: UpdateSupplyOrderDto) {
-    const newStartCordQuery: string | undefined = 
-      (updateSupplyOrderDto.startCordLongitude !== undefined
+  async updateSupplyOrderById(
+    id: string, 
+    creatorId: string,
+    updateSupplyOrderDto: UpdateSupplyOrderDto
+  ) {
+    const newStartCord: point | undefined = 
+      (updateSupplyOrderDto.startCordLongitude !== undefined 
         && updateSupplyOrderDto.startCordLatitude !== undefined)
-      ? `ST_SetSRID(ST_MakePoint(${updateSupplyOrderDto.startCordLongitude}, ${updateSupplyOrderDto.startCordLatitude}))`
+      ? { x: updateSupplyOrderDto.startCordLongitude, y: updateSupplyOrderDto.startCordLatitude, }
       : undefined;
     
-    const newEndCordQuery: string | undefined =
+    const newEndCord: point | undefined = 
       (updateSupplyOrderDto.endCordLongitude !== undefined
         && updateSupplyOrderDto.endCordLatitude !== undefined)
-      ? `ST_SetSRID(ST_MakePoint(${updateSupplyOrderDto.endCordLongitude}, ${updateSupplyOrderDto.endCordLatitude}))`
+      ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
       : undefined;
 
     return await this.db.update(SupplyOrderTable).set({
       description: updateSupplyOrderDto.description,
       initPrice: updateSupplyOrderDto.initPrice,
-      startCord: sql`${newStartCordQuery}`,
-      endCord: sql`${newEndCordQuery}`,
+      startCord: newStartCord,
+      endCord: newEndCord,
       updatedAt: new Date(),
       startAfter: updateSupplyOrderDto.startAfter,
       tolerableRDV: updateSupplyOrderDto.tolerableRDV,
       status: updateSupplyOrderDto.status,
-    }).where(eq(SupplyOrderTable.id, id))
+    }).where(and(eq(SupplyOrderTable.id, id), eq(SupplyOrderTable.creatorId, creatorId)))
       .returning({
         id: SupplyOrderTable.id,
-        creatorId: SupplyOrderTable.creatorId,
         updatedAt: SupplyOrderTable.updatedAt,
         status: SupplyOrderTable.status,
       });
@@ -251,10 +302,16 @@ export class SupplyOrderService {
   /* ================================= Update operations ================================= */
 
 
+
   /* ================================= Delete operations ================================= */
-  async deleteSupplyOrderById(id: string) {
+  async deleteSupplyOrderById(id: string, creatorId: string) {
     return await this.db.delete(SupplyOrderTable)
-      .where(eq(SupplyOrderTable.id, id));
+      .where(and(eq(SupplyOrderTable.id, id), eq(SupplyOrderTable.creatorId, creatorId)))
+      .returning({
+        id: SupplyOrderTable.id,
+        deletedAt: SupplyOrderTable.updatedAt,
+        status: SupplyOrderTable.status,
+      });
   }
   /* ================================= Delete operations ================================= */
 }

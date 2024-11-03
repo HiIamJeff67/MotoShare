@@ -1,70 +1,95 @@
 import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
-import { CreateRidderDto } from './dto/create-ridder.dto';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
 export declare class RidderService {
     private config;
     private db;
     constructor(config: ConfigService, db: DrizzleDB);
-    createRidder(createRidderDto: CreateRidderDto): Promise<{
-        id: string;
-        userName: string;
-    }[]>;
-    createRidderInfoByUserId(userId: string): Promise<{
-        id: string;
-        userId: string;
-    }[]>;
-    getRidderById(id: string): Promise<{
-        id: string;
-        userName: string;
-        email: string;
-    }[]>;
-    getRidderWithInfoByUserId(userId: string): Promise<{
-        password: string;
-        id: string;
+    private getRidderById;
+    getRidderWithInfoByUserName(userName: string): Promise<{
         userName: string;
         email: string;
         info: {
-            id: string;
-            userId: string;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
-            motocycleLicense: string | null;
-            motocyclePhotoUrl: string | null;
+        } | null;
+    } | undefined>;
+    getRidderWithInfoByUserId(userId: string): Promise<{
+        userName: string;
+        email: string;
+        info: {
+            isOnline: boolean;
+            age: number | null;
+            phoneNumber: string | null;
+            selfIntroduction: string | null;
+            avatorUrl: string | null;
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(userId: string): Promise<{
-        password: string;
-        id: string;
         userName: string;
-        email: string;
         collection: {
             userId: string;
             orderId: string;
+            order: {
+                id: string;
+                description: string | null;
+                initPrice: number;
+                startCord: {
+                    x: number;
+                    y: number;
+                };
+                endCord: {
+                    x: number;
+                    y: number;
+                };
+                createdAt: Date;
+                updatedAt: Date;
+                startAfter: Date;
+                status: "POSTED" | "EXPIRED" | "CANCEL";
+                isUrgent: boolean;
+                creator: {
+                    userName: string;
+                } | null;
+            };
         }[];
     } | undefined>;
-    getAllRidders(): Promise<{
-        id: string;
+    searchRiddersByUserName(userName: string, limit: number, offset: number): Promise<{
         userName: string;
+        email: string;
+        info: {
+            selfIntroduction: string | null;
+            avatorUrl: string | null;
+        } | null;
     }[]>;
-    getPaginationRidders(limit: number, offset: number): Promise<{
-        id: string;
+    searchPaginationRidders(limit: number, offset: number): Promise<{
         userName: string;
+        email: string;
+        info: {
+            selfIntroduction: string | null;
+            avatorUrl: string | null;
+        } | null;
     }[]>;
     updateRidderById(id: string, updateRidderDto: UpdateRidderDto): Promise<{
-        id: string;
+        userName: string;
+        eamil: string;
     }[]>;
-    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto): Promise<{
+    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto): Promise<import("pg").QueryResult<never>>;
+    deleteRiddderById(id: string): Promise<{
         id: string;
+        userName: string;
+        email: string;
     }[]>;
-    deleteRiddderById(id: string): Promise<import("pg").QueryResult<never>>;
     testBcryptHashing(secretText: string, hash: string | undefined): Promise<{
         originalData: string;
         hashData: string;
         isMatch: boolean;
     }>;
+    getAllRidders(): Promise<{
+        id: string;
+        userName: string;
+    }[]>;
 }

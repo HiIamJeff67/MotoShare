@@ -1,12 +1,18 @@
-import { Controller, Get, Body, Patch, Delete, Query, Res, UseGuards, Req, NotFoundException, ConflictException } from '@nestjs/common';
+import { 
+  Controller, UseGuards, 
+  Get, Body, Patch, Delete, Query, Res, 
+  NotFoundException, ConflictException, UnauthorizedException 
+} from '@nestjs/common';
 import { PassengerService } from './passenger.service';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
+import { TokenExpiredError } from '@nestjs/jwt';
+
+import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
+import { PassengerType } from '../../src/interfaces/auth.interface';
+import { Passenger } from '../auth/decorator';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
-import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
-import { User } from '../../src/interfaces/auth.interface';
-import { TokenExpiredError } from '@nestjs/jwt';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 
 @Controller('passenger')
@@ -17,21 +23,14 @@ export class PassengerController {
   @UseGuards(JwtPassengerGuard)
   @Get('getMe')
   getMe(
-    @Req() request: Request, // mainly the method to get the id of current passenger
+    @Passenger() passenger: PassengerType,  // mainly the method to get the id of current passenger
     @Res() response: Response,
   ) {  
     // will throw "401, unauthorized" if the bearer token is invalid or expired
     try {
-      if (!request || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-      const user = request.user as User;
-      response.status(HttpStatusCode.Ok).send(user);
+      response.status(HttpStatusCode.Ok).send(passenger);
     } catch (error) {
-      response.status(error instanceof TokenExpiredError
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized
         : HttpStatusCode.UnknownError ?? 520
       ).send({
@@ -41,27 +40,45 @@ export class PassengerController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Get('getMyInfo')
-  async getPassengerInfo(
-    @Req() request: Request,
+  @Get('getPassengerWithInfoByUserName')
+  async getPassengerWithInfoByUserName(
+    @Passenger() passenger: PassengerType,  // still require to provide the bearer token
+    @Query('userName') userName: string,
     @Res() response: Response,
   ) {
     try {
-      if (!request || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-      const user = request.user as User;
+      const res = await this.passengerService.getPassengerWithInfoByUserName(userName);
 
-      const res = await this.passengerService.getPassengerWithInfoByUserId(user.id);
-
-      if (!res) throw new NotFoundException("Cannot find the passenger with given id");
+      if (!res) throw new NotFoundException("Cannot find the passenger with the given userName");
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof TokenExpiredError 
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
+        ? HttpStatusCode.Unauthorized 
+        : (error instanceof NotFoundException
+          ? HttpStatusCode.NotFound
+          : HttpStatusCode.UnknownError ?? 520
+        )
+      ).send({
+        message: error.message,
+      });
+    }
+  }
+
+  @UseGuards(JwtPassengerGuard)
+  @Get('getMyInfo')
+  async getMyInfo(
+    @Passenger() passenger: PassengerType,
+    @Res() response: Response,
+  ) {
+    try {
+      const res = await this.passengerService.getPassengerWithInfoByUserId(passenger.id);
+
+      if (!res) throw new NotFoundException("Cannot find the passenger with the given id");
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized 
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
@@ -75,26 +92,18 @@ export class PassengerController {
 
   @UseGuards(JwtPassengerGuard)
   @Get('getMyCollection')
-  async getPassengerCollection(
-    @Req() request: Request,
+  async getMyCollection(
+    @Passenger() passenger: PassengerType,
     @Res() response: Response,
   ) {
     try {
-      if (!request.user || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-      const user = request.user as User;
+      const res = await this.passengerService.getPassengerWithCollectionByUserId(passenger.id);
 
-      const res = await this.passengerService.getPassengerWithCollectionByUserId(user.id);
-
-      if (!res) throw new NotFoundException("Cannot find the passenger with given id");
+      if (!res) throw new NotFoundException("Cannot find the passenger with the given id");
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof TokenExpiredError 
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized 
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
@@ -118,7 +127,7 @@ export class PassengerController {
       const res = await this.passengerService.searchPassengersByUserName(userName, +limit, +offset);
 
       if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any passengers")
+        throw new NotFoundException("Cannot find any passengers");
       }
 
       response.status(HttpStatusCode.Ok).send(res);
@@ -132,17 +141,17 @@ export class PassengerController {
     }
   }
 
-  @Get('getPaginationPassengers')
-  async getPaginationPassengers(
+  @Get('searchPaginationPassengers')
+  async searchPaginationPassengers(
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
     try {
-      const res = await this.passengerService.getPaginationPassengers(+limit, +offset);
+      const res = await this.passengerService.searchPaginationPassengers(+limit, +offset);
 
       if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any passengers")
+        throw new NotFoundException("Cannot find any passengers");
       }
 
       response.status(HttpStatusCode.Ok).send(res);
@@ -160,33 +169,25 @@ export class PassengerController {
   /* ================================= Get operations ================================= */
 
 
+
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
   @Patch('updateMe')
   async updateMe(
-    @Req() request: Request,
+    @Passenger() passenger: PassengerType,
     @Body() updatePassengerDto: UpdatePassengerDto,
     @Res() response: Response
   ) {
     try {
-      if (!request || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-
-      const user = request.user as User;
-
-      const res = await this.passengerService.updatePassengerById(user.id, updatePassengerDto);
+      const res = await this.passengerService.updatePassengerById(passenger.id, updatePassengerDto);
 
       if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the passenger with given id to update")
+        throw new NotFoundException("Cannot find the passenger with the given id to update")
       }
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status(error instanceof TokenExpiredError 
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
@@ -204,29 +205,20 @@ export class PassengerController {
   @UseGuards(JwtPassengerGuard)
   @Patch('updateMyInfo')
   async updateMyInfo(
-    @Req() request: Request,
+    @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
     @Res() response: Response,
   ) {
     try {
-      if (!request || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-
-      const user = request.user as User;
-
-      const res = await this.passengerService.updatePassengerInfoByUserId(user.id, updatePassengerInfoDto);
+      const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto);
 
       if (!res) {
-        throw new NotFoundException("Cannot find the passenger with given id to update")
+        throw new NotFoundException("Cannot find the passenger with the given id to update")
       }
 
       response.status(HttpStatusCode.Ok).send({});
     } catch (error) {
-      response.status(error instanceof TokenExpiredError
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
@@ -240,32 +232,24 @@ export class PassengerController {
   /* ================================= Update operations ================================= */
 
 
+
   /* ================================= Delete operations ================================= */
   @UseGuards(JwtPassengerGuard)
   @Delete('deleteMe')
   async deleteMe(
-    @Req() request: Request,
+    @Passenger() passenger: PassengerType,
     @Res() response: Response,
   ) {
     try {
-      if (!request || !request.user) {
-        throw new TokenExpiredError(
-          "access token has expired, please try to login again", 
-          new Date()
-        );
-      }
-
-      const user = request.user as User;
-
-      const res = await this.passengerService.deletePassengerById(user.id);
+      const res = await this.passengerService.deletePassengerById(passenger.id);
 
       if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the passenger with given id to update")
+        throw new NotFoundException("Cannot find the passenger with the given id to update")
       }
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status(error instanceof TokenExpiredError
+      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized
         : (error instanceof NotFoundException
           ? HttpStatusCode.NotFound
@@ -278,6 +262,7 @@ export class PassengerController {
   }
   /* ================================= Delete operations ================================= */
 
+  
 
   /* ================================= Other operations ================================= */
   @Get('test')

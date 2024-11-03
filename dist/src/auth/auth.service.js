@@ -114,6 +114,7 @@ let AuthService = class AuthService {
             userResponse = await this.db.select({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,
+                hash: ridder_schema_1.RidderTable.password,
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, signInDto.userName))
                 .limit(1);
@@ -122,17 +123,19 @@ let AuthService = class AuthService {
             userResponse = await this.db.select({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,
+                hash: ridder_schema_1.RidderTable.password,
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInDto.email))
                 .limit(1);
         }
         if (!userResponse || userResponse.length === 0) {
-            throw new common_1.ForbiddenException('Credential incorrect');
+            throw new common_1.NotFoundException('Credential incorrect');
         }
         const user = userResponse[0];
         const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
+        delete user.hash;
         if (!pwMatches) {
-            throw new common_1.ForbiddenException('Credential incorrect');
+            throw new common_1.NotFoundException('Credential incorrect');
         }
         return this.signToken(user.id, user.email);
     }
