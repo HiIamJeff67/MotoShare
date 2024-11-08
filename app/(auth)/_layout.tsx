@@ -8,7 +8,8 @@ const Layout = () => {
     <Provider store={store}>
       <Stack>
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="plogin" options={{ headerShown: false }} />
+        <Stack.Screen name="rlogin" options={{ headerShown: false }} />
         <Stack.Screen name="choose" options={{ headerShown: false }} />
       </Stack>
     </Provider>

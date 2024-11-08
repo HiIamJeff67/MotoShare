@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../(store)/index';
+import * as SecureStore from 'expo-secure-store';
 
 const OrderAdd = () => {
   const [initialPrice, setinitialPrice] = useState('');
@@ -15,41 +16,51 @@ const OrderAdd = () => {
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const user = useSelector((state: RootState) => state.user);
 
-  const Check = () => {
+  const getToken = async () => {
+    try {
+        const token = await SecureStore.getItemAsync('userToken');
+        if (token) {
+        console.log('Token 獲取成功:', token);
+        return token;
+        } else {
+        console.log('沒有儲存的 Token');
+        return null;
+        }
+    } catch (error) {
+        console.error('獲取 Token 出錯:', error);
+        return null;
+    }
+  };
+
+  const api = axios.create({
+    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded',
+    Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  const updateOrderData = async () => {
     const startCord = startPosition.replace(' ', '').split(',');
     const endCord = endPosition.replace(' ', '').split(',');
 
-    axios
-      .post(
-        `https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/createPurchaseOrderByCreatorId?id=${user.id}`,
-        {
-            description: orderDescription,
-            initPrice: initialPrice,
-            startCordLongitude: startCord[0],
-            startCordLatitude: startCord[1],
-            endCordLongitude: endCord[0],
-            endCordLatitude: endCord[1],
-            isUrgent: isEnabled,
-        },
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        }
-      )
-      .then((response) => {
-        if (response && response.data) {
-          Alert.alert('成功', '成功送出。');
-        }
-        else
-        {
-          Alert.alert('錯誤', '無法送出。');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        Alert.alert('錯誤', '無法送出。');
-      });
-  };
+    try {
+      const data = {
+        description: orderDescription,
+        initPrice: initialPrice,
+        startCordLongitude: startCord[0],
+        startCordLatitude: startCord[1],
+        endCordLongitude: endCord[0],
+        endCordLatitude: endCord[1],
+        isUrgent: isEnabled,
+      };
   
+      const response = await api.post('/purchaseOrder/createPurchaseOrder', data);
+      console.log('Profile Update Response:', response.data);
+    } catch (error) {
+      console.error('API 請求出錯:', error);
+    }
+  };
+
   const dismissKeyboard = () => {
     if (Platform.OS !== 'web') {
       Keyboard.dismiss();
@@ -120,8 +131,8 @@ const OrderAdd = () => {
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}
-                    className="rounded-[12px] bg-white shadow-lg w-full bg-green-500"
-                    onPress={() => Check()}
+                    className="rounded-[12px] shadow-lg w-full bg-green-500"
+                    onPress={() => updateOrderData()}
                 >
                 <Text className="font-semibold text-lg">送出訂單</Text>
                 </Pressable>

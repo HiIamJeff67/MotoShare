@@ -4,18 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const WelcomeScreen = () => {
     return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView className="flex-1 bg-[#3498db]">
                 <StatusBar barStyle="dark-content" />
                 
                 <View className="justify-center items-center">
                     <Image
                         source={require('../../assets/images/vecteezy_electric-scooter-transparent.png')}
-                        style={{ 
-                            width: 250, 
-                            height: 250,
-                            position: 'absolute',
-                            top: 125,
-                        }}
+                        className="w-64 h-64 absolute top-32"
                         resizeMode="contain"
                     />
                 </View>
@@ -63,12 +58,5 @@ const WelcomeScreen = () => {
 
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#38BDF8', // 手動設置 sky-blue-400 的顏色
-    },
-});
 
 export default WelcomeScreen;

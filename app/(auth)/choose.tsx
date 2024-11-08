@@ -36,7 +36,7 @@ const WelcomeScreen = () => {
                             alignItems: 'center',
                         }}
                         className="rounded-full bg-white shadow-lg"
-                        onPress={() => router.push("./login")}
+                        onPress={() => router.push("./plogin")}
                     >
                     <Text className="font-semibold text-black text-lg">我是乘客</Text>
                     </Pressable>
@@ -51,7 +51,7 @@ const WelcomeScreen = () => {
                             alignItems: 'center',
                         }}
                         className="rounded-full bg-white shadow-lg"
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => router.push("./rlogin")}
                     >
                     <Text className="font-semibold text-black text-lg">我是車主</Text>
                     </Pressable>
@@ -65,7 +65,7 @@ const WelcomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#38BDF8', // 手動設置 sky-blue-400 的顏色
+        backgroundColor: '#3498db', // 手動設置 sky-blue-400 的顏色
     },
 });
 

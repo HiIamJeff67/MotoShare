@@ -3,6 +3,8 @@ import { router } from "expo-router";
 import { Text, View, TouchableWithoutFeedback, StyleSheet, Pressable, TextInput, Platform, Keyboard, ScrollView } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../(store)/index';
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -13,6 +15,7 @@ interface OrderType {
 }
 
 const Order = () => {
+    const user = useSelector((state: RootState) => state.user);
     const [orders, setOrders] = useState<OrderType[]>([]); // 設定 orders 的類型
     const [Search, setSearch] = useState('');
 
@@ -24,7 +27,18 @@ const Order = () => {
     };
     
     const SearchOrder = async () => {
-      const response = await axios.get('https://moto-share-jeffs-projects-95ef1060.vercel.app/supplyOrder/getSupplyOrders', {
+      let response, url = "";
+
+      if (user.role == 1)
+      {
+        url = 'https://moto-share-jeffs-projects-95ef1060.vercel.app/supplyOrder/getSupplyOrders';
+      }
+      else if (user.role == 2)
+      {
+        url = 'https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/getAllPurchaseOrders';
+      }
+
+      response = await axios.get(url, {
         params: {
           limit: 10,
           offset: 0,
@@ -33,19 +47,15 @@ const Order = () => {
 
       if (response)
       {
-        //response.data.id
-        //response.data.tolerableRDV
-        //response.data.startAfter
-        //response.data.initPrice
         setSearch(response.data);
         setOrders(response.data);
       }
     }
-
+    
     useEffect(() => {
       SearchOrder();
     }, []);
-
+    
     return (
         <ScrollView>
           <TouchableWithoutFeedback onPress={dismissKeyboard}>
