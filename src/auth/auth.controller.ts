@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, NotFoundException, PayloadTooLargeException, Post, Res } from "@nestjs/common";
+import { BadRequestException, Body, ConflictException, Controller, NotFoundException, PayloadTooLargeException, Post, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Response } from "express";
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
@@ -28,9 +28,9 @@ export class AuthController {
                 response.status(
                     error instanceof PayloadTooLargeException
                     ? HttpStatusCode.PayloadTooLarge
-                    : (error instanceof ConflictException
-                        ? HttpStatusCode.Conflict
-                        : HttpStatusCode.UnknownError ?? 520
+                    : (error instanceof BadRequestException
+                        ? HttpStatusCode.UnknownError ?? 520
+                        : HttpStatusCode.Conflict
                     )
                 ).send({
                     message: error.message,
@@ -61,9 +61,9 @@ export class AuthController {
                 response.status(
                     error instanceof PayloadTooLargeException
                     ? HttpStatusCode.PayloadTooLarge
-                    : (error instanceof ConflictException
-                        ? HttpStatusCode.Conflict
-                        : HttpStatusCode.UnknownError ?? 520
+                    : (error instanceof BadRequestException
+                        ? HttpStatusCode.UnknownError ?? 520
+                        : HttpStatusCode.Conflict
                     )
                 ).send({
                     message: error.message,

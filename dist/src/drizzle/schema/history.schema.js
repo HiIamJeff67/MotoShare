@@ -2,16 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HistoryRelation = exports.HistoryTable = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
-const ridder_schema_1 = require("./ridder.schema");
-const passenger_schema_1 = require("./passenger.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const schema_1 = require("./schema");
 const enums_1 = require("./enums");
 exports.HistoryTable = (0, pg_core_1.pgTable)("history", {
     id: (0, pg_core_1.uuid)("id").primaryKey(),
-    passengerId: (0, pg_core_1.uuid)("passengerId").references(() => passenger_schema_1.PassengerTable.id, {
+    passengerId: (0, pg_core_1.uuid)("passengerId").references(() => schema_1.PassengerTable.id, {
         onDelete: 'set null',
     }),
-    ridderId: (0, pg_core_1.uuid)("ridderId").references(() => ridder_schema_1.RidderTable.id, {
+    ridderId: (0, pg_core_1.uuid)("ridderId").references(() => schema_1.RidderTable.id, {
         onDelete: 'set null',
     }),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
@@ -27,13 +26,13 @@ exports.HistoryTable = (0, pg_core_1.pgTable)("history", {
     status: (0, enums_1.historyStatusEnum)().notNull().default("FINISHED"),
 });
 exports.HistoryRelation = (0, drizzle_orm_1.relations)(exports.HistoryTable, ({ one }) => ({
-    passenger: one(passenger_schema_1.PassengerTable, {
+    passenger: one(schema_1.PassengerTable, {
         fields: [exports.HistoryTable.passengerId],
-        references: [passenger_schema_1.PassengerTable.id],
+        references: [schema_1.PassengerTable.id],
     }),
-    ridder: one(ridder_schema_1.RidderTable, {
+    ridder: one(schema_1.RidderTable, {
         fields: [exports.HistoryTable.passengerId],
-        references: [ridder_schema_1.RidderTable.id],
+        references: [schema_1.RidderTable.id],
     }),
 }));
 //# sourceMappingURL=history.schema.js.map

@@ -1,7 +1,10 @@
 import { geometry, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { RidderTable } from "./ridder.schema";
-import { PassengerTable } from "./passenger.schema";
 import { relations } from "drizzle-orm";
+
+import { 
+    RidderTable,
+    PassengerTable,
+} from "./schema";
 
 import { historyStatusEnum, starRatingEnum } from "./enums";
 // const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"])

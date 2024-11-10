@@ -104,6 +104,22 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAfter: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAfter";
+            tableName: "supplyOrder";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "createdAt";
             tableName: "supplyOrder";
@@ -122,22 +138,6 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
         }, {}, {}>;
         updatedAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "updatedAt";
-            tableName: "supplyOrder";
-            dataType: "date";
-            columnType: "PgTimestamp";
-            data: Date;
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: undefined;
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        startAfter: import("drizzle-orm/pg-core").PgColumn<{
-            name: "startAfter";
             tableName: "supplyOrder";
             dataType: "date";
             columnType: "PgTimestamp";
@@ -190,4 +190,5 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
 export declare const SupplyOrderRelation: import("drizzle-orm").Relations<"supplyOrder", {
     creator: import("drizzle-orm").One<"ridder", false>;
     collectionsToOrders: import("drizzle-orm").Many<"passengerCollectionsToOrders">;
+    invite: import("drizzle-orm").Many<"passengerInvite">;
 }>;

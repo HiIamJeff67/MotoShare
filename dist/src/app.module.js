@@ -18,6 +18,8 @@ const ridder_module_1 = require("./ridder/ridder.module");
 const supplyOrder_module_1 = require("./supplyOrder/supplyOrder.module");
 const order_module_1 = require("./order/order.module");
 const auth_module_1 = require("./auth/auth.module");
+const passengerInvite_module_1 = require("./passengerInvite/passengerInvite.module");
+const ridderInvite_module_1 = require("./ridderInvite/ridderInvite.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,6 +34,8 @@ exports.AppModule = AppModule = __decorate([
             ridder_module_1.RidderModule,
             supplyOrder_module_1.SupplyOrderModule,
             order_module_1.OrderModule,
+            passengerInvite_module_1.PassengerInviteModule,
+            ridderInvite_module_1.RidderInviteModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

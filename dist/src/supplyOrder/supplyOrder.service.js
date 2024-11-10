@@ -45,8 +45,63 @@ let SupplyOrderService = class SupplyOrderService {
         });
     }
     async getSupplyOrdersByCreatorId(creatorId, limit, offset) {
-        return await this.db.select({
+        return await this.db.query.SupplyOrderTable.findMany({
+            where: (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId),
+            columns: {
+                id: true,
+                initPrice: true,
+                startCord: true,
+                endCord: true,
+                createdAt: true,
+                updatedAt: true,
+                startAfter: true,
+                tolerableRDV: true,
+                status: true,
+            },
+            orderBy: (0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt),
+            limit: limit,
+            offset: offset,
+        });
+    }
+    async getSupplyOrderById(id) {
+        return await this.db.query.SupplyOrderTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id),
+            columns: {
+                id: true,
+                initPrice: true,
+                description: true,
+                startCord: true,
+                endCord: true,
+                createdAt: true,
+                updatedAt: true,
+                startAfter: true,
+                tolerableRDV: true,
+                status: true,
+            },
+            with: {
+                creator: {
+                    columns: {
+                        userName: true,
+                    },
+                    with: {
+                        info: {
+                            columns: {
+                                isOnline: true,
+                                avatorUrl: true,
+                                motocycleType: true,
+                                motocyclePhotoUrl: true,
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    async searchPaginationSupplyOrders(creatorName = undefined, limit, offset) {
+        const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
+            creatorName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
@@ -56,13 +111,18 @@ let SupplyOrderService = class SupplyOrderService {
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+        if (creatorName) {
+            query.where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, creatorName));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async getSupplyOrderById(id) {
-        return await this.db.select({
+    async searchCurAdjacentSupplyOrders(creatorName = undefined, limit, offset, getAdjacentSupplyOrdersDto) {
+        const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
@@ -73,82 +133,28 @@ let SupplyOrderService = class SupplyOrderService {
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
-        }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id))
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
-            .limit(1);
-    }
-    async searchSupplyOrderByCreatorName(creatorName, limit, offset) {
-        return await this.db.select({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            creatorName: ridder_schema_1.RidderTable.userName,
-            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
-            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
-            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
-            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
-        }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, creatorName))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
-            .orderBy(supplyOrder_schema_1.SupplyOrderTable.updatedAt)
-            .limit(limit)
-            .offset(offset);
-    }
-    async searchPaginationSupplyOrders(limit, offset) {
-        return await this.db.select({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            creatorName: ridder_schema_1.RidderTable.userName,
-            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
-            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
-            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
-            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
-        }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
-            .limit(limit)
-            .offset(offset);
-    }
-    async searchCurAdjacentSupplyOrders(limit, offset, getAdjacentSupplyOrdersDto) {
-        return await this.db.select({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            creatorName: ridder_schema_1.RidderTable.userName,
-            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
-            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
-            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
-            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.startCord}, 
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
         }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+        if (creatorName) {
+            query.where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, creatorName));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.startCord}, 
-        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.startCord}, 
+            ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchDestAdjacentSupplyOrders(limit, offset, getAdjacentSupplyOrdersDto) {
-        return await this.db.select({
+    async searchDestAdjacentSupplyOrders(creatorName = undefined, limit, offset, getAdjacentSupplyOrdersDto) {
+        const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
@@ -159,23 +165,28 @@ let SupplyOrderService = class SupplyOrderService {
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
         }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+        if (creatorName) {
+            query.where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, creatorName));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchSimilarRouteSupplyOrders(limit, offset, getSimilarRouteSupplyOrdersDto) {
-        return await this.db.select({
+    async searchSimilarRouteSupplyOrders(creatorName = undefined, limit, offset, getSimilarRouteSupplyOrdersDto) {
+        const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
@@ -186,6 +197,7 @@ let SupplyOrderService = class SupplyOrderService {
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
             RDV: (0, drizzle_orm_1.sql) `
           ST_Distance(
@@ -206,28 +218,32 @@ let SupplyOrderService = class SupplyOrderService {
           )
       `,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+        if (creatorName) {
+            query.where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, creatorName));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
-          ST_Distance(
-            ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326)
-          ) 
-        + ST_Distance(
-            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326),
-            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326)
-          ) 
-        + ST_Distance(
-            ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326),
-            ${supplyOrder_schema_1.SupplyOrderTable.endCord}
-          ) 
-        - ST_Distance(
-            ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-            ${supplyOrder_schema_1.SupplyOrderTable.endCord}
-          )
-      `)
+            ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+              ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.startCordLongitude}, ${getSimilarRouteSupplyOrdersDto.startCordLatitude}), 4326),
+              ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+              ST_SetSRID(ST_MakePoint(${getSimilarRouteSupplyOrdersDto.endCordLongitude}, ${getSimilarRouteSupplyOrdersDto.endCordLatitude}), 4326),
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
+            ) 
+          - ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
+            )
+         `)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
     async updateSupplyOrderById(id, creatorId, updateSupplyOrderDto) {
         const newStartCord = (updateSupplyOrderDto.startCordLongitude !== undefined
@@ -259,7 +275,6 @@ let SupplyOrderService = class SupplyOrderService {
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)))
             .returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
-            deletedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });
     }

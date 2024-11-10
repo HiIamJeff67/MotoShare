@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -38,20 +38,20 @@ export class AuthService {
         });
 
         if (!response) {
-            throw new ConflictException(`Duplicate userName or email detected`)
+            throw new BadRequestException(`Unknown error occurred`)
         }
 
         const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
         
         if (!responseOfCreatingInfo) {
-            throw new Error('Cannot create the info for current passenger')
+            throw new BadRequestException('Cannot create the info for current passenger')
         }
 
         return this.signToken(response[0].id, response[0].email);
     }
     async createPassengerInfoByUserId(userId: string) {
         return await this.db.insert(PassengerInfoTable).values({
-        userId: userId
+            userId: userId
         })
         // we don't return anything here, since we don't have to
         //   .returning({
@@ -79,20 +79,20 @@ export class AuthService {
         });
 
         if (!response) {
-            throw new ConflictException(`Duplicate userName or email detected`)
+            throw new BadRequestException(`Unknown error occurred`)
         }
 
         const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
         
         if (!responseOfCreatingInfo) {
-            throw new Error('Cannot create the info for current passenger')
+            throw new BadRequestException('Cannot create the info for current passenger')
         }
 
         return this.signToken(response[0].id, response[0].email);
     }
     async createRidderInfoByUserId(userId: string) {
         return await this.db.insert(RidderInfoTable).values({
-        userId: userId
+            userId: userId
         })
         // we don't return anything here, since we don't have to
         //   .returning({

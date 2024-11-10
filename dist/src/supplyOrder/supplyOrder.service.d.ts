@@ -12,6 +12,7 @@ export declare class SupplyOrderService {
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -21,16 +22,42 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
-        createdAt: Date;
-        updatedAt: Date;
         startAfter: Date;
+        updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
     getSupplyOrderById(id: string): Promise<{
         id: string;
+        description: string | null;
+        createdAt: Date;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        startAfter: Date;
+        updatedAt: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
+        creator: {
+            userName: string;
+            info: {
+                isOnline: boolean;
+                avatorUrl: string | null;
+                motocycleType: string | null;
+                motocyclePhotoUrl: string | null;
+            } | null;
+        } | null;
+    } | undefined>;
+    searchPaginationSupplyOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -46,10 +73,10 @@ export declare class SupplyOrderService {
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    searchSupplyOrderByCreatorName(creatorName: string, limit: number, offset: number): Promise<{
+    searchCurAdjacentSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -63,51 +90,14 @@ export declare class SupplyOrderService {
         updatedAt: Date;
         startAfter: Date;
         tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
-    }[]>;
-    searchPaginationSupplyOrders(limit: number, offset: number): Promise<{
-        id: string;
-        creatorName: string | null;
-        avatorUrl: string | null;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
-    }[]>;
-    searchCurAdjacentSupplyOrders(limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
-        id: string;
-        creatorName: string | null;
-        avatorUrl: string | null;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        tolerableRDV: number;
+        motocycleType: never;
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
     }[]>;
-    searchDestAdjacentSupplyOrders(limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
+    searchDestAdjacentSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -121,13 +111,14 @@ export declare class SupplyOrderService {
         updatedAt: Date;
         startAfter: Date;
         tolerableRDV: number;
+        motocycleType: never;
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
     }[]>;
-    searchSimilarRouteSupplyOrders(limit: number, offset: number, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto): Promise<{
+    searchSimilarRouteSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -141,6 +132,7 @@ export declare class SupplyOrderService {
         updatedAt: Date;
         startAfter: Date;
         tolerableRDV: number;
+        motocycleType: never;
         status: "POSTED" | "EXPIRED" | "CANCEL";
         RDV: unknown;
     }[]>;
@@ -152,6 +144,5 @@ export declare class SupplyOrderService {
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL";
-        deletedAt: Date;
     }[]>;
 }

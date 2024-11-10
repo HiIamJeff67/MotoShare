@@ -35,6 +35,7 @@ export class PassengerService {
   // once a ridder want to find a passenger, he/she first do a search
   // then specify a passenger with his/her userName,
   // finally use this userName to get the info of that passenger
+  // for specifying the details of the passenger(who is not the current user)
   async getPassengerWithInfoByUserName(userName: string) {
     return await this.db.query.PassengerTable.findFirst({
       where: eq(PassengerTable.userName, userName),
@@ -50,6 +51,7 @@ export class PassengerService {
             phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
+            createdAt: true,
           }
         },
       }
@@ -71,6 +73,7 @@ export class PassengerService {
             phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
+            createdAt: true,
           }
         },
       }
@@ -118,7 +121,7 @@ export class PassengerService {
   async searchPassengersByUserName(
     userName: string, 
     limit: number, 
-    offset: number,
+    offset: number, 
   ) {
     return await this.db.query.PassengerTable.findMany({
       where: like(PassengerTable.userName, userName + "%"), // using entire prefix matching to search relative users

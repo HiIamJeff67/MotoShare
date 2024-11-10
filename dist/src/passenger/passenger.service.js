@@ -51,6 +51,7 @@ let PassengerService = class PassengerService {
                         phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        createdAt: true,
                     }
                 },
             }
@@ -71,6 +72,7 @@ let PassengerService = class PassengerService {
                         phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        createdAt: true,
                     }
                 },
             }

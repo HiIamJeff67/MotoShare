@@ -66,10 +66,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async getPurchaseOrderById(passenger, id, response) {
         try {
             const res = await this.purchaseOrderService.getPurchaseOrderById(id);
-            if (!res || res.length === 0) {
+            if (!res) {
                 throw new common_1.NotFoundException(`Cannot find the purchase order with the given orderId: ${id}`);
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
@@ -81,25 +81,9 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchPurchaseOrdersByCreatorName(userName, limit = "10", offset = "0", response) {
+    async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
-            const res = await this.purchaseOrderService.searchPurchaseOrderByCreatorName(userName, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`Cannot find the passenger with the given userName: ${userName}`);
-            }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
-            });
-        }
-    }
-    async searchPaginationPurchaseOrders(limit = "10", offset = "0", response) {
-        try {
-            const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(+limit, +offset);
+            const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any purchase orders");
             }
@@ -113,9 +97,9 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchCurAdjacentPurchaseOrders(limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
+    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
-            const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any purchase orders");
             }
@@ -129,9 +113,9 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchDestAdjacentPurchaseOrders(limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
+    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
-            const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any purchase orders");
             }
@@ -145,9 +129,9 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchSimilarRoutePurchaseOrders(limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto, response) {
+    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto, response) {
         try {
-            const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, +limit, +offset, getSimilarRoutePurchaseOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any purchase orders");
             }
@@ -191,7 +175,10 @@ let PurchaseOrderController = class PurchaseOrderController {
           or the current passenger cannot delete the order which is not created by himself/herself
         `);
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
@@ -241,52 +228,46 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
 __decorate([
-    (0, common_1.Get)('searchPurchaseOrdersByCreatorName'),
-    __param(0, (0, common_1.Query)('userName')),
+    (0, common_1.Get)('searchPaginationPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Object]),
-    __metadata("design:returntype", Promise)
-], PurchaseOrderController.prototype, "searchPurchaseOrdersByCreatorName", null);
-__decorate([
-    (0, common_1.Get)('searchPaginationPurchaseOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchPaginationPurchaseOrders", null);
 __decorate([
     (0, common_1.Get)('searchCurAdjacentPurchaseOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchCurAdjacentPurchaseOrders", null);
 __decorate([
     (0, common_1.Get)('searchDestAdjacentPurchaseOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchDestAdjacentPurchaseOrders", null);
 __decorate([
     (0, common_1.Get)('searchSimilarRoutePurchaseOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchSimilarRoutePurchaseOrders", null);
 __decorate([

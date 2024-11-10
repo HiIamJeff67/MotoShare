@@ -1,8 +1,10 @@
 import { geometry, integer, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-import { RidderTable } from "./ridder.schema";
-import { PassengerTable } from "./passenger.schema";
+import { 
+    RidderTable,
+    PassengerTable,
+} from "./schema";
 
 import { orderStatusEnum } from "./enums";
 // const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED"]);

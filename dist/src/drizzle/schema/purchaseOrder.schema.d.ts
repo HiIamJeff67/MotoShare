@@ -104,6 +104,22 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAfter: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAfter";
+            tableName: "purchaseOrder";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "createdAt";
             tableName: "purchaseOrder";
@@ -122,22 +138,6 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
         }, {}, {}>;
         updatedAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "updatedAt";
-            tableName: "purchaseOrder";
-            dataType: "date";
-            columnType: "PgTimestamp";
-            data: Date;
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: undefined;
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        startAfter: import("drizzle-orm/pg-core").PgColumn<{
-            name: "startAfter";
             tableName: "purchaseOrder";
             dataType: "date";
             columnType: "PgTimestamp";
@@ -190,4 +190,5 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
 export declare const PurchaseOrderRelation: import("drizzle-orm").Relations<"purchaseOrder", {
     creator: import("drizzle-orm").One<"passenger", false>;
     collectionsToOrders: import("drizzle-orm").Many<"ridderCollectionsToOrders">;
+    invite: import("drizzle-orm").Many<"ridderInvite">;
 }>;

@@ -3,13 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderCollectionsToOrdersRelation = exports.RidderCollectionsToOrders = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const drizzle_orm_1 = require("drizzle-orm");
-const ridder_schema_1 = require("./ridder.schema");
-const purchaseOrder_schema_1 = require("./purchaseOrder.schema");
+const schema_1 = require("./schema");
 exports.RidderCollectionsToOrders = (0, pg_core_1.pgTable)("ridderCollectionsToOrders", {
-    userId: (0, pg_core_1.uuid)("userId").references(() => ridder_schema_1.RidderTable.id, {
+    userId: (0, pg_core_1.uuid)("userId").references(() => schema_1.RidderTable.id, {
         onDelete: 'cascade',
     }).notNull(),
-    orderId: (0, pg_core_1.uuid)("orderId").references(() => purchaseOrder_schema_1.PurchaseOrderTable.id, {
+    orderId: (0, pg_core_1.uuid)("orderId").references(() => schema_1.PurchaseOrderTable.id, {
         onDelete: 'cascade',
     }).notNull(),
 }, (table) => {
@@ -18,13 +17,13 @@ exports.RidderCollectionsToOrders = (0, pg_core_1.pgTable)("ridderCollectionsToO
     };
 });
 exports.RidderCollectionsToOrdersRelation = (0, drizzle_orm_1.relations)(exports.RidderCollectionsToOrders, ({ one }) => ({
-    collection: one(ridder_schema_1.RidderTable, {
+    collection: one(schema_1.RidderTable, {
         fields: [exports.RidderCollectionsToOrders.userId],
-        references: [ridder_schema_1.RidderTable.id],
+        references: [schema_1.RidderTable.id],
     }),
-    order: one(purchaseOrder_schema_1.PurchaseOrderTable, {
+    order: one(schema_1.PurchaseOrderTable, {
         fields: [exports.RidderCollectionsToOrders.orderId],
-        references: [purchaseOrder_schema_1.PurchaseOrderTable.id],
+        references: [schema_1.PurchaseOrderTable.id],
     }),
 }));
 //# sourceMappingURL=ridderCollection.schema.js.map

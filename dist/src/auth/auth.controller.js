@@ -34,9 +34,9 @@ let AuthController = class AuthController {
         catch (error) {
             response.status(error instanceof common_1.PayloadTooLargeException
                 ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.ConflictException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                : (error instanceof common_1.BadRequestException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520
+                    : HttpStatusCode_enum_1.HttpStatusCode.Conflict)).send({
                 message: error.message,
             });
         }
@@ -54,9 +54,9 @@ let AuthController = class AuthController {
         catch (error) {
             response.status(error instanceof common_1.PayloadTooLargeException
                 ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.ConflictException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
+                : (error instanceof common_1.BadRequestException
+                    ? HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520
+                    : HttpStatusCode_enum_1.HttpStatusCode.Conflict)).send({
                 message: error.message,
             });
         }

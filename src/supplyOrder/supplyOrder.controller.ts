@@ -87,11 +87,11 @@ export class SupplyOrderController {
     try {
       const res = await this.supplyOrderService.getSupplyOrderById(id);
 
-      if (!res || res.length === 0) {
+      if (!res) {
         throw new NotFoundException(`Cannot find the supply order with the given orderId: ${id}`);
       }
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized
@@ -106,39 +106,15 @@ export class SupplyOrderController {
   }
 
   /* ================= Search operations ================= */
-  @Get('searchSupplyOrdersByCreatorName')
-  async searchSupplyOrdersByCreatorName(
-    @Query('userName') userName: string,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      const res = await this.supplyOrderService.searchSupplyOrderByCreatorName(userName, +limit, +offset);
-
-      if (!res || res.length === 0) {
-        throw new NotFoundException(`Cannot find the ridder with the given userName: ${userName}`);
-      }
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
-      });
-    }
-  }
-
   @Get('searchPaginationSupplyOrders')
   async searchPaginationSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
     try {
-      const res = await this.supplyOrderService.searchPaginationSupplyOrders(+limit, +offset);
+      const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any purchase orders");
@@ -157,13 +133,19 @@ export class SupplyOrderController {
 
   @Get('searchCurAdjacentSupplyOrders')
   async searchCurAdjacentSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+      const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(
+        creatorName, 
+        +limit, 
+        +offset, 
+        getAdjacentSupplyOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any supply orders");
@@ -182,13 +164,19 @@ export class SupplyOrderController {
 
   @Get('searchDestAdjacentSupplyOrders')
   async searchDestAdjacentSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+      const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(
+        creatorName,
+        +limit, 
+        +offset, 
+        getAdjacentSupplyOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any supply orders");
@@ -207,13 +195,19 @@ export class SupplyOrderController {
 
   @Get('searchSimilarRouteSupplyOrders')
   async searchSimilarRouteSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
+      const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(
+        creatorName,
+        +limit, 
+        +offset, 
+        getSimilarRouteSupplyOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any supply orders");
@@ -288,7 +282,10 @@ export class SupplyOrderController {
         `);
       }
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        deletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized

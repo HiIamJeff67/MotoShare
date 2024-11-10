@@ -16,6 +16,9 @@ export declare class RidderService {
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            createdAt: Date;
+            motocycleType: string | null;
+            motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
     getRidderWithInfoByUserId(userId: string): Promise<{
@@ -27,6 +30,10 @@ export declare class RidderService {
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            createdAt: Date;
+            motocycleLicense: string | null;
+            motocycleType: string | null;
+            motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
     getRidderWithCollectionByUserId(userId: string): Promise<{
@@ -37,6 +44,7 @@ export declare class RidderService {
             order: {
                 id: string;
                 description: string | null;
+                createdAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -46,9 +54,8 @@ export declare class RidderService {
                     x: number;
                     y: number;
                 };
-                createdAt: Date;
-                updatedAt: Date;
                 startAfter: Date;
+                updatedAt: Date;
                 status: "POSTED" | "EXPIRED" | "CANCEL";
                 isUrgent: boolean;
                 creator: {
@@ -61,16 +68,16 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
-            selfIntroduction: string | null;
             avatorUrl: string | null;
+            motocycleType: string | null;
         } | null;
     }[]>;
     searchPaginationRidders(limit: number, offset: number): Promise<{
         userName: string;
         email: string;
         info: {
-            selfIntroduction: string | null;
             avatorUrl: string | null;
+            motocycleType: string | null;
         } | null;
     }[]>;
     updateRidderById(id: string, updateRidderDto: UpdateRidderDto): Promise<{

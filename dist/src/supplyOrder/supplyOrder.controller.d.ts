@@ -10,11 +10,10 @@ export declare class SupplyOrderController {
     createSupplyOrder(ridder: RidderType, createSupplyOrderDto: CreateSupplyOrderDto, response: Response): Promise<void>;
     getMySupplyOrders(ridder: RidderType, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     getSupplyOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
-    searchSupplyOrdersByCreatorName(userName: string, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    searchPaginationSupplyOrders(limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    searchCurAdjacentSupplyOrders(limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
-    searchDestAdjacentSupplyOrders(limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
-    searchSimilarRouteSupplyOrders(limit: string | undefined, offset: string | undefined, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto, response: Response): Promise<void>;
+    searchPaginationSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchCurAdjacentSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
+    searchDestAdjacentSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
+    searchSimilarRouteSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto, response: Response): Promise<void>;
     updateMySupplyOrderById(ridder: RidderType, id: string, updateSupplyOrderDto: UpdateSupplyOrderDto, response: Response): Promise<void>;
     deleteMySupplyOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
 }

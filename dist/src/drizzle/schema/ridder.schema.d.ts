@@ -75,4 +75,5 @@ export declare const RidderRelation: import("drizzle-orm").Relations<"ridder", {
     supplyOrder: import("drizzle-orm").Many<"supplyOrder">;
     order: import("drizzle-orm").Many<"order">;
     history: import("drizzle-orm").Many<"history">;
+    invite: import("drizzle-orm").Many<"ridderInvite">;
 }>;

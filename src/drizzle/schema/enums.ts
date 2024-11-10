@@ -9,8 +9,11 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 // for HistoryTable
-export const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"])
-export const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"])
+export const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"]);
+export const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"]);
+
+// for PassengerInviteTable and RidderInviteTable
+export const inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]);
 
 // for OrderTable
 export const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED"]);

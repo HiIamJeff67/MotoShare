@@ -10,6 +10,7 @@ exports.OrderModule = void 0;
 const common_1 = require("@nestjs/common");
 const order_service_1 = require("./order.service");
 const order_controller_1 = require("./order.controller");
+const drizzle_module_1 = require("../drizzle/drizzle.module");
 let OrderModule = class OrderModule {
 };
 exports.OrderModule = OrderModule;
@@ -17,6 +18,7 @@ exports.OrderModule = OrderModule = __decorate([
     (0, common_1.Module)({
         controllers: [order_controller_1.OrderController],
         providers: [order_service_1.OrderService],
+        imports: [drizzle_module_1.DrizzleModule],
     })
 ], OrderModule);
 //# sourceMappingURL=order.module.js.map

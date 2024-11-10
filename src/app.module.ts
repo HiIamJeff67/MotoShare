@@ -9,6 +9,8 @@ import { RidderModule } from './ridder/ridder.module';
 import { SupplyOrderModule } from './supplyOrder/supplyOrder.module';
 import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
+import { PassengerInviteModule } from './passengerInvite/passengerInvite.module';
+import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { AuthModule } from './auth/auth.module';
     RidderModule,
     SupplyOrderModule,
     OrderModule,
+    PassengerInviteModule,
+    RidderInviteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

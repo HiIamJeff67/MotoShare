@@ -1,5 +1,5 @@
 {
-  "id": "992d3c41-1c22-4701-abf6-3d7510fdf328",
+  "id": "c8d18a7d-e61d-4768-92b9-859c0c19cb6f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -418,6 +418,115 @@
         }
       }
     },
+    "public.passengerInvite": {
+      "name": "passengerInvite",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "briefDesciption": {
+          "name": "briefDesciption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suggestPrice": {
+          "name": "suggestPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestStartAfter": {
+          "name": "suggestStartAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "status": {
+          "name": "status",
+          "type": "inviteStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CHECKING'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "passengerInvite_userId_passenger_id_fk": {
+          "name": "passengerInvite_userId_passenger_id_fk",
+          "tableFrom": "passengerInvite",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "passengerInvite_orderId_supplyOrder_id_fk": {
+          "name": "passengerInvite_orderId_supplyOrder_id_fk",
+          "tableFrom": "passengerInvite",
+          "tableTo": "supplyOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.purchaseOrder": {
       "name": "purchaseOrder",
       "schema": "",
@@ -459,6 +568,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -468,13 +584,6 @@
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "startAfter": {
-          "name": "startAfter",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -724,6 +833,115 @@
         }
       }
     },
+    "public.ridderInvite": {
+      "name": "ridderInvite",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "briefDesciption": {
+          "name": "briefDesciption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suggestPrice": {
+          "name": "suggestPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestStartAfter": {
+          "name": "suggestStartAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "status": {
+          "name": "status",
+          "type": "inviteStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CHECKING'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ridderInvite_userId_ridder_id_fk": {
+          "name": "ridderInvite_userId_ridder_id_fk",
+          "tableFrom": "ridderInvite",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "ridderInvite_orderId_purchaseOrder_id_fk": {
+          "name": "ridderInvite_orderId_purchaseOrder_id_fk",
+          "tableFrom": "ridderInvite",
+          "tableTo": "purchaseOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.supplyOrder": {
       "name": "supplyOrder",
       "schema": "",
@@ -765,6 +983,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -774,13 +999,6 @@
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "startAfter": {
-          "name": "startAfter",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,

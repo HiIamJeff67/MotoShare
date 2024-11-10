@@ -4,7 +4,7 @@ import { TokenExpiredError } from '@nestjs/jwt';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 
-import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
+import { JwtPassengerGuard } from '../auth/guard';
 import { PassengerType } from '../interfaces/auth.interface';
 import { Passenger } from '../auth/decorator';
 
@@ -14,9 +14,7 @@ import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from '
 
 @Controller('purchaseOrder')
 export class PurchaseOrderController {
-  constructor(
-    private readonly purchaseOrderService: PurchaseOrderService,
-  ) {}
+  constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
   /* ================================= Create operations ================================= */
   @UseGuards(JwtPassengerGuard)
@@ -93,11 +91,11 @@ export class PurchaseOrderController {
     try {
       const res = await this.purchaseOrderService.getPurchaseOrderById(id);
 
-      if (!res || res.length === 0) {
+      if (!res) {
         throw new NotFoundException(`Cannot find the purchase order with the given orderId: ${id}`);
       }
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized 
@@ -112,39 +110,15 @@ export class PurchaseOrderController {
   }
 
   /* ================= Search operations ================= */
-  @Get('searchPurchaseOrdersByCreatorName')
-  async searchPurchaseOrdersByCreatorName(
-    @Query('userName') userName: string,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      const res = await this.purchaseOrderService.searchPurchaseOrderByCreatorName(userName, +limit, +offset);
-
-      if (!res || res.length === 0) {
-        throw new NotFoundException(`Cannot find the passenger with the given userName: ${userName}`);
-      }
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
-      });
-    }
-  }
-
   @Get('searchPaginationPurchaseOrders')
   async searchPaginationPurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
     try {
-      const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(+limit, +offset);
+      const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any purchase orders");
@@ -163,13 +137,19 @@ export class PurchaseOrderController {
 
   @Get('searchCurAdjacentPurchaseOrders')
   async searchCurAdjacentPurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+      const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(
+        creatorName, 
+        +limit, 
+        +offset, 
+        getAdjacentPurchaseOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any purchase orders");
@@ -188,13 +168,19 @@ export class PurchaseOrderController {
 
   @Get('searchDestAdjacentPurchaseOrders')
   async searchDestAdjacentPurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(+limit, +offset, getAdjacentPurchaseOrdersDto);
+      const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(
+        creatorName, 
+        +limit, 
+        +offset, 
+        getAdjacentPurchaseOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any purchase orders");
@@ -213,13 +199,19 @@ export class PurchaseOrderController {
 
   @Get('searchSimilarRoutePurchaseOrders')
   async searchSimilarRoutePurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Body() getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(+limit, +offset, getSimilarRoutePurchaseOrdersDto);
+      const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(
+        creatorName, 
+        +limit, 
+        +offset, 
+        getSimilarRoutePurchaseOrdersDto
+      );
 
       if (!res || res.length === 0) {
         throw new NotFoundException("Cannot find any purchase orders");
@@ -292,7 +284,10 @@ export class PurchaseOrderController {
         `);
       }
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        deletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
         ? HttpStatusCode.Unauthorized

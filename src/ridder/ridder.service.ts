@@ -32,6 +32,7 @@ export class RidderService {
     return response && response.length > 0 ? response[0] : undefined;
   }
 
+  // for specifying the details of the ridder(who is not the current user)
   async getRidderWithInfoByUserName(userName: string) {
     return await this.db.query.RidderTable.findFirst({
       where: eq(RidderTable.userName, userName),
@@ -47,6 +48,9 @@ export class RidderService {
             phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
+            motocycleType: true,
+            motocyclePhotoUrl: true,
+            createdAt: true,
           }
         },
       }
@@ -68,6 +72,10 @@ export class RidderService {
             phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
+            motocycleLicense: true,
+            motocycleType: true,
+            motocyclePhotoUrl: true,
+            createdAt: true,
           }
         },
       }
@@ -126,8 +134,8 @@ export class RidderService {
       with: {
         info: {
           columns: {
-            selfIntroduction: true,
             avatorUrl: true,
+            motocycleType: true,
           }
         }
       },
@@ -145,8 +153,8 @@ export class RidderService {
       with: {
         info: {
           columns: {
-            selfIntroduction: true,
             avatorUrl: true,
+            motocycleType: true,
           }
         }
       },
@@ -223,6 +231,7 @@ export class RidderService {
       selfIntroduction: updateRidderInfoDto.selfIntroduction,
       motocycleLicense: updateRidderInfoDto.motocycleLicense,
       motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
+      motocycleType: updateRidderInfoDto.motocycleType,
       avatorUrl: updateRidderInfoDto.avatorUrl,
     }).where(eq(RidderInfoTable.userId, userId));
   }

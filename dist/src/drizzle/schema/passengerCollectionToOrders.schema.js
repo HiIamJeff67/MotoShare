@@ -3,13 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerCollectionsToOrdersRelation = exports.PassengerCollectionsToOrders = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const drizzle_orm_1 = require("drizzle-orm");
-const passenger_schema_1 = require("./passenger.schema");
-const supplyOrder_schema_1 = require("./supplyOrder.schema");
+const schema_1 = require("./schema");
 exports.PassengerCollectionsToOrders = (0, pg_core_1.pgTable)("passengerCollectionsToOrders", {
-    userId: (0, pg_core_1.uuid)("userId").references(() => passenger_schema_1.PassengerTable.id, {
+    userId: (0, pg_core_1.uuid)("userId").references(() => schema_1.PassengerTable.id, {
         onDelete: 'cascade',
     }).notNull(),
-    orderId: (0, pg_core_1.uuid)("orderId").references(() => supplyOrder_schema_1.SupplyOrderTable.id, {
+    orderId: (0, pg_core_1.uuid)("orderId").references(() => schema_1.SupplyOrderTable.id, {
         onDelete: 'cascade',
     }).notNull(),
 }, (table) => {
@@ -18,13 +17,13 @@ exports.PassengerCollectionsToOrders = (0, pg_core_1.pgTable)("passengerCollecti
     };
 });
 exports.PassengerCollectionsToOrdersRelation = (0, drizzle_orm_1.relations)(exports.PassengerCollectionsToOrders, ({ one }) => ({
-    collection: one(passenger_schema_1.PassengerTable, {
+    collection: one(schema_1.PassengerTable, {
         fields: [exports.PassengerCollectionsToOrders.userId],
-        references: [passenger_schema_1.PassengerTable.id],
+        references: [schema_1.PassengerTable.id],
     }),
-    order: one(supplyOrder_schema_1.SupplyOrderTable, {
+    order: one(schema_1.SupplyOrderTable, {
         fields: [exports.PassengerCollectionsToOrders.orderId],
-        references: [supplyOrder_schema_1.SupplyOrderTable.id],
+        references: [schema_1.SupplyOrderTable.id],
     }),
 }));
 //# sourceMappingURL=passengerCollectionToOrders.schema.js.map

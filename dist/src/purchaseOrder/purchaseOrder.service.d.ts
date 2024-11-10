@@ -12,6 +12,7 @@ export declare class PurchaseOrderService {
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -21,16 +22,15 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
-        createdAt: Date;
-        updatedAt: Date;
         startAfter: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
+        isUrgent: boolean;
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
-        creatorName: string | null;
-        avatorUrl: string | null;
+        description: string | null;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -40,15 +40,21 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
-        createdAt: Date;
-        updatedAt: Date;
         startAfter: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
-    }[]>;
-    searchPurchaseOrderByCreatorName(creatorName: string, limit: number, offset: number): Promise<{
+        isUrgent: boolean;
+        creator: {
+            userName: string;
+            info: {
+                isOnline: boolean;
+                avatorUrl: string | null;
+            } | null;
+        } | null;
+    } | undefined>;
+    searchPaginationPurchaseOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        creatorName: never;
+        creatorName: string | null;
         avatorUrl: never;
         initPrice: number;
         startCord: {
@@ -65,29 +71,10 @@ export declare class PurchaseOrderService {
         isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
-    searchPaginationPurchaseOrders(limit: number, offset: number): Promise<{
+    searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
-    }[]>;
-    searchCurAdjacentPurchaseOrders(limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
-        id: string;
-        creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -104,10 +91,10 @@ export declare class PurchaseOrderService {
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
     }[]>;
-    searchDestAdjacentPurchaseOrders(limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
+    searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -124,10 +111,10 @@ export declare class PurchaseOrderService {
         status: "POSTED" | "EXPIRED" | "CANCEL";
         distance: unknown;
     }[]>;
-    searchSimilarRoutePurchaseOrders(limit: number, offset: number, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
+    searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: string | null;
+        avatorUrl: never;
         initPrice: number;
         startCord: {
             x: number;
@@ -152,12 +139,12 @@ export declare class PurchaseOrderService {
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL";
-        deletedAt: Date;
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        creatorId: string | null;
         description: string | null;
+        createdAt: Date;
+        creatorId: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -167,10 +154,9 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
-        createdAt: Date;
-        updatedAt: Date;
         startAfter: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
+        isUrgent: boolean;
     }[]>;
 }

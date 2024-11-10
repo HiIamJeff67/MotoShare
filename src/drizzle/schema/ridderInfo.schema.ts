@@ -1,6 +1,7 @@
-import { integer, boolean, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { RidderTable } from "./ridder.schema";
+import { integer, boolean, pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+
+import { RidderTable } from "./schema";
 
 export const RidderInfoTable = pgTable("ridderInfo", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -13,7 +14,9 @@ export const RidderInfoTable = pgTable("ridderInfo", {
     selfIntroduction: text("selfIntroduction"),
     avatorUrl: text("avatorUrl"),
     motocycleLicense: text("motocycleLicense").unique(),
+    motocycleType: text("motocycleType"),
     motocyclePhotoUrl: text("motocyclePhotoUrl"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
 export const RidderInfoRelation = relations(RidderInfoTable, ({ one }) => ({

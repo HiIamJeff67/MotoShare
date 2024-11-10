@@ -1,0 +1,2 @@
+ALTER TABLE "passengerInvite" ADD COLUMN "notificationType" text DEFAULT 'INVITE' NOT NULL;--> statement-breakpoint
+ALTER TABLE "ridderInvite" ADD COLUMN "notificationType" text DEFAULT 'INVITE' NOT NULL;

@@ -40,11 +40,11 @@ let AuthService = class AuthService {
             email: passenger_schema_1.PassengerTable.email,
         });
         if (!response) {
-            throw new common_1.ConflictException(`Duplicate userName or email detected`);
+            throw new common_1.BadRequestException(`Unknown error occurred`);
         }
         const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
         if (!responseOfCreatingInfo) {
-            throw new Error('Cannot create the info for current passenger');
+            throw new common_1.BadRequestException('Cannot create the info for current passenger');
         }
         return this.signToken(response[0].id, response[0].email);
     }
@@ -64,11 +64,11 @@ let AuthService = class AuthService {
             email: ridder_schema_1.RidderTable.email,
         });
         if (!response) {
-            throw new common_1.ConflictException(`Duplicate userName or email detected`);
+            throw new common_1.BadRequestException(`Unknown error occurred`);
         }
         const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
         if (!responseOfCreatingInfo) {
-            throw new Error('Cannot create the info for current passenger');
+            throw new common_1.BadRequestException('Cannot create the info for current passenger');
         }
         return this.signToken(response[0].id, response[0].email);
     }

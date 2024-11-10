@@ -54,6 +54,20 @@ CREATE TABLE IF NOT EXISTS "passengerInfo" (
 	CONSTRAINT "passengerInfo_phoneNumber_unique" UNIQUE("phoneNumber")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "passengerInvite" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" uuid,
+	"orderId" uuid,
+	"briefDesciption" text,
+	"suggestPrice" integer NOT NULL,
+	"startCord" geometry(point) NOT NULL,
+	"endCord" geometry(point) NOT NULL,
+	"suggestStartAfter" timestamp DEFAULT now() NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"status" "inviteStatus" DEFAULT 'CHECKING' NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "purchaseOrder" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"creatorId" uuid,
@@ -61,9 +75,9 @@ CREATE TABLE IF NOT EXISTS "purchaseOrder" (
 	"initPrice" integer NOT NULL,
 	"startCord" geometry(point) NOT NULL,
 	"endCord" geometry(point) NOT NULL,
+	"startAfter" timestamp DEFAULT now() NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
-	"startAfter" timestamp DEFAULT now() NOT NULL,
 	"isUrgent" boolean DEFAULT false NOT NULL,
 	"status" "postStatus" DEFAULT 'POSTED' NOT NULL
 );
@@ -98,6 +112,20 @@ CREATE TABLE IF NOT EXISTS "ridderInfo" (
 	CONSTRAINT "ridderInfo_motocycleLicense_unique" UNIQUE("motocycleLicense")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "ridderInvite" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" uuid,
+	"orderId" uuid,
+	"briefDesciption" text,
+	"suggestPrice" integer NOT NULL,
+	"startCord" geometry(point) NOT NULL,
+	"endCord" geometry(point) NOT NULL,
+	"suggestStartAfter" timestamp DEFAULT now() NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"status" "inviteStatus" DEFAULT 'CHECKING' NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "supplyOrder" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"creatorId" uuid,
@@ -105,9 +133,9 @@ CREATE TABLE IF NOT EXISTS "supplyOrder" (
 	"initPrice" integer NOT NULL,
 	"startCord" geometry(point) NOT NULL,
 	"endCord" geometry(point) NOT NULL,
+	"startAfter" timestamp DEFAULT now() NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
-	"startAfter" timestamp DEFAULT now() NOT NULL,
 	"tolerableRDV" double precision DEFAULT 5 NOT NULL,
 	"status" "postStatus" DEFAULT 'POSTED' NOT NULL
 );
@@ -155,6 +183,18 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "passengerInvite" ADD CONSTRAINT "passengerInvite_userId_passenger_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."passenger"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "passengerInvite" ADD CONSTRAINT "passengerInvite_orderId_supplyOrder_id_fk" FOREIGN KEY ("orderId") REFERENCES "public"."supplyOrder"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "purchaseOrder" ADD CONSTRAINT "purchaseOrder_creatorId_passenger_id_fk" FOREIGN KEY ("creatorId") REFERENCES "public"."passenger"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -174,6 +214,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "ridderInfo" ADD CONSTRAINT "ridderInfo_userId_ridder_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."ridder"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "ridderInvite" ADD CONSTRAINT "ridderInvite_userId_ridder_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."ridder"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "ridderInvite" ADD CONSTRAINT "ridderInvite_orderId_purchaseOrder_id_fk" FOREIGN KEY ("orderId") REFERENCES "public"."purchaseOrder"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -10,17 +10,17 @@ export declare class PurchaseOrderController {
     createPurchaseOrder(passenger: PassengerType, createPurchaseOrderDto: CreatePurchaseOrderDto, response: Response): Promise<void>;
     getMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     getPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
-    searchPurchaseOrdersByCreatorName(userName: string, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    searchPaginationPurchaseOrders(limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    searchCurAdjacentPurchaseOrders(limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
-    searchDestAdjacentPurchaseOrders(limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
-    searchSimilarRoutePurchaseOrders(limit: string | undefined, offset: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, response: Response): Promise<void>;
+    searchPaginationPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
+    searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
+    searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, response: Response): Promise<void>;
     updateMyPurchaseOrderById(passenger: PassengerType, id: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto, response: Response): Promise<void>;
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        creatorId: string | null;
         description: string | null;
+        createdAt: Date;
+        creatorId: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -30,10 +30,9 @@ export declare class PurchaseOrderController {
             x: number;
             y: number;
         };
-        createdAt: Date;
-        updatedAt: Date;
         startAfter: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL";
+        isUrgent: boolean;
     }[]>;
 }

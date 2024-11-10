@@ -1,9 +1,10 @@
 import { pgTable, uuid, primaryKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-import { RidderTable } from "./ridder.schema";
-import { PurchaseOrderTable } from "./purchaseOrder.schema";
-
+import { 
+    RidderTable,
+    PurchaseOrderTable,
+} from "./schema";
 
 // this table is for the internal node for the many-to-many relationship between PassengerCollectionTable and SupplyOrderTable
 export const RidderCollectionsToOrders = pgTable("ridderCollectionsToOrders", {

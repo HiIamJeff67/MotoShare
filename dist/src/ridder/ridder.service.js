@@ -51,6 +51,9 @@ let RidderService = class RidderService {
                         phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        motocycleType: true,
+                        motocyclePhotoUrl: true,
+                        createdAt: true,
                     }
                 },
             }
@@ -71,6 +74,10 @@ let RidderService = class RidderService {
                         phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        motocycleLicense: true,
+                        motocycleType: true,
+                        motocyclePhotoUrl: true,
+                        createdAt: true,
                     }
                 },
             }
@@ -121,8 +128,8 @@ let RidderService = class RidderService {
             with: {
                 info: {
                     columns: {
-                        selfIntroduction: true,
                         avatorUrl: true,
+                        motocycleType: true,
                     }
                 }
             },
@@ -139,8 +146,8 @@ let RidderService = class RidderService {
             with: {
                 info: {
                     columns: {
-                        selfIntroduction: true,
                         avatorUrl: true,
+                        motocycleType: true,
                     }
                 }
             },
@@ -199,6 +206,7 @@ let RidderService = class RidderService {
             selfIntroduction: updateRidderInfoDto.selfIntroduction,
             motocycleLicense: updateRidderInfoDto.motocycleLicense,
             motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
+            motocycleType: updateRidderInfoDto.motocycleType,
             avatorUrl: updateRidderInfoDto.avatorUrl,
         }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
     }

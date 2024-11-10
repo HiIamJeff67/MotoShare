@@ -66,10 +66,10 @@ let SupplyOrderController = class SupplyOrderController {
     async getSupplyOrderById(ridder, id, response) {
         try {
             const res = await this.supplyOrderService.getSupplyOrderById(id);
-            if (!res || res.length === 0) {
+            if (!res) {
                 throw new common_1.NotFoundException(`Cannot find the supply order with the given orderId: ${id}`);
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
@@ -81,25 +81,9 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchSupplyOrdersByCreatorName(userName, limit = "10", offset = "0", response) {
+    async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
-            const res = await this.supplyOrderService.searchSupplyOrderByCreatorName(userName, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`Cannot find the ridder with the given userName: ${userName}`);
-            }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
-            });
-        }
-    }
-    async searchPaginationSupplyOrders(limit = "10", offset = "0", response) {
-        try {
-            const res = await this.supplyOrderService.searchPaginationSupplyOrders(+limit, +offset);
+            const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any purchase orders");
             }
@@ -113,9 +97,9 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchCurAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+    async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
-            const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any supply orders");
             }
@@ -129,9 +113,9 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchDestAdjacentSupplyOrders(limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+    async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
-            const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(+limit, +offset, getAdjacentSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any supply orders");
             }
@@ -145,9 +129,9 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchSimilarRouteSupplyOrders(limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
+    async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
         try {
-            const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(+limit, +offset, getSimilarRouteSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, +limit, +offset, getSimilarRouteSupplyOrdersDto);
             if (!res || res.length === 0) {
                 throw new common_1.NotFoundException("Cannot find any supply orders");
             }
@@ -191,7 +175,10 @@ let SupplyOrderController = class SupplyOrderController {
           or the current ridder cannot delete the order which is not created by himself/herself
         `);
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
@@ -238,52 +225,46 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "getSupplyOrderById", null);
 __decorate([
-    (0, common_1.Get)('searchSupplyOrdersByCreatorName'),
-    __param(0, (0, common_1.Query)('userName')),
+    (0, common_1.Get)('searchPaginationSupplyOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Object]),
-    __metadata("design:returntype", Promise)
-], SupplyOrderController.prototype, "searchSupplyOrdersByCreatorName", null);
-__decorate([
-    (0, common_1.Get)('searchPaginationSupplyOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchPaginationSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('searchCurAdjacentSupplyOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchCurAdjacentSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('searchDestAdjacentSupplyOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchDestAdjacentSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('searchSimilarRouteSupplyOrders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Body)()),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchSimilarRouteSupplyOrders", null);
 __decorate([

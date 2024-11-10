@@ -5,5 +5,6 @@ export declare class CreateRidderInfoDto {
     selfIntroduction?: string;
     motocycleLicense?: string;
     motocylePhotoUrl?: string;
+    motocycleType?: string;
     avatorUrl?: string;
 }
