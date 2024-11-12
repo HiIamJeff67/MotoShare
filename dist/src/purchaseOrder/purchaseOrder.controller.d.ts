@@ -1,6 +1,6 @@
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { Response } from 'express';
-import { PassengerType } from '../interfaces/auth.interface';
+import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
@@ -9,7 +9,7 @@ export declare class PurchaseOrderController {
     constructor(purchaseOrderService: PurchaseOrderService);
     createPurchaseOrder(passenger: PassengerType, createPurchaseOrderDto: CreatePurchaseOrderDto, response: Response): Promise<void>;
     getMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    getPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
+    getPurchaseOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     searchPaginationPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
     searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
@@ -20,7 +20,7 @@ export declare class PurchaseOrderController {
         id: string;
         description: string | null;
         createdAt: Date;
-        creatorId: string | null;
+        creatorId: string;
         initPrice: number;
         startCord: {
             x: number;

@@ -16,7 +16,7 @@ exports.RidderController = void 0;
 const common_1 = require("@nestjs/common");
 const ridder_service_1 = require("./ridder.service");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
-const jwt_1 = require("@nestjs/jwt");
+const exceptions_1 = require("../exceptions");
 const guard_1 = require("../auth/guard");
 const auth_interface_1 = require("../interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
@@ -31,27 +31,32 @@ let RidderController = class RidderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(ridder);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response
             });
         }
     }
     async getRidderWithInfoByUserName(ridder, userName, response) {
         try {
+            if (!userName) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
             const res = await this.ridderService.getRidderWithInfoByUserName(userName);
             if (!res)
-                throw new common_1.NotFoundException("Cannot find the ridder with the given userName");
+                throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
@@ -59,16 +64,16 @@ let RidderController = class RidderController {
         try {
             const res = await this.ridderService.getRidderWithInfoByUserId(ridder.id);
             if (!res)
-                throw new common_1.NotFoundException("Cannot find the ridder with the given id");
+                throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
@@ -76,104 +81,88 @@ let RidderController = class RidderController {
         try {
             const res = await this.ridderService.getRidderWithCollectionByUserId(ridder.id);
             if (!res)
-                throw new common_1.NotFoundException("Cannot find the ridder with the given id");
+                throw exceptions_1.ClientCollectionNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
-    async searchRiddersByUserName(userName, limit = "10", offset = "0", response) {
+    async searchPaginationRidders(userName = undefined, limit = "10", offset = "0", response) {
         try {
-            const res = await this.ridderService.searchRiddersByUserName(userName, +limit, +offset);
-            if (!res || res.length == 0) {
-                throw new common_1.NotFoundException("Cannot find any ridders");
-            }
+            const res = await this.ridderService.searchPaginationRidders(userName, +limit, +offset);
+            if (!res || res.length == 0)
+                throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
-            });
-        }
-    }
-    async searchPaginationRidders(limit, offset, response) {
-        try {
-            const res = await this.ridderService.searchPaginationRidders(+limit, +offset);
-            if (!res || res.length == 0) {
-                throw new common_1.NotFoundException("Cannot find any ridders");
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
             }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async updateMe(ridder, updateRidderDto, response) {
         try {
             const res = await this.ridderService.updateRidderById(ridder.id, updateRidderDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find the ridder with the given id to update");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : (error instanceof common_1.ConflictException
-                        ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async updateMyInfo(ridder, updateRidderInfoDto, response) {
         try {
             const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto);
-            if (!res) {
-                throw new common_1.NotFoundException("Cannot find the ridder with the given id to update");
-            }
+            if (!res)
+                throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({});
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async deleteMe(ridder, response) {
         try {
             const res = await this.ridderService.deleteRiddderById(ridder.id);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find the ridder with the given id to update");
-            }
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
@@ -187,6 +176,7 @@ let RidderController = class RidderController {
         }
         catch (error) {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.NotFound).send({
+                alert: "This route is currently only for debugging",
                 message: "Cannot find any ridders",
             });
         }
@@ -231,22 +221,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "getMyCollection", null);
 __decorate([
-    (0, common_1.Get)('searchRiddersByUserName'),
+    (0, common_1.Get)('searchPaginationRidders'),
     __param(0, (0, common_1.Query)('userName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Object]),
-    __metadata("design:returntype", Promise)
-], RidderController.prototype, "searchRiddersByUserName", null);
-__decorate([
-    (0, common_1.Get)('searchPaginationRidders'),
-    __param(0, (0, common_1.Query)('limit')),
-    __param(1, (0, common_1.Query)('offset')),
-    __param(2, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "searchPaginationRidders", null);
 __decorate([

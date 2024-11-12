@@ -9,10 +9,10 @@ exports.PassengerInviteTable = (0, pg_core_1.pgTable)('passengerInvite', {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     userId: (0, pg_core_1.uuid)("userId").references(() => schema_1.PassengerTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     orderId: (0, pg_core_1.uuid)("orderId").references(() => schema_1.SupplyOrderTable.id, {
         onDelete: 'cascade',
-    }),
+    }).notNull(),
     briefDescription: (0, pg_core_1.text)("briefDesciption"),
     suggestPrice: (0, pg_core_1.integer)("suggestPrice").notNull(),
     startCord: (0, pg_core_1.geometry)("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

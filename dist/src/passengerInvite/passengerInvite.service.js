@@ -22,6 +22,7 @@ const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
+const exceptions_1 = require("../exceptions");
 let PassengerInviteService = class PassengerInviteService {
     constructor(db) {
         this.db = db;
@@ -49,56 +50,39 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
         });
     }
-    async getPassengerInviteById(id) {
-        return await this.db.query.PassengerInviteTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id),
-            columns: {
-                id: true,
-                suggestPrice: true,
-                briefDescription: true,
-                startCord: true,
-                endCord: true,
-                suggestStartAfter: true,
-                createdAt: true,
-                updatedAt: true,
-                status: true,
-            },
-            with: {
-                order: {
-                    columns: {
-                        initPrice: true,
-                        startCord: true,
-                        endCord: true,
-                        description: true,
-                        startAfter: true,
-                        createdAt: true,
-                        updatedAt: true,
-                    },
-                    with: {
-                        creator: {
-                            columns: {
-                                userName: true,
-                            },
-                            with: {
-                                info: {
-                                    columns: {
-                                        isOnline: true,
-                                        avatorUrl: true,
-                                        motocycleType: true,
-                                        motocyclePhotoUrl: true,
-                                        phoneNumber: true,
-                                        motocycleLicense: true,
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-        });
-    }
-    async searchPaginationPassengerInvitesByInviterId(inviterId, limit, offset) {
+    async getPassengerInviteById(id, userId) {
         return await this.db.select({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+            suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+            inviteBriefDescription: passengerInvite_schema_1.PassengerInviteTable.briefDescription,
+            suggestStartCord: passengerInvite_schema_1.PassengerInviteTable.startCord,
+            suggestEndCord: passengerInvite_schema_1.PassengerInviteTable.endCord,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            inviteCreatedAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            inviteUdpatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            inviteStatus: passengerInvite_schema_1.PassengerInviteTable.status,
+            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
+            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
+            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            description: supplyOrder_schema_1.SupplyOrderTable.description,
+            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+            orderCreatedAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
+            orderUpdatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
+            creatorName: ridder_schema_1.RidderTable.userName,
+            isOnline: ridderInfo_schema_1.RidderInfoTable.isOnline,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+            motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
+            phoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+        }).from(passengerInvite_schema_1.PassengerInviteTable)
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder_schema_1.SupplyOrderTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, userId), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, userId))))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id));
+    }
+    async searchPaginationPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             receiverName: ridder_schema_1.RidderTable.userName,
@@ -110,17 +94,25 @@ let PassengerInviteService = class PassengerInviteService {
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
-        }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.desc)(passengerInvite_schema_1.PassengerInviteTable.updatedAt))
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchCurAdjacentPassengerInvitesByInviterId(inviterId, limit, offset) {
-        return await this.db.select({
+    async searchCurAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             receiverName: ridder_schema_1.RidderTable.userName,
@@ -136,20 +128,28 @@ let PassengerInviteService = class PassengerInviteService {
         ${supplyOrder_schema_1.SupplyOrderTable.startCord},
         ${passengerInvite_schema_1.PassengerInviteTable.startCord},
       )`,
-        }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchDestAdjacentPassengerInvitesByInviterId(inviterId, limit, offset) {
-        return await this.db.select({
+    async searchDestAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             receiverName: ridder_schema_1.RidderTable.userName,
@@ -165,20 +165,28 @@ let PassengerInviteService = class PassengerInviteService {
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
         ${passengerInvite_schema_1.PassengerInviteTable.endCord},
       )`,
-        }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchSimilarRoutePassengerInvitesByInviterId(inviterId, limit, offset) {
-        return await this.db.select({
+    async searchSimilarRoutePassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             receiverName: ridder_schema_1.RidderTable.userName,
@@ -208,34 +216,42 @@ let PassengerInviteService = class PassengerInviteService {
           ${supplyOrder_schema_1.SupplyOrderTable.endCord},
         )
       `,
-        }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `
-        ST_Distance(
-          ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-        )
-      + ST_Distance(
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-        )
-      + ST_Distance(
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        )
-      - ST_Distance(
-          ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        )
-      `)
+            ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+          )
+          + ST_Distance(
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+            )
+          + ST_Distance(
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            )
+          - ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            )
+          `)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchPaginationPasssengerInvitesByReceiverId(receiverId, limit, offset) {
-        return await this.db.select({
+    async searchPaginationPasssengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             inviterName: passenger_schema_1.PassengerTable.userName,
@@ -248,16 +264,23 @@ let PassengerInviteService = class PassengerInviteService {
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.desc)(passengerInvite_schema_1.PassengerInviteTable.updatedAt))
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, limit, offset) {
-        return await this.db.select({
+    async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             inviterName: passenger_schema_1.PassengerTable.userName,
@@ -274,19 +297,26 @@ let PassengerInviteService = class PassengerInviteService {
         ${passengerInvite_schema_1.PassengerInviteTable.startCord},
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchDestAdjacentPassengerInvitesByReceiverId(receiverId, limit, offset) {
-        return await this.db.select({
+    async searchDestAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             inviterName: passenger_schema_1.PassengerTable.userName,
@@ -303,19 +333,26 @@ let PassengerInviteService = class PassengerInviteService {
         ${passengerInvite_schema_1.PassengerInviteTable.endCord},
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-        ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-      )`)
+            ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+          )`)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
-    async searchSimilarRoutePassengerInvitesByReceverId(receiverId, limit, offset) {
-        return await this.db.select({
+    async searchSimilarRoutePassengerInvitesByReceverId(receiverId, inviterName = undefined, limit, offset) {
+        const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
             inviterName: passenger_schema_1.PassengerTable.userName,
@@ -346,30 +383,37 @@ let PassengerInviteService = class PassengerInviteService {
         )
       `,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
-            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
-            .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `
-        ST_Distance(
-          ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-        )
-      + ST_Distance(
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-        )
-      + ST_Distance(
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        )
-      - ST_Distance(
-          ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        )
-      `)
+            ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+            )
+          + ST_Distance(
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+            )
+          + ST_Distance(
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            )
+          - ST_Distance(
+              ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+            )
+          `)
             .limit(limit)
             .offset(offset);
+        return await query;
     }
     async updatePassengerInviteById(id, inviterId, updatePassengerInviteDto) {
         const newStartCord = (updatePassengerInviteDto.startCordLongitude !== undefined
@@ -395,7 +439,7 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
         });
     }
-    async decidePassengerInvitebyId(id, receiverId, decidePassengerInviteDto) {
+    async decidePassengerInviteById(id, receiverId, decidePassengerInviteDto) {
         const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
             where: (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id),
             with: {
@@ -406,8 +450,8 @@ let PassengerInviteService = class PassengerInviteService {
                 }
             }
         });
-        if (!supplyOrder || !supplyOrder.order || receiverId !== supplyOrder?.order?.creatorId) {
-            throw new common_1.UnauthorizedException("You have no access to the invite");
+        if (supplyOrder && supplyOrder.order && receiverId !== supplyOrder?.order?.creatorId) {
+            throw exceptions_1.ClientUserHasNoAccessException;
         }
         return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
             status: decidePassengerInviteDto.status,

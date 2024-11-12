@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplyOrderController = void 0;
 const common_1 = require("@nestjs/common");
 const supplyOrder_service_1 = require("./supplyOrder.service");
-const jwt_1 = require("@nestjs/jwt");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const exceptions_1 = require("../exceptions");
 const guard_1 = require("../auth/guard");
 const auth_interface_1 = require("../interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
@@ -30,163 +30,164 @@ let SupplyOrderController = class SupplyOrderController {
     async createSupplyOrder(ridder, createSupplyOrderDto, response) {
         try {
             const res = await this.supplyOrderService.createSupplyOrderByCreatorId(ridder.id, createSupplyOrderDto);
-            if (!res || res.length === 0) {
-                throw new common_1.BadRequestException("Cannot create supply order by the current ridder");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreateSupplyOrderException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.BadRequestException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.BadRequest
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async getMySupplyOrders(ridder, limit = "10", offset = "0", response) {
         try {
             const res = await this.supplyOrderService.getSupplyOrdersByCreatorId(ridder.id, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find the supply orders of the current ridder");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
-    async getSupplyOrderById(ridder, id, response) {
+    async getSupplyOrderById(passenger, id, response) {
         try {
-            const res = await this.supplyOrderService.getSupplyOrderById(id);
-            if (!res) {
-                throw new common_1.NotFoundException(`Cannot find the supply order with the given orderId: ${id}`);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.supplyOrderService.getSupplyOrderById(id);
+            if (!res)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
             const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any purchase orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
             const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any supply orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
             const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any supply orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
         try {
             const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, +limit, +offset, getSimilarRouteSupplyOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any supply orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async updateMySupplyOrderById(ridder, id, updateSupplyOrderDto, response) {
         try {
-            const res = await this.supplyOrderService.updateSupplyOrderById(id, ridder.id, updateSupplyOrderDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`
-          Cannot find any supply orders with the given orderId: ${id}, 
-          or the current ridder cannot update the order which is not created by himself/herself
-        `);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.supplyOrderService.updateSupplyOrderById(id, ridder.id, updateSupplyOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async deleteMySupplyOrderById(ridder, id, response) {
         try {
-            const res = await this.supplyOrderService.deleteSupplyOrderById(id, ridder.id);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`
-          Cannot find any supply orders with the given orderId: ${id}, 
-          or the current ridder cannot delete the order which is not created by himself/herself
-        `);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.supplyOrderService.deleteSupplyOrderById(id, ridder.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
                 ...res[0],
             });
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
@@ -215,13 +216,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "getMySupplyOrders", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('getSupplyOrderById'),
-    __param(0, (0, decorator_1.Ridder)()),
+    __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "getSupplyOrderById", null);
 __decorate([

@@ -19,7 +19,7 @@ class UpdatePassengerInviteDto extends (0, mapped_types_1.PartialType)(create_pa
 exports.UpdatePassengerInviteDto = UpdatePassengerInviteDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_interface_1.InviterStatusTypes, { message: "The status of PassengerInvite should be either CHECKING or CANCEL" }),
+    (0, class_validator_1.IsIn)(status_interface_1.InviterStatusTypes, { message: "The status of PassengerInvite must be either CHECKING or CANCEL" }),
     __metadata("design:type", String)
 ], UpdatePassengerInviteDto.prototype, "status", void 0);
 class DecidePassengerInviteDto {
@@ -27,7 +27,7 @@ class DecidePassengerInviteDto {
 exports.DecidePassengerInviteDto = DecidePassengerInviteDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_interface_1.ReceiverStatusTypes, { message: "The status of PassengerInvite should be either ACCEPTED, REJECTED, or CHECKING" }),
+    (0, class_validator_1.IsIn)(status_interface_1.ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" }),
     __metadata("design:type", String)
 ], DecidePassengerInviteDto.prototype, "status", void 0);
 //# sourceMappingURL=update-passengerInvite.dto.js.map

@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Passenger = void 0;
 const common_1 = require("@nestjs/common");
-const jwt_1 = require("@nestjs/jwt");
+const exceptions_1 = require("../../exceptions");
 exports.Passenger = (0, common_1.createParamDecorator)((data, ctx) => {
     const request = ctx
         .switchToHttp()
         .getRequest();
     if (!request || !request.user) {
-        throw new jwt_1.TokenExpiredError('The access token has expired, please try to login again', new Date());
+        throw exceptions_1.ClientInvalidTokenOrTokenExpiredException;
     }
     return request.user;
 });

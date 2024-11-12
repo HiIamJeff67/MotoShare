@@ -1,29 +1,29 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsLatitude, IsLongitude, IsNotEmpty } from "class-validator";
 
 export class GetAdjacentPurchaseOrdersDto {
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     cordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     cordLatitude: number
 }
 
 export class GetSimilarRoutePurchaseOrdersDto {
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     startCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     startCordLatitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     endCordLongitude: number
     
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     endCordLatitude: number
 }

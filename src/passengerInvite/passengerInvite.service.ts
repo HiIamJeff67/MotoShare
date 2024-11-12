@@ -1,16 +1,17 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreatePassengerInviteDto } from './dto/create-passengerInvite.dto';
 import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update-passengerInvite.dto';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, like, or, sql } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
+import { ClientUserHasNoAccessException } from '../exceptions';
 
 @Injectable()
 export class PassengerInviteService {
@@ -47,68 +48,114 @@ export class PassengerInviteService {
   /* ================================= Create operations ================================= */
 
 
-
   /* ================================= Get operations ================================= */
   // for specifying the details of the other invites
-  async getPassengerInviteById(id: string) {
-    return await this.db.query.PassengerInviteTable.findFirst({
-      where: eq(PassengerInviteTable.id, id),
-      columns: {
-        id: true,
-        suggestPrice: true,
-        briefDescription: true,
-        startCord: true,
-        endCord: true,
-        suggestStartAfter: true,
-        createdAt: true,
-        updatedAt: true,
-        status: true,
-      },
-      with: {
-        order: {
-          columns: {
-            initPrice: true,
-            startCord: true,
-            endCord: true,
-            description: true,
-            startAfter: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          with: {
-            creator: {
-              columns: {
-                userName: true,
-              },
-              with: {
-                info: {
-                  columns: {
-                    isOnline: true,
-                    avatorUrl: true,
-                    motocycleType: true,
-                    motocyclePhotoUrl: true,
-                    // the below things can be display, since the passenger must have validate to see this
-                    phoneNumber: true,
-                    motocycleLicense: true,
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-    });
+  async getPassengerInviteById(
+    id: string,
+    userId: string, // can be inviter or receiver
+  ) {
+    return await this.db.select({
+      id: PassengerInviteTable.id,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      inviteBriefDescription: PassengerInviteTable.briefDescription,
+      suggestStartCord: PassengerInviteTable.startCord,
+      suggestEndCord: PassengerInviteTable.endCord,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      inviteCreatedAt: PassengerInviteTable.createdAt,
+      inviteUdpatedAt: PassengerInviteTable.updatedAt,
+      inviteStatus: PassengerInviteTable.status,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      description: SupplyOrderTable.description,
+      startAfter: SupplyOrderTable.startAfter,
+      orderCreatedAt: SupplyOrderTable.createdAt,
+      orderUpdatedAt: SupplyOrderTable.updatedAt,
+      creatorName: RidderTable.userName,
+      isOnline: RidderInfoTable.isOnline,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      motocycleLicense: RidderInfoTable.motocycleLicense,
+      motocycleType: RidderInfoTable.motocycleType,
+      motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
+      phoneNumber: RidderInfoTable.phoneNumber,
+    }).from(PassengerInviteTable)
+      .leftJoin(SupplyOrderTable, eq(PassengerInviteTable.orderId, SupplyOrderTable.id))
+      .where(and(
+          eq(PassengerInviteTable.id, id), 
+          or(
+            eq(PassengerInviteTable.userId, userId),
+            eq(SupplyOrderTable.creatorId, userId),
+          ))
+      )
+      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id));
+    // return await this.db.query.PassengerInviteTable.findFirst({
+    //   where: and(
+    //     eq(PassengerInviteTable.id, id), 
+    //     or(
+    //       eq(PassengerInviteTable.userId, userId), 
+    //       eq(SupplyOrderTable.creatorId, userId)
+    //     )
+    //   ),
+    //   columns: {
+    //     id: true,
+    //     userId: true,
+    //     suggestPrice: true,
+    //     briefDescription: true,
+    //     startCord: true,
+    //     endCord: true,
+    //     suggestStartAfter: true,
+    //     createdAt: true,
+    //     updatedAt: true,
+    //     status: true,
+    //   },
+    //   with: {
+    //     order: {
+    //       columns: {
+    //         creatorId: true,
+    //         initPrice: true,
+    //         startCord: true,
+    //         endCord: true,
+    //         description: true,
+    //         startAfter: true,
+    //         createdAt: true,
+    //         updatedAt: true,
+    //       },
+    //       with: {
+    //         creator: {
+    //           columns: {
+    //             userName: true,
+    //           },
+    //           with: {
+    //             info: {
+    //               columns: {
+    //                 isOnline: true,
+    //                 avatorUrl: true,
+    //                 motocycleType: true,
+    //                 motocyclePhotoUrl: true,
+    //                 // the below things can be display, since the passenger must have validate to see this
+    //                 phoneNumber: true,
+    //                 motocycleLicense: true,
+    //               }
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    // });
   }
 
-  /* ================= Search operations used by Passengers ================= */
+  /* ================= Search PassengerInvite operations used by Passengers ================= */
   // note that we can't use query to do the search, since we need to do some distance calculating
   // getting the invites which are created by current passenger
   async searchPaginationPassengerInvitesByInviterId(
     inviterId: string,
+    receiverName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       receiverName: RidderTable.userName,
@@ -120,22 +167,33 @@ export class PassengerInviteService {
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
-    }).from(PassengerInviteTable)
-      .where(eq(PassengerInviteTable.userId, inviterId))
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
-      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
-      .orderBy(desc(PassengerInviteTable.updatedAt))
-      .limit(limit)
-      .offset(offset);
+    }).from(PassengerInviteTable);
+      
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName)))
+    } else {  // specify before join -> faster
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+         .orderBy(desc(PassengerInviteTable.updatedAt))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
   }
   
   async searchCurAdjacentPassengerInvitesByInviterId(
     inviterId: string,
+    receiverName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       receiverName: RidderTable.userName,
@@ -151,25 +209,36 @@ export class PassengerInviteService {
         ${SupplyOrderTable.startCord},
         ${PassengerInviteTable.startCord},
       )`,
-    }).from(PassengerInviteTable)
-      .where(eq(PassengerInviteTable.userId, inviterId))
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
-      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
-      .orderBy(sql`ST_Distance(
-        ${SupplyOrderTable.startCord},
-        ${PassengerInviteTable.startCord},
-      )`)
-      .limit(limit)
-      .offset(offset);
+    }).from(PassengerInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName)));
+    } else {
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(sql`ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ${PassengerInviteTable.startCord},
+          )`)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
 
   async searchDestAdjacentPassengerInvitesByInviterId(
     inviterId: string,
+    receiverName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       receiverName: RidderTable.userName,
@@ -185,25 +254,36 @@ export class PassengerInviteService {
         ${SupplyOrderTable.endCord},
         ${PassengerInviteTable.endCord},
       )`,
-    }).from(PassengerInviteTable)
-      .where(eq(PassengerInviteTable.userId, inviterId))
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
-      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
-      .orderBy(sql`ST_Distance(
-        ${SupplyOrderTable.endCord},
-        ${PassengerInviteTable.endCord},
-      )`)
-      .limit(limit)
-      .offset(offset);
+    }).from(PassengerInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName)));
+    } else {
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(sql`ST_Distance(
+            ${SupplyOrderTable.endCord},
+            ${PassengerInviteTable.endCord},
+          )`)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
 
   async searchSimilarRoutePassengerInvitesByInviterId(
     inviterId: string,
+    receiverName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       receiverName: RidderTable.userName,
@@ -233,45 +313,56 @@ export class PassengerInviteService {
           ${SupplyOrderTable.endCord},
         )
       `,
-    }).from(PassengerInviteTable)
-      .where(eq(PassengerInviteTable.userId, inviterId))
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
-      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
-      .orderBy(sql`
-        ST_Distance(
-          ${SupplyOrderTable.startCord},
-          ${PassengerInviteTable.startCord},
-        )
-      + ST_Distance(
-          ${PassengerInviteTable.startCord},
-          ${PassengerInviteTable.endCord},
-        )
-      + ST_Distance(
-          ${PassengerInviteTable.endCord},
-          ${SupplyOrderTable.endCord},
-        )
-      - ST_Distance(
-          ${SupplyOrderTable.startCord},
-          ${SupplyOrderTable.endCord},
-        )
-      `)
-      .limit(limit)
-      .offset(offset);
+    }).from(PassengerInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName)));
+    } else {
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(sql`
+            ST_Distance(
+              ${SupplyOrderTable.startCord},
+              ${PassengerInviteTable.startCord},
+          )
+          + ST_Distance(
+              ${PassengerInviteTable.startCord},
+              ${PassengerInviteTable.endCord},
+            )
+          + ST_Distance(
+              ${PassengerInviteTable.endCord},
+              ${SupplyOrderTable.endCord},
+            )
+          - ST_Distance(
+              ${SupplyOrderTable.startCord},
+              ${SupplyOrderTable.endCord},
+            )
+          `)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
-  /* ================= Search operations used by Passengers ================= */
+  /* ================= Search PassengerInvite operations used by Passengers ================= */
 
 
-  /* ================= Search operations used by Ridders ================= */
+  /* ================= Search PassengerInvite operations used by Ridders ================= */
   // getting the invites which should be received by ridder
   // so note that the below APIs would be used by ridder, not the passenger,
   // but we still put these API routes in 'passengerInvite', since it's the invitation from passenger
   async searchPaginationPasssengerInvitesByReceiverId(
     receiverId: string,
+    inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       inviterName: PassengerTable.userName,
@@ -284,21 +375,31 @@ export class PassengerInviteService {
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
     }).from(PassengerInviteTable)
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .where(eq(SupplyOrderTable.creatorId, receiverId))
-      .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .orderBy(desc(PassengerInviteTable.updatedAt))
-      .limit(limit)
-      .offset(offset);
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+      
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName)));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+      
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(desc(PassengerInviteTable.updatedAt))
+          .limit(limit)
+          .offset(offset);
+    
+    return await query;
   }
 
   async searchCurAdjacentPassengerInvitesByReceiverId(
     receiverId: string,
+    inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       inviterName: PassengerTable.userName,
@@ -315,24 +416,34 @@ export class PassengerInviteService {
         ${PassengerInviteTable.startCord},
       )`,
     }).from(PassengerInviteTable)
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .where(eq(SupplyOrderTable.creatorId, receiverId))
-      .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .orderBy(sql`ST_Distance(
-        ${SupplyOrderTable.startCord},
-        ${PassengerInviteTable.startCord},
-      )`)
-      .limit(limit)
-      .offset(offset);
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName)));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(sql`ST_Distance(
+            ${SupplyOrderTable.startCord},
+            ${PassengerInviteTable.startCord},
+          )`)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
 
   async searchDestAdjacentPassengerInvitesByReceiverId(
     receiverId: string,
+    inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       inviterName: PassengerTable.userName,
@@ -349,24 +460,34 @@ export class PassengerInviteService {
         ${PassengerInviteTable.endCord},
       )`,
     }).from(PassengerInviteTable)
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .where(eq(SupplyOrderTable.creatorId, receiverId))
-      .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .orderBy(sql`ST_Distance(
-        ${SupplyOrderTable.endCord},
-        ${PassengerInviteTable.endCord},
-      )`)
-      .limit(limit)
-      .offset(offset);
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName)));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(sql`ST_Distance(
+            ${SupplyOrderTable.endCord},
+            ${PassengerInviteTable.endCord},
+          )`)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
 
   async searchSimilarRoutePassengerInvitesByReceverId(
     receiverId: string,
+    inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    return await this.db.select({
+    const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
       inviterName: PassengerTable.userName,
@@ -397,32 +518,41 @@ export class PassengerInviteService {
         )
       `,
     }).from(PassengerInviteTable)
-      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
-      .where(eq(SupplyOrderTable.creatorId, receiverId))
-      .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .orderBy(sql`
-        ST_Distance(
-          ${SupplyOrderTable.startCord},
-          ${PassengerInviteTable.startCord},
-        )
-      + ST_Distance(
-          ${PassengerInviteTable.startCord},
-          ${PassengerInviteTable.endCord},
-        )
-      + ST_Distance(
-          ${PassengerInviteTable.endCord},
-          ${SupplyOrderTable.endCord},
-        )
-      - ST_Distance(
-          ${SupplyOrderTable.startCord},
-          ${SupplyOrderTable.endCord},
-        )
-      `)
-      .limit(limit)
-      .offset(offset);
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName)));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(sql`
+            ST_Distance(
+              ${SupplyOrderTable.startCord},
+              ${PassengerInviteTable.startCord},
+            )
+          + ST_Distance(
+              ${PassengerInviteTable.startCord},
+              ${PassengerInviteTable.endCord},
+            )
+          + ST_Distance(
+              ${PassengerInviteTable.endCord},
+              ${SupplyOrderTable.endCord},
+            )
+          - ST_Distance(
+              ${SupplyOrderTable.startCord},
+              ${SupplyOrderTable.endCord},
+            )
+          `)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
   }
-  /* ================= Search operations used by Ridders ================= */
+  /* ================= Search PassengerInvite operations used by Ridders ================= */
 
   /* ================================= Get operations ================================= */
   
@@ -466,7 +596,7 @@ export class PassengerInviteService {
 
 
   /* ================= Accept or Reject operations used by Ridder ================= */
-  async decidePassengerInvitebyId(
+  async decidePassengerInviteById(
     id: string,
     receiverId: string,
     decidePassengerInviteDto: DecidePassengerInviteDto,
@@ -483,8 +613,8 @@ export class PassengerInviteService {
       }
     });
     
-    if (!supplyOrder || !supplyOrder.order || receiverId !== supplyOrder?.order?.creatorId) {
-      throw new UnauthorizedException("You have no access to the invite")
+    if (supplyOrder && supplyOrder.order && receiverId !== supplyOrder?.order?.creatorId) {
+      throw ClientUserHasNoAccessException;
     }
 
     return await this.db.update(PassengerInviteTable).set({

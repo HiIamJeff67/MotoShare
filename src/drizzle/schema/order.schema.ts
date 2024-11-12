@@ -13,10 +13,10 @@ export const OrderTable = pgTable("order", {
     id: uuid("id").primaryKey().defaultRandom(),
     passengerId: uuid("passengerId").references(() => PassengerTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     ridderId: uuid("ridderId").references(() => RidderTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     finalPrice: integer("finalPrice").notNull(),
     passengerStartCord: geometry("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

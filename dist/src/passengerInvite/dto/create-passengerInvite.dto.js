@@ -21,27 +21,27 @@ __decorate([
 ], CreatePassengerInviteDto.prototype, "briefDescription", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "suggestPrice", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "startCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "startCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "endCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "endCordLatitude", void 0);
 __decorate([

@@ -9,7 +9,7 @@ exports.PurchaseOrderTable = (0, pg_core_1.pgTable)("purchaseOrder", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     creatorId: (0, pg_core_1.uuid)("creatorId").references(() => schema_1.PassengerTable.id, {
         onDelete: 'cascade',
-    }),
+    }).notNull(),
     description: (0, pg_core_1.text)("description"),
     initPrice: (0, pg_core_1.integer)("initPrice").notNull(),
     startCord: (0, pg_core_1.geometry)("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

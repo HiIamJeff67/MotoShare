@@ -1,16 +1,23 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsAlphanumeric, IsEmail, IsNotEmpty, IsStrongPassword, Validate } from "class-validator";
+import { CustomTextLength } from "../../validator";
 
 export class CreateRidderDto {
     @IsNotEmpty()
-    @IsString()
-    userName: string;
+    @Validate(
+        CustomTextLength, [3, 20], 
+        { message: "The userName must be longer than 3 and shorter than 20 characters" }
+    )
+    @IsAlphanumeric(
+        undefined, 
+        { message: "The userName must be lowercase or uppercase english letters or numbers" }
+    )
+    userName: string
 
     @IsNotEmpty()
-    @IsString()
     @IsEmail()
-    email: string;
+    email: string
 
     @IsNotEmpty()
-    @IsString()
-    password: string;
-}
+    @IsStrongPassword()
+    password: string
+};

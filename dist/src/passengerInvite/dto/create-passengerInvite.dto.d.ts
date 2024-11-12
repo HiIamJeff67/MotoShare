@@ -1,5 +1,5 @@
 export declare class CreatePassengerInviteDto {
-    briefDescription: string;
+    briefDescription?: string;
     suggestPrice: number;
     startCordLongitude: number;
     startCordLatitude: number;

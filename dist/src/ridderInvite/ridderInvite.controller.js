@@ -15,66 +15,445 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderInviteController = void 0;
 const common_1 = require("@nestjs/common");
 const ridderInvite_service_1 = require("./ridderInvite.service");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const exceptions_1 = require("../exceptions");
+const guard_1 = require("../auth/guard");
+const decorator_1 = require("../auth/decorator");
+const auth_interface_1 = require("../interfaces/auth.interface");
 const create_ridderInvite_dto_1 = require("./dto/create-ridderInvite.dto");
 const update_ridderInvite_dto_1 = require("./dto/update-ridderInvite.dto");
 let RidderInviteController = class RidderInviteController {
     constructor(ridderInviteService) {
         this.ridderInviteService = ridderInviteService;
     }
-    create(createRidderInviteDto) {
-        return this.ridderInviteService.create(createRidderInviteDto);
+    async createRidderInviteByOrderId(ridder, orderId, createRidderInviteDto, response) {
+        try {
+            if (!orderId) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.createRidderInviteByOrderId(ridder.id, orderId, createRidderInviteDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreateRidderInviteException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                message: error.message,
+            });
+        }
     }
-    findAll() {
-        return this.ridderInviteService.findAll();
+    async getRidderInviteOfRidderById(ridder, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.getRidderInviteById(id, ridder.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response
+            });
+        }
     }
-    findOne(id) {
-        return this.ridderInviteService.findOne(+id);
+    async getRidderInviteOfPassengerById(passenger, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.getRidderInviteById(id, passenger.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    update(id, updateRidderInviteDto) {
-        return this.ridderInviteService.update(+id, updateRidderInviteDto);
+    async searchPaginationRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchPaginationRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    remove(id) {
-        return this.ridderInviteService.remove(+id);
+    async searchCurAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchDestAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchSimilarRouteRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchPaginationRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchPaginationRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchCurAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchDestAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchMySimilarRouteRidderInvitesByReceverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByReceverId(passenger.id, inviterName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async updateMyRidderInviteById(ridder, id, updateRidderInviteDto, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, updateRidderInviteDto);
+            if (!res)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async decidePassengerInviteById(passenger, id, decideRidderInviteDto, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, decideRidderInviteDto);
+            if (!res)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async deleteMyRidderInviteById(ridder, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.ridderInviteService.deleteRidderInviteById(id, ridder.id);
+            if (!res)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                ...res,
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
 };
 exports.RidderInviteController = RidderInviteController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('ridder/createRidderInviteByOrderId'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('orderId')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_ridderInvite_dto_1.CreateRidderInviteDto]),
-    __metadata("design:returntype", void 0)
-], RidderInviteController.prototype, "create", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, create_ridderInvite_dto_1.CreateRidderInviteDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "createRidderInviteByOrderId", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/getMyRidderInviteById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], RidderInviteController.prototype, "findAll", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "getRidderInviteOfRidderById", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/getMyRidderInviteById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RidderInviteController.prototype, "findOne", null);
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "getRidderInviteOfPassengerById", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMyPaginationRidderInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_ridderInvite_dto_1.UpdateRidderInviteDto]),
-    __metadata("design:returntype", void 0)
-], RidderInviteController.prototype, "update", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchPaginationRidderInvitesByInviterId", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('passenger/searchMyCurAdjacentRidderInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RidderInviteController.prototype, "remove", null);
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchCurAdjacentRidderInvitesByInviterId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMyDestAdjacentRidderInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchDestAdjacentRidderInvitesByInviterId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMySimilarRoutePassengerInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchSimilarRouteRidderInvitesByInviterId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyPaginationRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchPaginationRidderInvitesByReceiverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyCurAdjacentRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchCurAdjacentRidderInvitesByReceiverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyDestAdjacentRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchDestAdjacentRidderInvitesByReceiverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMySimilarRouteRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchMySimilarRouteRidderInvitesByReceverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Patch)('ridder/updateMyRidderInviteById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, update_ridderInvite_dto_1.UpdateRidderInviteDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "updateMyRidderInviteById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('passenger/decideRidderInviteById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, update_ridderInvite_dto_1.DecideRidderInviteDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "decidePassengerInviteById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Delete)('ridder/deleteMyRidderInviteById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "deleteMyRidderInviteById", null);
 exports.RidderInviteController = RidderInviteController = __decorate([
-    (0, common_1.Controller)('ridder-invite'),
+    (0, common_1.Controller)('ridderInvite'),
     __metadata("design:paramtypes", [ridderInvite_service_1.RidderInviteService])
 ], RidderInviteController);
 //# sourceMappingURL=ridderInvite.controller.js.map

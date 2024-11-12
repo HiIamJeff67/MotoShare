@@ -1,4 +1,4 @@
-import { IsDate, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDate, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
 
 // import { PostedStatusType } from "src/interfaces/status.interface";
 
@@ -8,23 +8,23 @@ export class CreateSupplyOrderDto {
     description?: string
 
     @IsNotEmpty()
-    @IsInt()
+    @IsNumberString()
     initPrice: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     startCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     startCordLatitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     endCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     endCordLatitude: number
 
     // @IsOptional()
@@ -40,7 +40,7 @@ export class CreateSupplyOrderDto {
     startAfter?: Date   // but at most case, should be specify
 
     @IsOptional()
-    @IsNumber()
+    @IsNumberString()
     tolerableRDV?: number
 
     // @IsOptional()

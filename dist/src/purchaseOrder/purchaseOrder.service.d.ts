@@ -50,7 +50,7 @@ export declare class PurchaseOrderService {
                 isOnline: boolean;
                 avatorUrl: string | null;
             } | null;
-        } | null;
+        };
     } | undefined>;
     searchPaginationPurchaseOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
@@ -144,7 +144,7 @@ export declare class PurchaseOrderService {
         id: string;
         description: string | null;
         createdAt: Date;
-        creatorId: string | null;
+        creatorId: string;
         initPrice: number;
         startCord: {
             x: number;

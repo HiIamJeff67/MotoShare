@@ -25,7 +25,7 @@ export declare const RidderInviteTable: import("drizzle-orm/pg-core").PgTableWit
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -41,7 +41,7 @@ export declare const RidderInviteTable: import("drizzle-orm/pg-core").PgTableWit
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -204,6 +204,6 @@ export declare const RidderInviteTable: import("drizzle-orm/pg-core").PgTableWit
     dialect: "pg";
 }>;
 export declare const RidderInviteRelation: import("drizzle-orm").Relations<"ridderInvite", {
-    inviter: import("drizzle-orm").One<"ridder", false>;
-    order: import("drizzle-orm").One<"purchaseOrder", false>;
+    inviter: import("drizzle-orm").One<"ridder", true>;
+    order: import("drizzle-orm").One<"purchaseOrder", true>;
 }>;

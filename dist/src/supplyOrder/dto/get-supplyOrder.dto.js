@@ -16,12 +16,12 @@ class GetAdjacentSupplyOrdersDto {
 exports.GetAdjacentSupplyOrdersDto = GetAdjacentSupplyOrdersDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], GetAdjacentSupplyOrdersDto.prototype, "cordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], GetAdjacentSupplyOrdersDto.prototype, "cordLatitude", void 0);
 class GetSimilarRouteSupplyOrdersDto {
@@ -29,22 +29,22 @@ class GetSimilarRouteSupplyOrdersDto {
 exports.GetSimilarRouteSupplyOrdersDto = GetSimilarRouteSupplyOrdersDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], GetSimilarRouteSupplyOrdersDto.prototype, "startCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], GetSimilarRouteSupplyOrdersDto.prototype, "startCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], GetSimilarRouteSupplyOrdersDto.prototype, "endCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], GetSimilarRouteSupplyOrdersDto.prototype, "endCordLatitude", void 0);
 //# sourceMappingURL=get-supplyOrder.dto.js.map

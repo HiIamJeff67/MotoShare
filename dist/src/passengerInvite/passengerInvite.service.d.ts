@@ -7,112 +7,106 @@ export declare class PassengerInviteService {
     createPassengerInviteByOrderId(inviterId: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
         id: string;
         createdAt: Date;
-        orderId: string | null;
+        orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    getPassengerInviteById(id: string): Promise<{
+    getPassengerInviteById(id: string, userId: string): Promise<{
         id: string;
-        createdAt: Date;
+        suggestPrice: number;
+        inviteBriefDescription: string | null;
+        suggestStartCord: {
+            x: number;
+            y: number;
+        };
+        suggestEndCord: {
+            x: number;
+            y: number;
+        };
+        suggestStartAfter: Date;
+        inviteCreatedAt: Date;
+        inviteUdpatedAt: Date;
+        inviteStatus: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        initPrice: number | null;
         startCord: {
             x: number;
             y: number;
-        };
+        } | null;
         endCord: {
             x: number;
             y: number;
-        };
-        updatedAt: Date;
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
-        briefDescription: string | null;
-        suggestPrice: number;
-        suggestStartAfter: Date;
-        order: {
-            description: string | null;
-            createdAt: Date;
-            initPrice: number;
-            startCord: {
-                x: number;
-                y: number;
-            };
-            endCord: {
-                x: number;
-                y: number;
-            };
-            startAfter: Date;
-            updatedAt: Date;
-            creator: {
-                userName: string;
-                info: {
-                    isOnline: boolean;
-                    phoneNumber: string | null;
-                    avatorUrl: string | null;
-                    motocycleLicense: string | null;
-                    motocycleType: string | null;
-                    motocyclePhotoUrl: string | null;
-                } | null;
-            } | null;
         } | null;
-    } | undefined>;
-    searchPaginationPassengerInvitesByInviterId(inviterId: string, limit: number, offset: number): Promise<{
-        id: string;
-        orderId: string | null;
-        receiverName: string | null;
-        avatorUrl: string | null;
-        initPrice: number | null;
-        suggestPrice: number;
+        description: string | null;
         startAfter: Date | null;
+        orderCreatedAt: Date | null;
+        orderUpdatedAt: Date | null;
+        creatorName: string | null;
+        isOnline: boolean | null;
+        avatorUrl: string | null;
+        motocycleLicense: string | null;
+        motocycleType: string | null;
+        motocyclePhotoUrl: string | null;
+        phoneNumber: string | null;
+    }[]>;
+    searchPaginationPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        receiverName: never;
+        avatorUrl: never;
+        initPrice: never;
+        suggestPrice: number;
+        startAfter: never;
         suggetStartAfter: Date;
         createdAt: Date;
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    searchCurAdjacentPassengerInvitesByInviterId(inviterId: string, limit: number, offset: number): Promise<{
+    searchCurAdjacentPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        receiverName: string | null;
-        avatorUrl: string | null;
-        initPrice: number | null;
+        orderId: string;
+        receiverName: never;
+        avatorUrl: never;
+        initPrice: never;
         suggestPrice: number;
-        startAfter: Date | null;
+        startAfter: never;
         suggetStartAfter: Date;
         createdAt: Date;
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         distance: unknown;
     }[]>;
-    searchDestAdjacentPassengerInvitesByInviterId(inviterId: string, limit: number, offset: number): Promise<{
+    searchDestAdjacentPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        receiverName: string | null;
-        avatorUrl: string | null;
-        initPrice: number | null;
+        orderId: string;
+        receiverName: never;
+        avatorUrl: never;
+        initPrice: never;
         suggestPrice: number;
-        startAfter: Date | null;
+        startAfter: never;
         suggetStartAfter: Date;
         createdAt: Date;
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         distance: unknown;
     }[]>;
-    searchSimilarRoutePassengerInvitesByInviterId(inviterId: string, limit: number, offset: number): Promise<{
+    searchSimilarRoutePassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        receiverName: string | null;
-        avatorUrl: string | null;
-        initPrice: number | null;
+        orderId: string;
+        receiverName: never;
+        avatorUrl: never;
+        initPrice: never;
         suggestPrice: number;
-        startAfter: Date | null;
+        startAfter: never;
         suggetStartAfter: Date;
         createdAt: Date;
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         RDV: unknown;
     }[]>;
-    searchPaginationPasssengerInvitesByReceiverId(receiverId: string, limit: number, offset: number): Promise<{
+    searchPaginationPasssengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        inviterName: string | null;
-        avatorUrl: string | null;
+        orderId: string;
+        inviterName: never;
+        avatorUrl: never;
         initPrice: number | null;
         suggestPrice: number;
         startAfter: Date | null;
@@ -121,25 +115,11 @@ export declare class PassengerInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    searchCurAdjacentPassengerInvitesByReceiverId(receiverId: string, limit: number, offset: number): Promise<{
+    searchCurAdjacentPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        inviterName: string | null;
-        avatorUrl: string | null;
-        initPrice: number | null;
-        suggestPrice: number;
-        startAfter: Date | null;
-        suggestStartAfter: Date;
-        createdAt: Date;
-        updatedAt: Date;
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
-        distance: unknown;
-    }[]>;
-    searchDestAdjacentPassengerInvitesByReceiverId(receiverId: string, limit: number, offset: number): Promise<{
-        id: string;
-        orderId: string | null;
-        inviterName: string | null;
-        avatorUrl: string | null;
+        orderId: string;
+        inviterName: never;
+        avatorUrl: never;
         initPrice: number | null;
         suggestPrice: number;
         startAfter: Date | null;
@@ -149,11 +129,25 @@ export declare class PassengerInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         distance: unknown;
     }[]>;
-    searchSimilarRoutePassengerInvitesByReceverId(receiverId: string, limit: number, offset: number): Promise<{
+    searchDestAdjacentPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        orderId: string | null;
-        inviterName: string | null;
-        avatorUrl: string | null;
+        orderId: string;
+        inviterName: never;
+        avatorUrl: never;
+        initPrice: number | null;
+        suggestPrice: number;
+        startAfter: Date | null;
+        suggestStartAfter: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        distance: unknown;
+    }[]>;
+    searchSimilarRoutePassengerInvitesByReceverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        inviterName: never;
+        avatorUrl: never;
         initPrice: number | null;
         suggestPrice: number;
         startAfter: Date | null;
@@ -168,7 +162,7 @@ export declare class PassengerInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    decidePassengerInvitebyId(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<import("pg").QueryResult<never>>;
+    decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<import("pg").QueryResult<never>>;
     deletePassengerInviteById(id: string, inviterId: string): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

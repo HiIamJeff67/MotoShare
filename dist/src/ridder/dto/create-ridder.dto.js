@@ -11,23 +11,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRidderDto = void 0;
 const class_validator_1 = require("class-validator");
+const validator_1 = require("../../validator");
 class CreateRidderDto {
 }
 exports.CreateRidderDto = CreateRidderDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Validate)(validator_1.CustomTextLength, [3, 20], { message: "The userName must be longer than 3 and shorter than 20 characters" }),
+    (0, class_validator_1.IsAlphanumeric)(undefined, { message: "The userName must be lowercase or uppercase english letters or numbers" }),
     __metadata("design:type", String)
 ], CreateRidderDto.prototype, "userName", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], CreateRidderDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(),
     __metadata("design:type", String)
 ], CreateRidderDto.prototype, "password", void 0);
+;
 //# sourceMappingURL=create-ridder.dto.js.map

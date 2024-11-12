@@ -52,7 +52,7 @@ export declare class SupplyOrderService {
                 motocycleType: string | null;
                 motocyclePhotoUrl: string | null;
             } | null;
-        } | null;
+        };
     } | undefined>;
     searchPaginationSupplyOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
         id: string;

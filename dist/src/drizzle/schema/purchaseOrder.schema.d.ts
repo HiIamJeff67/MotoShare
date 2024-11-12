@@ -25,7 +25,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -188,7 +188,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
     dialect: "pg";
 }>;
 export declare const PurchaseOrderRelation: import("drizzle-orm").Relations<"purchaseOrder", {
-    creator: import("drizzle-orm").One<"passenger", false>;
+    creator: import("drizzle-orm").One<"passenger", true>;
     collectionsToOrders: import("drizzle-orm").Many<"ridderCollectionsToOrders">;
     invite: import("drizzle-orm").Many<"ridderInvite">;
 }>;

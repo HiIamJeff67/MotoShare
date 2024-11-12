@@ -11,24 +11,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignInDto = void 0;
 const class_validator_1 = require("class-validator");
+const validator_1 = require("../../validator");
 class SignInDto {
 }
 exports.SignInDto = SignInDto;
 __decorate([
     (0, class_validator_1.ValidateIf)((o) => !o.email),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsAlphanumeric)(),
+    (0, class_validator_1.Validate)(validator_1.CustomTextLength, [3, 20], { message: "E-C-004" }),
+    (0, class_validator_1.IsAlphanumeric)(undefined, { message: "E-C-005" }),
     __metadata("design:type", String)
 ], SignInDto.prototype, "userName", void 0);
 __decorate([
-    (0, class_validator_1.ValidateIf)((o) => !o.userName),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
     __metadata("design:type", String)
 ], SignInDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], SignInDto.prototype, "password", void 0);
 //# sourceMappingURL=signIn.dto.js.map

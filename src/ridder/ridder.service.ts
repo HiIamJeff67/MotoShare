@@ -10,6 +10,7 @@ import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
 
 @Injectable()
 export class RidderService {
@@ -45,7 +46,7 @@ export class RidderService {
           columns: {
             isOnline: true,
             age: true,
-            phoneNumber: true,
+            // phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
             motocycleType: true,
@@ -101,7 +102,6 @@ export class RidderService {
                 createdAt: true,
                 updatedAt: true,
                 startAfter: true,
-                // tolerableRDV: true,  // maybe we'll need this on the passenger side
                 isUrgent: true,
                 status: true,
               },
@@ -120,13 +120,13 @@ export class RidderService {
   }
 
   /* ================= Search operations ================= */
-  async searchRiddersByUserName(
-    userName: string,
-    limit: number,
+  async searchPaginationRidders(
+    userName: string | undefined = undefined,
+    limit: number, 
     offset: number,
   ) {
     return await this.db.query.RidderTable.findMany({
-      where: like(RidderTable.userName, userName + "%"), // using entire prefix matching to search relative users
+      ...(userName && {where: like(RidderTable.userName, userName + "%")}),
       columns: {
         userName: true,
         email: true,
@@ -135,25 +135,7 @@ export class RidderService {
         info: {
           columns: {
             avatorUrl: true,
-            motocycleType: true,
-          }
-        }
-      },
-      limit: limit,
-      offset: offset,
-    });
-  }
-
-  async searchPaginationRidders(limit: number, offset: number) {
-    return await this.db.query.RidderTable.findMany({
-      columns: {
-        userName: true,
-        email: true,
-      },
-      with: {
-        info: {
-          columns: {
-            avatorUrl: true,
+            isOnline: true,
             motocycleType: true,
           }
         }
@@ -177,26 +159,20 @@ export class RidderService {
     // check if the new password is same as the previous one
     const user = await this.getRidderById(id);
     if (!user) {
-      throw new NotFoundException(`Cannot find the ridder with the given id`);
+      throw ClientRidderNotFoundException;
     }
 
     if (updateRidderDto.userName && updateRidderDto.userName.length !== 0) {  // if the user want to update its userName
       const unMatches = updateRidderDto.userName === user.userName;  // check if the userName matches the previous one
-      if (unMatches) {
-        throw new ConflictException(`Duplicated userName ${updateRidderDto.userName} detected, please use a different userName`);
-      }
+      if (unMatches) throw ClientNoChangeOnUserNameException;
     }
     if (updateRidderDto.email && updateRidderDto.email.length !== 0) {  // if the user want to update its email
       const emMatches = updateRidderDto.email === user.email;  // check of the email matches the previous one
-      if (emMatches) {
-        throw new ConflictException(`Duplicated email ${updateRidderDto.email} detected, please use a different email`);
-      }
+      if (emMatches) throw ClientNoChangeOnEmailException;
     }
     if (updateRidderDto.password && updateRidderDto.password.length !== 0) {  // if the user want to update its password
       const pwMatches = await bcrypt.compare(updateRidderDto.password, user.hash); // check if the password matches the previous one
-      if (pwMatches) {
-        throw new ConflictException(`Duplicated credential detected, please use a different password`);
-      }
+      if (pwMatches) throw ClientNoChangeOnPasswordException;
 
       const hash = await bcrypt.hash(updateRidderDto.password, Number(this.config.get("SALT_OR_ROUND")));
       return await this.db.update(RidderTable).set({

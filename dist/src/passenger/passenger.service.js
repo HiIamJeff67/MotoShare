@@ -20,6 +20,7 @@ const config_1 = require("@nestjs/config");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
+const exceptions_1 = require("../exceptions");
 let PassengerService = class PassengerService {
     constructor(config, db) {
         this.config = config;
@@ -48,7 +49,6 @@ let PassengerService = class PassengerService {
                     columns: {
                         isOnline: true,
                         age: true,
-                        phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
                         createdAt: true,
@@ -113,9 +113,9 @@ let PassengerService = class PassengerService {
             }
         });
     }
-    async searchPassengersByUserName(userName, limit, offset) {
+    async searchPaginationPassengers(userName = undefined, limit, offset) {
         return await this.db.query.PassengerTable.findMany({
-            where: (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, userName + "%"),
+            ...(userName && { where: (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, userName + "%") }),
             columns: {
                 userName: true,
                 email: true,
@@ -123,26 +123,8 @@ let PassengerService = class PassengerService {
             with: {
                 info: {
                     columns: {
-                        selfIntroduction: true,
                         avatorUrl: true,
-                    }
-                }
-            },
-            limit: limit,
-            offset: offset,
-        });
-    }
-    async searchPaginationPassengers(limit, offset) {
-        return await this.db.query.PassengerTable.findMany({
-            columns: {
-                userName: true,
-                email: true,
-            },
-            with: {
-                info: {
-                    columns: {
-                        selfIntroduction: true,
-                        avatorUrl: true,
+                        isOnline: true,
                     }
                 }
             },
@@ -154,25 +136,22 @@ let PassengerService = class PassengerService {
     async updatePassengerById(id, updatePassengerDto) {
         const user = await this.getPassengerById(id);
         if (!user) {
-            throw new common_1.NotFoundException(`Cannot find the passenger with the given id`);
+            throw exceptions_1.ClientPassengerNotFoundException;
         }
         if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {
             const unMatches = updatePassengerDto.userName === user.userName;
-            if (unMatches) {
-                throw new common_1.ConflictException(`Duplicated userName ${updatePassengerDto.userName} detected, please use a different userName`);
-            }
+            if (unMatches)
+                throw exceptions_1.ClientNoChangeOnUserNameException;
         }
         if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {
             const emMatches = updatePassengerDto.email === user.email;
-            if (emMatches) {
-                throw new common_1.ConflictException(`Duplicated email ${updatePassengerDto.email} detected, please use a different email`);
-            }
+            if (emMatches)
+                throw exceptions_1.ClientNoChangeOnEmailException;
         }
         if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {
             const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash);
-            if (pwMatches) {
-                throw new common_1.ConflictException(`Duplicated credential detected, please use a different password`);
-            }
+            if (pwMatches)
+                throw exceptions_1.ClientNoChangeOnPasswordException;
             const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
             return await this.db.update(passenger_schema_1.PassengerTable).set({
                 userName: updatePassengerDto.userName,

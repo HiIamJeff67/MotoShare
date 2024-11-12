@@ -10,12 +10,12 @@ import {
 
 export class UpdatePassengerInviteDto extends PartialType(CreatePassengerInviteDto) {
     @IsOptional()
-    @IsIn(InviterStatusTypes, { message: "The status of PassengerInvite should be either CHECKING or CANCEL" })
+    @IsIn(InviterStatusTypes, { message: "The status of PassengerInvite must be either CHECKING or CANCEL" })
     status: InviterStatusType
 }
 
 export class DecidePassengerInviteDto {
     @IsOptional()
-    @IsIn(ReceiverStatusTypes, { message: "The status of PassengerInvite should be either ACCEPTED, REJECTED, or CHECKING" })
+    @IsIn(ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" })
     status: ReceiverStatusType
 }

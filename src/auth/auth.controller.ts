@@ -15,26 +15,22 @@ export class AuthController {
         @Res() response: Response,
     ) {
         try {
-            if (signUpDto.userName && signUpDto.userName.length > 20) {
-                throw new PayloadTooLargeException("User name cannot be longer than 20 characters")
-            }
-
             const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
 
             response.status(HttpStatusCode.Created).send({
                 ...passengerResponse,
             });
         } catch (error) {
-                response.status(
-                    error instanceof PayloadTooLargeException
-                    ? HttpStatusCode.PayloadTooLarge
-                    : (error instanceof BadRequestException
-                        ? HttpStatusCode.UnknownError ?? 520
-                        : HttpStatusCode.Conflict
-                    )
-                ).send({
-                    message: error.message,
-                });
+            response.status(
+                error instanceof PayloadTooLargeException
+                ? HttpStatusCode.PayloadTooLarge
+                : (error instanceof BadRequestException
+                    ? HttpStatusCode.UnknownError ?? 520
+                    : HttpStatusCode.Conflict
+                )
+            ).send({
+                message: error.message,
+            });
         }
     }
     /* ================================= Sign Up Passenger Operations ================================= */
@@ -58,16 +54,16 @@ export class AuthController {
                 ...passengerResponse,
             });
         } catch (error) {
-                response.status(
-                    error instanceof PayloadTooLargeException
-                    ? HttpStatusCode.PayloadTooLarge
-                    : (error instanceof BadRequestException
-                        ? HttpStatusCode.UnknownError ?? 520
-                        : HttpStatusCode.Conflict
-                    )
-                ).send({
-                    message: error.message,
-                });
+            response.status(
+                error instanceof PayloadTooLargeException
+                ? HttpStatusCode.PayloadTooLarge
+                : (error instanceof BadRequestException
+                    ? HttpStatusCode.UnknownError ?? 520
+                    : HttpStatusCode.Conflict
+                )
+            ).send({
+                message: error.message,
+            });
         }
     }
     /* ================================= Sign Up Ridder Operations ================================= */

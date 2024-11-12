@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PurchaseOrderController = void 0;
 const common_1 = require("@nestjs/common");
 const purchaseOrder_service_1 = require("./purchaseOrder.service");
-const jwt_1 = require("@nestjs/jwt");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const exceptions_1 = require("../exceptions");
 const guard_1 = require("../auth/guard");
 const auth_interface_1 = require("../interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
@@ -30,163 +30,164 @@ let PurchaseOrderController = class PurchaseOrderController {
     async createPurchaseOrder(passenger, createPurchaseOrderDto, response) {
         try {
             const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(passenger.id, createPurchaseOrderDto);
-            if (!res || res.length === 0) {
-                throw new common_1.BadRequestException("Cannot create purchase order by the current passenger");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreatePurchaseOrderException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.BadRequestException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.BadRequest
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async getMyPurchaseOrders(passenger, limit = "10", offset = "0", response) {
         try {
             const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find the purchase orders of the current passenger");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
-    async getPurchaseOrderById(passenger, id, response) {
+    async getPurchaseOrderById(ridder, id, response) {
         try {
-            const res = await this.purchaseOrderService.getPurchaseOrderById(id);
-            if (!res) {
-                throw new common_1.NotFoundException(`Cannot find the purchase order with the given orderId: ${id}`);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.purchaseOrderService.getPurchaseOrderById(id);
+            if (!res)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
             const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any purchase orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
             const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any purchase orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
             const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any purchase orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto, response) {
         try {
             const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, +limit, +offset, getSimilarRoutePurchaseOrdersDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException("Cannot find any purchase orders");
-            }
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.NotFoundException
-                ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520).send({
-                message: error.message,
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async updateMyPurchaseOrderById(passenger, id, updatePurchaseOrderDto, response) {
         try {
-            const res = await this.purchaseOrderService.updatePurchaseOrderById(id, passenger.id, updatePurchaseOrderDto);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`
-          Cannot find any purchase orders with the given orderId: ${id}, 
-          or the current passenger cannot update the order which is not created by himself/herself
-        `);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.purchaseOrderService.updatePurchaseOrderById(id, passenger.id, updatePurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async deleteMyPurchaseOrderById(passenger, id, response) {
         try {
-            const res = await this.purchaseOrderService.deletePurchaseOrderById(id, passenger.id);
-            if (!res || res.length === 0) {
-                throw new common_1.NotFoundException(`
-          Cannot find any purchase orders with the given orderId: ${id}, 
-          or the current passenger cannot delete the order which is not created by himself/herself
-        `);
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
             }
+            const res = await this.purchaseOrderService.deletePurchaseOrderById(id, passenger.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
                 ...res[0],
             });
         }
         catch (error) {
-            response.status((error instanceof common_1.UnauthorizedException || error instanceof jwt_1.TokenExpiredError)
-                ? HttpStatusCode_enum_1.HttpStatusCode.Unauthorized
-                : (error instanceof common_1.NotFoundException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                    : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520)).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
@@ -218,13 +219,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "getMyPurchaseOrders", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('getPurchaseOrderById'),
-    __param(0, (0, decorator_1.Passenger)()),
+    __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
 __decorate([

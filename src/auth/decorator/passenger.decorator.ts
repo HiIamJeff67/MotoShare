@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { TokenExpiredError } from "@nestjs/jwt";
+import { ClientInvalidTokenOrTokenExpiredException } from "../../exceptions";
 
 export const Passenger = createParamDecorator(
     (data: unknown, ctx: ExecutionContext) => {
@@ -7,10 +7,7 @@ export const Passenger = createParamDecorator(
             .switchToHttp()
             .getRequest();
         if (!request || !request.user) {
-            throw new TokenExpiredError(
-                'The access token has expired, please try to login again', 
-                new Date()
-            );
+            throw ClientInvalidTokenOrTokenExpiredException;
         }
         return request.user;
     }

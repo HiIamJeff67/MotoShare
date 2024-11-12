@@ -1,12 +1,20 @@
 import { 
   Controller, UseGuards, 
   Get, Body, Patch, Delete, Query, Res, 
-  NotFoundException, ConflictException, UnauthorizedException 
+  NotFoundException, 
+  ConflictException, 
+  UnauthorizedException, 
+  BadRequestException
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
-import { TokenExpiredError } from '@nestjs/jwt';
+import { 
+  ApiMissingParameterException, 
+  ClientUnknownException, 
+  ClientPassengerNotFoundException, 
+  ClientCollectionNotFoundException 
+} from '../exceptions';
 
 import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
 import { PassengerType } from '../../src/interfaces/auth.interface';
@@ -30,11 +38,12 @@ export class PassengerController {
     try {
       response.status(HttpStatusCode.Ok).send(passenger);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response
       });
     }
   }
@@ -47,20 +56,24 @@ export class PassengerController {
     @Res() response: Response,
   ) {
     try {
+      if (!userName) {
+        throw ApiMissingParameterException;
+      }
+
       const res = await this.passengerService.getPassengerWithInfoByUserName(userName);
 
-      if (!res) throw new NotFoundException("Cannot find the passenger with the given userName");
+      if (!res) throw ClientPassengerNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof BadRequestException 
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -74,18 +87,17 @@ export class PassengerController {
     try {
       const res = await this.passengerService.getPassengerWithInfoByUserId(passenger.id);
 
-      if (!res) throw new NotFoundException("Cannot find the passenger with the given id");
+      if (!res) throw ClientPassengerNotFoundException; // since the info of user is one-to-one relative to the user
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -99,68 +111,43 @@ export class PassengerController {
     try {
       const res = await this.passengerService.getPassengerWithCollectionByUserId(passenger.id);
 
-      if (!res) throw new NotFoundException("Cannot find the passenger with the given id");
+      if (!res) throw ClientCollectionNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
 
   /* ================= Search operations ================= */
-  @Get('searchPassengersByUserName')
-  async searchPassengersByUserName(
-    @Query('userName') userName: string,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      const res = await this.passengerService.searchPassengersByUserName(userName, +limit, +offset);
-
-      if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any passengers");
-      }
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      response.status(error instanceof NotFoundException 
-        ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
-      });
-    }
-  }
-
   @Get('searchPaginationPassengers')
   async searchPaginationPassengers(
+    @Query('userName') userName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
     try {
-      const res = await this.passengerService.searchPaginationPassengers(+limit, +offset);
+      const res = await this.passengerService.searchPaginationPassengers(userName, +limit, +offset);
 
-      if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any passengers");
-      }
+      if (!res || res.length == 0) throw ClientPassengerNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException 
-        ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -181,23 +168,18 @@ export class PassengerController {
     try {
       const res = await this.passengerService.updatePassengerById(passenger.id, updatePassengerDto);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the passenger with the given id to update")
-      }
+      if (!res || res.length === 0) throw ClientPassengerNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : (error instanceof ConflictException
-            ? HttpStatusCode.Conflict
-            : HttpStatusCode.UnknownError ?? 520
-          )
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException
+        || error instanceof ConflictException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -212,20 +194,17 @@ export class PassengerController {
     try {
       const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto);
 
-      if (!res) {
-        throw new NotFoundException("Cannot find the passenger with the given id to update")
-      }
+      if (!res) throw ClientPassengerNotFoundException;
 
       response.status(HttpStatusCode.Ok).send({});
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -243,20 +222,20 @@ export class PassengerController {
     try {
       const res = await this.passengerService.deletePassengerById(passenger.id);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the passenger with the given id to update")
-      }
+      if (!res || res.length === 0) throw ClientPassengerNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        deletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -266,12 +245,12 @@ export class PassengerController {
 
   /* ================================= Other operations ================================= */
   @Get('test')
-  getTest() {
+  getTest(@Res() response: Response) {
     console.log("test")
-    // response.status(HttpStatusCode.Ok).send({
-    //   alert: "This route is currently only for debugging",
-    //   message: "test",
-    // });
+    response.status(HttpStatusCode.Ok).send({
+      alert: "This route is currently only for debugging",
+      message: "test",
+    });
   }
 
   @Get('getAllPassengers')
@@ -285,6 +264,7 @@ export class PassengerController {
       });
     } catch (error) {
       response.status(HttpStatusCode.NotFound).send({
+        alert: "This route is currently only for debugging",
         message: "Cannot find any passengers",
       });
     }

@@ -9,10 +9,10 @@ exports.OrderTable = (0, pg_core_1.pgTable)("order", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     passengerId: (0, pg_core_1.uuid)("passengerId").references(() => schema_1.PassengerTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     ridderId: (0, pg_core_1.uuid)("ridderId").references(() => schema_1.RidderTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
     passengerStartCord: (0, pg_core_1.geometry)("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: (0, pg_core_1.geometry)("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

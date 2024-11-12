@@ -1,12 +1,20 @@
 import { 
   Controller, UseGuards, 
   Get, Body, Patch, Delete, Query, Res, 
-  UnauthorizedException, NotFoundException, ConflictException 
+  UnauthorizedException, 
+  NotFoundException, 
+  ConflictException, 
+  BadRequestException
 } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
-import { TokenExpiredError } from '@nestjs/jwt';
+import { 
+  ApiMissingParameterException, 
+  ClientUnknownException, 
+  ClientCollectionNotFoundException, 
+  ClientRidderNotFoundException
+} from '../exceptions';
 
 import { JwtRidderGuard } from '../auth/guard';
 import { RidderType } from '../interfaces/auth.interface';
@@ -29,11 +37,12 @@ export class RidderController {
     try {
       response.status(HttpStatusCode.Ok).send(ridder);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response
       });
     }
   }
@@ -46,20 +55,24 @@ export class RidderController {
     @Res() response: Response,
   ) {
     try {
+      if (!userName) {
+        throw ApiMissingParameterException;
+      }
+
       const res = await this.ridderService.getRidderWithInfoByUserName(userName);
 
-      if (!res) throw new NotFoundException("Cannot find the ridder with the given userName");
+      if (!res) throw ClientRidderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof BadRequestException 
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -73,18 +86,17 @@ export class RidderController {
     try {
       const res = await this.ridderService.getRidderWithInfoByUserId(ridder.id);
 
-      if (!res) throw new NotFoundException("Cannot find the ridder with the given id");
+      if (!res) throw ClientRidderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -98,71 +110,46 @@ export class RidderController {
     try {
       const res = await this.ridderService.getRidderWithCollectionByUserId(ridder.id);
       
-      if (!res) throw new NotFoundException("Cannot find the ridder with the given id");
+      if (!res) throw ClientCollectionNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
 
   /* ================= Search operations ================= */
-  @Get('searchRiddersByUserName')
-  async searchRiddersByUserName(
-    @Query('userName') userName: string,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      const res = await this.ridderService.searchRiddersByUserName(userName, +limit, +offset);
-
-      if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any ridders");
-      }
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      response.status(error instanceof NotFoundException 
-        ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
-      });
-    }
-  }
-
   @Get('searchPaginationRidders')
   async searchPaginationRidders(
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
+    @Query('userName') userName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
     // !important : note that if you want to get the parameter as number from the url route,
     //              you must first make sure the type of parameters are all string,
     //              for each variable you want to read it as a number, add '+' when you passing it to the services
     try {
-      const res = await this.ridderService.searchPaginationRidders(+limit, +offset);
+      const res = await this.ridderService.searchPaginationRidders(userName, +limit, +offset);
 
-      if (!res || res.length == 0) {
-        throw new NotFoundException("Cannot find any ridders");
-      }
+      if (!res || res.length == 0) throw ClientRidderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException 
-        ? HttpStatusCode.NotFound 
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -183,23 +170,18 @@ export class RidderController {
     try {
       const res = await this.ridderService.updateRidderById(ridder.id, updateRidderDto);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the ridder with the given id to update")
-      }
+      if (!res || res.length === 0) throw ClientRidderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : (error instanceof ConflictException // passing the same password as previous to update
-            ? HttpStatusCode.Conflict
-            : HttpStatusCode.UnknownError ?? 520
-          )
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException
+        || error instanceof ConflictException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -214,20 +196,17 @@ export class RidderController {
     try {
       const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto);
 
-      if (!res) {
-        throw new NotFoundException("Cannot find the ridder with the given id to update")
-      }
+      if (!res) throw ClientRidderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send({});
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -245,20 +224,20 @@ export class RidderController {
     try {
       const res = await this.ridderService.deleteRiddderById(ridder.id);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the ridder with the given id to update")
-      }
+      if (!res || res.length === 0) throw ClientRidderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        deletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+      
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -278,6 +257,7 @@ export class RidderController {
       });
     } catch (error) {
       response.status(HttpStatusCode.NotFound).send({
+        alert: "This route is currently only for debugging",
         message: "Cannot find any ridders",
       });
     }

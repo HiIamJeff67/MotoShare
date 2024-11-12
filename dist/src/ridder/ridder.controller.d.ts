@@ -10,8 +10,7 @@ export declare class RidderController {
     getRidderWithInfoByUserName(ridder: RidderType, userName: string, response: Response): Promise<void>;
     getMyInfo(ridder: RidderType, response: Response): Promise<void>;
     getMyCollection(ridder: RidderType, response: Response): Promise<void>;
-    searchRiddersByUserName(userName: string, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
-    searchPaginationRidders(limit: string, offset: string, response: Response): Promise<void>;
+    searchPaginationRidders(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     updateMe(ridder: RidderType, updateRidderDto: UpdateRidderDto, response: Response): Promise<void>;
     updateMyInfo(ridder: RidderType, updateRidderInfoDto: UpdateRidderInfoDto, response: Response): Promise<void>;
     deleteMe(ridder: RidderType, response: Response): Promise<void>;

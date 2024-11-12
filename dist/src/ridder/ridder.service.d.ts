@@ -13,7 +13,6 @@ export declare class RidderService {
         info: {
             isOnline: boolean;
             age: number | null;
-            phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             createdAt: Date;
@@ -60,22 +59,15 @@ export declare class RidderService {
                 isUrgent: boolean;
                 creator: {
                     userName: string;
-                } | null;
+                };
             };
         }[];
     } | undefined>;
-    searchRiddersByUserName(userName: string, limit: number, offset: number): Promise<{
+    searchPaginationRidders(userName: string | undefined, limit: number, offset: number): Promise<{
         userName: string;
         email: string;
         info: {
-            avatorUrl: string | null;
-            motocycleType: string | null;
-        } | null;
-    }[]>;
-    searchPaginationRidders(limit: number, offset: number): Promise<{
-        userName: string;
-        email: string;
-        info: {
+            isOnline: boolean;
             avatorUrl: string | null;
             motocycleType: string | null;
         } | null;

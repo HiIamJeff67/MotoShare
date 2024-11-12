@@ -1,28 +1,28 @@
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDate, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
 
 export class CreatePassengerInviteDto {
     @IsOptional()
     @IsString()
-    briefDescription: string
+    briefDescription?: string
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsNumberString()
     suggestPrice: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     startCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     startCordLatitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     endCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     endCordLatitude: number
 
     @IsOptional()

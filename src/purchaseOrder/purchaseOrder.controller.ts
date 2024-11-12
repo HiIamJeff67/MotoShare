@@ -1,16 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Delete, Query, UseGuards, Req, Res, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Controller, 
+  Get, Post, Body, Patch, Delete, Query, UseGuards, Res, 
+  NotFoundException, 
+  BadRequestException, 
+  UnauthorizedException, 
+  ForbiddenException
+} from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
-import { TokenExpiredError } from '@nestjs/jwt';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
+import { 
+  ApiMissingParameterException,
+  ClientCreatePurchaseOrderException,
+  ClientPurchaseOrderNotFoundException,
+  ClientUnknownException, 
+} from '../exceptions';
 
-import { JwtPassengerGuard } from '../auth/guard';
-import { PassengerType } from '../interfaces/auth.interface';
-import { Passenger } from '../auth/decorator';
+import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
+import { PassengerType, RidderType } from '../interfaces/auth.interface';
+import { Passenger, Ridder } from '../auth/decorator';
 
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
-import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
+import { 
+  GetAdjacentPurchaseOrdersDto, 
+  GetSimilarRoutePurchaseOrdersDto 
+} from './dto/get-purchaseOrder.dto';
+
 
 @Controller('purchaseOrder')
 export class PurchaseOrderController {
@@ -27,19 +42,17 @@ export class PurchaseOrderController {
     try {
       const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(passenger.id, createPurchaseOrderDto);
 
-      if (!res || res.length === 0) {
-        throw new BadRequestException("Cannot create purchase order by the current passenger");
-      }
+      if (!res || res.length === 0) throw ClientCreatePurchaseOrderException;
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof BadRequestException
-          ? HttpStatusCode.BadRequest
-          : HttpStatusCode.UnknownError ?? 520)
-      ).send({
-        message: error.message,
+      if (!(error instanceof ForbiddenException 
+        || error instanceof UnauthorizedException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -62,49 +75,48 @@ export class PurchaseOrderController {
     try {
       const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find the purchase orders of the current passenger");
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
 
   // use this route to get detail of a puchase order by the given purchaseOrderId
-  @UseGuards(JwtPassengerGuard)
+  @UseGuards(JwtRidderGuard)
   @Get('getPurchaseOrderById')
   async getPurchaseOrderById(
-    @Passenger() passenger: PassengerType,
+    @Ridder() ridder: RidderType, // only the authenticated ridder can see the details of purchaseOrders
     @Query('id') id: string,
     @Res() response: Response,
   ) {
     try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
       const res = await this.purchaseOrderService.getPurchaseOrderById(id);
 
-      if (!res) {
-        throw new NotFoundException(`Cannot find the purchase order with the given orderId: ${id}`);
-      }
+      if (!res) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized 
-        : (error instanceof NotFoundException
-          ? HttpStatusCode.NotFound
-          : HttpStatusCode.UnknownError ?? 520
-        )
-      ).send({
-        message: error.message,
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -120,17 +132,16 @@ export class PurchaseOrderController {
     try {
       const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find any purchase orders");
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -151,17 +162,16 @@ export class PurchaseOrderController {
         getAdjacentPurchaseOrdersDto
       );
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find any purchase orders");
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -182,17 +192,16 @@ export class PurchaseOrderController {
         getAdjacentPurchaseOrdersDto
       );
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find any purchase orders");
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -213,17 +222,16 @@ export class PurchaseOrderController {
         getSimilarRoutePurchaseOrdersDto
       );
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException("Cannot find any purchase orders");
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      response.status(error instanceof NotFoundException
-        ? HttpStatusCode.NotFound
-        : HttpStatusCode.UnknownError ?? 520
-      ).send({
-        message: error.message,
+      if (!(error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -242,24 +250,24 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
       const res = await this.purchaseOrderService.updatePurchaseOrderById(id, passenger.id, updatePurchaseOrderDto);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException(`
-          Cannot find any purchase orders with the given orderId: ${id}, 
-          or the current passenger cannot update the order which is not created by himself/herself
-        `);
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-            ? HttpStatusCode.NotFound
-            : HttpStatusCode.UnknownError ?? 520)
-      ).send({
-        message: error.message,
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }
@@ -275,27 +283,27 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
       const res = await this.purchaseOrderService.deletePurchaseOrderById(id, passenger.id);
 
-      if (!res || res.length === 0) {
-        throw new NotFoundException(`
-          Cannot find any purchase orders with the given orderId: ${id}, 
-          or the current passenger cannot delete the order which is not created by himself/herself
-        `);
-      }
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send({
         deletedAt: new Date(),
         ...res[0],
       });
     } catch (error) {
-      response.status((error instanceof UnauthorizedException || error instanceof TokenExpiredError)
-        ? HttpStatusCode.Unauthorized
-        : (error instanceof NotFoundException
-            ? HttpStatusCode.NotFound
-            : HttpStatusCode.UnknownError ?? 520)
-      ).send({
-        message: error.message,
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
       });
     }
   }

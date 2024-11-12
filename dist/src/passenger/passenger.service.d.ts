@@ -13,7 +13,6 @@ export declare class PassengerService {
         info: {
             isOnline: boolean;
             age: number | null;
-            phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             createdAt: Date;
@@ -55,23 +54,15 @@ export declare class PassengerService {
                 status: "POSTED" | "EXPIRED" | "CANCEL";
                 creator: {
                     userName: string;
-                } | null;
+                };
             };
         }[];
     } | undefined>;
-    searchPassengersByUserName(userName: string, limit: number, offset: number): Promise<{
+    searchPaginationPassengers(userName: string | undefined, limit: number, offset: number): Promise<{
         userName: string;
         email: string;
         info: {
-            selfIntroduction: string | null;
-            avatorUrl: string | null;
-        } | null;
-    }[]>;
-    searchPaginationPassengers(limit: number, offset: number): Promise<{
-        userName: string;
-        email: string;
-        info: {
-            selfIntroduction: string | null;
+            isOnline: boolean;
             avatorUrl: string | null;
         } | null;
     }[]>;

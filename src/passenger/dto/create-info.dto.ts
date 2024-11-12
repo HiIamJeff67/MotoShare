@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsBooleanString, IsInt, IsNumberString, IsOptional, IsString } from "class-validator";
 
 export class CreatePassengerInfoDto {
     // instead of using @IsOptional decorator for the optional fields,
@@ -6,15 +6,15 @@ export class CreatePassengerInfoDto {
     // (since our database accept null value of these fields)
 
     @IsOptional()
-    @IsBoolean()
+    @IsBooleanString()
     isOnline?: boolean
 
     @IsOptional()
-    @IsInt()
+    @IsNumberString()
     age?: number
 
     @IsOptional()
-    @IsString()
+    @IsNumberString()
     phoneNumber?: string
 
     @IsOptional()

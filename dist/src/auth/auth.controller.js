@@ -23,9 +23,6 @@ let AuthController = class AuthController {
     }
     async signUpPassengerWithEmailAndPassword(signUpDto, response) {
         try {
-            if (signUpDto.userName && signUpDto.userName.length > 20) {
-                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
-            }
             const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
                 ...passengerResponse,

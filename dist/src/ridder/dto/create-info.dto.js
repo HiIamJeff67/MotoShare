@@ -16,17 +16,17 @@ class CreateRidderInfoDto {
 exports.CreateRidderInfoDto = CreateRidderInfoDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsBooleanString)(),
     __metadata("design:type", Boolean)
 ], CreateRidderInfoDto.prototype, "isOnline", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateRidderInfoDto.prototype, "age", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", String)
 ], CreateRidderInfoDto.prototype, "phoneNumber", void 0);
 __decorate([

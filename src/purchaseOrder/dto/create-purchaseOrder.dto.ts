@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
 
 // longitude(經度) -> x
 // latitude(緯度)  -> y
@@ -9,23 +9,23 @@ export class CreatePurchaseOrderDto {
     description?: string
 
     @IsNotEmpty()
-    @IsInt()
+    @IsNumberString()
     initPrice: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     startCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     startCordLatitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLongitude()
     endCordLongitude: number
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsLatitude()
     endCordLatitude: number
 
     // @IsOptional()

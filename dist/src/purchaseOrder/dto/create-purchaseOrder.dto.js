@@ -21,27 +21,27 @@ __decorate([
 ], CreatePurchaseOrderDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreatePurchaseOrderDto.prototype, "initPrice", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreatePurchaseOrderDto.prototype, "startCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreatePurchaseOrderDto.prototype, "startCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreatePurchaseOrderDto.prototype, "endCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreatePurchaseOrderDto.prototype, "endCordLatitude", void 0);
 __decorate([

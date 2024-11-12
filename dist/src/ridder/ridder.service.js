@@ -20,6 +20,7 @@ const config_1 = require("@nestjs/config");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
+const exceptions_1 = require("../exceptions");
 let RidderService = class RidderService {
     constructor(config, db) {
         this.config = config;
@@ -48,7 +49,6 @@ let RidderService = class RidderService {
                     columns: {
                         isOnline: true,
                         age: true,
-                        phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
                         motocycleType: true,
@@ -118,9 +118,9 @@ let RidderService = class RidderService {
             }
         });
     }
-    async searchRiddersByUserName(userName, limit, offset) {
+    async searchPaginationRidders(userName = undefined, limit, offset) {
         return await this.db.query.RidderTable.findMany({
-            where: (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, userName + "%"),
+            ...(userName && { where: (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, userName + "%") }),
             columns: {
                 userName: true,
                 email: true,
@@ -129,24 +129,7 @@ let RidderService = class RidderService {
                 info: {
                     columns: {
                         avatorUrl: true,
-                        motocycleType: true,
-                    }
-                }
-            },
-            limit: limit,
-            offset: offset,
-        });
-    }
-    async searchPaginationRidders(limit, offset) {
-        return await this.db.query.RidderTable.findMany({
-            columns: {
-                userName: true,
-                email: true,
-            },
-            with: {
-                info: {
-                    columns: {
-                        avatorUrl: true,
+                        isOnline: true,
                         motocycleType: true,
                     }
                 }
@@ -159,25 +142,22 @@ let RidderService = class RidderService {
     async updateRidderById(id, updateRidderDto) {
         const user = await this.getRidderById(id);
         if (!user) {
-            throw new common_1.NotFoundException(`Cannot find the ridder with the given id`);
+            throw exceptions_1.ClientRidderNotFoundException;
         }
         if (updateRidderDto.userName && updateRidderDto.userName.length !== 0) {
             const unMatches = updateRidderDto.userName === user.userName;
-            if (unMatches) {
-                throw new common_1.ConflictException(`Duplicated userName ${updateRidderDto.userName} detected, please use a different userName`);
-            }
+            if (unMatches)
+                throw exceptions_1.ClientNoChangeOnUserNameException;
         }
         if (updateRidderDto.email && updateRidderDto.email.length !== 0) {
             const emMatches = updateRidderDto.email === user.email;
-            if (emMatches) {
-                throw new common_1.ConflictException(`Duplicated email ${updateRidderDto.email} detected, please use a different email`);
-            }
+            if (emMatches)
+                throw exceptions_1.ClientNoChangeOnEmailException;
         }
         if (updateRidderDto.password && updateRidderDto.password.length !== 0) {
             const pwMatches = await bcrypt.compare(updateRidderDto.password, user.hash);
-            if (pwMatches) {
-                throw new common_1.ConflictException(`Duplicated credential detected, please use a different password`);
-            }
+            if (pwMatches)
+                throw exceptions_1.ClientNoChangeOnPasswordException;
             const hash = await bcrypt.hash(updateRidderDto.password, Number(this.config.get("SALT_OR_ROUND")));
             return await this.db.update(ridder_schema_1.RidderTable).set({
                 userName: updateRidderDto.userName,

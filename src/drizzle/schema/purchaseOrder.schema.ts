@@ -14,7 +14,7 @@ export const PurchaseOrderTable = pgTable("purchaseOrder", {
     id: uuid("id").primaryKey().defaultRandom(),
     creatorId: uuid("creatorId").references(() => PassengerTable.id, {
         onDelete: 'cascade',
-    }),
+    }).notNull(),
     description: text("description"),
     initPrice: integer("initPrice").notNull(),
     startCord: geometry("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

@@ -25,7 +25,7 @@ export declare const PassengerInviteTable: import("drizzle-orm/pg-core").PgTable
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -41,7 +41,7 @@ export declare const PassengerInviteTable: import("drizzle-orm/pg-core").PgTable
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -204,6 +204,6 @@ export declare const PassengerInviteTable: import("drizzle-orm/pg-core").PgTable
     dialect: "pg";
 }>;
 export declare const PassengerInviteRelation: import("drizzle-orm").Relations<"passengerInvite", {
-    inviter: import("drizzle-orm").One<"passenger", false>;
-    order: import("drizzle-orm").One<"supplyOrder", false>;
+    inviter: import("drizzle-orm").One<"passenger", true>;
+    order: import("drizzle-orm").One<"supplyOrder", true>;
 }>;

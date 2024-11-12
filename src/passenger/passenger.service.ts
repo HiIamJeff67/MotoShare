@@ -10,6 +10,7 @@ import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schem
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientPassengerNotFoundException } from '../exceptions';
 
 @Injectable()
 export class PassengerService {
@@ -48,7 +49,7 @@ export class PassengerService {
           columns: {
             isOnline: true,
             age: true,
-            phoneNumber: true,
+            // phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
             createdAt: true,
@@ -117,14 +118,13 @@ export class PassengerService {
   }
 
   /* ================= Search operations ================= */
-  // usually used by ridder(to search the passengers)
-  async searchPassengersByUserName(
-    userName: string, 
+  async searchPaginationPassengers(
+    userName: string | undefined = undefined,
     limit: number, 
-    offset: number, 
+    offset: number,
   ) {
     return await this.db.query.PassengerTable.findMany({
-      where: like(PassengerTable.userName, userName + "%"), // using entire prefix matching to search relative users
+      ...(userName && {where: like(PassengerTable.userName, userName + "%")}), // using entire prefix matching to search relative users
       columns: {
         userName: true,
         email: true,
@@ -132,27 +132,8 @@ export class PassengerService {
       with: {
         info: {
           columns: {
-            selfIntroduction: true,
             avatorUrl: true,
-          }
-        }
-      },
-      limit: limit,
-      offset: offset,
-    });
-  }
-
-  async searchPaginationPassengers(limit: number, offset: number) {
-    return await this.db.query.PassengerTable.findMany({
-      columns: {
-        userName: true,
-        email: true,
-      },
-      with: {
-        info: {
-          columns: {
-            selfIntroduction: true,
-            avatorUrl: true,
+            isOnline: true,
           }
         }
       },
@@ -166,7 +147,6 @@ export class PassengerService {
   /* ================================= Get operations ================================= */
 
 
-
   /* ================================= Update operations ================================= */
   async updatePassengerById(
     id: string, 
@@ -175,26 +155,20 @@ export class PassengerService {
     // check if the new password is same as the previous one
     const user = await this.getPassengerById(id);
     if (!user) {
-      throw new NotFoundException(`Cannot find the passenger with the given id`);
+      throw ClientPassengerNotFoundException;
     }
 
     if (updatePassengerDto.userName && updatePassengerDto.userName.length !== 0) {  // if the user want to update its userName
       const unMatches = updatePassengerDto.userName === user.userName;  // check if the userName matches the previous one
-      if (unMatches) {
-        throw new ConflictException(`Duplicated userName ${updatePassengerDto.userName} detected, please use a different userName`);
-      }
+      if (unMatches) throw ClientNoChangeOnUserNameException;
     }
     if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {  // if the user want to update its email
       const emMatches = updatePassengerDto.email === user.email;  // check of the email matches the previous one
-      if (emMatches) {
-        throw new ConflictException(`Duplicated email ${updatePassengerDto.email} detected, please use a different email`);
-      }
+      if (emMatches) throw ClientNoChangeOnEmailException;
     }
     if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {  // if the user want to update its password
       const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash); // check if the password matches the previous one
-      if (pwMatches) {
-        throw new ConflictException(`Duplicated credential detected, please use a different password`);
-      }
+      if (pwMatches) throw ClientNoChangeOnPasswordException;
 
       const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
       return await this.db.update(PassengerTable).set({
@@ -228,11 +202,10 @@ export class PassengerService {
       phoneNumber: updatePassengerInfoDto.phoneNumber,
       selfIntroduction: updatePassengerInfoDto.selfIntroduction,
       avatorUrl: updatePassengerInfoDto.avatorUrl,
-    }).where(eq(PassengerInfoTable.userId, userId))
+    }).where(eq(PassengerInfoTable.userId, userId));
   }
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
-
 
 
   /* ================================= Delete operations ================================= */
@@ -246,7 +219,6 @@ export class PassengerService {
       });
   }
   /* ================================= Delete operations ================================= */
-
 
 
   /* ================================= Test operations ================================= */

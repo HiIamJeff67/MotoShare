@@ -21,27 +21,27 @@ __decorate([
 ], CreateSupplyOrderDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "initPrice", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "startCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "startCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLongitude)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "endCordLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "endCordLatitude", void 0);
 __decorate([
@@ -51,7 +51,7 @@ __decorate([
 ], CreateSupplyOrderDto.prototype, "startAfter", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "tolerableRDV", void 0);
 //# sourceMappingURL=create-supplyOrder.dto.js.map

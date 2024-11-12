@@ -25,7 +25,7 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -188,7 +188,7 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
     dialect: "pg";
 }>;
 export declare const SupplyOrderRelation: import("drizzle-orm").Relations<"supplyOrder", {
-    creator: import("drizzle-orm").One<"ridder", false>;
+    creator: import("drizzle-orm").One<"ridder", true>;
     collectionsToOrders: import("drizzle-orm").Many<"passengerCollectionsToOrders">;
     invite: import("drizzle-orm").Many<"passengerInvite">;
 }>;

@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, like, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -158,10 +158,10 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
 
     if (creatorName) {
-      query.where(eq(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName));
     }
 
-    query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
          .orderBy(desc(SupplyOrderTable.updatedAt))
          .limit(limit)
          .offset(offset);
@@ -193,10 +193,10 @@ export class SupplyOrderService {
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
     }).from(SupplyOrderTable)
-      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(eq(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -234,10 +234,10 @@ export class SupplyOrderService {
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
     }).from(SupplyOrderTable)
-      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(eq(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -292,10 +292,10 @@ export class SupplyOrderService {
           )
       `,
     }).from(SupplyOrderTable)
-      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(eq(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))

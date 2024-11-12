@@ -10,10 +10,10 @@ export const RidderInviteTable = pgTable('ridderInvite', {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'set null',
-    }),
+    }).notNull(),
     orderId: uuid("orderId").references(() => PurchaseOrderTable.id, {
         onDelete: 'cascade',
-    }),
+    }).notNull(),
     briefDescription: text("briefDesciption"),
     suggestPrice: integer("suggestPrice").notNull(),
     startCord: geometry("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql } from 'drizzle-orm';
+import { desc, and, eq, sql, like } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
@@ -65,7 +65,7 @@ export class PurchaseOrderService {
       orderBy: desc(PurchaseOrderTable.updatedAt),
       limit: limit,
       offset: offset,
-    })
+    });
     // return await this.db.select({
     //   id: PurchaseOrderTable.id,
     //   initPrice: PurchaseOrderTable.initPrice,
@@ -156,7 +156,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(eq(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName));
     }
       
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -193,7 +193,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(eq(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -233,7 +233,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(eq(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -287,11 +287,11 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(eq(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-          .orderBy(sql`
+         .orderBy(sql`
             ST_Distance(
               ${PurchaseOrderTable.startCord},
               ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326)
@@ -309,8 +309,8 @@ export class PurchaseOrderService {
               ${PurchaseOrderTable.endCord}
             )
         `)
-          .limit(limit)
-          .offset(offset);
+         .limit(limit)
+         .offset(offset);
     
       return await query;
   }
