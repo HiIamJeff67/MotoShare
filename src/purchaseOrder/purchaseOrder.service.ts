@@ -156,7 +156,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName + "%"));
     }
       
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -193,7 +193,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -233,7 +233,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -287,7 +287,7 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName));
+      query.where(like(PassengerTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))

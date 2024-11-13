@@ -111,7 +111,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
@@ -139,7 +139,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -170,7 +170,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -215,7 +215,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `

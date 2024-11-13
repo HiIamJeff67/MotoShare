@@ -2,7 +2,8 @@ import { Controller,
   Get, Post, Body, Patch, Delete, UseGuards, Query, Res, 
   BadRequestException, 
   UnauthorizedException, 
-  ForbiddenException 
+  ForbiddenException, 
+  NotFoundException
 } from '@nestjs/common';
 import { RidderInviteService } from './ridderInvite.service';
 import { Response } from 'express';
@@ -52,7 +53,7 @@ export class RidderInviteController {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
         || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -84,8 +85,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -114,8 +115,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -147,8 +148,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -158,7 +159,7 @@ export class RidderInviteController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('passenger/searchMyCurAdjacentRidderInvites')
+  @Get('ridder/searchMyCurAdjacentRidderInvites')
   async searchCurAdjacentRidderInvitesByInviterId(
     @Ridder() ridder: RidderType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -179,8 +180,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -211,8 +212,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -222,7 +223,7 @@ export class RidderInviteController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchMySimilarRoutePassengerInvites')
+  @Get('ridder/searchMySimilarRouteRidderInvites')
   async searchSimilarRouteRidderInvitesByInviterId(
     @Ridder() ridder: RidderType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -243,8 +244,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -278,8 +279,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -310,8 +311,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -342,8 +343,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -374,8 +375,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -412,8 +413,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -445,8 +446,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -483,8 +484,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({

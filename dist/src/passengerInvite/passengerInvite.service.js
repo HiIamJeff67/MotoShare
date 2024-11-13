@@ -98,7 +98,7 @@ let PassengerInviteService = class PassengerInviteService {
         if (receiverName) {
             query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
                 .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
@@ -126,13 +126,13 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+        ${passengerInvite_schema_1.PassengerInviteTable.startCord}
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable);
         if (receiverName) {
             query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
                 .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
@@ -141,9 +141,9 @@ let PassengerInviteService = class PassengerInviteService {
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-            ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-            ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-          )`)
+           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
+           ${passengerInvite_schema_1.PassengerInviteTable.startCord}
+         )`)
             .limit(limit)
             .offset(offset);
         return await query;
@@ -163,13 +163,13 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+        ${passengerInvite_schema_1.PassengerInviteTable.endCord}
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable);
         if (receiverName) {
             query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
                 .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
@@ -179,7 +179,7 @@ let PassengerInviteService = class PassengerInviteService {
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-            ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.endCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -201,26 +201,26 @@ let PassengerInviteService = class PassengerInviteService {
             RDV: (0, drizzle_orm_1.sql) `
         ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+          ${passengerInvite_schema_1.PassengerInviteTable.startCord}
         )
       + ST_Distance(
           ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+          ${passengerInvite_schema_1.PassengerInviteTable.endCord}
         )
       + ST_Distance(
           ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+          ${supplyOrder_schema_1.SupplyOrderTable.endCord}
         )
       - ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+          ${supplyOrder_schema_1.SupplyOrderTable.endCord}
         )
       `,
         }).from(passengerInvite_schema_1.PassengerInviteTable);
         if (receiverName) {
             query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
                 .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
@@ -231,19 +231,19 @@ let PassengerInviteService = class PassengerInviteService {
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord}
           )
           + ST_Distance(
               ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord}
             )
           + ST_Distance(
               ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
             )
           - ST_Distance(
               ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
             )
           `)
             .limit(limit)
@@ -267,7 +267,7 @@ let PassengerInviteService = class PassengerInviteService {
             .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
@@ -294,13 +294,13 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+        ${passengerInvite_schema_1.PassengerInviteTable.startCord}
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
             .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
@@ -309,7 +309,7 @@ let PassengerInviteService = class PassengerInviteService {
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-            ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.startCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -330,13 +330,13 @@ let PassengerInviteService = class PassengerInviteService {
             status: passengerInvite_schema_1.PassengerInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-        ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+        ${passengerInvite_schema_1.PassengerInviteTable.endCord}
       )`,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
             .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
@@ -345,7 +345,7 @@ let PassengerInviteService = class PassengerInviteService {
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${supplyOrder_schema_1.SupplyOrderTable.endCord},
-            ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+            ${passengerInvite_schema_1.PassengerInviteTable.endCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -367,26 +367,26 @@ let PassengerInviteService = class PassengerInviteService {
             RDV: (0, drizzle_orm_1.sql) `
         ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+          ${passengerInvite_schema_1.PassengerInviteTable.startCord}
         )
       + ST_Distance(
           ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-          ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+          ${passengerInvite_schema_1.PassengerInviteTable.endCord}
         )
       + ST_Distance(
           ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+          ${supplyOrder_schema_1.SupplyOrderTable.endCord}
         )
       - ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-          ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+          ${supplyOrder_schema_1.SupplyOrderTable.endCord}
         )
       `,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
             .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
@@ -396,19 +396,19 @@ let PassengerInviteService = class PassengerInviteService {
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-              ${passengerInvite_schema_1.PassengerInviteTable.startCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.startCord}
             )
           + ST_Distance(
               ${passengerInvite_schema_1.PassengerInviteTable.startCord},
-              ${passengerInvite_schema_1.PassengerInviteTable.endCord},
+              ${passengerInvite_schema_1.PassengerInviteTable.endCord}
             )
           + ST_Distance(
               ${passengerInvite_schema_1.PassengerInviteTable.endCord},
-              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
             )
           - ST_Distance(
               ${supplyOrder_schema_1.SupplyOrderTable.startCord},
-              ${supplyOrder_schema_1.SupplyOrderTable.endCord},
+              ${supplyOrder_schema_1.SupplyOrderTable.endCord}
             )
           `)
             .limit(limit)
@@ -432,7 +432,7 @@ let PassengerInviteService = class PassengerInviteService {
             suggestStartAfter: updatePassengerInviteDto.suggestStartAfter,
             updatedAt: new Date(),
             status: updatePassengerInviteDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId)))
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")))
             .returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
@@ -441,7 +441,7 @@ let PassengerInviteService = class PassengerInviteService {
     }
     async decidePassengerInviteById(id, receiverId, decidePassengerInviteDto) {
         const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")),
             with: {
                 order: {
                     columns: {
@@ -450,16 +450,17 @@ let PassengerInviteService = class PassengerInviteService {
                 }
             }
         });
-        if (supplyOrder && supplyOrder.order && receiverId !== supplyOrder?.order?.creatorId) {
+        if (!supplyOrder || !supplyOrder.order)
+            throw exceptions_1.ClientInviteNotFoundException;
+        if (receiverId !== supplyOrder?.order?.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
-        }
         return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
             status: decidePassengerInviteDto.status,
         }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id));
     }
     async deletePassengerInviteById(id, inviterId) {
         return await this.db.delete(passengerInvite_schema_1.PassengerInviteTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")))
             .returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             status: passengerInvite_schema_1.PassengerInviteTable.status,

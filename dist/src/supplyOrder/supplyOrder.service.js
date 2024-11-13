@@ -113,7 +113,7 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
@@ -142,7 +142,7 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -174,7 +174,7 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -220,7 +220,7 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName));
+            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `

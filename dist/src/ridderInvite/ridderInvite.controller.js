@@ -60,7 +60,7 @@ let RidderInviteController = class RidderInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -81,7 +81,7 @@ let RidderInviteController = class RidderInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -98,7 +98,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -115,7 +115,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -132,7 +132,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -149,7 +149,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -166,7 +166,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -183,7 +183,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -200,7 +200,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -217,7 +217,7 @@ let RidderInviteController = class RidderInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -238,7 +238,7 @@ let RidderInviteController = class RidderInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -259,7 +259,7 @@ let RidderInviteController = class RidderInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -283,7 +283,7 @@ let RidderInviteController = class RidderInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -338,7 +338,7 @@ __decorate([
 ], RidderInviteController.prototype, "searchPaginationRidderInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('passenger/searchMyCurAdjacentRidderInvites'),
+    (0, common_1.Get)('ridder/searchMyCurAdjacentRidderInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -362,7 +362,7 @@ __decorate([
 ], RidderInviteController.prototype, "searchDestAdjacentRidderInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchMySimilarRoutePassengerInvites'),
+    (0, common_1.Get)('ridder/searchMySimilarRouteRidderInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),

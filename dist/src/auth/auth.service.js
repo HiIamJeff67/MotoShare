@@ -19,11 +19,11 @@ const drizzle_orm_1 = require("drizzle-orm");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const exceptions_1 = require("../exceptions");
 const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
-const exceptions_1 = require("../exceptions");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;

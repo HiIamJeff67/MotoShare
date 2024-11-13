@@ -1,17 +1,10 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { DRIZZLE } from "../../src/drizzle/drizzle.module";
 import { DrizzleDB } from "../../src/drizzle/types/drizzle";
-import { SignInDto, SignUpDto } from "./dto/index";
-
-import { PassengerTable } from "../../src/drizzle/schema/passenger.schema";
-import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schema';
-import { RidderTable } from '../../src/drizzle/schema/ridder.schema';
-import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
-
 import { AuthTokenType } from '../../src/interfaces/auth.interface';
 import { ApiGeneratingBearerTokenException, 
     ClientCreatePassengerInfoException, 
@@ -21,6 +14,13 @@ import { ApiGeneratingBearerTokenException,
     ClientSignInUserNameNotFoundException, 
     ClientSignUpUserException, 
 } from '../exceptions';
+
+import { PassengerTable } from "../../src/drizzle/schema/passenger.schema";
+import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schema';
+import { RidderTable } from '../../src/drizzle/schema/ridder.schema';
+import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
+
+import { SignInDto, SignUpDto } from "./dto/index";
 
 @Injectable()
 export class AuthService {

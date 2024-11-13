@@ -50,7 +50,7 @@ let AuthController = class AuthController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
         }
         catch (error) {
-            if (error instanceof common_1.InternalServerErrorException) {
+            if (error.status === undefined) {
                 error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
             }
             else if (!(error instanceof common_1.BadRequestException

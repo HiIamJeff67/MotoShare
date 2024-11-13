@@ -60,7 +60,7 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -81,7 +81,7 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -98,7 +98,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -115,7 +115,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -132,7 +132,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -149,7 +149,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -166,7 +166,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -183,7 +183,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -200,7 +200,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -217,7 +217,7 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -238,7 +238,7 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -259,7 +259,7 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -283,7 +283,7 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -326,7 +326,7 @@ __decorate([
 ], PassengerInviteController.prototype, "getPassengerInviteOfRidderById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('passenger/searchMyPaginationPassengerInvitesByInviterId'),
+    (0, common_1.Get)('passenger/searchMyPaginationPassengerInvites'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -338,7 +338,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchPaginationPassengerInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('passenger/searchMyCurAdjacentPassengerInvitesByInviterId'),
+    (0, common_1.Get)('passenger/searchMyCurAdjacentPassengerInvites'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -350,7 +350,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchCurAdjacentPassengerInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('passenger/searchMyDestAdjacentPassengerInvitesByInviterId'),
+    (0, common_1.Get)('passenger/searchMyDestAdjacentPassengerInvites'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -362,7 +362,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchDestAdjacentPassengerInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('passenger/searchMySimilarRoutePassengerInvitesByInviterId'),
+    (0, common_1.Get)('passenger/searchMySimilarRoutePassengerInvites'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('receiverName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -374,7 +374,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchSimilarRoutePassengerInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchMyPaginationPasssengerInvitesByReceiverId'),
+    (0, common_1.Get)('ridder/searchMyPaginationPasssengerInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('inviterName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -386,7 +386,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchPaginationPasssengerInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchMyCurAdjacentPassengerInvitesByReceiverId'),
+    (0, common_1.Get)('ridder/searchMyCurAdjacentPassengerInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('inviterName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -398,7 +398,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchCurAdjacentPassengerInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchMyDestAdjacentPassengerInvitesByReceiverId'),
+    (0, common_1.Get)('ridder/searchMyDestAdjacentPassengerInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('inviterName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -410,7 +410,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchDestAdjacentPassengerInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchMySimilarRoutePassengerInvitesByReceverId'),
+    (0, common_1.Get)('ridder/searchMySimilarRoutePassengerInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('inviterName')),
     __param(2, (0, common_1.Query)('limit')),

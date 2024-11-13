@@ -95,7 +95,7 @@ let RidderInviteService = class RidderInviteService {
         if (receiverName) {
             query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
                 .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
@@ -123,13 +123,13 @@ let RidderInviteService = class RidderInviteService {
             status: ridderInvite_schema_1.RidderInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-        ${ridderInvite_schema_1.RidderInviteTable.startCord},
+        ${ridderInvite_schema_1.RidderInviteTable.startCord}
       )`,
         }).from(ridderInvite_schema_1.RidderInviteTable);
         if (receiverName) {
             query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
                 .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
@@ -139,7 +139,7 @@ let RidderInviteService = class RidderInviteService {
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-            ${ridderInvite_schema_1.RidderInviteTable.startCord},
+            ${ridderInvite_schema_1.RidderInviteTable.startCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -160,13 +160,13 @@ let RidderInviteService = class RidderInviteService {
             status: ridderInvite_schema_1.RidderInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
-        ${ridderInvite_schema_1.RidderInviteTable.endCord},
+        ${ridderInvite_schema_1.RidderInviteTable.endCord}
       )`,
         }).from(ridderInvite_schema_1.RidderInviteTable);
         if (receiverName) {
             query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
                 .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
@@ -176,7 +176,7 @@ let RidderInviteService = class RidderInviteService {
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
-            ${ridderInvite_schema_1.RidderInviteTable.endCord},
+            ${ridderInvite_schema_1.RidderInviteTable.endCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -198,26 +198,26 @@ let RidderInviteService = class RidderInviteService {
             RDV: (0, drizzle_orm_1.sql) `
         ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-          ${ridderInvite_schema_1.RidderInviteTable.startCord},
+          ${ridderInvite_schema_1.RidderInviteTable.startCord}
         )
       + ST_Distance(
           ${ridderInvite_schema_1.RidderInviteTable.startCord},
-          ${ridderInvite_schema_1.RidderInviteTable.endCord},
+          ${ridderInvite_schema_1.RidderInviteTable.endCord}
         )
       + ST_Distance(
           ${ridderInvite_schema_1.RidderInviteTable.endCord},
-          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
         )
       - ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
         )
       `,
         }).from(ridderInvite_schema_1.RidderInviteTable);
         if (receiverName) {
             query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
                 .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
@@ -228,19 +228,19 @@ let RidderInviteService = class RidderInviteService {
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-              ${ridderInvite_schema_1.RidderInviteTable.startCord},
+              ${ridderInvite_schema_1.RidderInviteTable.startCord}
           )
           + ST_Distance(
               ${ridderInvite_schema_1.RidderInviteTable.startCord},
-              ${ridderInvite_schema_1.RidderInviteTable.endCord},
+              ${ridderInvite_schema_1.RidderInviteTable.endCord}
             )
           + ST_Distance(
               ${ridderInvite_schema_1.RidderInviteTable.endCord},
-              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
             )
           - ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
             )
           `)
             .limit(limit)
@@ -264,7 +264,7 @@ let RidderInviteService = class RidderInviteService {
             .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
@@ -291,13 +291,13 @@ let RidderInviteService = class RidderInviteService {
             status: ridderInvite_schema_1.RidderInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-        ${ridderInvite_schema_1.RidderInviteTable.startCord},
+        ${ridderInvite_schema_1.RidderInviteTable.startCord}
       )`,
         }).from(ridderInvite_schema_1.RidderInviteTable)
             .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
@@ -306,7 +306,7 @@ let RidderInviteService = class RidderInviteService {
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-            ${ridderInvite_schema_1.RidderInviteTable.startCord},
+            ${ridderInvite_schema_1.RidderInviteTable.startCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -327,13 +327,13 @@ let RidderInviteService = class RidderInviteService {
             status: ridderInvite_schema_1.RidderInviteTable.status,
             distance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
-        ${ridderInvite_schema_1.RidderInviteTable.endCord},
+        ${ridderInvite_schema_1.RidderInviteTable.endCord}
       )`,
         }).from(ridderInvite_schema_1.RidderInviteTable)
             .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
@@ -342,7 +342,7 @@ let RidderInviteService = class RidderInviteService {
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
             ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
-            ${ridderInvite_schema_1.RidderInviteTable.endCord},
+            ${ridderInvite_schema_1.RidderInviteTable.endCord}
           )`)
             .limit(limit)
             .offset(offset);
@@ -364,26 +364,26 @@ let RidderInviteService = class RidderInviteService {
             RDV: (0, drizzle_orm_1.sql) `
         ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-          ${ridderInvite_schema_1.RidderInviteTable.startCord},
+          ${ridderInvite_schema_1.RidderInviteTable.startCord}
         )
       + ST_Distance(
           ${ridderInvite_schema_1.RidderInviteTable.startCord},
-          ${ridderInvite_schema_1.RidderInviteTable.endCord},
+          ${ridderInvite_schema_1.RidderInviteTable.endCord}
         )
       + ST_Distance(
           ${ridderInvite_schema_1.RidderInviteTable.endCord},
-          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
         )
       - ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
         )
       `,
         }).from(ridderInvite_schema_1.RidderInviteTable)
             .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
         if (inviterName) {
             query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName)));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName + "%")));
         }
         else {
             query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
@@ -393,19 +393,19 @@ let RidderInviteService = class RidderInviteService {
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-              ${ridderInvite_schema_1.RidderInviteTable.startCord},
+              ${ridderInvite_schema_1.RidderInviteTable.startCord}
             )
           + ST_Distance(
               ${ridderInvite_schema_1.RidderInviteTable.startCord},
-              ${ridderInvite_schema_1.RidderInviteTable.endCord},
+              ${ridderInvite_schema_1.RidderInviteTable.endCord}
             )
           + ST_Distance(
               ${ridderInvite_schema_1.RidderInviteTable.endCord},
-              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
             )
           - ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+              ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
             )
           `)
             .limit(limit)
@@ -429,7 +429,7 @@ let RidderInviteService = class RidderInviteService {
             suggestStartAfter: updateRidderInviteDto.suggestStartAfter,
             updatedAt: new Date(),
             status: updateRidderInviteDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId)))
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")))
             .returning({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
@@ -438,7 +438,7 @@ let RidderInviteService = class RidderInviteService {
     }
     async decideRidderInviteById(id, receiverId, decideRidderInviteDto) {
         const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")),
             with: {
                 order: {
                     columns: {
@@ -447,16 +447,17 @@ let RidderInviteService = class RidderInviteService {
                 }
             }
         });
-        if (supplyOrder && supplyOrder.order && receiverId !== supplyOrder?.order?.creatorId) {
+        if (!supplyOrder || !supplyOrder.order)
+            throw exceptions_1.ClientInviteNotFoundException;
+        if (receiverId !== supplyOrder.order.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
-        }
         return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
             status: decideRidderInviteDto.status,
         }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id));
     }
     async deleteRidderInviteById(id, inviterId) {
         return await this.db.delete(ridderInvite_schema_1.RidderInviteTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")))
             .returning({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             status: ridderInvite_schema_1.RidderInviteTable.status,

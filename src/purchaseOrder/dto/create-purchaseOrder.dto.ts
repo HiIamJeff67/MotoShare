@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsBooleanString, IsDate, IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
 
 // longitude(經度) -> x
 // latitude(緯度)  -> y
@@ -41,7 +41,7 @@ export class CreatePurchaseOrderDto {
     startAfter?: Date   // but at most case, should be specify
 
     @IsOptional()
-    @IsBoolean()
+    @IsBooleanString()
     isUrgent?: boolean
 
     // @IsOptional()

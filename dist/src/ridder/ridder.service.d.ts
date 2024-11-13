@@ -42,8 +42,8 @@ export declare class RidderService {
             orderId: string;
             order: {
                 id: string;
-                createdAt: Date;
                 description: string | null;
+                createdAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;

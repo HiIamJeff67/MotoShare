@@ -4,14 +4,14 @@ import { DecideRidderInviteDto, UpdateRidderInviteDto } from './dto/update-ridde
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
-import { and, desc, eq, like, or, sql } from 'drizzle-orm';
+import { and, desc, eq, like, ne, or, sql } from 'drizzle-orm';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientUserHasNoAccessException } from '../exceptions';
+import { ClientInviteNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
 
 @Injectable()
 export class RidderInviteService {
@@ -112,7 +112,7 @@ export class RidderInviteService {
     if (receiverName) {
       query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
            .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
-           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName)))
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")))
     } else {  // specify before join -> faster
       query.where(eq(RidderInviteTable.userId, inviterId))
            .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
@@ -147,14 +147,14 @@ export class RidderInviteService {
       status: RidderInviteTable.status,
       distance: sql`ST_Distance(
         ${PurchaseOrderTable.startCord},
-        ${RidderInviteTable.startCord},
+        ${RidderInviteTable.startCord}
       )`,
     }).from(RidderInviteTable);
 
     if (receiverName) {
       query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
            .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
-           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName)));
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")));
     } else {
       query.where(eq(RidderInviteTable.userId, inviterId))
            .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
@@ -164,7 +164,7 @@ export class RidderInviteService {
     query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
           .orderBy(sql`ST_Distance(
             ${PurchaseOrderTable.startCord},
-            ${RidderInviteTable.startCord},
+            ${RidderInviteTable.startCord}
           )`)
           .limit(limit)
           .offset(offset);
@@ -192,14 +192,14 @@ export class RidderInviteService {
       status: RidderInviteTable.status,
       distance: sql`ST_Distance(
         ${PurchaseOrderTable.endCord},
-        ${RidderInviteTable.endCord},
+        ${RidderInviteTable.endCord}
       )`,
     }).from(RidderInviteTable);
 
     if (receiverName) {
       query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
            .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
-           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName)));
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")));
     } else {
       query.where(eq(RidderInviteTable.userId, inviterId))
            .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
@@ -209,7 +209,7 @@ export class RidderInviteService {
     query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
           .orderBy(sql`ST_Distance(
             ${PurchaseOrderTable.endCord},
-            ${RidderInviteTable.endCord},
+            ${RidderInviteTable.endCord}
           )`)
           .limit(limit)
           .offset(offset);
@@ -238,19 +238,19 @@ export class RidderInviteService {
       RDV: sql`
         ST_Distance(
           ${PurchaseOrderTable.startCord},
-          ${RidderInviteTable.startCord},
+          ${RidderInviteTable.startCord}
         )
       + ST_Distance(
           ${RidderInviteTable.startCord},
-          ${RidderInviteTable.endCord},
+          ${RidderInviteTable.endCord}
         )
       + ST_Distance(
           ${RidderInviteTable.endCord},
-          ${PurchaseOrderTable.endCord},
+          ${PurchaseOrderTable.endCord}
         )
       - ST_Distance(
           ${PurchaseOrderTable.startCord},
-          ${PurchaseOrderTable.endCord},
+          ${PurchaseOrderTable.endCord}
         )
       `,
     }).from(RidderInviteTable);
@@ -258,7 +258,7 @@ export class RidderInviteService {
     if (receiverName) {
       query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
            .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
-           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName)));
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")));
     } else {
       query.where(eq(RidderInviteTable.userId, inviterId))
            .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
@@ -269,19 +269,19 @@ export class RidderInviteService {
           .orderBy(sql`
             ST_Distance(
               ${PurchaseOrderTable.startCord},
-              ${RidderInviteTable.startCord},
+              ${RidderInviteTable.startCord}
           )
           + ST_Distance(
               ${RidderInviteTable.startCord},
-              ${RidderInviteTable.endCord},
+              ${RidderInviteTable.endCord}
             )
           + ST_Distance(
               ${RidderInviteTable.endCord},
-              ${PurchaseOrderTable.endCord},
+              ${PurchaseOrderTable.endCord}
             )
           - ST_Distance(
               ${PurchaseOrderTable.startCord},
-              ${PurchaseOrderTable.endCord},
+              ${PurchaseOrderTable.endCord}
             )
           `)
           .limit(limit)
@@ -316,7 +316,7 @@ export class RidderInviteService {
       
     if (inviterName) {
       query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
-           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName)));
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
     } else {
       query.where(eq(PurchaseOrderTable.creatorId, receiverId))
            .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
@@ -350,14 +350,14 @@ export class RidderInviteService {
       status: RidderInviteTable.status,
       distance: sql`ST_Distance(
         ${PurchaseOrderTable.startCord},
-        ${RidderInviteTable.startCord},
+        ${RidderInviteTable.startCord}
       )`,
     }).from(RidderInviteTable)
       .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId));
 
     if (inviterName) {
       query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
-           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName)));
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
     } else {
       query.where(eq(PurchaseOrderTable.creatorId, receiverId))
            .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
@@ -366,7 +366,7 @@ export class RidderInviteService {
     query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
           .orderBy(sql`ST_Distance(
             ${PurchaseOrderTable.startCord},
-            ${RidderInviteTable.startCord},
+            ${RidderInviteTable.startCord}
           )`)
           .limit(limit)
           .offset(offset);
@@ -394,14 +394,14 @@ export class RidderInviteService {
       status: RidderInviteTable.status,
       distance: sql`ST_Distance(
         ${PurchaseOrderTable.endCord},
-        ${RidderInviteTable.endCord},
+        ${RidderInviteTable.endCord}
       )`,
     }).from(RidderInviteTable)
       .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId));
 
     if (inviterName) {
       query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
-           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName)));
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
     } else {
       query.where(eq(PurchaseOrderTable.creatorId, receiverId))
            .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
@@ -410,7 +410,7 @@ export class RidderInviteService {
     query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
           .orderBy(sql`ST_Distance(
             ${PurchaseOrderTable.endCord},
-            ${RidderInviteTable.endCord},
+            ${RidderInviteTable.endCord}
           )`)
           .limit(limit)
           .offset(offset);
@@ -439,19 +439,19 @@ export class RidderInviteService {
       RDV: sql`
         ST_Distance(
           ${PurchaseOrderTable.startCord},
-          ${RidderInviteTable.startCord},
+          ${RidderInviteTable.startCord}
         )
       + ST_Distance(
           ${RidderInviteTable.startCord},
-          ${RidderInviteTable.endCord},
+          ${RidderInviteTable.endCord}
         )
       + ST_Distance(
           ${RidderInviteTable.endCord},
-          ${PurchaseOrderTable.endCord},
+          ${PurchaseOrderTable.endCord}
         )
       - ST_Distance(
           ${PurchaseOrderTable.startCord},
-          ${PurchaseOrderTable.endCord},
+          ${PurchaseOrderTable.endCord}
         )
       `,
     }).from(RidderInviteTable)
@@ -459,7 +459,7 @@ export class RidderInviteService {
 
     if (inviterName) {
       query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
-           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName)));
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
     } else {
       query.where(eq(PurchaseOrderTable.creatorId, receiverId))
            .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
@@ -469,19 +469,19 @@ export class RidderInviteService {
           .orderBy(sql`
             ST_Distance(
               ${PurchaseOrderTable.startCord},
-              ${RidderInviteTable.startCord},
+              ${RidderInviteTable.startCord}
             )
           + ST_Distance(
               ${RidderInviteTable.startCord},
-              ${RidderInviteTable.endCord},
+              ${RidderInviteTable.endCord}
             )
           + ST_Distance(
               ${RidderInviteTable.endCord},
-              ${PurchaseOrderTable.endCord},
+              ${PurchaseOrderTable.endCord}
             )
           - ST_Distance(
               ${PurchaseOrderTable.startCord},
-              ${PurchaseOrderTable.endCord},
+              ${PurchaseOrderTable.endCord}
             )
           `)
           .limit(limit)
@@ -522,7 +522,11 @@ export class RidderInviteService {
       suggestStartAfter: updateRidderInviteDto.suggestStartAfter,
       updatedAt: new Date(),
       status: updateRidderInviteDto.status,
-    }).where(and(eq(RidderInviteTable.id, id), eq(RidderInviteTable.userId, inviterId)))
+    }).where(and(
+        eq(RidderInviteTable.id, id), 
+        eq(RidderInviteTable.userId, inviterId), 
+        eq(RidderInviteTable.status, "CHECKING"),  // can only update the invite when it's on CHECKING status
+      ))
       .returning({
         id: RidderInviteTable.id,
         updatedAt: RidderInviteTable.updatedAt,
@@ -540,7 +544,10 @@ export class RidderInviteService {
   ) {
     // vaildate if the ridder by given receiverId is the creator of that SupplyOrder
     const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
-      where: eq(RidderInviteTable.id, id),
+      where: and(
+        eq(RidderInviteTable.id, id), 
+        eq(RidderInviteTable.status, "CHECKING"),  // can only update the invite when it's on CHECKING status
+      ),
       with: {
         order: {
           columns: {
@@ -549,10 +556,8 @@ export class RidderInviteService {
         }
       }
     });
-    
-    if (supplyOrder && supplyOrder.order && receiverId !== supplyOrder?.order?.creatorId) {
-      throw ClientUserHasNoAccessException;
-    }
+    if (!supplyOrder || !supplyOrder.order) throw ClientInviteNotFoundException;
+    if (receiverId !== supplyOrder.order.creatorId) throw ClientUserHasNoAccessException;
 
     return await this.db.update(RidderInviteTable).set({
       status: decideRidderInviteDto.status,
@@ -566,7 +571,11 @@ export class RidderInviteService {
   /* ================================= Delete operations ================================= */
   async deleteRidderInviteById(id: string, inviterId: string) {
     return await this.db.delete(RidderInviteTable)
-      .where(and(eq(RidderInviteTable.id, id), eq(RidderInviteTable.userId, inviterId)))
+      .where(and(
+        eq(RidderInviteTable.id, id), 
+        eq(RidderInviteTable.userId, inviterId),
+        ne(RidderInviteTable.status, "CHECKING"), // can only delete the invite when it's NOT on CHECKING status
+      ))
       .returning({
         id: RidderInviteTable.id,
         status: RidderInviteTable.status,

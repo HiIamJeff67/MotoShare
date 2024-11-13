@@ -158,7 +158,7 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
@@ -196,7 +196,7 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -237,7 +237,7 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -295,7 +295,7 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName));
+      query.where(like(RidderTable.userName, creatorName + "%"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))

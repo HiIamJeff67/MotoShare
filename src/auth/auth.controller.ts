@@ -37,7 +37,6 @@ export class AuthController {
     /* ================================= Sign Up Passenger Operations ================================= */
 
 
-
     /* ================================= Sign Up Ridder Operations ================================= */
     @Post('signUpRidder')
     async signUpRidderWithEmailAndPassword(
@@ -51,7 +50,7 @@ export class AuthController {
 
             response.status(HttpStatusCode.Created).send(res);
         } catch (error) {
-            if (error instanceof InternalServerErrorException) {
+            if (error.status === undefined) {  // conflict from database
                 error = ClientDuplicateFieldDetectedException(error.message);
             } else if (!(error instanceof BadRequestException
                 || error instanceof ForbiddenException)) {
@@ -91,7 +90,6 @@ export class AuthController {
         }
     }
     /* ================================= Sign In Passenger Operations ================================= */
-
 
 
     /* ================================= Sign In Ridder Operations ================================= */

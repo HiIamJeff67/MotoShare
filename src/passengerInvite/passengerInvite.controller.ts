@@ -2,7 +2,8 @@ import { Controller,
   Get, Post, Body, Patch, Delete, UseGuards, Query, Res, 
   BadRequestException, 
   UnauthorizedException, 
-  ForbiddenException 
+  ForbiddenException, 
+  NotFoundException
 } from '@nestjs/common';
 import { PassengerInviteService } from './passengerInvite.service';
 import { Response } from 'express';
@@ -50,7 +51,7 @@ export class PassengerInviteController {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
         || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -82,8 +83,8 @@ export class PassengerInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -112,8 +113,8 @@ export class PassengerInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -124,7 +125,7 @@ export class PassengerInviteController {
 
   /* ================= Search PassengerInvite operations used by Passengers ================= */
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchMyPaginationPassengerInvitesByInviterId')
+  @Get('passenger/searchMyPaginationPassengerInvites')
   async searchPaginationPassengerInvitesByInviterId(
     @Passenger() passenger: PassengerType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -145,8 +146,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -156,7 +157,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchMyCurAdjacentPassengerInvitesByInviterId')
+  @Get('passenger/searchMyCurAdjacentPassengerInvites')
   async searchCurAdjacentPassengerInvitesByInviterId(
     @Passenger() passenger: PassengerType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -169,7 +170,7 @@ export class PassengerInviteController {
         passenger.id, 
         receiverName, 
         +limit, 
-        +offset
+        +offset,
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -177,8 +178,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -188,7 +189,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchMyDestAdjacentPassengerInvitesByInviterId')
+  @Get('passenger/searchMyDestAdjacentPassengerInvites')
   async searchDestAdjacentPassengerInvitesByInviterId(
     @Passenger() passenger: PassengerType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -209,8 +210,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -220,7 +221,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchMySimilarRoutePassengerInvitesByInviterId')
+  @Get('passenger/searchMySimilarRoutePassengerInvites')
   async searchSimilarRoutePassengerInvitesByInviterId(
     @Passenger() passenger: PassengerType,
     @Query('receiverName') receiverName: string | undefined = undefined,
@@ -241,8 +242,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -255,7 +256,7 @@ export class PassengerInviteController {
 
   /* ================= Search PassengerInvite operations used by Ridders ================= */
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchMyPaginationPasssengerInvitesByReceiverId')
+  @Get('ridder/searchMyPaginationPasssengerInvites')
   async searchPaginationPasssengerInvitesByReceiverId(
     @Ridder() ridder: RidderType,
     @Query('inviterName') inviterName: string | undefined = undefined,
@@ -276,8 +277,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -287,7 +288,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchMyCurAdjacentPassengerInvitesByReceiverId')
+  @Get('ridder/searchMyCurAdjacentPassengerInvites')
   async searchCurAdjacentPassengerInvitesByReceiverId(
     @Ridder() ridder: RidderType,
     @Query('inviterName') inviterName: string | undefined = undefined,
@@ -308,8 +309,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -319,7 +320,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchMyDestAdjacentPassengerInvitesByReceiverId')
+  @Get('ridder/searchMyDestAdjacentPassengerInvites')
   async searchDestAdjacentPassengerInvitesByReceiverId(
     @Ridder() ridder: RidderType,
     @Query('inviterName') inviterName: string | undefined = undefined,
@@ -340,8 +341,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -351,7 +352,7 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchMySimilarRoutePassengerInvitesByReceverId')
+  @Get('ridder/searchMySimilarRoutePassengerInvites')
   async searchMySimilarRoutePassengerInvitesByReceverId(
     @Ridder() ridder: RidderType,
     @Query('inviterName') inviterName: string | undefined = undefined,
@@ -372,8 +373,8 @@ export class PassengerInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -410,8 +411,8 @@ export class PassengerInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -443,8 +444,8 @@ export class PassengerInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -481,8 +482,8 @@ export class PassengerInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
-        || error instanceof ForbiddenException)) {
-        error = ClientUnknownException;
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
