@@ -23,6 +23,7 @@ const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
+const exceptions_1 = require("../exceptions");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;
@@ -39,14 +40,15 @@ let AuthService = class AuthService {
             id: passenger_schema_1.PassengerTable.id,
             email: passenger_schema_1.PassengerTable.email,
         });
-        if (!response) {
-            throw new common_1.BadRequestException(`Unknown error occurred`);
-        }
+        if (!response)
+            throw exceptions_1.ClientSignUpUserException;
         const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
-        if (!responseOfCreatingInfo) {
-            throw new common_1.BadRequestException('Cannot create the info for current passenger');
-        }
-        return this.signToken(response[0].id, response[0].email);
+        if (!responseOfCreatingInfo)
+            throw exceptions_1.ClientCreatePassengerInfoException;
+        const result = await this.signToken(response[0].id, response[0].email);
+        if (!result)
+            throw exceptions_1.ApiGeneratingBearerTokenException;
+        return result;
     }
     async createPassengerInfoByUserId(userId) {
         return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
@@ -63,14 +65,15 @@ let AuthService = class AuthService {
             id: ridder_schema_1.RidderTable.id,
             email: ridder_schema_1.RidderTable.email,
         });
-        if (!response) {
-            throw new common_1.BadRequestException(`Unknown error occurred`);
-        }
+        if (!response)
+            throw exceptions_1.ClientSignUpUserException;
         const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
-        if (!responseOfCreatingInfo) {
-            throw new common_1.BadRequestException('Cannot create the info for current passenger');
-        }
-        return this.signToken(response[0].id, response[0].email);
+        if (!responseOfCreatingInfo)
+            throw exceptions_1.ClientCreateRidderInfoException;
+        const result = await this.signToken(response[0].id, response[0].email);
+        if (!result)
+            throw exceptions_1.ApiGeneratingBearerTokenException;
+        return result;
     }
     async createRidderInfoByUserId(userId) {
         return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
@@ -87,6 +90,9 @@ let AuthService = class AuthService {
             }).from(passenger_schema_1.PassengerTable)
                 .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, signInDto.userName))
                 .limit(1);
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInUserNameNotFoundException;
+            }
         }
         else if (signInDto.email) {
             userResponse = await this.db.select({
@@ -96,17 +102,20 @@ let AuthService = class AuthService {
             }).from(passenger_schema_1.PassengerTable)
                 .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInDto.email))
                 .limit(1);
-        }
-        if (!userResponse || userResponse.length === 0) {
-            throw new common_1.NotFoundException('Credential incorrect');
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInEmailNotFoundException;
+            }
         }
         const user = userResponse[0];
         const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
         delete user.hash;
         if (!pwMatches) {
-            throw new common_1.NotFoundException('Credential incorrect');
+            throw exceptions_1.ClientSignInPasswordNotMatchException;
         }
-        return this.signToken(user.id, user.email);
+        const result = await this.signToken(user.id, user.email);
+        if (!result)
+            throw exceptions_1.ApiGeneratingBearerTokenException;
+        return result;
     }
     async signInRidderByEmailAndPassword(signInDto) {
         let userResponse = null;
@@ -118,6 +127,9 @@ let AuthService = class AuthService {
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, signInDto.userName))
                 .limit(1);
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInUserNameNotFoundException;
+            }
         }
         else if (signInDto.email) {
             userResponse = await this.db.select({
@@ -127,32 +139,40 @@ let AuthService = class AuthService {
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInDto.email))
                 .limit(1);
-        }
-        if (!userResponse || userResponse.length === 0) {
-            throw new common_1.NotFoundException('Credential incorrect');
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInEmailNotFoundException;
+            }
         }
         const user = userResponse[0];
         const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
         delete user.hash;
         if (!pwMatches) {
-            throw new common_1.NotFoundException('Credential incorrect');
+            throw exceptions_1.ClientSignInPasswordNotMatchException;
         }
-        return this.signToken(user.id, user.email);
+        const result = await this.signToken(user.id, user.email);
+        if (!result)
+            throw exceptions_1.ApiGeneratingBearerTokenException;
+        return result;
     }
     async signToken(userId, email) {
-        const payload = {
-            sub: userId,
-            email: email,
-        };
-        const secret = this.config.get("JWT_SECRET");
-        const token = await this.jwt.signAsync(payload, {
-            expiresIn: this.config.get("JWT_TOKEN_EXPIRED_TIME") ?? '60m',
-            secret: secret,
-        });
-        return {
-            accessToken: token,
-            expiredIn: this.config.get("JWT_TOKEN_EXPIRED_TIME") ?? '60m',
-        };
+        try {
+            const payload = {
+                sub: userId,
+                email: email,
+            };
+            const secret = this.config.get("JWT_SECRET");
+            const token = await this.jwt.signAsync(payload, {
+                expiresIn: this.config.get("JWT_TOKEN_EXPIRED_TIME") ?? '60m',
+                secret: secret,
+            });
+            return {
+                accessToken: token,
+                expiredIn: this.config.get("JWT_TOKEN_EXPIRED_TIME") ?? '60m',
+            };
+        }
+        catch (error) {
+            throw error;
+        }
     }
 };
 exports.AuthService = AuthService;

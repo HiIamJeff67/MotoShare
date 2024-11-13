@@ -12,6 +12,14 @@ export const ApiMissingBodyOrWrongDtoException = new BadRequestException({
     message: "Require body and customized dto of current route",
 });
 
+
+
+// E-A-900
+export const ApiGeneratingBearerTokenException = new InternalServerErrorException({
+    name: "E-A-900",
+    message: "Failed to generate a bearer token for current user",
+})
+
 // E-A-099
 export const ApiUnknownException = new InternalServerErrorException({
     name: "E-A-099", 

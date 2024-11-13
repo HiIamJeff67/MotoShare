@@ -23,6 +23,7 @@ __decorate([
     __metadata("design:type", String)
 ], SignInDto.prototype, "userName", void 0);
 __decorate([
+    (0, class_validator_1.ValidateIf)((o) => !o.userName),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
     __metadata("design:type", String)

@@ -14,6 +14,7 @@ export class SignInDto {
     )
     userName: string;
 
+    @ValidateIf((o) => !o.userName)
     @IsNotEmpty()
     @IsEmail(
         undefined,

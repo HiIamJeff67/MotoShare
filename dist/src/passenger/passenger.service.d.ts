@@ -37,8 +37,8 @@ export declare class PassengerService {
             orderId: string;
             order: {
                 id: string;
-                description: string | null;
                 createdAt: Date;
+                description: string | null;
                 initPrice: number;
                 startCord: {
                     x: number;

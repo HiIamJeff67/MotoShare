@@ -10,6 +10,8 @@ exports.CustomTextLength = void 0;
 const class_validator_1 = require("class-validator");
 let CustomTextLength = class CustomTextLength {
     validate(text, validationArguments) {
+        if (!text)
+            return false;
         return text.length > validationArguments.constraints[0] && text.length < validationArguments.constraints[1];
     }
 };

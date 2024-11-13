@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientUnknownException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpRidderException = exports.ClientSignUpPassengerException = exports.ClientSignInRidderException = exports.ClientSignInPassengerException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientMissingTokenException = exports.ClientInvalidTokenOrTokenExpiredException = void 0;
+exports.ClientUnknownException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientMissingTokenException = exports.ClientInvalidTokenOrTokenExpiredException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ClientInvalidTokenOrTokenExpiredException = new common_1.UnauthorizedException({
     case: "E-C-001",
@@ -42,21 +42,25 @@ exports.ClientCollectionNotFoundException = new common_1.NotFoundException({
     case: "E-C-106",
     message: "Cannot find any collections",
 });
-exports.ClientSignInPassengerException = new common_1.ForbiddenException({
-    case: "E-C-200",
-    message: "Failed to sign in as a passenger",
+exports.ClientSignInUserNameNotFoundException = new common_1.NotFoundException({
+    case: "E-C-107",
+    message: "Failed to sign in, userName not found",
 });
-exports.ClientSignInRidderException = new common_1.ForbiddenException({
+exports.ClientSignInEmailNotFoundException = new common_1.NotFoundException({
+    case: "E-C-108",
+    message: "Failed to sign in, email not found",
+});
+exports.ClientSignInUserException = new common_1.ForbiddenException({
     case: "E-C-201",
-    message: "Failed to sign in as a ridder",
+    message: "Failed to sign in"
 });
-exports.ClientSignUpPassengerException = new common_1.ForbiddenException({
+exports.ClientSignInPasswordNotMatchException = new common_1.ForbiddenException({
     case: "E-C-202",
-    message: "Failed to sign up as a passenger",
+    message: "Failed to sign in, user with password not match",
 });
-exports.ClientSignUpRidderException = new common_1.ForbiddenException({
+exports.ClientSignUpUserException = new common_1.ForbiddenException({
     case: "E-C-203",
-    message: "Failed to sign up as a ridder",
+    message: "Failed to sign up",
 });
 const ClientDuplicateFieldDetectedException = (errorMessage) => {
     return new common_1.ConflictException(errorMessage ?? {
@@ -83,6 +87,22 @@ exports.ClientCreateRidderInviteException = new common_1.ForbiddenException({
 exports.ClientCreateOrderException = new common_1.ForbiddenException({
     case: "E-C-209",
     message: "Failed to create an order",
+});
+exports.ClientCreatePassengerInfoException = new common_1.ForbiddenException({
+    case: "E-C-210",
+    message: "Failed to create a passengerInfo",
+});
+exports.ClientCreateRidderInfoException = new common_1.ForbiddenException({
+    case: "E-C-211",
+    message: "Failed to create a ridderInfo",
+});
+exports.ClientCreatePassengerCollectionException = new common_1.ForbiddenException({
+    case: "E-C-212",
+    message: "Failed to create a passengerCollection",
+});
+exports.ClientCreateRidderCollectionException = new common_1.ForbiddenException({
+    case: "E-C-213",
+    message: "Failed to create a ridderCollection",
 });
 exports.ClientNoChangeOnUserNameException = new common_1.ConflictException({
     case: "E-C-300",

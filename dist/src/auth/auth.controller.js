@@ -17,88 +17,84 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const index_1 = require("./dto/index");
+const exceptions_1 = require("../exceptions");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
     async signUpPassengerWithEmailAndPassword(signUpDto, response) {
         try {
-            const passengerResponse = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
-                ...passengerResponse,
-            });
+            const res = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
+            if (!res)
+                throw exceptions_1.ClientSignUpUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.PayloadTooLargeException
-                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.BadRequestException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520
-                    : HttpStatusCode_enum_1.HttpStatusCode.Conflict)).send({
-                message: error.message,
+            if (error.status === undefined) {
+                error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
+            }
+            else if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async signUpRidderWithEmailAndPassword(signUpDto, response) {
         try {
-            if (signUpDto.userName && signUpDto.userName.length > 20) {
-                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
-            }
-            const passengerResponse = await this.authService.signUpRidderWithEmailAndPassword(signUpDto);
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
-                ...passengerResponse,
-            });
+            const res = await this.authService.signUpRidderWithEmailAndPassword(signUpDto);
+            if (!res)
+                throw exceptions_1.ClientSignUpUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.PayloadTooLargeException
-                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.BadRequestException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520
-                    : HttpStatusCode_enum_1.HttpStatusCode.Conflict)).send({
-                message: error.message,
+            if (error instanceof common_1.InternalServerErrorException) {
+                error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
+            }
+            else if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async signInPassengerWithAccountAndPassword(signInDto, response) {
         try {
-            if (signInDto.userName && signInDto.userName.length > 20) {
-                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
-            }
-            const passengerRespose = await this.authService.signInPassengerEmailAndPassword(signInDto);
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
-                ...passengerRespose,
-            });
+            const res = await this.authService.signInPassengerEmailAndPassword(signInDto);
+            if (!res)
+                throw exceptions_1.ClientSignInUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.PayloadTooLargeException
-                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.ConflictException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                    : (error instanceof common_1.NotFoundException
-                        ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
     async signInRidderWithAccountAndPassword(signInDto, response) {
         try {
-            if (signInDto.userName && signInDto.userName.length > 20) {
-                throw new common_1.PayloadTooLargeException("User name cannot be longer than 20 characters");
-            }
-            const ridderResponse = await this.authService.signInRidderByEmailAndPassword(signInDto);
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
-                ...ridderResponse,
-            });
+            const res = await this.authService.signInRidderByEmailAndPassword(signInDto);
+            if (!res)
+                throw exceptions_1.ClientSignInUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            response.status(error instanceof common_1.PayloadTooLargeException
-                ? HttpStatusCode_enum_1.HttpStatusCode.PayloadTooLarge
-                : (error instanceof common_1.ConflictException
-                    ? HttpStatusCode_enum_1.HttpStatusCode.Conflict
-                    : (error instanceof common_1.NotFoundException
-                        ? HttpStatusCode_enum_1.HttpStatusCode.NotFound
-                        : HttpStatusCode_enum_1.HttpStatusCode.UnknownError ?? 520))).send({
-                message: error.message,
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
             });
         }
     }
