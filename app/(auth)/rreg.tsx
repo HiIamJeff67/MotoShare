@@ -57,7 +57,7 @@ const LoginForm = () => {
     
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/signUpPassenger`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/signUpRidder`,
         {
           userName: username,
           email: email,
@@ -79,10 +79,10 @@ const LoginForm = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.response?.data.message);
-        Alert.alert('錯誤', error.response?.data.message, [{ onPress: () => setLoading(false) }]);
+        console.log(JSON.stringify(error.response?.data.message));
+        Alert.alert('錯誤', JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
-        console.log('An unexpected error occurred:', error);
+        console.log('An unexpected error occurred:', JSON.stringify(error));
         Alert.alert('錯誤', '無法連接到伺服器。', [{ onPress: () => setLoading(false) }]);
       }
     }
@@ -102,7 +102,7 @@ const LoginForm = () => {
         >
         <View className="h-10"/>
         <View className="justify-center items-center">
-          <Text className="text-4xl p-5 font-bold text-[#3498db]">乘客註冊</Text>
+          <Text className="text-4xl p-5 font-bold text-[#3498db]">車主註冊</Text>
         </View>
         <View className="h-10"/>
         <TextInput

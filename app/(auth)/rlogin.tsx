@@ -16,12 +16,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../(store)/userSlice';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
+  const saveToken = async (token: string) => {
+    try {
+      await SecureStore.setItemAsync('userToken', token);
+      console.log('Token 保存成功');
+    } catch (error) {
+      console.error('保存 Token 出錯:', error);
+    }
+  };
   
   const handleLogin = async () => {
     setLoading(true);
@@ -37,29 +47,39 @@ const LoginForm = () => {
       Alert.alert('錯誤', '請輸入使用者名稱和密碼', [{ onPress: () => setLoading(false) }]);
       return;
     }
-    
+  
     try {
-      const response = await axios.post(
-        'https://moto-share-jeffs-projects-95ef1060.vercel.app/ridder/signInRidderByEamilAndPassword ',
-        {
-          email: username,
-          password: password,
-        },
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        }
-      );
+      dispatch(setUser({ username: "123", role: 2 }));
+      Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
+      router.push('../(root)/(tabs)/home');
+
+      // const response = await axios.post(
+      //   `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidder`,
+      //   {
+      //     userName: username,
+      //     password: password,
+      //   },
+      //   {
+      //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      //   }
+      // );
       
-      if (response && response.data[0].email === username) {
-        dispatch(setUser({ id: response.data[0].id, username: response.data[0].userName, role: 2 }));
-        Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
-        router.push('../(root)/(tabs)/home');
-      } else {
-        Alert.alert('錯誤', '登入失敗，請檢查您的使用者名稱和密碼。', [{ onPress: () => setLoading(false) }]);
-      }
+      // if (response && response.data) {
+      //   saveToken(response.data.accessToken);
+      //   dispatch(setUser({ username: response.data.userName, role: 1 }));
+      //   Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
+      //   router.push('../(root)/(tabs)/home');
+      // } else {
+      //   Alert.alert('錯誤', '登入失敗，請檢查您的使用者名稱和密碼。', [{ onPress: () => setLoading(false) }]);
+      // }
     } catch (error) {
-      Alert.alert('錯誤', '無法連接到伺服器。', [{ onPress: () => setLoading(false) }]);
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log(JSON.stringify(error.response?.data.message));
+        Alert.alert('錯誤', JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
+      } else {
+        console.log('An unexpected error occurred:', JSON.stringify(error));
+        Alert.alert('錯誤', '無法連接到伺服器。', [{ onPress: () => setLoading(false) }]);
+      }
     }
   };
 

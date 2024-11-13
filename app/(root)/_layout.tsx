@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import 'react-native-get-random-values'
 import "../../global.css"
 import store from '../(store)/index';
 import { Provider } from 'react-redux';
@@ -20,6 +21,11 @@ const Layout = () => {
         <Stack.Screen name="(tabs)" options={{ 
             headerShown: false,
             title: "訂單",
+          }}
+        />
+        <Stack.Screen name="map" options={{ 
+            headerShown: false,
+            title: "1",
           }}
         />
       </Stack>

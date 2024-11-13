@@ -36,7 +36,7 @@ const WelcomeScreen = () => {
                             alignItems: 'center',
                         }}
                         className="rounded-lg bg-white shadow-lg"
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => router.push("./choose2")}
                     >
                     <Text className="font-semibold text-black text-lg">加入我們</Text>
                     </Pressable>

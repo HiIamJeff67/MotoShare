@@ -11,6 +11,9 @@ const Layout = () => {
         <Stack.Screen name="plogin" options={{ headerShown: false }} />
         <Stack.Screen name="rlogin" options={{ headerShown: false }} />
         <Stack.Screen name="choose" options={{ headerShown: false }} />
+        <Stack.Screen name="choose2" options={{ headerShown: false }} />
+        <Stack.Screen name="preg" options={{ headerShown: false }} />
+        <Stack.Screen name="rreg" options={{ headerShown: false }} />
       </Stack>
     </Provider>
   );
