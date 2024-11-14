@@ -1,4 +1,4 @@
-import { IsDate, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
 
 // import { PostedStatusType } from "src/interfaces/status.interface";
 
@@ -36,7 +36,7 @@ export class CreateSupplyOrderDto {
     // updatedAt?: Date    // not recommand to specify this field
 
     @IsOptional()
-    @IsDate()
+    @IsDateString()
     startAfter?: Date   // but at most case, should be specify
 
     @IsOptional()

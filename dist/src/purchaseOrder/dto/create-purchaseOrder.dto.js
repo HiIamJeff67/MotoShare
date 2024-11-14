@@ -46,7 +46,7 @@ __decorate([
 ], CreatePurchaseOrderDto.prototype, "endCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)
 ], CreatePurchaseOrderDto.prototype, "startAfter", void 0);
 __decorate([

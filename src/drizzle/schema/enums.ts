@@ -7,7 +7,7 @@
  */
 
 import { pgEnum } from "drizzle-orm/pg-core";
-
+ 
 // for HistoryTable
 export const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"]);
 export const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"]);

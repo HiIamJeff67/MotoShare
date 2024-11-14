@@ -11,7 +11,9 @@ import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientInviteNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { ClientCreateOrderException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { text } from 'stream/consumers';
+import { OrderTable } from '../drizzle/schema/order.schema';
 
 @Injectable()
 export class PassengerInviteService {
@@ -605,6 +607,8 @@ export class PassengerInviteService {
     receiverId: string,
     decidePassengerInviteDto: DecidePassengerInviteDto,
   ) {
+    // Note that the inviter here is the passenger, and the receiver here is the ridder
+
     // vaildate if the ridder by given receiverId is the creator of that SupplyOrder
     const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
       where: and(
@@ -614,6 +618,7 @@ export class PassengerInviteService {
       with: {
         order: {
           columns: {
+            id: true,
             creatorId: true,
           }
         }
@@ -622,9 +627,86 @@ export class PassengerInviteService {
     if (!supplyOrder || !supplyOrder.order) throw ClientInviteNotFoundException;
     if (receiverId !== supplyOrder?.order?.creatorId) throw ClientUserHasNoAccessException;
 
-    return await this.db.update(PassengerInviteTable).set({
-      status: decidePassengerInviteDto.status,
-    }).where(eq(PassengerInviteTable.id, id))
+    if (decidePassengerInviteDto.status === "ACCEPTED") {
+      return await this.db.transaction(async (tx) => {
+        const responseOfDecidingPassengerInvite = await tx.update(PassengerInviteTable).set({
+          status: decidePassengerInviteDto.status,
+          updatedAt: new Date(),
+        }).where(eq(PassengerInviteTable.id, id))
+          .returning({
+            inviterId: PassengerInviteTable.userId,
+            inviterStartCord: PassengerInviteTable.startCord,
+            inviterEndCord: PassengerInviteTable.endCord,
+            suggestPrice: PassengerInviteTable.suggestPrice,
+            suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+            inviterDescription: PassengerInviteTable.briefDescription,
+            inviteStatus: PassengerInviteTable.status,
+        });
+        if (!responseOfDecidingPassengerInvite
+          || responseOfDecidingPassengerInvite.length === 0) {
+            throw ClientInviteNotFoundException;
+        }
+
+        await tx.update(PassengerInviteTable).set({
+          status: "REJECTED",
+          updatedAt: new Date(),
+        }).where(and(
+          eq(PassengerInviteTable.orderId, supplyOrder.order.id),
+          ne(PassengerInviteTable.id, id),
+        ));
+
+        const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({
+          status: "CANCEL",
+          updatedAt: new Date(),
+        }).where(eq(SupplyOrderTable.id, supplyOrder.order.id))
+          .returning({
+            receiverId: SupplyOrderTable.creatorId,
+            receiverStartCord: SupplyOrderTable.startCord,
+            receiverEndCord: SupplyOrderTable.endCord,
+            tolerableRDV: SupplyOrderTable.tolerableRDV,
+            orderStatus: SupplyOrderTable.status,
+          });
+        if (!responseOfDeletingSupplyOrder
+          || responseOfDeletingSupplyOrder.length === 0) {
+            throw ClientSupplyOrderNotFoundException;
+        }
+
+        const responseOfCreatingOrder = await tx.insert(OrderTable).values({
+          ridderId: responseOfDeletingSupplyOrder[0].receiverId,
+          passengerId: responseOfDecidingPassengerInvite[0].inviterId,
+          finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
+          passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+          passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+          ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+          startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
+          // endAt: , // will be covered the autocomplete function powered by google in the future
+          status: "UNSTARTED",
+        }).returning({
+          finalPrice: OrderTable.finalPrice,
+          startAfter: OrderTable.startAfter,
+          status: OrderTable.status,
+        });
+        if (!responseOfCreatingOrder 
+          || responseOfCreatingOrder.length === 0) {
+            throw ClientCreateOrderException;
+        }
+
+        return {
+          status: responseOfDecidingPassengerInvite[0].inviteStatus,
+          price: responseOfCreatingOrder[0].finalPrice,
+          passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+          passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+          ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+          startAfter: responseOfCreatingOrder[0].startAfter,
+          orderStatus: responseOfCreatingOrder[0].status,
+        }
+      });
+    } else {  // decidePassengerInvite.status === "REJECTED" | "CHECKING"
+      return await this.db.update(PassengerInviteTable).set({
+        status: decidePassengerInviteDto.status,
+        updatedAt: new Date(),
+      }).where(eq(PassengerInviteTable.id, id));
+    }
   }
   /* ================= Accept or Reject operations used by Ridder ================= */
 

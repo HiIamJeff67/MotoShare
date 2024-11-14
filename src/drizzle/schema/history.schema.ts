@@ -28,6 +28,7 @@ export const HistoryTable = pgTable("history", {
     starRatingByRidder: starRatingEnum().notNull().default("0"),
     commentByPassenger: text("commentByP"),
     commentByRidder: text("commentByR"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
     status: historyStatusEnum().notNull().default("FINISHED"),
 });
 

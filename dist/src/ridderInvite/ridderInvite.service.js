@@ -23,6 +23,7 @@ const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema")
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
+const order_schema_1 = require("../drizzle/schema/order.schema");
 let RidderInviteService = class RidderInviteService {
     constructor(db) {
         this.db = db;
@@ -437,23 +438,94 @@ let RidderInviteService = class RidderInviteService {
         });
     }
     async decideRidderInviteById(id, receiverId, decideRidderInviteDto) {
-        const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
+        const purchaseOrder = await this.db.query.RidderInviteTable.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")),
             with: {
                 order: {
                     columns: {
+                        id: true,
                         creatorId: true,
                     }
                 }
             }
         });
-        if (!supplyOrder || !supplyOrder.order)
+        if (!purchaseOrder || !purchaseOrder.order)
             throw exceptions_1.ClientInviteNotFoundException;
-        if (receiverId !== supplyOrder.order.creatorId)
+        if (receiverId !== purchaseOrder.order.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
-        return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
-            status: decideRidderInviteDto.status,
-        }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id));
+        if (decideRidderInviteDto.status === "ACCEPTED") {
+            return await this.db.transaction(async (tx) => {
+                const responseOfDecidingRidderInvite = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                    status: decideRidderInviteDto.status,
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id))
+                    .returning({
+                    inviterId: ridderInvite_schema_1.RidderInviteTable.userId,
+                    inviterStartCord: ridderInvite_schema_1.RidderInviteTable.startCord,
+                    inviterEndCord: ridderInvite_schema_1.RidderInviteTable.endCord,
+                    suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
+                    suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
+                    inviterDescription: ridderInvite_schema_1.RidderInviteTable.briefDescription,
+                    inviteStatus: ridderInvite_schema_1.RidderInviteTable.status,
+                });
+                if (!responseOfDecidingRidderInvite
+                    || responseOfDecidingRidderInvite.length === 0) {
+                    throw exceptions_1.ClientInviteNotFoundException;
+                }
+                await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                    status: "REJECTED",
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, purchaseOrder.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id)));
+                const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+                    status: "CANCEL",
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, purchaseOrder.order.id))
+                    .returning({
+                    receiverId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
+                    receiverStartCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+                    receiverEndCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+                    isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+                    orderStatus: purchaseOrder_schema_1.PurchaseOrderTable.status,
+                });
+                if (!responseOfDeletingPurchaseOrder
+                    || responseOfDeletingPurchaseOrder.length === 0) {
+                    throw exceptions_1.ClientPurchaseOrderNotFoundException;
+                }
+                const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
+                    ridderId: responseOfDecidingRidderInvite[0].inviterId,
+                    passengerId: responseOfDeletingPurchaseOrder[0].receiverId,
+                    finalPrice: responseOfDecidingRidderInvite[0].suggestPrice,
+                    passengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
+                    passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
+                    ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+                    startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,
+                    status: "UNSTARTED",
+                }).returning({
+                    finalPrice: order_schema_1.OrderTable.finalPrice,
+                    startAfter: order_schema_1.OrderTable.startAfter,
+                    status: order_schema_1.OrderTable.status,
+                });
+                if (!responseOfCreatingOrder
+                    || responseOfCreatingOrder.length === 0) {
+                    throw exceptions_1.ClientCreateOrderException;
+                }
+                return {
+                    status: responseOfDecidingRidderInvite[0].inviteStatus,
+                    price: responseOfCreatingOrder[0].finalPrice,
+                    passsengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
+                    passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
+                    ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+                    startAfter: responseOfCreatingOrder[0].startAfter,
+                    orderStatus: responseOfCreatingOrder[0].status,
+                };
+            });
+        }
+        else {
+            return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
+                status: decideRidderInviteDto.status,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id));
+        }
     }
     async deleteRidderInviteById(id, inviterId) {
         return await this.db.delete(ridderInvite_schema_1.RidderInviteTable)

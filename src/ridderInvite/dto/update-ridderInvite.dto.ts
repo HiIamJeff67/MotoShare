@@ -9,7 +9,7 @@ export class UpdateRidderInviteDto extends PartialType(CreateRidderInviteDto) {
     status: InviteStatusType
 }
 
-export class DecideRidderInviteDto extends PartialType(CreateRidderInviteDto) {
+export class DecideRidderInviteDto {
     @IsOptional()
     @IsIn(ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" })
     status: ReceiverStatusType

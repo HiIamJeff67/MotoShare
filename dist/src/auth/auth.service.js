@@ -23,61 +23,54 @@ const exceptions_1 = require("../exceptions");
 const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
-const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;
         this.db = db;
         this.jwt = jwt;
     }
-    async signUpPassengerWithEmailAndPassword(signUpDto) {
-        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
-        const response = await this.db.insert(passenger_schema_1.PassengerTable).values({
-            userName: signUpDto.userName,
-            email: signUpDto.email,
-            password: hash,
-        }).returning({
-            id: passenger_schema_1.PassengerTable.id,
-            email: passenger_schema_1.PassengerTable.email,
-        });
-        if (!response)
-            throw exceptions_1.ClientSignUpUserException;
-        const responseOfCreatingInfo = this.createPassengerInfoByUserId(response[0].id);
-        if (!responseOfCreatingInfo)
-            throw exceptions_1.ClientCreatePassengerInfoException;
-        const result = await this.signToken(response[0].id, response[0].email);
-        if (!result)
-            throw exceptions_1.ApiGeneratingBearerTokenException;
-        return result;
-    }
-    async createPassengerInfoByUserId(userId) {
-        return await this.db.insert(passengerInfo_schema_1.PassengerInfoTable).values({
-            userId: userId
+    async signUpPassengerWithUserNameAndEmailAndPassword(signUpDto) {
+        return await this.db.transaction(async (tx) => {
+            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            const responseOfCreatingPassenger = await tx.insert(passenger_schema_1.PassengerTable).values({
+                userName: signUpDto.userName,
+                email: signUpDto.email,
+                password: hash,
+            }).returning({
+                id: passenger_schema_1.PassengerTable.id,
+                email: passenger_schema_1.PassengerTable.email,
+            });
+            if (!responseOfCreatingPassenger)
+                throw exceptions_1.ClientSignUpUserException;
+            const responseOfCreatingInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+            });
+            if (!responseOfCreatingInfo)
+                throw exceptions_1.ClientCreatePassengerInfoException;
+            const result = await this.signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
+            return result;
         });
     }
     async signUpRidderWithEmailAndPassword(signUpDto) {
-        const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
-        const response = await this.db.insert(ridder_schema_1.RidderTable).values({
-            userName: signUpDto.userName,
-            email: signUpDto.email,
-            password: hash,
-        }).returning({
-            id: ridder_schema_1.RidderTable.id,
-            email: ridder_schema_1.RidderTable.email,
-        });
-        if (!response)
-            throw exceptions_1.ClientSignUpUserException;
-        const responseOfCreatingInfo = this.createRidderInfoByUserId(response[0].id);
-        if (!responseOfCreatingInfo)
-            throw exceptions_1.ClientCreateRidderInfoException;
-        const result = await this.signToken(response[0].id, response[0].email);
-        if (!result)
-            throw exceptions_1.ApiGeneratingBearerTokenException;
-        return result;
-    }
-    async createRidderInfoByUserId(userId) {
-        return await this.db.insert(ridderInfo_schema_1.RidderInfoTable).values({
-            userId: userId
+        return await this.db.transaction(async (tx) => {
+            const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            const responseOfCreatingRidder = await tx.insert(ridder_schema_1.RidderTable).values({
+                userName: signUpDto.userName,
+                email: signUpDto.email,
+                password: hash,
+            }).returning({
+                id: ridder_schema_1.RidderTable.id,
+                email: ridder_schema_1.RidderTable.email,
+            });
+            if (!responseOfCreatingRidder)
+                throw exceptions_1.ClientSignUpUserException;
+            const responseOfCreatingInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+                userId: responseOfCreatingRidder[0].id,
+            });
+            if (!responseOfCreatingInfo)
+                throw exceptions_1.ClientCreatePassengerInfoException;
+            const result = await this.signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
+            return result;
         });
     }
     async signInPassengerEmailAndPassword(signInDto) {

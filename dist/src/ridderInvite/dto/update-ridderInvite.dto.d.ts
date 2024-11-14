@@ -4,8 +4,7 @@ declare const UpdateRidderInviteDto_base: import("@nestjs/mapped-types").MappedT
 export declare class UpdateRidderInviteDto extends UpdateRidderInviteDto_base {
     status: InviteStatusType;
 }
-declare const DecideRidderInviteDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateRidderInviteDto>>;
-export declare class DecideRidderInviteDto extends DecideRidderInviteDto_base {
+export declare class DecideRidderInviteDto {
     status: ReceiverStatusType;
 }
 export {};

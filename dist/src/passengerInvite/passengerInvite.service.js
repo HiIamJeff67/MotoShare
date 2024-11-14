@@ -23,6 +23,7 @@ const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
+const order_schema_1 = require("../drizzle/schema/order.schema");
 let PassengerInviteService = class PassengerInviteService {
     constructor(db) {
         this.db = db;
@@ -445,6 +446,7 @@ let PassengerInviteService = class PassengerInviteService {
             with: {
                 order: {
                     columns: {
+                        id: true,
                         creatorId: true,
                     }
                 }
@@ -454,9 +456,79 @@ let PassengerInviteService = class PassengerInviteService {
             throw exceptions_1.ClientInviteNotFoundException;
         if (receiverId !== supplyOrder?.order?.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
-        return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
-            status: decidePassengerInviteDto.status,
-        }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id));
+        if (decidePassengerInviteDto.status === "ACCEPTED") {
+            return await this.db.transaction(async (tx) => {
+                const responseOfDecidingPassengerInvite = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                    status: decidePassengerInviteDto.status,
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id))
+                    .returning({
+                    inviterId: passengerInvite_schema_1.PassengerInviteTable.userId,
+                    inviterStartCord: passengerInvite_schema_1.PassengerInviteTable.startCord,
+                    inviterEndCord: passengerInvite_schema_1.PassengerInviteTable.endCord,
+                    suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+                    suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+                    inviterDescription: passengerInvite_schema_1.PassengerInviteTable.briefDescription,
+                    inviteStatus: passengerInvite_schema_1.PassengerInviteTable.status,
+                });
+                if (!responseOfDecidingPassengerInvite
+                    || responseOfDecidingPassengerInvite.length === 0) {
+                    throw exceptions_1.ClientInviteNotFoundException;
+                }
+                await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                    status: "REJECTED",
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id)));
+                const responseOfDeletingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
+                    status: "CANCEL",
+                    updatedAt: new Date(),
+                }).where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, supplyOrder.order.id))
+                    .returning({
+                    receiverId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
+                    receiverStartCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
+                    receiverEndCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+                    tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+                    orderStatus: supplyOrder_schema_1.SupplyOrderTable.status,
+                });
+                if (!responseOfDeletingSupplyOrder
+                    || responseOfDeletingSupplyOrder.length === 0) {
+                    throw exceptions_1.ClientSupplyOrderNotFoundException;
+                }
+                const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
+                    ridderId: responseOfDeletingSupplyOrder[0].receiverId,
+                    passengerId: responseOfDecidingPassengerInvite[0].inviterId,
+                    finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
+                    passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+                    passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+                    ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+                    startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
+                    status: "UNSTARTED",
+                }).returning({
+                    finalPrice: order_schema_1.OrderTable.finalPrice,
+                    startAfter: order_schema_1.OrderTable.startAfter,
+                    status: order_schema_1.OrderTable.status,
+                });
+                if (!responseOfCreatingOrder
+                    || responseOfCreatingOrder.length === 0) {
+                    throw exceptions_1.ClientCreateOrderException;
+                }
+                return {
+                    status: responseOfDecidingPassengerInvite[0].inviteStatus,
+                    price: responseOfCreatingOrder[0].finalPrice,
+                    passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+                    passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+                    ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+                    startAfter: responseOfCreatingOrder[0].startAfter,
+                    orderStatus: responseOfCreatingOrder[0].status,
+                };
+            });
+        }
+        else {
+            return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                status: decidePassengerInviteDto.status,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id));
+        }
     }
     async deletePassengerInviteById(id, inviterId) {
         return await this.db.delete(passengerInvite_schema_1.PassengerInviteTable)

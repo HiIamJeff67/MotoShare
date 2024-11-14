@@ -23,6 +23,7 @@ exports.HistoryTable = (0, pg_core_1.pgTable)("history", {
     starRatingByRidder: (0, enums_1.starRatingEnum)().notNull().default("0"),
     commentByPassenger: (0, pg_core_1.text)("commentByP"),
     commentByRidder: (0, pg_core_1.text)("commentByR"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     status: (0, enums_1.historyStatusEnum)().notNull().default("FINISHED"),
 });
 exports.HistoryRelation = (0, drizzle_orm_1.relations)(exports.HistoryTable, ({ one }) => ({

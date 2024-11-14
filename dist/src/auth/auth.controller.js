@@ -24,7 +24,7 @@ let AuthController = class AuthController {
     }
     async signUpPassengerWithEmailAndPassword(signUpDto, response) {
         try {
-            const res = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
+            const res = await this.authService.signUpPassengerWithUserNameAndEmailAndPassword(signUpDto);
             if (!res)
                 throw exceptions_1.ClientSignUpUserException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);

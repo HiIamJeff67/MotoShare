@@ -139,6 +139,38 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        endAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endAt";
+            tableName: "order";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "createdAt";
+            tableName: "order";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         status: import("drizzle-orm/pg-core").PgColumn<{
             name: "status";
             tableName: "order";

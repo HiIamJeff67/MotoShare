@@ -11,7 +11,7 @@ exports.RidderInviteTable = (0, pg_core_1.pgTable)('ridderInvite', {
         onDelete: 'set null',
     }).notNull(),
     orderId: (0, pg_core_1.uuid)("orderId").references(() => schema_1.PurchaseOrderTable.id, {
-        onDelete: 'cascade',
+        onDelete: 'set null',
     }).notNull(),
     briefDescription: (0, pg_core_1.text)("briefDesciption"),
     suggestPrice: (0, pg_core_1.integer)("suggestPrice").notNull(),

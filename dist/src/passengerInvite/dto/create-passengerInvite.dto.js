@@ -46,7 +46,7 @@ __decorate([
 ], CreatePassengerInviteDto.prototype, "endCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)
 ], CreatePassengerInviteDto.prototype, "suggestStartAfter", void 0);
 //# sourceMappingURL=create-passengerInvite.dto.js.map

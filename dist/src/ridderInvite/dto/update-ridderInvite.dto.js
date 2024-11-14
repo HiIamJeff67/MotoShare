@@ -22,7 +22,7 @@ __decorate([
     (0, class_validator_1.IsIn)(status_interface_1.InviteStatusTypes, { message: "The status of PassengerInvite must be either CHECKING or CANCEL" }),
     __metadata("design:type", String)
 ], UpdateRidderInviteDto.prototype, "status", void 0);
-class DecideRidderInviteDto extends (0, mapped_types_1.PartialType)(create_ridderInvite_dto_1.CreateRidderInviteDto) {
+class DecideRidderInviteDto {
 }
 exports.DecideRidderInviteDto = DecideRidderInviteDto;
 __decorate([

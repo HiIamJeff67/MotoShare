@@ -1,4 +1,4 @@
-import { IsBoolean, IsBooleanString, IsDate, IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsBooleanString, IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
 
 // longitude(經度) -> x
 // latitude(緯度)  -> y
@@ -37,7 +37,7 @@ export class CreatePurchaseOrderDto {
     // updatedAt?: Date    // not recommand to specify this field
 
     @IsOptional()
-    @IsDate()
+    @IsDateString()
     startAfter?: Date   // but at most case, should be specify
 
     @IsOptional()

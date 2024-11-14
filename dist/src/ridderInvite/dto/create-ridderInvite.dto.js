@@ -46,7 +46,7 @@ __decorate([
 ], CreateRidderInviteDto.prototype, "endCordLatitude", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)
 ], CreateRidderInviteDto.prototype, "suggestStartAfter", void 0);
 //# sourceMappingURL=create-ridderInvite.dto.js.map

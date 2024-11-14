@@ -8,10 +8,8 @@ export declare class AuthService {
     private db;
     private jwt;
     constructor(config: ConfigService, db: DrizzleDB, jwt: JwtService);
-    signUpPassengerWithEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType>;
-    createPassengerInfoByUserId(userId: string): Promise<import("pg").QueryResult<never>>;
+    signUpPassengerWithUserNameAndEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType>;
     signUpRidderWithEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType>;
-    createRidderInfoByUserId(userId: string): Promise<import("pg").QueryResult<never>>;
     signInPassengerEmailAndPassword(signInDto: SignInDto): Promise<AuthTokenType>;
     signInRidderByEmailAndPassword(signInDto: SignInDto): Promise<AuthTokenType>;
     signToken(userId: string, email: string): Promise<AuthTokenType>;

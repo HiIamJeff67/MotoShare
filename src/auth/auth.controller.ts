@@ -16,7 +16,7 @@ export class AuthController {
         @Res() response: Response,
     ) {
         try {
-            const res = await this.authService.signUpPassengerWithEmailAndPassword(signUpDto);
+            const res = await this.authService.signUpPassengerWithUserNameAndEmailAndPassword(signUpDto);
 
             if (!res) throw ClientSignUpUserException;
 

@@ -12,7 +12,7 @@ export const RidderInviteTable = pgTable('ridderInvite', {
         onDelete: 'set null',
     }).notNull(),
     orderId: uuid("orderId").references(() => PurchaseOrderTable.id, {
-        onDelete: 'cascade',
+        onDelete: 'set null',
     }).notNull(),
     briefDescription: text("briefDesciption"),
     suggestPrice: integer("suggestPrice").notNull(),

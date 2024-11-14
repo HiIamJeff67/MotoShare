@@ -23,6 +23,8 @@ export const OrderTable = pgTable("order", {
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     // note that there's no need to specify the end cord of ridder
     startAfter: timestamp("startAfter").notNull().defaultNow(),
+    endAt: timestamp("endAt").notNull().defaultNow(),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
     status: orderStatusEnum().notNull().default("UNSTARTED"),
 });
 

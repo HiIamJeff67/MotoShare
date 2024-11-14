@@ -18,6 +18,8 @@ exports.OrderTable = (0, pg_core_1.pgTable)("order", {
     passengerEndCord: (0, pg_core_1.geometry)("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: (0, pg_core_1.geometry)("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
+    endAt: (0, pg_core_1.timestamp)("endAt").notNull().defaultNow(),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     status: (0, enums_1.orderStatusEnum)().notNull().default("UNSTARTED"),
 });
 exports.OrderRelation = (0, drizzle_orm_1.relations)(exports.OrderTable, ({ one }) => ({

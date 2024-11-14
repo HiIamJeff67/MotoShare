@@ -219,6 +219,22 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        createdAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "createdAt";
+            tableName: "history";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         status: import("drizzle-orm/pg-core").PgColumn<{
             name: "status";
             tableName: "history";

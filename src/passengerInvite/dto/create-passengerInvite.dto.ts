@@ -1,4 +1,4 @@
-import { IsDate, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
 
 export class CreatePassengerInviteDto {
     @IsOptional()
@@ -26,6 +26,6 @@ export class CreatePassengerInviteDto {
     endCordLatitude: number
 
     @IsOptional()
-    @IsDate()
+    @IsDateString()
     suggestStartAfter?: Date
 }

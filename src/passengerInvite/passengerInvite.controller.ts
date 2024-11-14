@@ -46,7 +46,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientCreatePassengerInviteException;
 
-      response.status(HttpStatusCode.Created).send(res)
+      response.status(HttpStatusCode.Created).send(res);
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -143,7 +143,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -175,7 +175,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -207,7 +207,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -239,7 +239,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -274,7 +274,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -306,7 +306,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -338,7 +338,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
@@ -370,7 +370,7 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res)
+      response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
