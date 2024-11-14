@@ -38,7 +38,7 @@ export class CreatePurchaseOrderDto {
 
     @IsOptional()
     @IsDateString()
-    startAfter?: Date   // but at most case, should be specify
+    startAfter?: string   // but at most case, should be specify
 
     @IsOptional()
     @IsBooleanString()

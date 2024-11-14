@@ -26,7 +26,7 @@ let SupplyOrderService = class SupplyOrderService {
     async createSupplyOrderByCreatorId(creatorId, createSupplyOrderDto) {
         return await this.db.insert(supplyOrder_schema_1.SupplyOrderTable).values({
             creatorId: creatorId,
-            description: createSupplyOrderDto.description ?? undefined,
+            description: createSupplyOrderDto.description,
             initPrice: createSupplyOrderDto.initPrice,
             startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
         ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
@@ -36,8 +36,8 @@ let SupplyOrderService = class SupplyOrderService {
         ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
         4326
       )`,
-            startAfter: createSupplyOrderDto.startAfter ?? undefined,
-            tolerableRDV: createSupplyOrderDto.tolerableRDV ?? undefined,
+            startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
+            tolerableRDV: createSupplyOrderDto.tolerableRDV,
         }).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
@@ -260,7 +260,7 @@ let SupplyOrderService = class SupplyOrderService {
             startCord: newStartCord,
             endCord: newEndCord,
             updatedAt: new Date(),
-            startAfter: updateSupplyOrderDto.startAfter,
+            startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
             tolerableRDV: updateSupplyOrderDto.tolerableRDV,
             status: updateSupplyOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)))

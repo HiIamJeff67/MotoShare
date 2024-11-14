@@ -12,7 +12,6 @@ export declare class PurchaseOrderService {
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -23,14 +22,14 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -41,9 +40,10 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
         creator: {
             userName: string;
             info: {
@@ -142,9 +142,8 @@ export declare class PurchaseOrderService {
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        description: string | null;
-        createdAt: Date;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -155,8 +154,9 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
 }

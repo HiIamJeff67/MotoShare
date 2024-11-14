@@ -35,6 +35,7 @@ let PurchaseOrderController = class PurchaseOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.ForbiddenException
                 || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;

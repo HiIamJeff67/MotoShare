@@ -46,6 +46,7 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
+      console.log(error)
       if (!(error instanceof ForbiddenException 
         || error instanceof UnauthorizedException)) {
           error = ClientUnknownException;

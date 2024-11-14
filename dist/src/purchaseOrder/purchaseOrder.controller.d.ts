@@ -18,9 +18,8 @@ export declare class PurchaseOrderController {
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        description: string | null;
-        createdAt: Date;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -31,8 +30,9 @@ export declare class PurchaseOrderController {
             y: number;
         };
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
 }

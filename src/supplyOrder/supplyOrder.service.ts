@@ -21,7 +21,7 @@ export class SupplyOrderService {
   async createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto) {
     return await this.db.insert(SupplyOrderTable).values({
       creatorId: creatorId,
-      description: createSupplyOrderDto.description ?? undefined,
+      description: createSupplyOrderDto.description,
       initPrice: createSupplyOrderDto.initPrice,
       startCord: sql`ST_SetSRID(
         ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
@@ -31,8 +31,8 @@ export class SupplyOrderService {
         ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
         4326
       )`,
-      startAfter: createSupplyOrderDto.startAfter ?? undefined,
-      tolerableRDV: createSupplyOrderDto.tolerableRDV ?? undefined,
+      startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
+      tolerableRDV: createSupplyOrderDto.tolerableRDV,
     }) .returning({
       id: SupplyOrderTable.id,
       createdAt: SupplyOrderTable.createdAt,
@@ -352,7 +352,7 @@ export class SupplyOrderService {
       startCord: newStartCord,
       endCord: newEndCord,
       updatedAt: new Date(),
-      startAfter: updateSupplyOrderDto.startAfter,
+      startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
       tolerableRDV: updateSupplyOrderDto.tolerableRDV,
       status: updateSupplyOrderDto.status,
     }).where(and(eq(SupplyOrderTable.id, id), eq(SupplyOrderTable.creatorId, creatorId)))

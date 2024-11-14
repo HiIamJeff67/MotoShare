@@ -38,7 +38,7 @@ export class PassengerInviteService {
         ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
         4326
       )`,
-      suggestStartAfter: createPassengerInviteDto.suggestStartAfter,
+      suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
       status: "CHECKING",
     }).returning({
       id: PassengerInviteTable.id,
@@ -584,7 +584,7 @@ export class PassengerInviteService {
       suggestPrice: updatePassengerInviteDto.suggestPrice,
       startCord: newStartCord,
       endCord: newEndCord,
-      suggestStartAfter: updatePassengerInviteDto.suggestStartAfter,
+      suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
       updatedAt: new Date(),
       status: updatePassengerInviteDto.status,
     }).where(and(

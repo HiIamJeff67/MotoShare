@@ -42,7 +42,7 @@ let RidderInviteService = class RidderInviteService {
         ST_MakePoint(${createRidderInviteDto.endCordLongitude}, ${createRidderInviteDto.endCordLatitude}),
         4326
       )`,
-            suggestStartAfter: createRidderInviteDto.suggestStartAfter,
+            suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter || new Date()),
             status: "CHECKING",
         }).returning({
             id: ridderInvite_schema_1.RidderInviteTable.id,
@@ -427,7 +427,7 @@ let RidderInviteService = class RidderInviteService {
             suggestPrice: updateRidderInviteDto.suggestPrice,
             startCord: newStartCord,
             endCord: newEndCord,
-            suggestStartAfter: updateRidderInviteDto.suggestStartAfter,
+            suggestStartAfter: new Date(updateRidderInviteDto.suggestStartAfter || new Date()),
             updatedAt: new Date(),
             status: updateRidderInviteDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")))

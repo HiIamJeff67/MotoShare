@@ -47,7 +47,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], CreatePurchaseOrderDto.prototype, "startAfter", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),

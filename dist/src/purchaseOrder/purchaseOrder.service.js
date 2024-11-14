@@ -26,7 +26,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
         return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
             creatorId: creatorId,
-            description: createPurchaseOrderDto.description ?? undefined,
+            description: createPurchaseOrderDto.description,
             initPrice: createPurchaseOrderDto.initPrice,
             startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
         ST_MakePoint(${createPurchaseOrderDto.startCordLongitude}, ${createPurchaseOrderDto.startCordLatitude}),
@@ -36,8 +36,8 @@ let PurchaseOrderService = class PurchaseOrderService {
         ST_MakePoint(${createPurchaseOrderDto.endCordLongitude}, ${createPurchaseOrderDto.endCordLatitude}),
         4326
       )`,
-            startAfter: createPurchaseOrderDto.startAfter ?? undefined,
-            isUrgent: createPurchaseOrderDto.isUrgent ?? undefined,
+            startAfter: new Date(createPurchaseOrderDto.startAfter || new Date()),
+            isUrgent: createPurchaseOrderDto.isUrgent,
         }).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
@@ -255,7 +255,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             startCord: newStartCord,
             endCord: newEndCord,
             updatedAt: new Date(),
-            startAfter: updatePurchaseOrderDto.startAfter,
+            startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
             isUrgent: updatePurchaseOrderDto.isUrgent,
             status: updatePurchaseOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId)))
