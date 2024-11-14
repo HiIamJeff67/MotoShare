@@ -19,6 +19,7 @@ import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schem
 import { RidderTable } from '../../src/drizzle/schema/ridder.schema';
 
 import { SignInDto, SignUpDto } from "./dto/index";
+import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 
 @Injectable()
 export class AuthService {
@@ -74,7 +75,7 @@ export class AuthService {
             });
             if (!responseOfCreatingRidder) throw ClientSignUpUserException;
 
-            const responseOfCreatingInfo = await tx.insert(PassengerInfoTable).values({
+            const responseOfCreatingInfo = await tx.insert(RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
             });
             if (!responseOfCreatingInfo) throw ClientCreatePassengerInfoException;

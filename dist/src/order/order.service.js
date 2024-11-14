@@ -15,36 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const common_1 = require("@nestjs/common");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
-const drizzle_orm_1 = require("drizzle-orm");
-const supplyOrder_schema_1 = require("../drizzle/schema/supplyOrder.schema");
 let OrderService = class OrderService {
     constructor(db) {
         this.db = db;
-    }
-    async createOrderByPassenger(id, orderId) {
-        const supplyOrder = await this.db.query.SupplyOrderTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, orderId),
-            columns: {
-                creatorId: true,
-                initPrice: true,
-                startCord: true,
-                startAfter: true,
-            }
-        });
-    }
-    async createOrderByRidder(id, orderId) {
-    }
-    findAll() {
-        return `This action returns all order`;
-    }
-    findOne(id) {
-        return `This action returns a #${id} order`;
-    }
-    update(id, updateOrderDto) {
-        return `This action updates a #${id} order`;
-    }
-    remove(id) {
-        return `This action removes a #${id} order`;
     }
 };
 exports.OrderService = OrderService;

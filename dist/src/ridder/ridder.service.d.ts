@@ -55,7 +55,7 @@ export declare class RidderService {
                 };
                 startAfter: Date;
                 updatedAt: Date;
-                status: "POSTED" | "EXPIRED" | "CANCEL";
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 isUrgent: boolean;
                 creator: {
                     userName: string;

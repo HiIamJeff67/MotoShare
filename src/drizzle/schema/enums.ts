@@ -19,4 +19,4 @@ export const inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", 
 export const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED"]);
 
 // for both PurchaseOrderTable and SupplyOrderTable
-export const postedStatusEnum = pgEnum("postStatus", ["POSTED", "EXPIRED", "CANCEL"]);
+export const postedStatusEnum = pgEnum("postStatus", ["POSTED", "EXPIRED", "CANCEL", "RESERVED"]);

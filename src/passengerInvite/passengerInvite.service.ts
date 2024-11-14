@@ -655,8 +655,8 @@ export class PassengerInviteService {
           ne(PassengerInviteTable.id, id),
         ));
 
-        const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({
-          status: "CANCEL",
+        const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({ // will delete this supplyOrder later
+          status: "RESERVED",
           updatedAt: new Date(),
         }).where(eq(SupplyOrderTable.id, supplyOrder.order.id))
           .returning({

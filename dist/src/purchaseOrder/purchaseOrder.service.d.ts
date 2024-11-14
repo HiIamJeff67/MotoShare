@@ -8,10 +8,11 @@ export declare class PurchaseOrderService {
     createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
         id: string;
         createdAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -22,14 +23,14 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
-        createdAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -40,10 +41,9 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
-        createdAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
         creator: {
             userName: string;
             info: {
@@ -69,7 +69,7 @@ export declare class PurchaseOrderService {
         updatedAt: Date;
         startAfter: Date;
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
@@ -88,7 +88,7 @@ export declare class PurchaseOrderService {
         updatedAt: Date;
         startAfter: Date;
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         distance: unknown;
     }[]>;
     searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
@@ -108,7 +108,7 @@ export declare class PurchaseOrderService {
         updatedAt: Date;
         startAfter: Date;
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         distance: unknown;
     }[]>;
     searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
@@ -128,22 +128,23 @@ export declare class PurchaseOrderService {
         updatedAt: Date;
         startAfter: Date;
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         RDV: unknown;
     }[]>;
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
         id: string;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        creatorId: string;
         description: string | null;
+        createdAt: Date;
+        creatorId: string;
         initPrice: number;
         startCord: {
             x: number;
@@ -154,9 +155,8 @@ export declare class PurchaseOrderService {
             y: number;
         };
         startAfter: Date;
-        createdAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
     }[]>;
 }

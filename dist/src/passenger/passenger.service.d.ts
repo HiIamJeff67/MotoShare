@@ -51,7 +51,7 @@ export declare class PassengerService {
                 startAfter: Date;
                 updatedAt: Date;
                 tolerableRDV: number;
-                status: "POSTED" | "EXPIRED" | "CANCEL";
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 creator: {
                     userName: string;
                 };

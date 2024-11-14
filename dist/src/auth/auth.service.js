@@ -23,6 +23,7 @@ const exceptions_1 = require("../exceptions");
 const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
+const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;
@@ -64,7 +65,7 @@ let AuthService = class AuthService {
             });
             if (!responseOfCreatingRidder)
                 throw exceptions_1.ClientSignUpUserException;
-            const responseOfCreatingInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+            const responseOfCreatingInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
             });
             if (!responseOfCreatingInfo)

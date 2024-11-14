@@ -173,14 +173,14 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             tableName: "purchaseOrder";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "POSTED" | "EXPIRED" | "CANCEL";
+            data: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
             driverParam: string;
             notNull: true;
             hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: ["POSTED", "EXPIRED", "CANCEL"];
+            enumValues: ["POSTED", "EXPIRED", "CANCEL", "RESERVED"];
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;

@@ -46,7 +46,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async getPurchaseOrdersByCreatorId(creatorId, limit, offset) {
         return await this.db.query.PurchaseOrderTable.findMany({
-            where: (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId)),
             columns: {
                 id: true,
                 initPrice: true,
@@ -65,7 +65,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async getPurchaseOrderById(id) {
         return await this.db.query.PurchaseOrderTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id)),
             columns: {
                 id: true,
                 initPrice: true,
@@ -111,7 +111,10 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
@@ -139,7 +142,10 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -170,7 +176,10 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -215,7 +224,10 @@ let PurchaseOrderService = class PurchaseOrderService {
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
@@ -258,8 +270,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
             isUrgent: updatePurchaseOrderDto.isUrgent,
             status: updatePurchaseOrderDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId)))
-            .returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
@@ -267,8 +278,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async deletePurchaseOrderById(id, creatorId) {
         return await this.db.delete(purchaseOrder_schema_1.PurchaseOrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId)))
-            .returning({
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });

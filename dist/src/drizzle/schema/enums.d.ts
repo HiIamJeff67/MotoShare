@@ -2,4 +2,4 @@ export declare const starRatingEnum: import("drizzle-orm/pg-core").PgEnum<["0", 
 export declare const historyStatusEnum: import("drizzle-orm/pg-core").PgEnum<["FINISHED", "EXPIRED", "CANCEL"]>;
 export declare const inviteStatusEnum: import("drizzle-orm/pg-core").PgEnum<["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]>;
 export declare const orderStatusEnum: import("drizzle-orm/pg-core").PgEnum<["UNSTARTED", "STARTED"]>;
-export declare const postedStatusEnum: import("drizzle-orm/pg-core").PgEnum<["POSTED", "EXPIRED", "CANCEL"]>;
+export declare const postedStatusEnum: import("drizzle-orm/pg-core").PgEnum<["POSTED", "EXPIRED", "CANCEL", "RESERVED"]>;

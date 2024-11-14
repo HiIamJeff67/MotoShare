@@ -480,7 +480,7 @@ let PassengerInviteService = class PassengerInviteService {
                     updatedAt: new Date(),
                 }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id)));
                 const responseOfDeletingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
-                    status: "CANCEL",
+                    status: "RESERVED",
                     updatedAt: new Date(),
                 }).where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, supplyOrder.order.id))
                     .returning({

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql, like } from 'drizzle-orm';
+import { desc, and, eq, sql, like, ne } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
@@ -13,6 +13,7 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
+import e from 'express';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -50,7 +51,10 @@ export class PurchaseOrderService {
     offset: number,
   ) {
     return await this.db.query.PurchaseOrderTable.findMany({
-      where: eq(PurchaseOrderTable.creatorId, creatorId),
+      where: and(
+        ne(PurchaseOrderTable.status, "RESERVED"),
+        eq(PurchaseOrderTable.creatorId, creatorId),
+      ),
       columns: {
         id: true,
         initPrice: true,
@@ -86,7 +90,10 @@ export class PurchaseOrderService {
   // for specifying the details of the other purchaseOrders
   async getPurchaseOrderById(id: string) {
     return await this.db.query.PurchaseOrderTable.findFirst({
-      where: eq(PurchaseOrderTable.id, id),
+      where: and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        eq(PurchaseOrderTable.id, id),
+      ),
       columns: {
         id: true,
         initPrice: true,
@@ -156,7 +163,12 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
     }
       
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -193,7 +205,12 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
     
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, creatorName + "%")
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -233,7 +250,12 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -287,7 +309,12 @@ export class PurchaseOrderService {
       .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
 
     if (creatorName) {
-      query.where(like(PassengerTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
@@ -350,8 +377,11 @@ export class PurchaseOrderService {
       startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
       isUrgent: updatePurchaseOrderDto.isUrgent,
       status: updatePurchaseOrderDto.status,
-    }).where(and(eq(PurchaseOrderTable.id, id), eq(PurchaseOrderTable.creatorId, creatorId)))
-      .returning({
+    }).where(and(
+      ne(PurchaseOrderTable.status, "RESERVED"),
+      eq(PurchaseOrderTable.id, id), 
+      eq(PurchaseOrderTable.creatorId, creatorId),
+    )).returning({
         id: PurchaseOrderTable.id,
         updatedAt: PurchaseOrderTable.updatedAt,
         status: PurchaseOrderTable.status,
@@ -364,8 +394,11 @@ export class PurchaseOrderService {
   async deletePurchaseOrderById(id: string, creatorId: string) {
     // do the same check as update, since the passenger can only delete the order created by himself
     return await this.db.delete(PurchaseOrderTable)
-      .where(and(eq(PurchaseOrderTable.id, id), eq(PurchaseOrderTable.creatorId, creatorId)))
-      .returning({
+      .where(and(
+        ne(PurchaseOrderTable.status, "RESERVED"),
+        eq(PurchaseOrderTable.id, id), 
+        eq(PurchaseOrderTable.creatorId, creatorId)
+      )).returning({
         id: PurchaseOrderTable.id,
         status: PurchaseOrderTable.status,
       });

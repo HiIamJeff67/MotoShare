@@ -8,10 +8,11 @@ export declare class SupplyOrderService {
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
         id: string;
         createdAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -22,14 +23,14 @@ export declare class SupplyOrderService {
             y: number;
         };
         startAfter: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getSupplyOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -40,10 +41,9 @@ export declare class SupplyOrderService {
             y: number;
         };
         startAfter: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         creator: {
             userName: string;
             info: {
@@ -71,7 +71,7 @@ export declare class SupplyOrderService {
         updatedAt: Date;
         startAfter: Date;
         tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     searchCurAdjacentSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
         id: string;
@@ -91,7 +91,7 @@ export declare class SupplyOrderService {
         startAfter: Date;
         tolerableRDV: number;
         motocycleType: never;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         distance: unknown;
     }[]>;
     searchDestAdjacentSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto): Promise<{
@@ -112,7 +112,7 @@ export declare class SupplyOrderService {
         startAfter: Date;
         tolerableRDV: number;
         motocycleType: never;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         distance: unknown;
     }[]>;
     searchSimilarRouteSupplyOrders(creatorName: string | undefined, limit: number, offset: number, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto): Promise<{
@@ -133,16 +133,16 @@ export declare class SupplyOrderService {
         startAfter: Date;
         tolerableRDV: number;
         motocycleType: never;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         RDV: unknown;
     }[]>;
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
         id: string;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;
-        status: "POSTED" | "EXPIRED" | "CANCEL";
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
 }

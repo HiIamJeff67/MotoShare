@@ -6,8 +6,8 @@ export declare class RidderInviteService {
     constructor(db: DrizzleDB);
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
-        orderId: string;
         createdAt: Date;
+        orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{

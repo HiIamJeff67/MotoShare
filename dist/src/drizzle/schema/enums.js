@@ -6,5 +6,5 @@ exports.starRatingEnum = (0, pg_core_1.pgEnum)("starRating", ["0", "1", "2", "3"
 exports.historyStatusEnum = (0, pg_core_1.pgEnum)("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"]);
 exports.inviteStatusEnum = (0, pg_core_1.pgEnum)("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]);
 exports.orderStatusEnum = (0, pg_core_1.pgEnum)("orderStatus", ["UNSTARTED", "STARTED"]);
-exports.postedStatusEnum = (0, pg_core_1.pgEnum)("postStatus", ["POSTED", "EXPIRED", "CANCEL"]);
+exports.postedStatusEnum = (0, pg_core_1.pgEnum)("postStatus", ["POSTED", "EXPIRED", "CANCEL", "RESERVED"]);
 //# sourceMappingURL=enums.js.map
