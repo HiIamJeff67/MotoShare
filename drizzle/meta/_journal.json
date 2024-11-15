@@ -36,6 +36,34 @@
       "when": 1731562036518,
       "tag": "0004_graceful_amphibian",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1731600118612,
+      "tag": "0005_bent_stephen_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1731601629320,
+      "tag": "0006_big_imperial_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1731631797416,
+      "tag": "0007_white_malice",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1731666086208,
+      "tag": "0008_lively_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

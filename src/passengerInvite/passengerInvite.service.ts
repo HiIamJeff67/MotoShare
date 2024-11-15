@@ -38,6 +38,8 @@ export class PassengerInviteService {
         ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
         4326
       )`,
+      startAddress: createPassengerInviteDto.startAddress,
+      endAddress: createPassengerInviteDto.endAddress,
       suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
       status: "CHECKING",
     }).returning({
@@ -62,6 +64,8 @@ export class PassengerInviteService {
       inviteBriefDescription: PassengerInviteTable.briefDescription,
       suggestStartCord: PassengerInviteTable.startCord,
       suggestEndCord: PassengerInviteTable.endCord,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
       inviteCreatedAt: PassengerInviteTable.createdAt,
       inviteUdpatedAt: PassengerInviteTable.updatedAt,
@@ -69,6 +73,8 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       description: SupplyOrderTable.description,
       startAfter: SupplyOrderTable.startAfter,
       orderCreatedAt: SupplyOrderTable.createdAt,
@@ -160,6 +166,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -198,6 +206,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -243,6 +253,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -288,6 +300,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -367,6 +381,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -404,6 +420,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -448,6 +466,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -492,6 +512,8 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
       initPrice: SupplyOrderTable.initPrice,
@@ -584,9 +606,11 @@ export class PassengerInviteService {
       suggestPrice: updatePassengerInviteDto.suggestPrice,
       startCord: newStartCord,
       endCord: newEndCord,
+      startAddress: updatePassengerInviteDto.startAddress,
+      endAddress: updatePassengerInviteDto.endAddress,
       suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
       updatedAt: new Date(),
-      status: updatePassengerInviteDto.status,
+      status: updatePassengerInviteDto.status,  // either CHECKING or CANCEL
     }).where(and(
       eq(PassengerInviteTable.id, id), 
       eq(PassengerInviteTable.userId, inviterId),
@@ -630,13 +654,15 @@ export class PassengerInviteService {
     if (decidePassengerInviteDto.status === "ACCEPTED") {
       return await this.db.transaction(async (tx) => {
         const responseOfDecidingPassengerInvite = await tx.update(PassengerInviteTable).set({
-          status: decidePassengerInviteDto.status,
+          status: decidePassengerInviteDto.status,  // must be ACCEPTED
           updatedAt: new Date(),
         }).where(eq(PassengerInviteTable.id, id))
           .returning({
             inviterId: PassengerInviteTable.userId,
             inviterStartCord: PassengerInviteTable.startCord,
             inviterEndCord: PassengerInviteTable.endCord,
+            inviterStartAddress: PassengerInviteTable.startAddress,
+            inviterEndAddress: PassengerInviteTable.endAddress,
             suggestPrice: PassengerInviteTable.suggestPrice,
             suggestStartAfter: PassengerInviteTable.suggestStartAfter,
             inviterDescription: PassengerInviteTable.briefDescription,
@@ -663,32 +689,37 @@ export class PassengerInviteService {
             receiverId: SupplyOrderTable.creatorId,
             receiverStartCord: SupplyOrderTable.startCord,
             receiverEndCord: SupplyOrderTable.endCord,
+            receiverStartAddress: SupplyOrderTable.startAddress,
+            receiverEndAddress: SupplyOrderTable.endAddress,
             tolerableRDV: SupplyOrderTable.tolerableRDV,
             orderStatus: SupplyOrderTable.status,
-          });
+        });
         if (!responseOfDeletingSupplyOrder
-          || responseOfDeletingSupplyOrder.length === 0) {
-            throw ClientSupplyOrderNotFoundException;
+            || responseOfDeletingSupplyOrder.length === 0) {
+              throw ClientSupplyOrderNotFoundException;
         }
 
         const responseOfCreatingOrder = await tx.insert(OrderTable).values({
           ridderId: responseOfDeletingSupplyOrder[0].receiverId,
           passengerId: responseOfDecidingPassengerInvite[0].inviterId,
+          prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
           finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
           passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
           passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
           ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+          passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+          passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
+          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
           // endAt: , // will be covered the autocomplete function powered by google in the future
-          status: "UNSTARTED",
         }).returning({
           finalPrice: OrderTable.finalPrice,
           startAfter: OrderTable.startAfter,
-          status: OrderTable.status,
+          status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
         });
         if (!responseOfCreatingOrder 
-          || responseOfCreatingOrder.length === 0) {
-            throw ClientCreateOrderException;
+            || responseOfCreatingOrder.length === 0) {
+              throw ClientCreateOrderException;
         }
 
         return {
@@ -697,13 +728,16 @@ export class PassengerInviteService {
           passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
           passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
           ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+          passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+          passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
+          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
           orderStatus: responseOfCreatingOrder[0].status,
         }
       });
-    } else {  // decidePassengerInvite.status === "REJECTED" | "CHECKING"
+    } else if (decidePassengerInviteDto.status === "REJECTED") {
       return await this.db.update(PassengerInviteTable).set({
-        status: decidePassengerInviteDto.status,
+        status: decidePassengerInviteDto.status,  // must be REJECTED
         updatedAt: new Date(),
       }).where(eq(PassengerInviteTable.id, id));
     }

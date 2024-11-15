@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, desc, eq, like, sql } from 'drizzle-orm';
+import { and, desc, eq, like, ne, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -31,6 +31,8 @@ export class SupplyOrderService {
         ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
         4326
       )`,
+      startAddress: createSupplyOrderDto.startAddress,
+      endAddress: createSupplyOrderDto.endAddress,
       startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
       tolerableRDV: createSupplyOrderDto.tolerableRDV,
     }) .returning({
@@ -42,7 +44,6 @@ export class SupplyOrderService {
   /* ================================= Create operations ================================= */
 
 
-  
   /* ================================= Get operations ================================= */
   async getSupplyOrdersByCreatorId(
     creatorId: string, 
@@ -50,12 +51,17 @@ export class SupplyOrderService {
     offset: number,
   ) {
     return await this.db.query.SupplyOrderTable.findMany({
-      where: eq(SupplyOrderTable.creatorId, creatorId),
+      where: and(
+        ne(SupplyOrderTable.status, "RESERVED"),
+        eq(SupplyOrderTable.creatorId, creatorId),
+      ),
       columns: {
         id: true,
         initPrice: true,
         startCord: true,
         endCord: true,
+        startAddress: true,
+        endAddress: true,
         createdAt: true,
         updatedAt: true,
         startAfter: true,
@@ -86,13 +92,18 @@ export class SupplyOrderService {
   // for specifying the details of that other SupplyOrders
   async getSupplyOrderById(id: string) {
     return await this.db.query.SupplyOrderTable.findFirst({
-      where: eq(SupplyOrderTable.id, id),
+      where: and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        eq(SupplyOrderTable.id, id),
+      ),
       columns: {
         id: true,
         initPrice: true,
         description: true,
         startCord: true,
         endCord: true,
+        startAddress: true,
+        endAddress: true,
         createdAt: true,
         updatedAt: true,
         startAfter: true,
@@ -149,6 +160,8 @@ export class SupplyOrderService {
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
@@ -158,7 +171,12 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        like(RidderTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(SupplyOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
@@ -182,6 +200,8 @@ export class SupplyOrderService {
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
@@ -196,7 +216,12 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        like(RidderTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(SupplyOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -223,6 +248,8 @@ export class SupplyOrderService {
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
@@ -237,7 +264,12 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        like(RidderTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(SupplyOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -267,6 +299,8 @@ export class SupplyOrderService {
       initPrice: SupplyOrderTable.initPrice,
       startCord: SupplyOrderTable.startCord,
       endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
       createdAt: SupplyOrderTable.createdAt,
       updatedAt: SupplyOrderTable.updatedAt,
       startAfter: SupplyOrderTable.startAfter,
@@ -295,7 +329,12 @@ export class SupplyOrderService {
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
 
     if (creatorName) {
-      query.where(like(RidderTable.userName, creatorName + "%"));
+      query.where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        like(RidderTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(SupplyOrderTable.status, "POSTED"));
     }
 
     query.leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
@@ -327,7 +366,6 @@ export class SupplyOrderService {
   /* ================================= Get operations ================================= */
 
 
-
   /* ================================= Update operations ================================= */
   async updateSupplyOrderById(
     id: string, 
@@ -351,12 +389,17 @@ export class SupplyOrderService {
       initPrice: updateSupplyOrderDto.initPrice,
       startCord: newStartCord,
       endCord: newEndCord,
+      startAddress: updateSupplyOrderDto.startAddress,
+      endAddress: updateSupplyOrderDto.endAddress,
       updatedAt: new Date(),
       startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
       tolerableRDV: updateSupplyOrderDto.tolerableRDV,
       status: updateSupplyOrderDto.status,
-    }).where(and(eq(SupplyOrderTable.id, id), eq(SupplyOrderTable.creatorId, creatorId)))
-      .returning({
+    }).where(and(
+      ne(SupplyOrderTable.status, "RESERVED"),
+      eq(SupplyOrderTable.id, id), 
+      eq(SupplyOrderTable.creatorId, creatorId),
+    )).returning({
         id: SupplyOrderTable.id,
         updatedAt: SupplyOrderTable.updatedAt,
         status: SupplyOrderTable.status,
@@ -365,12 +408,14 @@ export class SupplyOrderService {
   /* ================================= Update operations ================================= */
 
 
-
   /* ================================= Delete operations ================================= */
   async deleteSupplyOrderById(id: string, creatorId: string) {
     return await this.db.delete(SupplyOrderTable)
-      .where(and(eq(SupplyOrderTable.id, id), eq(SupplyOrderTable.creatorId, creatorId)))
-      .returning({
+      .where(and(
+        ne(SupplyOrderTable.status, "POSTED"),
+        eq(SupplyOrderTable.id, id), 
+        eq(SupplyOrderTable.creatorId, creatorId),
+      )).returning({
         id: SupplyOrderTable.id,
         status: SupplyOrderTable.status,
       });

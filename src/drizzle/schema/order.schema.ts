@@ -1,4 +1,4 @@
-import { geometry, integer, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -7,25 +7,34 @@ import {
 } from "./schema";
 
 import { orderStatusEnum } from "./enums";
-// const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED"]);
+// const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
 
 export const OrderTable = pgTable("order", {
     id: uuid("id").primaryKey().defaultRandom(),
     passengerId: uuid("passengerId").references(() => PassengerTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     ridderId: uuid("ridderId").references(() => RidderTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
+    // should be the form of: "PurchaseOrder" + " " + `${purchaseOrderId}`
+    // or "SupplyOrder" + " " + `${supplyOrderId}` (with the place to seperate the text)
+    // and in api layer, we use split to decode this field
+    prevOrderId: text("prevOrderId").notNull().default(""),
     finalPrice: integer("finalPrice").notNull(),
     passengerStartCord: geometry("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    passengerStartAddress: text("startAddress").notNull().default(""),
+    passengerEndAddress: text("endAddress").notNull().default(""),
+    ridderStartAddress: text("startAddress").notNull().default(""),
     // note that there's no need to specify the end cord of ridder
     startAfter: timestamp("startAfter").notNull().defaultNow(),
-    endAt: timestamp("endAt").notNull().defaultNow(),
+    endedAt: timestamp("endedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
-    status: orderStatusEnum().notNull().default("UNSTARTED"),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+    passengerStatus: orderStatusEnum().notNull().default("UNSTARTED"),
+    ridderStatus: orderStatusEnum().notNull().default("UNSTARTED"),
 });
 
 export const OrderRelation = relations(OrderTable, ({ one }) => ({

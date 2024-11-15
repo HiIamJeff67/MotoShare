@@ -1,4 +1,4 @@
-import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, InternalServerErrorException, NotAcceptableException } from "@nestjs/common";
 
 // E-A-001
 export const ApiMissingParameterException = new BadRequestException({
@@ -10,6 +10,12 @@ export const ApiMissingParameterException = new BadRequestException({
 export const ApiMissingBodyOrWrongDtoException = new BadRequestException({
     name: "E-A-002", 
     message: "Require body and customized dto of current route",
+});
+
+// E-A-100
+export const ApiPrevOrderIdFormException = new NotAcceptableException({
+    name: "E-A-100",
+    message: "Wrong form of prevOrderId field on OrderTable detected, its length should be exactly 2",
 });
 
 

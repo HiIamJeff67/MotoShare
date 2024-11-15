@@ -27,6 +27,14 @@ export class CreateSupplyOrderDto {
     @IsLatitude()
     endCordLatitude: number
 
+    @IsNotEmpty()
+    @IsString()
+    startAddress: string
+
+    @IsNotEmpty()
+    @IsString()
+    endAddress: string
+
     // @IsOptional()
     // @IsDate()
     // createdAt?: Date    // not recommand to specify this field

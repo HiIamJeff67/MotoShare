@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 import { PurchaseOrderTable, RidderTable } from "./schema";
 
 import { inviteStatusEnum } from "./enums";
-// inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING"]);
+// inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]);
 
 export const RidderInviteTable = pgTable('ridderInvite', {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -18,6 +18,8 @@ export const RidderInviteTable = pgTable('ridderInvite', {
     suggestPrice: integer("suggestPrice").notNull(),
     startCord: geometry("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     endCord: geometry("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    startAddress: text("startAddress").notNull(),
+    endAddress: text("endAddress").notNull(),
     suggestStartAfter: timestamp("suggestStartAfter").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),

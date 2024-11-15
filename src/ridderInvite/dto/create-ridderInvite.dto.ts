@@ -25,6 +25,14 @@ export class CreateRidderInviteDto {
     @IsLatitude()
     endCordLatitude: number
 
+    @IsNotEmpty()
+    @IsString()
+    startAddress: string
+
+    @IsNotEmpty()
+    @IsString()
+    endAddress: string
+
     @IsOptional()
     @IsDateString()
     suggestStartAfter?: Date

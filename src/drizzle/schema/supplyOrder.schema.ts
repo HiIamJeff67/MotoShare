@@ -8,7 +8,7 @@ import {
 } from "./schema";
 
 import { postedStatusEnum } from "./enums";
-// postedStatusEnum = pgEnum('postStatus', ["POSTED", "CANCEL", "EXPIRED"]); // same on purchaseOrder.schema
+// postedStatusEnum = pgEnum('postStatus', ["POSTED", "CANCEL", "EXPIRED", "RESERVED"]); // same on purchaseOrder.schema
 
 export const SupplyOrderTable = pgTable("supplyOrder", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -19,6 +19,8 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     initPrice: integer("initPrice").notNull(),
     startCord: geometry("startCord", { type: 'point', mode: 'xy', srid: 4326  }).notNull(),
     endCord: geometry("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    startAddress: text("startAddress").notNull().default(""),
+    endAddress: text("endAddress").notNull().default(""),
     startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),

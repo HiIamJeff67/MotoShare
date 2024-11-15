@@ -38,7 +38,7 @@ export const ClientPassengerNotFoundException = new NotFoundException({
 export const ClientRidderNotFoundException = new NotFoundException({
     case: "E-C-101",
     message: "Cannot find any ridders",
-})
+});
 
 // E-C-102
 export const ClientInviteNotFoundException = new NotFoundException({
@@ -146,25 +146,31 @@ export const ClientCreateOrderException = new ForbiddenException({
 export const ClientCreatePassengerInfoException = new ForbiddenException({
     case: "E-C-210",
     message: "Failed to create a passengerInfo",
-})
+});
 
 // E-C-211
 export const ClientCreateRidderInfoException = new ForbiddenException({
     case: "E-C-211",
     message: "Failed to create a ridderInfo",
-})
+});
 
 // E-C-212
 export const ClientCreatePassengerCollectionException = new ForbiddenException({
     case: "E-C-212",
     message: "Failed to create a passengerCollection",
-})
+});
 
 // E-C-213
 export const ClientCreateRidderCollectionException = new ForbiddenException({
     case: "E-C-213",
     message: "Failed to create a ridderCollection",
-})
+});
+
+// E-C-214
+export const ClientCreateHistoryException = new ForbiddenException({
+    case: "E-C-214",
+    message: "Failed to create a history",
+});
 
 /* ============================== Error about create operation ============================== */
 

@@ -57,7 +57,7 @@ export class RidderInviteController {
       }
 
       response.status(error.status).send({
-        message: error.message,
+        ...error.response,
       });
     }
   }
