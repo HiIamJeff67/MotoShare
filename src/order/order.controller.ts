@@ -93,7 +93,7 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
-      const res = await this.orderService.searchPaginationOrderForPassengerById(passenger.id, ridderName, +limit, +offset);
+      const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -120,7 +120,7 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
-      const res = await this.orderService.searchPaginationOrderForRidderById(ridder.id, passengerName, +limit, +offset);
+      const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 

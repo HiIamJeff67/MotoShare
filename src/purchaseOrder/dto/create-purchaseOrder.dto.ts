@@ -1,14 +1,20 @@
-import { IsBooleanString, IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsBooleanString, IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString, Max, Min } from "class-validator";
+import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
+import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
 
 // longitude(經度) -> x
 // latitude(緯度)  -> y
 
 export class CreatePurchaseOrderDto {
     @IsOptional()
+    @Min(MIN_DESCRIPTION_LENGTH)
+    @Max(MAX_DESCRIPTION_LENGTH)
     @IsString()
     description?: string
 
     @IsNotEmpty()
+    @Min(MIN_INIT_PRICE)
+    @Max(MAX_INIT_PRICE)
     @IsNumberString()
     initPrice: number
 

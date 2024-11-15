@@ -6,7 +6,7 @@ import {
     InviterStatusTypes,
     ReceiverStatusType,
     ReceiverStatusTypes,
-} from '../../interfaces/status.interface'
+} from '../../types/status.tpye'
 
 export class UpdatePassengerInviteDto extends PartialType(CreatePassengerInviteDto) {
     @IsOptional()

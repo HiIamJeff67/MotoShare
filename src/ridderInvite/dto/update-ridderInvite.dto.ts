@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateRidderInviteDto } from './create-ridderInvite.dto';
 import { IsIn, IsOptional } from 'class-validator';
-import { InviteStatusType, InviteStatusTypes, ReceiverStatusType, ReceiverStatusTypes } from '../../interfaces/status.interface';
+import { InviteStatusType, InviteStatusTypes, ReceiverStatusType, ReceiverStatusTypes } from '../../types/status.tpye';
 
 export class UpdateRidderInviteDto extends PartialType(CreateRidderInviteDto) {
     @IsOptional()

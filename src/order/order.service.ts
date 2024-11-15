@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { and, desc, eq, ne, or } from 'drizzle-orm';
@@ -72,7 +70,7 @@ export class OrderService {
   }
 
   /* ================= Search operations ================= */
-  async searchPaginationOrderForPassengerById(
+  async searchPaginationOrderByPassengerId(
     passengerId: string,
     ridderName: string | undefined = undefined,
     limit: number,
@@ -111,7 +109,7 @@ export class OrderService {
     return await query;
   }
 
-  async searchPaginationOrderForRidderById(
+  async searchPaginationOrderByRidderId(
     ridderId: string,
     passengerName: string | undefined = undefined,
     limit: number,
