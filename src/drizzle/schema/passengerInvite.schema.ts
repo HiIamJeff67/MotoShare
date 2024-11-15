@@ -9,10 +9,10 @@ import { inviteStatusEnum } from "./enums";
 export const PassengerInviteTable = pgTable('passengerInvite', {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("userId").references(() => PassengerTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     orderId: uuid("orderId").references(() => SupplyOrderTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     briefDescription: text("briefDesciption"),
     suggestPrice: integer("suggestPrice").notNull(),

@@ -36,6 +36,8 @@ let SupplyOrderService = class SupplyOrderService {
         ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
         4326
       )`,
+            startAddress: createSupplyOrderDto.startAddress,
+            endAddress: createSupplyOrderDto.endAddress,
             startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
             tolerableRDV: createSupplyOrderDto.tolerableRDV,
         }).returning({
@@ -46,12 +48,14 @@ let SupplyOrderService = class SupplyOrderService {
     }
     async getSupplyOrdersByCreatorId(creatorId, limit, offset) {
         return await this.db.query.SupplyOrderTable.findMany({
-            where: (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)),
             columns: {
                 id: true,
                 initPrice: true,
                 startCord: true,
                 endCord: true,
+                startAddress: true,
+                endAddress: true,
                 createdAt: true,
                 updatedAt: true,
                 startAfter: true,
@@ -65,13 +69,15 @@ let SupplyOrderService = class SupplyOrderService {
     }
     async getSupplyOrderById(id) {
         return await this.db.query.SupplyOrderTable.findFirst({
-            where: (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id)),
             columns: {
                 id: true,
                 initPrice: true,
                 description: true,
                 startCord: true,
                 endCord: true,
+                startAddress: true,
+                endAddress: true,
                 createdAt: true,
                 updatedAt: true,
                 startAfter: true,
@@ -105,6 +111,8 @@ let SupplyOrderService = class SupplyOrderService {
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
@@ -113,7 +121,10 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
@@ -129,6 +140,8 @@ let SupplyOrderService = class SupplyOrderService {
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
@@ -142,7 +155,10 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -161,6 +177,8 @@ let SupplyOrderService = class SupplyOrderService {
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
@@ -174,7 +192,10 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
@@ -193,6 +214,8 @@ let SupplyOrderService = class SupplyOrderService {
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
@@ -220,7 +243,10 @@ let SupplyOrderService = class SupplyOrderService {
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
         if (creatorName) {
-            query.where((0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%"));
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"));
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
@@ -259,12 +285,13 @@ let SupplyOrderService = class SupplyOrderService {
             initPrice: updateSupplyOrderDto.initPrice,
             startCord: newStartCord,
             endCord: newEndCord,
+            startAddress: updateSupplyOrderDto.startAddress,
+            endAddress: updateSupplyOrderDto.endAddress,
             updatedAt: new Date(),
             startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
             tolerableRDV: updateSupplyOrderDto.tolerableRDV,
             status: updateSupplyOrderDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)))
-            .returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
@@ -272,8 +299,7 @@ let SupplyOrderService = class SupplyOrderService {
     }
     async deleteSupplyOrderById(id, creatorId) {
         return await this.db.delete(supplyOrder_schema_1.SupplyOrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)))
-            .returning({
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });

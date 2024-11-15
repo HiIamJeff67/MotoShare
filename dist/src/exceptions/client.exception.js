@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientUnknownException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientMissingTokenException = exports.ClientInvalidTokenOrTokenExpiredException = void 0;
+exports.ClientUnknownException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientMissingTokenException = exports.ClientInvalidTokenOrTokenExpiredException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ClientInvalidTokenOrTokenExpiredException = new common_1.UnauthorizedException({
     case: "E-C-001",
@@ -103,6 +103,10 @@ exports.ClientCreatePassengerCollectionException = new common_1.ForbiddenExcepti
 exports.ClientCreateRidderCollectionException = new common_1.ForbiddenException({
     case: "E-C-213",
     message: "Failed to create a ridderCollection",
+});
+exports.ClientCreateHistoryException = new common_1.ForbiddenException({
+    case: "E-C-214",
+    message: "Failed to create a history",
 });
 exports.ClientNoChangeOnUserNameException = new common_1.ConflictException({
     case: "E-C-300",

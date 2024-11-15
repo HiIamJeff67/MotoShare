@@ -170,7 +170,10 @@ export class PassengerController {
 
       if (!res || res.length === 0) throw ClientPassengerNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
         || error instanceof NotFoundException
@@ -196,7 +199,9 @@ export class PassengerController {
 
       if (!res) throw ClientPassengerNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send({});
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+      });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
         || error instanceof NotFoundException)) {

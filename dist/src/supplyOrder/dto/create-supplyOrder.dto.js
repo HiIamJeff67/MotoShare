@@ -45,6 +45,16 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "endCordLatitude", void 0);
 __decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSupplyOrderDto.prototype, "startAddress", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSupplyOrderDto.prototype, "endAddress", void 0);
+__decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)

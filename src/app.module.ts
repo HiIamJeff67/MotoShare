@@ -11,6 +11,7 @@ import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { PassengerInviteModule } from './passengerInvite/passengerInvite.module';
 import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
     OrderModule,
     PassengerInviteModule,
     RidderInviteModule,
+    HistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

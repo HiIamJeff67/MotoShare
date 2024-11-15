@@ -5,5 +5,7 @@ export declare class CreatePassengerInviteDto {
     startCordLatitude: number;
     endCordLongitude: number;
     endCordLatitude: number;
+    startAddress: string;
+    endAddress: string;
     suggestStartAfter?: Date;
 }

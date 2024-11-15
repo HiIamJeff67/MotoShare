@@ -5,6 +5,8 @@ export declare class CreateSupplyOrderDto {
     startCordLatitude: number;
     endCordLongitude: number;
     endCordLatitude: number;
+    startAddress: string;
+    endAddress: string;
     startAfter?: Date;
     tolerableRDV?: number;
 }

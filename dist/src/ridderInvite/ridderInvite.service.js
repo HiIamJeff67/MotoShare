@@ -42,6 +42,8 @@ let RidderInviteService = class RidderInviteService {
         ST_MakePoint(${createRidderInviteDto.endCordLongitude}, ${createRidderInviteDto.endCordLatitude}),
         4326
       )`,
+            startAddress: createRidderInviteDto.startAddress,
+            endAddress: createRidderInviteDto.endAddress,
             suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter || new Date()),
             status: "CHECKING",
         }).returning({
@@ -58,6 +60,8 @@ let RidderInviteService = class RidderInviteService {
             inviteBriefDescription: ridderInvite_schema_1.RidderInviteTable.briefDescription,
             suggestStartCord: ridderInvite_schema_1.RidderInviteTable.startCord,
             suggestEndCord: ridderInvite_schema_1.RidderInviteTable.endCord,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
             suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
             inviteCreatedAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
             inviteUdpatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
@@ -65,6 +69,8 @@ let RidderInviteService = class RidderInviteService {
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
             startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
             endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
             description: purchaseOrder_schema_1.PurchaseOrderTable.description,
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             orderCreatedAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
@@ -83,6 +89,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
             receiverName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -113,6 +121,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
             receiverName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -150,6 +160,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
             receiverName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -187,6 +199,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
             receiverName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -252,6 +266,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
             inviterName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -281,6 +297,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
             inviterName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -317,6 +335,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
             inviterName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -353,6 +373,8 @@ let RidderInviteService = class RidderInviteService {
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
             inviterName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
@@ -427,6 +449,8 @@ let RidderInviteService = class RidderInviteService {
             suggestPrice: updateRidderInviteDto.suggestPrice,
             startCord: newStartCord,
             endCord: newEndCord,
+            startAddress: updateRidderInviteDto.startAddress,
+            endAddress: updateRidderInviteDto.endAddress,
             suggestStartAfter: new Date(updateRidderInviteDto.suggestStartAfter || new Date()),
             updatedAt: new Date(),
             status: updateRidderInviteDto.status,
@@ -463,6 +487,8 @@ let RidderInviteService = class RidderInviteService {
                     inviterId: ridderInvite_schema_1.RidderInviteTable.userId,
                     inviterStartCord: ridderInvite_schema_1.RidderInviteTable.startCord,
                     inviterEndCord: ridderInvite_schema_1.RidderInviteTable.endCord,
+                    inviterStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+                    inviterEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
                     suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
                     suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
                     inviterDescription: ridderInvite_schema_1.RidderInviteTable.briefDescription,
@@ -477,13 +503,15 @@ let RidderInviteService = class RidderInviteService {
                     updatedAt: new Date(),
                 }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, purchaseOrder.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id)));
                 const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
-                    status: "CANCEL",
+                    status: "RESERVED",
                     updatedAt: new Date(),
                 }).where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, purchaseOrder.order.id))
                     .returning({
                     receiverId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
                     receiverStartCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
                     receiverEndCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+                    receiverStartAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+                    receiverEndAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
                     isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
                     orderStatus: purchaseOrder_schema_1.PurchaseOrderTable.status,
                 });
@@ -494,33 +522,41 @@ let RidderInviteService = class RidderInviteService {
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
                     ridderId: responseOfDecidingRidderInvite[0].inviterId,
                     passengerId: responseOfDeletingPurchaseOrder[0].receiverId,
+                    prevOrderId: "PurchaseOrder" + " " + purchaseOrder.order.id,
                     finalPrice: responseOfDecidingRidderInvite[0].suggestPrice,
                     passengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
                     passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
                     ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+                    passengerStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
+                    passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
+                    ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
                     startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,
-                    status: "UNSTARTED",
                 }).returning({
+                    id: order_schema_1.OrderTable.id,
                     finalPrice: order_schema_1.OrderTable.finalPrice,
                     startAfter: order_schema_1.OrderTable.startAfter,
-                    status: order_schema_1.OrderTable.status,
+                    status: order_schema_1.OrderTable.passengerStatus,
                 });
                 if (!responseOfCreatingOrder
                     || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
                 }
                 return {
+                    orderId: responseOfCreatingOrder[0].id,
                     status: responseOfDecidingRidderInvite[0].inviteStatus,
                     price: responseOfCreatingOrder[0].finalPrice,
                     passsengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
                     passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
                     ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+                    passengerStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
+                    passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
+                    ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
                     startAfter: responseOfCreatingOrder[0].startAfter,
                     orderStatus: responseOfCreatingOrder[0].status,
                 };
             });
         }
-        else {
+        else if (decideRidderInviteDto.status === "REJECTED") {
             return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
                 status: decideRidderInviteDto.status,
                 updatedAt: new Date(),

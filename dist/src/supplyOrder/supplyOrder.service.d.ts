@@ -22,6 +22,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         tolerableRDV: number;
@@ -40,6 +42,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         tolerableRDV: number;
@@ -67,6 +71,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -86,6 +92,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -107,6 +115,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -128,6 +138,8 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;

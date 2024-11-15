@@ -44,7 +44,10 @@ export class PurchaseOrderController {
 
       if (!res || res.length === 0) throw ClientCreatePurchaseOrderException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        createdAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       console.log(error)
       if (!(error instanceof ForbiddenException 
@@ -259,7 +262,10 @@ export class PurchaseOrderController {
 
       if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException 

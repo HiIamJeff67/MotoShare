@@ -24,6 +24,7 @@ export declare const ClientCreatePassengerInfoException: ForbiddenException;
 export declare const ClientCreateRidderInfoException: ForbiddenException;
 export declare const ClientCreatePassengerCollectionException: ForbiddenException;
 export declare const ClientCreateRidderCollectionException: ForbiddenException;
+export declare const ClientCreateHistoryException: ForbiddenException;
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;

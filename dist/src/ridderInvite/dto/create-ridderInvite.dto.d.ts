@@ -5,5 +5,7 @@ export declare class CreateRidderInviteDto {
     startCordLatitude: number;
     endCordLongitude: number;
     endCordLatitude: number;
+    startAddress: string;
+    endAddress: string;
     suggestStartAfter?: Date;
 }

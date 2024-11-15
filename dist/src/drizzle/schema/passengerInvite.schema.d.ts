@@ -120,6 +120,38 @@ export declare const PassengerInviteTable: import("drizzle-orm/pg-core").PgTable
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAddress";
+            tableName: "passengerInvite";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        endAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endAddress";
+            tableName: "passengerInvite";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         suggestStartAfter: import("drizzle-orm/pg-core").PgColumn<{
             name: "suggestStartAfter";
             tableName: "passengerInvite";

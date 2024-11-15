@@ -39,7 +39,6 @@ export class PurchaseOrderService {
       isUrgent: createPurchaseOrderDto.isUrgent,
     }).returning({
       id: PurchaseOrderTable.id,
-      createdAt: PurchaseOrderTable.createdAt,
       status: PurchaseOrderTable.status,
     });
   }
@@ -399,7 +398,6 @@ export class PurchaseOrderService {
       eq(PurchaseOrderTable.creatorId, creatorId),
     )).returning({
         id: PurchaseOrderTable.id,
-        updatedAt: PurchaseOrderTable.updatedAt,
         status: PurchaseOrderTable.status,
       });
   }

@@ -104,6 +104,38 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAddress";
+            tableName: "supplyOrder";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        endAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endAddress";
+            tableName: "supplyOrder";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         startAfter: import("drizzle-orm/pg-core").PgColumn<{
             name: "startAfter";
             tableName: "supplyOrder";

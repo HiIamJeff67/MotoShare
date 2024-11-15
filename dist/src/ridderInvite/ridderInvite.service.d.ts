@@ -22,6 +22,8 @@ export declare class RidderInviteService {
             x: number;
             y: number;
         };
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         suggestStartAfter: Date;
         inviteCreatedAt: Date;
         inviteUdpatedAt: Date;
@@ -35,6 +37,8 @@ export declare class RidderInviteService {
             x: number;
             y: number;
         } | null;
+        startAddress: string | null;
+        endAddress: string | null;
         description: string | null;
         startAfter: Date | null;
         orderCreatedAt: Date | null;
@@ -47,6 +51,8 @@ export declare class RidderInviteService {
     searchPaginationRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -60,6 +66,8 @@ export declare class RidderInviteService {
     searchCurAdjacentRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -74,6 +82,8 @@ export declare class RidderInviteService {
     searchDestAdjacentRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -88,6 +98,8 @@ export declare class RidderInviteService {
     searchSimilarRouteRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -102,6 +114,8 @@ export declare class RidderInviteService {
     searchPaginationRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -115,6 +129,8 @@ export declare class RidderInviteService {
     searchCurAdjacentRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -129,6 +145,8 @@ export declare class RidderInviteService {
     searchDestAdjacentRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -143,6 +161,8 @@ export declare class RidderInviteService {
     searchSimilarRouteRidderInvitesByReceverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -160,6 +180,7 @@ export declare class RidderInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     decideRidderInviteById(id: string, receiverId: string, decideRidderInviteDto: DecideRidderInviteDto): Promise<import("pg").QueryResult<never> | {
+        orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
         passsengerStartCord: {
@@ -174,9 +195,12 @@ export declare class RidderInviteService {
             x: number;
             y: number;
         };
+        passengerStartAddress: string;
+        passengerEndAddress: string;
+        ridderStartAddress: string;
         startAfter: Date;
-        orderStatus: "UNSTARTED" | "STARTED";
-    }>;
+        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+    } | undefined>;
     deleteRidderInviteById(id: string, inviterId: string): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

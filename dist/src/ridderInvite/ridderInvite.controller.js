@@ -34,7 +34,7 @@ let RidderInviteController = class RidderInviteController {
             const res = await this.ridderInviteService.createRidderInviteByOrderId(ridder.id, orderId, createRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreateRidderInviteException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -43,7 +43,7 @@ let RidderInviteController = class RidderInviteController {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
-                message: error.message,
+                ...error.response,
             });
         }
     }

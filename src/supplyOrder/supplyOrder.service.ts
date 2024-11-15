@@ -37,7 +37,6 @@ export class SupplyOrderService {
       tolerableRDV: createSupplyOrderDto.tolerableRDV,
     }) .returning({
       id: SupplyOrderTable.id,
-      createdAt: SupplyOrderTable.createdAt,
       status: SupplyOrderTable.status,
     });
   }
@@ -401,7 +400,6 @@ export class SupplyOrderService {
       eq(SupplyOrderTable.creatorId, creatorId),
     )).returning({
         id: SupplyOrderTable.id,
-        updatedAt: SupplyOrderTable.updatedAt,
         status: SupplyOrderTable.status,
       });
   }

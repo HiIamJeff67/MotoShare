@@ -14,6 +14,8 @@ exports.PurchaseOrderTable = (0, pg_core_1.pgTable)("purchaseOrder", {
     initPrice: (0, pg_core_1.integer)("initPrice").notNull(),
     startCord: (0, pg_core_1.geometry)("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     endCord: (0, pg_core_1.geometry)("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    startAddress: (0, pg_core_1.text)("startAddress").notNull().default(""),
+    endAddress: (0, pg_core_1.text)("endAddress").notNull().default(""),
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),

@@ -156,9 +156,12 @@ export class OrderController {
 
       const res = await this.orderService.toStartedPassengerStatusById(id, passenger.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException
@@ -186,9 +189,12 @@ export class OrderController {
 
       const res = await this.orderService.toUnpaidPassengerStatusById(id, passenger.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException
@@ -216,9 +222,12 @@ export class OrderController {
 
       const res = await this.orderService.toFinishedPassengerStatusById(id, passenger.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof NotAcceptableException
@@ -251,9 +260,12 @@ export class OrderController {
 
       const res = await this.orderService.toStartedRidderStatusById(id, ridder.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updateAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException
@@ -279,11 +291,14 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toUnpaidPassengerStatusById(id, ridder.id);
+      const res = await this.orderService.toUnpaidRidderStatusById(id, ridder.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException
@@ -309,11 +324,14 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toFinishedPassengerStatusById(id, ridder.id);
+      const res = await this.orderService.toFinishedRidderStatusById(id, ridder.id);
 
-      if (!res) throw ClientOrderNotFoundException;
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        prevOrderDeletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof NotAcceptableException
@@ -346,9 +364,12 @@ export class OrderController {
 
       const res = await this.orderService.cancelAndDeleteOrderById(id, passenger.id);
 
-      if (!res) throw ClientOrderNotFoundException; 
+      if (!res || res.length === 0) throw ClientOrderNotFoundException; 
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        prevOrderDeletedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException

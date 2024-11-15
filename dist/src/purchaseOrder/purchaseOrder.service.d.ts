@@ -22,6 +22,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -40,6 +42,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -65,6 +69,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -84,6 +90,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -104,6 +112,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -124,6 +134,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         createdAt: Date;
         updatedAt: Date;
         startAfter: Date;
@@ -154,6 +166,8 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";

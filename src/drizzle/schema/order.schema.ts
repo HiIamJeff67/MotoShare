@@ -6,7 +6,7 @@ import {
     PassengerTable,
 } from "./schema";
 
-import { orderStatusEnum } from "./enums";
+import { passengerOrderStatusEnum, ridderOrderStatusEnum } from "./enums";
 // const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
 
 export const OrderTable = pgTable("order", {
@@ -25,16 +25,16 @@ export const OrderTable = pgTable("order", {
     passengerStartCord: geometry("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
-    passengerStartAddress: text("startAddress").notNull().default(""),
-    passengerEndAddress: text("endAddress").notNull().default(""),
-    ridderStartAddress: text("startAddress").notNull().default(""),
+    passengerStartAddress: text("passengerStartAddress").notNull().default(""),
+    passengerEndAddress: text("passengerEndAddress").notNull().default(""),
+    ridderStartAddress: text("ridderStartAddress").notNull().default(""),
     // note that there's no need to specify the end cord of ridder
     startAfter: timestamp("startAfter").notNull().defaultNow(),
     endedAt: timestamp("endedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-    passengerStatus: orderStatusEnum().notNull().default("UNSTARTED"),
-    ridderStatus: orderStatusEnum().notNull().default("UNSTARTED"),
+    passengerStatus: passengerOrderStatusEnum().notNull().default("UNSTARTED"),
+    ridderStatus: ridderOrderStatusEnum().notNull().default("UNSTARTED"),
 });
 
 export const OrderRelation = relations(OrderTable, ({ one }) => ({

@@ -42,7 +42,10 @@ export class SupplyOrderController {
 
       if (!res || res.length === 0) throw ClientCreateSupplyOrderException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        createdAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof ForbiddenException 
         || error instanceof UnauthorizedException)) {
@@ -253,7 +256,10 @@ export class SupplyOrderController {
 
       if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException 

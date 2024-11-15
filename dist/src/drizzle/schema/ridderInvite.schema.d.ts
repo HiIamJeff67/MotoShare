@@ -120,6 +120,38 @@ export declare const RidderInviteTable: import("drizzle-orm/pg-core").PgTableWit
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAddress";
+            tableName: "ridderInvite";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        endAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endAddress";
+            tableName: "ridderInvite";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         suggestStartAfter: import("drizzle-orm/pg-core").PgColumn<{
             name: "suggestStartAfter";
             tableName: "ridderInvite";

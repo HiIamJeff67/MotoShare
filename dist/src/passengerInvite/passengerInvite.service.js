@@ -42,6 +42,8 @@ let PassengerInviteService = class PassengerInviteService {
         ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
         4326
       )`,
+            startAddress: createPassengerInviteDto.startAddress,
+            endAddress: createPassengerInviteDto.endAddress,
             suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
             status: "CHECKING",
         }).returning({
@@ -58,6 +60,8 @@ let PassengerInviteService = class PassengerInviteService {
             inviteBriefDescription: passengerInvite_schema_1.PassengerInviteTable.briefDescription,
             suggestStartCord: passengerInvite_schema_1.PassengerInviteTable.startCord,
             suggestEndCord: passengerInvite_schema_1.PassengerInviteTable.endCord,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
             inviteCreatedAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             inviteUdpatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
@@ -65,6 +69,8 @@ let PassengerInviteService = class PassengerInviteService {
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
             endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             description: supplyOrder_schema_1.SupplyOrderTable.description,
             startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
             orderCreatedAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
@@ -86,6 +92,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -116,6 +124,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -153,6 +163,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -190,6 +202,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -255,6 +269,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -284,6 +300,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -320,6 +338,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -356,6 +376,8 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
@@ -430,6 +452,8 @@ let PassengerInviteService = class PassengerInviteService {
             suggestPrice: updatePassengerInviteDto.suggestPrice,
             startCord: newStartCord,
             endCord: newEndCord,
+            startAddress: updatePassengerInviteDto.startAddress,
+            endAddress: updatePassengerInviteDto.endAddress,
             suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
             updatedAt: new Date(),
             status: updatePassengerInviteDto.status,
@@ -466,6 +490,8 @@ let PassengerInviteService = class PassengerInviteService {
                     inviterId: passengerInvite_schema_1.PassengerInviteTable.userId,
                     inviterStartCord: passengerInvite_schema_1.PassengerInviteTable.startCord,
                     inviterEndCord: passengerInvite_schema_1.PassengerInviteTable.endCord,
+                    inviterStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+                    inviterEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
                     suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
                     suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
                     inviterDescription: passengerInvite_schema_1.PassengerInviteTable.briefDescription,
@@ -487,6 +513,8 @@ let PassengerInviteService = class PassengerInviteService {
                     receiverId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
                     receiverStartCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
                     receiverEndCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+                    receiverStartAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+                    receiverEndAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
                     tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
                     orderStatus: supplyOrder_schema_1.SupplyOrderTable.status,
                 });
@@ -497,33 +525,41 @@ let PassengerInviteService = class PassengerInviteService {
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
                     ridderId: responseOfDeletingSupplyOrder[0].receiverId,
                     passengerId: responseOfDecidingPassengerInvite[0].inviterId,
+                    prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
                     finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
                     passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
                     passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
                     ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+                    passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+                    passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
+                    ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
                     startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
-                    status: "UNSTARTED",
                 }).returning({
+                    id: order_schema_1.OrderTable.id,
                     finalPrice: order_schema_1.OrderTable.finalPrice,
                     startAfter: order_schema_1.OrderTable.startAfter,
-                    status: order_schema_1.OrderTable.status,
+                    status: order_schema_1.OrderTable.passengerStatus,
                 });
                 if (!responseOfCreatingOrder
                     || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
                 }
                 return {
+                    orderId: responseOfCreatingOrder[0].id,
                     status: responseOfDecidingPassengerInvite[0].inviteStatus,
                     price: responseOfCreatingOrder[0].finalPrice,
                     passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
                     passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
                     ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+                    passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+                    passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
+                    ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
                     startAfter: responseOfCreatingOrder[0].startAfter,
                     orderStatus: responseOfCreatingOrder[0].status,
                 };
             });
         }
-        else {
+        else if (decidePassengerInviteDto.status === "REJECTED") {
             return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 status: decidePassengerInviteDto.status,
                 updatedAt: new Date(),

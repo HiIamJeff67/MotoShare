@@ -64,6 +64,20 @@
       "when": 1731666086208,
       "tag": "0008_lively_thunderbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1731671475420,
+      "tag": "0009_steady_chimera",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1731674112983,
+      "tag": "0010_mixed_the_enforcers",
+      "breakpoints": true
     }
   ]
 }

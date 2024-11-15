@@ -45,7 +45,6 @@ export class PassengerInviteService {
     }).returning({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
-      createdAt: PassengerInviteTable.createdAt,
       status: PassengerInviteTable.status,
     });
   }
@@ -618,7 +617,6 @@ export class PassengerInviteService {
     ))
       .returning({
         id: PassengerInviteTable.id,
-        updatedAt: PassengerInviteTable.updatedAt,
         status: PassengerInviteTable.status,
       });
   }
@@ -713,6 +711,7 @@ export class PassengerInviteService {
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
           // endAt: , // will be covered the autocomplete function powered by google in the future
         }).returning({
+          id: OrderTable.id,
           finalPrice: OrderTable.finalPrice,
           startAfter: OrderTable.startAfter,
           status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
@@ -722,7 +721,8 @@ export class PassengerInviteService {
               throw ClientCreateOrderException;
         }
 
-        return {
+        return [{
+          orderId: responseOfCreatingOrder[0].id,
           status: responseOfDecidingPassengerInvite[0].inviteStatus,
           price: responseOfCreatingOrder[0].finalPrice,
           passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
@@ -733,13 +733,17 @@ export class PassengerInviteService {
           ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
           orderStatus: responseOfCreatingOrder[0].status,
-        }
+        }]
       });
     } else if (decidePassengerInviteDto.status === "REJECTED") {
       return await this.db.update(PassengerInviteTable).set({
         status: decidePassengerInviteDto.status,  // must be REJECTED
         updatedAt: new Date(),
-      }).where(eq(PassengerInviteTable.id, id));
+      }).where(eq(PassengerInviteTable.id, id))
+        .returning({
+          status: PassengerInviteTable.status,
+          updatedAt: PassengerInviteTable.updatedAt,
+        });
     }
   }
   /* ================= Accept or Reject operations used by Ridder ================= */

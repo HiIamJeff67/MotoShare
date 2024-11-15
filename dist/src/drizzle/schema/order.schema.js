@@ -8,19 +8,25 @@ const enums_1 = require("./enums");
 exports.OrderTable = (0, pg_core_1.pgTable)("order", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     passengerId: (0, pg_core_1.uuid)("passengerId").references(() => schema_1.PassengerTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     ridderId: (0, pg_core_1.uuid)("ridderId").references(() => schema_1.RidderTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
+    prevOrderId: (0, pg_core_1.text)("prevOrderId").notNull().default(""),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
     passengerStartCord: (0, pg_core_1.geometry)("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: (0, pg_core_1.geometry)("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: (0, pg_core_1.geometry)("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    passengerStartAddress: (0, pg_core_1.text)("passengerStartAddress").notNull().default(""),
+    passengerEndAddress: (0, pg_core_1.text)("passengerEndAddress").notNull().default(""),
+    ridderStartAddress: (0, pg_core_1.text)("ridderStartAddress").notNull().default(""),
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
-    endAt: (0, pg_core_1.timestamp)("endAt").notNull().defaultNow(),
+    endedAt: (0, pg_core_1.timestamp)("endedAt").notNull().defaultNow(),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
-    status: (0, enums_1.orderStatusEnum)().notNull().default("UNSTARTED"),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+    passengerStatus: (0, enums_1.passengerOrderStatusEnum)().notNull().default("UNSTARTED"),
+    ridderStatus: (0, enums_1.ridderOrderStatusEnum)().notNull().default("UNSTARTED"),
 });
 exports.OrderRelation = (0, drizzle_orm_1.relations)(exports.OrderTable, ({ one }) => ({
     passenger: one(schema_1.PassengerTable, {

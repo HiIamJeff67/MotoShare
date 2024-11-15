@@ -22,6 +22,8 @@ export declare class PassengerInviteService {
             x: number;
             y: number;
         };
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         suggestStartAfter: Date;
         inviteCreatedAt: Date;
         inviteUdpatedAt: Date;
@@ -35,6 +37,8 @@ export declare class PassengerInviteService {
             x: number;
             y: number;
         } | null;
+        startAddress: string | null;
+        endAddress: string | null;
         description: string | null;
         startAfter: Date | null;
         orderCreatedAt: Date | null;
@@ -50,6 +54,8 @@ export declare class PassengerInviteService {
     searchPaginationPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -63,6 +69,8 @@ export declare class PassengerInviteService {
     searchCurAdjacentPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -77,6 +85,8 @@ export declare class PassengerInviteService {
     searchDestAdjacentPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -91,6 +101,8 @@ export declare class PassengerInviteService {
     searchSimilarRoutePassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        startAddress: never;
+        endAddress: never;
         receiverName: never;
         avatorUrl: never;
         initPrice: never;
@@ -105,6 +117,8 @@ export declare class PassengerInviteService {
     searchPaginationPasssengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -118,6 +132,8 @@ export declare class PassengerInviteService {
     searchCurAdjacentPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -132,6 +148,8 @@ export declare class PassengerInviteService {
     searchDestAdjacentPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -146,6 +164,8 @@ export declare class PassengerInviteService {
     searchSimilarRoutePassengerInvitesByReceverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         initPrice: number | null;
@@ -163,6 +183,7 @@ export declare class PassengerInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<import("pg").QueryResult<never> | {
+        orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
         passengerStartCord: {
@@ -177,9 +198,12 @@ export declare class PassengerInviteService {
             x: number;
             y: number;
         };
+        passengerStartAddress: string;
+        passengerEndAddress: string;
+        ridderStartAddress: string;
         startAfter: Date;
-        orderStatus: "UNSTARTED" | "STARTED";
-    }>;
+        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+    } | undefined>;
     deletePassengerInviteById(id: string, inviterId: string): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

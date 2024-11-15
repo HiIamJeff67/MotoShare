@@ -16,7 +16,8 @@ export const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED",
 export const inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]);
 
 // for OrderTable
-export const orderStatusEnum = pgEnum("orderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
+export const passengerOrderStatusEnum = pgEnum("passengerOrderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
+export const ridderOrderStatusEnum = pgEnum("ridderOrderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
 
 // for both PurchaseOrderTable and SupplyOrderTable
 export const postedStatusEnum = pgEnum("postStatus", ["POSTED", "EXPIRED", "CANCEL", "RESERVED"]);

@@ -104,6 +104,38 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        startAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "startAddress";
+            tableName: "purchaseOrder";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        endAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endAddress";
+            tableName: "purchaseOrder";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         startAfter: import("drizzle-orm/pg-core").PgColumn<{
             name: "startAfter";
             tableName: "purchaseOrder";

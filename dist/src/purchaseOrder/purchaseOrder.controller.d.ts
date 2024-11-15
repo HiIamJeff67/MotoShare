@@ -30,6 +30,8 @@ export declare class PurchaseOrderController {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
         startAfter: Date;
         updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";

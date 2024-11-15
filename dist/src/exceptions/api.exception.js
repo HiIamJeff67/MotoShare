@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiGeneratingBearerTokenException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     name: "E-A-001",
@@ -9,6 +9,10 @@ exports.ApiMissingParameterException = new common_1.BadRequestException({
 exports.ApiMissingBodyOrWrongDtoException = new common_1.BadRequestException({
     name: "E-A-002",
     message: "Require body and customized dto of current route",
+});
+exports.ApiPrevOrderIdFormException = new common_1.NotAcceptableException({
+    name: "E-A-100",
+    message: "Wrong form of prevOrderId field on OrderTable detected, its length should be exactly 2",
 });
 exports.ApiGeneratingBearerTokenException = new common_1.InternalServerErrorException({
     name: "E-A-900",

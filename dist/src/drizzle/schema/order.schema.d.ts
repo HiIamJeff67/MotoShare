@@ -50,6 +50,22 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        prevOrderId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "prevOrderId";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         finalPrice: import("drizzle-orm/pg-core").PgColumn<{
             name: "finalPrice";
             tableName: "order";
@@ -123,6 +139,54 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        passengerStartAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerStartAddress";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        passengerEndAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerEndAddress";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        ridderStartAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "ridderStartAddress";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         startAfter: import("drizzle-orm/pg-core").PgColumn<{
             name: "startAfter";
             tableName: "order";
@@ -139,8 +203,8 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        endAt: import("drizzle-orm/pg-core").PgColumn<{
-            name: "endAt";
+        endedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "endedAt";
             tableName: "order";
             dataType: "date";
             columnType: "PgTimestamp";
@@ -171,19 +235,51 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        status: import("drizzle-orm/pg-core").PgColumn<{
-            name: "status";
+        updatedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "updatedAt";
             tableName: "order";
-            dataType: "string";
-            columnType: "PgEnumColumn";
-            data: "UNSTARTED" | "STARTED";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
             driverParam: string;
             notNull: true;
             hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: ["UNSTARTED", "STARTED"];
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        passengerStatus: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerStatus";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        ridderStatus: import("drizzle-orm/pg-core").PgColumn<{
+            name: "ridderStatus";
+            tableName: "order";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"];
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;

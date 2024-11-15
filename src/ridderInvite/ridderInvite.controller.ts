@@ -48,7 +48,7 @@ export class RidderInviteController {
 
       if (!res || res.length === 0) throw ClientCreateRidderInviteException;
 
-      response.status(HttpStatusCode.Created).send(res)
+      response.status(HttpStatusCode.Created).send(res[0])
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -407,9 +407,9 @@ export class RidderInviteController {
 
       const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, updateRidderInviteDto);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -440,9 +440,9 @@ export class RidderInviteController {
 
       const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, decideRidderInviteDto);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -475,11 +475,11 @@ export class RidderInviteController {
 
       const res = await this.ridderInviteService.deleteRidderInviteById(id, ridder.id);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
       response.status(HttpStatusCode.Ok).send({
         deletedAt: new Date(),
-        ...res,
+        ...res[0],
       });
     } catch (error) {
       if (!(error instanceof BadRequestException 

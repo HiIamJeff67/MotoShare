@@ -657,6 +657,7 @@ export class RidderInviteService {
           startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,  // the receiver accept the suggest start time
           // endAt: , // will be covered the autocomplete function powered by google in the future
         }).returning({
+          id: OrderTable.id,
           finalPrice: OrderTable.finalPrice,
           startAfter: OrderTable.startAfter,
           status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
@@ -666,7 +667,8 @@ export class RidderInviteService {
               throw ClientCreateOrderException;
         }
 
-        return {
+        return [{
+          orderId: responseOfCreatingOrder[0].id,
           status: responseOfDecidingRidderInvite[0].inviteStatus,
           price: responseOfCreatingOrder[0].finalPrice,
           passsengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
@@ -677,13 +679,17 @@ export class RidderInviteService {
           ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
           orderStatus: responseOfCreatingOrder[0].status, // use either passengerStatus or ridderStatus is fine
-        }
+        }]
       });
     } else if (decideRidderInviteDto.status === "REJECTED") {
       return await this.db.update(RidderInviteTable).set({
         status: decideRidderInviteDto.status, // must be REJECTED
         updatedAt: new Date(),
-      }).where(eq(RidderInviteTable.id, id));
+      }).where(eq(RidderInviteTable.id, id))
+        .returning({
+          status: RidderInviteTable.status,
+          updatedAt: RidderInviteTable.updatedAt,
+        });
     }
   }
   /* ================= Accept or Reject operations used by Passenger ================= */

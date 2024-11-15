@@ -46,7 +46,10 @@ export class PassengerInviteController {
 
       if (!res || res.length === 0) throw ClientCreatePassengerInviteException;
 
-      response.status(HttpStatusCode.Created).send(res);
+      response.status(HttpStatusCode.Created).send({
+        createdAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -405,9 +408,12 @@ export class PassengerInviteController {
 
       const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, updatePassengerInviteDto);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -438,9 +444,12 @@ export class PassengerInviteController {
 
       const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, decidePassengerInviteDto);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(),
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -473,11 +482,11 @@ export class PassengerInviteController {
 
       const res = await this.passengerInviteService.deletePassengerInviteById(id, passenger.id);
 
-      if (!res) throw ClientInviteNotFoundException;
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
       response.status(HttpStatusCode.Ok).send({
         deletedAt: new Date(),
-        ...res,
+        ...res[0],
       });
     } catch (error) {
       if (!(error instanceof BadRequestException 

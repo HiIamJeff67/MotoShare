@@ -8,15 +8,17 @@ const enums_1 = require("./enums");
 exports.RidderInviteTable = (0, pg_core_1.pgTable)('ridderInvite', {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     userId: (0, pg_core_1.uuid)("userId").references(() => schema_1.RidderTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     orderId: (0, pg_core_1.uuid)("orderId").references(() => schema_1.PurchaseOrderTable.id, {
-        onDelete: 'set null',
+        onDelete: 'cascade',
     }).notNull(),
     briefDescription: (0, pg_core_1.text)("briefDesciption"),
     suggestPrice: (0, pg_core_1.integer)("suggestPrice").notNull(),
     startCord: (0, pg_core_1.geometry)("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     endCord: (0, pg_core_1.geometry)("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    startAddress: (0, pg_core_1.text)("startAddress").notNull(),
+    endAddress: (0, pg_core_1.text)("endAddress").notNull(),
     suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull().defaultNow(),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
