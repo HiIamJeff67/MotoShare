@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { router } from "expo-router";
+import { useNavigation } from '@react-navigation/native';
 import {
   TextInput,
   Text,
@@ -19,6 +19,7 @@ import { setUser } from '../(store)/userSlice';
 import * as SecureStore from 'expo-secure-store';
 
 const LoginForm = () => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -71,9 +72,9 @@ const LoginForm = () => {
       if (response) {
         console.log(response);
         saveToken(response.data.accessToken);
-        dispatch(setUser({ username: response.data.userName, role: 1 }));
+        dispatch(setUser({ username: response.data.userName, role: 2 }));
         Alert.alert('成功', `註冊成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
-        router.push('../(root)/(tabs)/home');
+        navigation.navigate('home');
       } else {
         Alert.alert('錯誤', '註冊失敗。', [{ onPress: () => setLoading(false) }]);
       }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { router } from "expo-router";
+import { useNavigation } from '@react-navigation/native';
 import {
   TextInput,
   Text,
@@ -23,6 +23,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const saveToken = async (token: string) => {
     try {
@@ -49,29 +50,25 @@ const LoginForm = () => {
     }
   
     try {
-      dispatch(setUser({ username: "123", role: 2 }));
-      Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
-      router.push('../(root)/(tabs)/home');
-
-      // const response = await axios.post(
-      //   `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidder`,
-      //   {
-      //     userName: username,
-      //     password: password,
-      //   },
-      //   {
-      //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      //   }
-      // );
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidder`,
+        {
+          userName: username,
+          password: password,
+        },
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        }
+      );
       
-      // if (response && response.data) {
-      //   saveToken(response.data.accessToken);
-      //   dispatch(setUser({ username: response.data.userName, role: 1 }));
-      //   Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
-      //   router.push('../(root)/(tabs)/home');
-      // } else {
-      //   Alert.alert('錯誤', '登入失敗，請檢查您的使用者名稱和密碼。', [{ onPress: () => setLoading(false) }]);
-      // }
+      if (response && response.data) {
+        saveToken(response.data.accessToken);
+        dispatch(setUser({ username: username, role: 2 }));
+        Alert.alert('成功', `登入成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
+        navigation.navigate('home');
+      } else {
+        Alert.alert('錯誤', '登入失敗，請檢查您的使用者名稱和密碼。', [{ onPress: () => setLoading(false) }]);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(JSON.stringify(error.response?.data.message));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { router } from "expo-router";
+import { useNavigation } from '@react-navigation/native';
 import {
   TextInput,
   Text,
@@ -19,6 +19,7 @@ import { setUser } from '../(store)/userSlice';
 import * as SecureStore from 'expo-secure-store';
 
 const LoginForm = () => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,16 +74,16 @@ const LoginForm = () => {
         saveToken(response.data.accessToken);
         dispatch(setUser({ username: response.data.userName, role: 1 }));
         Alert.alert('成功', `註冊成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
-        router.push('../(root)/(tabs)/home');
+        navigation.navigate('home');
       } else {
         Alert.alert('錯誤', '註冊失敗。', [{ onPress: () => setLoading(false) }]);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.response?.data.message);
-        Alert.alert('錯誤', error.response?.data.message, [{ onPress: () => setLoading(false) }]);
+        console.log(JSON.stringify(error.response?.data.message));
+        Alert.alert('錯誤', JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
-        console.log('An unexpected error occurred:', error);
+        console.log('An unexpected error occurred:', JSON.stringify(error));
         Alert.alert('錯誤', '無法連接到伺服器。', [{ onPress: () => setLoading(false) }]);
       }
     }

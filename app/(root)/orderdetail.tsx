@@ -1,46 +1,151 @@
-import { Text, View, Platform, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useSelector } from "react-redux";
+import { RootState } from "../(store)/index";
+import * as SecureStore from 'expo-secure-store';
+import { useRoute } from '@react-navigation/native';
+
+// 定義 Creator 的資料結構
+interface CreatorInfoType {
+  avatorUrl: string | null;
+  isOnline: boolean;
+  motocyclePhotoUrl: string | null;
+  motocycleType: string | null;
+}
+
+interface CreatorType {
+  info: CreatorInfoType;
+  userName: string;
+}
+
+// 定義每個訂單的資料結構
+interface OrderType {
+  id: string;
+  description: string;
+  tolerableRDV: number;
+  startAfter: Date;
+  initPrice: number;
+  startAddress: string;
+  endAddress: string;
+  updatedAt: Date;
+  endedAt: Date;
+  creator: CreatorType;
+}
 
 const OrderDetail = () => {
-    return (
-      <ScrollView>
-        <SafeAreaView style={styles.container}>
-            <View style={styles.card}>
-                <View style={styles.header}>
-                    <Text style={styles.orderNumber}>訂單編號: xxxxxxxxxxxxx</Text>
-                </View>
-        
-                <View style={styles.body}>
-                    <Text style={styles.textBase}>訂單日期: 2024/10/17 | 未知</Text>
-                    <Text style={styles.title}>機車型號：Yamaha EC-05</Text>
-                    <Text style={styles.title}>車牌號碼：ABC-1234</Text>
-                    <Text style={styles.title}>起點：台灣海洋大學</Text>
-                    <Text style={styles.title}>終點：基隆火車站</Text>
-                    <Text style={styles.title}>開始時間：2024-10-16 14:30</Text>
-                    <Text style={styles.title}>到達時間：2024-10-16 14:31</Text>
-                </View>
-            </View>
+  const user = useSelector((state: RootState) => state.user);
+  const [order, setOrder] = useState<OrderType>();
+  const route = useRoute();
+  const { orderid } = route.params as { orderid: string };
+  let roleText = "載入中...";
 
-            <View className="h-10"></View>
+  if (user.role == 1)
+  {
+    roleText = "車主";
+  }
+  else if (user.role == 2)
+  {
+    roleText = "乘客";
+  }
 
-            <View style={styles.card}>
-                <View style={styles.header}>
-                    <Text style={styles.orderNumber}>車主資料:</Text>
-                </View>
-        
-                <View style={styles.body}>
-                    <Text style={styles.title}></Text>
-                    <Text style={styles.title}>車牌號碼：ABC-1234</Text>
-                    <Text style={styles.title}>起點：台灣海洋大學</Text>
-                    <Text style={styles.title}>終點：基隆火車站</Text>
-                    <Text style={styles.title}>開始時間：2024-10-16 14:30</Text>
-                    <Text style={styles.title}>到達時間：2024-10-16 14:31</Text>
-                </View>
-            </View>
+  const getToken = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("userToken");
+      if (token) {
+        return token;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  };
 
-          </SafeAreaView>
-        </ScrollView>
-    );
+  useEffect(() => {
+    // 透過 orderId 取得訂單資料
+    let response, url = "";
+
+    if (user.role == 1) {
+      url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
+    } else if (user.role == 2) {
+      url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/getPurchaseOrderById`;
+    }
+
+    const SearchOrder = async () => {
+      try {
+          // 獲取 Token
+          const token = await getToken();
+
+          if (!token) {
+            Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+            return;
+          }
+
+          response = await axios.get(url, {
+            params: {
+              id: orderid,
+            },
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          setOrder(response.data);
+          console.log(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data);
+        } else {
+          console.log("An unexpected error occurred:", error);
+        }
+      }
+    }
+
+    SearchOrder();
+  }, []);
+
+  return (
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
+        <View className='pt-5'/>
+          <View style={styles.card}>
+              <View style={styles.header}>
+                {order ? (
+                  <>
+                    <Text style={styles.orderNumber}>訂單編號: {order?.id}</Text>
+                  </>
+                  ) : (
+                    <Text style={styles.title}>正在加載訂單資料...</Text>
+                )}
+              </View>
+      
+              <View style={styles.body}>
+                {order ? (
+                <>
+                  <Text style={styles.title}>{roleText}：{order.creator.userName}</Text>
+                  <Text style={styles.title}>車種：{order.creator.info.motocycleType}</Text>
+                  <Text style={styles.title}>起點：{order.startAddress}</Text>
+                  <Text style={styles.title}>終點：{order.endAddress}</Text>
+                  <Text style={styles.title}>描述: {order.description}</Text>
+                  <Text style={styles.title}>初始價格: {order.initPrice}</Text>
+                  {user.role == 1 ? (
+                    <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
+                  ) : null}
+                  <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>結束時間: {new Date(order.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                </>
+                ) : (
+                  <Text style={styles.title}>正在加載訂單資料...</Text>
+                )}
+              </View>
+          </View>
+        </SafeAreaView>
+      </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({

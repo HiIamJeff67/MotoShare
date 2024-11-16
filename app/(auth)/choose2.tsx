@@ -1,8 +1,9 @@
-import { router } from "expo-router";
 import { Text, View, Image, Pressable, StyleSheet, ImageBackground  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 const WelcomeScreen = () => {
+    const navigation = useNavigation();
     return (
             <SafeAreaView style={styles.container}>
                 <View className="justify-center items-center"
@@ -36,7 +37,7 @@ const WelcomeScreen = () => {
                             alignItems: 'center',
                         }}
                         className="rounded-full bg-white shadow-lg"
-                        onPress={() => router.push("./preg")}
+                        onPress={() => navigation.navigate("preg")}
                     >
                     <Text className="font-semibold text-black text-lg">我是乘客</Text>
                     </Pressable>
@@ -51,7 +52,7 @@ const WelcomeScreen = () => {
                             alignItems: 'center',
                         }}
                         className="rounded-full bg-white shadow-lg"
-                        onPress={() => router.push("./rreg")}
+                        onPress={() => navigation.navigate("rreg")}
                     >
                     <Text className="font-semibold text-black text-lg">我是車主</Text>
                     </Pressable>
