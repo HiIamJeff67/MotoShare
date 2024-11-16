@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MAX_SELF_INTRODUCTION_LENGTH = exports.MIN_SELF_INTRODUCTION_LENGTH = exports.MAX_COMMENT_LENGTH = exports.MIN_COMMENT_LENGTH = exports.MAX_BRIEF_DESCRIPTION_LENGTH = exports.MIN_BRIEF_DESCRIPTION_LENGTH = exports.MAX_DESCRIPTION_LENGTH = exports.MIN_DESCRIPTION_LENGTH = void 0;
+exports.MIN_DESCRIPTION_LENGTH = 0;
+exports.MAX_DESCRIPTION_LENGTH = 150;
+exports.MIN_BRIEF_DESCRIPTION_LENGTH = 0;
+exports.MAX_BRIEF_DESCRIPTION_LENGTH = 50;
+exports.MIN_COMMENT_LENGTH = 0;
+exports.MAX_COMMENT_LENGTH = 150;
+exports.MIN_SELF_INTRODUCTION_LENGTH = 0;
+exports.MAX_SELF_INTRODUCTION_LENGTH = 100;
+//# sourceMappingURL=context.constant.js.map

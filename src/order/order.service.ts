@@ -56,17 +56,17 @@ export class OrderService {
       motocycleLicense: RidderInfoTable.motocycleLicense,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
     }).from(OrderTable)
-      .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
-      .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
       .where(and(
         eq(OrderTable.id, id),
         or(
-          eq(PassengerTable.id, userId),
-          eq(RidderTable.id, userId),
+          eq(OrderTable.passengerId, userId),
+          eq(OrderTable.ridderId, userId),
         )
       ))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id));
+      .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
+      .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
+      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, OrderTable.passengerId))
+      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, OrderTable.ridderId));
   }
 
   /* ================= Search operations ================= */

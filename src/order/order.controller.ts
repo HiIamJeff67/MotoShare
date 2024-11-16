@@ -45,7 +45,7 @@ export class OrderController {
         || error instanceof NotFoundException)) {
           error = ClientUnknownException;
       }
-
+      
       response.status(error.status).send({
         ...error.response,
       });
@@ -84,8 +84,8 @@ export class OrderController {
 
   /* ================= Search operations ================= */
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchPaginationOrderById')
-  async searchPaginationOrderForPassengerById(
+  @Get('passenger/searchPaginationOrders')
+  async searchPaginationOrdersByPassengerId(
     @Passenger() passenger: PassengerType,
     @Query('ridderName') ridderName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -111,8 +111,8 @@ export class OrderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchPaginationOrderById')
-  async searchPaginationOrderForridderById(
+  @Get('ridder/searchPaginationOrders')
+  async searchPaginationOrdersByRidderId(
     @Ridder() ridder: RidderType,
     @Query('passengerName') passengerName: string | undefined = undefined,
     @Query('limit') limit: string = "10",

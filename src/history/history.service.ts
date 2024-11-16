@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateHistoryDto } from './dto/update-history.dto';
+import { RateAndCommentHistoryDto } from './dto/update-history.dto';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { HistoryTable } from '../drizzle/schema/history.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
@@ -48,8 +48,8 @@ export class HistoryService {
       ))
       .leftJoin(PassengerTable, eq(PassengerTable.id, HistoryTable.passengerId))
       .leftJoin(RidderTable, eq(RidderTable.id, HistoryTable.ridderId))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
-      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id));
+      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, HistoryTable.passengerId))
+      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, HistoryTable.ridderId));
   }
 
   /* ================= Search operations ================= */
@@ -112,11 +112,11 @@ export class HistoryService {
   async rateAndCommentHistoryForPassengerById(
     id: string, 
     passengerId: string, 
-    updateHistoryDto: UpdateHistoryDto, 
+    rateAndCommentHistoryDto: RateAndCommentHistoryDto, 
   ) {
     return await this.db.update(HistoryTable).set({
-      starRatingByPassenger: updateHistoryDto.starRating,
-      commentByPassenger: updateHistoryDto.comment,
+      starRatingByPassenger: rateAndCommentHistoryDto.starRating,
+      commentByPassenger: rateAndCommentHistoryDto.comment,
       updatedAt: new Date(),
     }).where(and(
       eq(HistoryTable.id, id),
@@ -129,11 +129,11 @@ export class HistoryService {
   async rateAndCommentHistoryForRidderById(
     id: string, 
     ridderId: string, 
-    updateHistoryDto: UpdateHistoryDto,
+    rateAndCommentHistoryDto: RateAndCommentHistoryDto,
   ) {
     return await this.db.update(HistoryTable).set({
-      starRatingByPassenger: updateHistoryDto.starRating,
-      commentByPassenger: updateHistoryDto.comment,
+      starRatingByRidder: rateAndCommentHistoryDto.starRating,
+      commentByRidder: rateAndCommentHistoryDto.comment,
       updatedAt: new Date(),
     }).where(and(
       eq(HistoryTable.id, id),
@@ -161,6 +161,7 @@ export class HistoryService {
     }).where(and(
       eq(HistoryTable.id, id),
       eq(HistoryTable.passengerId, passengerId),
+      ne(HistoryTable.starRatingByPassenger, "0"),
     ))
       .returning({
       passengerId: HistoryTable.passengerId,
@@ -186,9 +187,9 @@ export class HistoryService {
         }
     }
 
-    return {
+    return [{
       id: id,
-    };
+    }];
   }
 
   async delinkHistoryByRidderId(
@@ -200,6 +201,7 @@ export class HistoryService {
     }).where(and(
       eq(HistoryTable.id, id),
       eq(HistoryTable.ridderId, ridderId),
+      ne(HistoryTable.starRatingByRidder, "0"),
     ))
       .returning({
       passengerId: HistoryTable.passengerId,
@@ -226,9 +228,9 @@ export class HistoryService {
         }
     }
 
-    return {
+    return [{
       id: id,
-    };
+    }];
   }
   /* ================================= Delete operations ================================= */
 }
