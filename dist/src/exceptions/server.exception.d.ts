@@ -1,2 +1,3 @@
 import { InternalServerErrorException } from "@nestjs/common";
-export declare const ServerUnknownError: InternalServerErrorException;
+export declare const ServerAllowedPhoneNumberException: InternalServerErrorException;
+export declare const ServerUnknownException: InternalServerErrorException;

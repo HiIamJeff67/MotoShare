@@ -10,6 +10,8 @@ import {
 } from "../../decorators";
 import { MAX_AGE, MIN_AGE } from "../../constants/info.constant";
 import { MAX_SELF_INTRODUCTION_LENGTH, MIN_SELF_INTRODUCTION_LENGTH } from "../../constants/context.constant";
+import { IsPhoneNumberString } from "../../decorators/IsPhoneNumberString.decorator";
+import { AllowedPhoneNumberTypes } from "../../types";
 
 export class CreateRidderInfoDto {
     // instead of using @IsOptional decorator for the optional fields,
@@ -27,6 +29,7 @@ export class CreateRidderInfoDto {
     age?: number
 
     @IsOptional()
+    @IsPhoneNumberString("+886", AllowedPhoneNumberTypes)
     @IsNumberString()
     phoneNumber?: string
 

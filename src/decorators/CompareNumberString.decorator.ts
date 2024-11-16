@@ -8,18 +8,19 @@ export function MinNumberString(minValue: number, validationOptions?: Validation
             propertyName: propertyName,
             constraints: [],
             options: {
-            message: `${propertyName} must be not less than ${minValue}`,
-            ...validationOptions,
+                message: `${propertyName} must be not less than ${minValue}`,
+                ...validationOptions,
             },
             validator: {
-            validate(value: any) {
-                const numericValue = parseFloat(value);
-                return (
-                typeof value === 'string' &&
-                !isNaN(numericValue) &&
-                numericValue >= minValue
-                );
-            },
+                validate(value: any) {
+                    const numericValue = parseFloat(value);
+                    
+                    return (
+                        typeof value === 'string' &&
+                        !isNaN(numericValue) &&
+                        numericValue >= minValue
+                    );
+                },
             },
         });
     };
@@ -33,18 +34,19 @@ export function MaxNumberString(maxValue: number, validationOptions?: Validation
             propertyName: propertyName,
             constraints: [],
             options: {
-            message: `${propertyName} must be not greater than ${maxValue}`,
-            ...validationOptions,
+                message: `${propertyName} must be not greater than ${maxValue}`,
+                ...validationOptions,
             },
             validator: {
-            validate(value: any) {
-                const numericValue = parseFloat(value);
-                return (
-                typeof value === 'string' &&
-                !isNaN(numericValue) &&
-                numericValue <= maxValue
-                );
-            },
+                validate(value: any) {
+                    const numericValue = parseFloat(value);
+
+                    return (
+                        typeof value === 'string' &&
+                        !isNaN(numericValue) &&
+                        numericValue <= maxValue
+                    );
+                },
             },
         });
     };

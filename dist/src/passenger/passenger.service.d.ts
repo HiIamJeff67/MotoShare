@@ -36,10 +36,13 @@ export declare class PassengerService {
             userId: string;
             orderId: string;
             order: {
-                id: string;
                 description: string | null;
-                createdAt: Date;
                 initPrice: number;
+                startAfter: Date;
+                tolerableRDV: number;
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                id: string;
+                createdAt: Date;
                 startCord: {
                     x: number;
                     y: number;
@@ -48,10 +51,7 @@ export declare class PassengerService {
                     x: number;
                     y: number;
                 };
-                startAfter: Date;
                 updatedAt: Date;
-                tolerableRDV: number;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 creator: {
                     userName: string;
                 };

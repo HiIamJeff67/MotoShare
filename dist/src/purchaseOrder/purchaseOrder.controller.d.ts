@@ -17,11 +17,17 @@ export declare class PurchaseOrderController {
     updateMyPurchaseOrderById(passenger: PassengerType, id: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto, response: Response): Promise<void>;
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
-        id: string;
+        startAddress: string;
+        endAddress: string;
         description: string | null;
+        initPrice: number;
+        startAfter: Date;
+        endedAt: Date;
+        isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
         createdAt: Date;
         creatorId: string;
-        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -30,12 +36,6 @@ export declare class PurchaseOrderController {
             x: number;
             y: number;
         };
-        startAddress: string;
-        endAddress: string;
-        startAfter: Date;
-        endedAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        isUrgent: boolean;
     }[]>;
 }

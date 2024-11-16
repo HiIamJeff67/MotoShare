@@ -41,10 +41,13 @@ export declare class RidderService {
             userId: string;
             orderId: string;
             order: {
-                id: string;
                 description: string | null;
-                createdAt: Date;
                 initPrice: number;
+                startAfter: Date;
+                isUrgent: boolean;
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                id: string;
+                createdAt: Date;
                 startCord: {
                     x: number;
                     y: number;
@@ -53,10 +56,7 @@ export declare class RidderService {
                     x: number;
                     y: number;
                 };
-                startAfter: Date;
                 updatedAt: Date;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-                isUrgent: boolean;
                 creator: {
                     userName: string;
                 };

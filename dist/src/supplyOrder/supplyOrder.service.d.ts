@@ -6,13 +6,19 @@ export declare class SupplyOrderService {
     private db;
     constructor(db: DrizzleDB);
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
+        startAddress: string;
+        endAddress: string;
+        initPrice: number;
+        startAfter: Date;
+        endedAt: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         createdAt: Date;
-        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -21,19 +27,19 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
-        startAddress: string;
-        endAddress: string;
-        startAfter: Date;
-        endedAt: Date;
         updatedAt: Date;
-        tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getSupplyOrderById(id: string): Promise<{
-        id: string;
+        startAddress: string;
+        endAddress: string;
         description: string | null;
-        createdAt: Date;
         initPrice: number;
+        startAfter: Date;
+        endedAt: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
+        createdAt: Date;
         startCord: {
             x: number;
             y: number;
@@ -42,13 +48,7 @@ export declare class SupplyOrderService {
             x: number;
             y: number;
         };
-        startAddress: string;
-        endAddress: string;
-        startAfter: Date;
-        endedAt: Date;
         updatedAt: Date;
-        tolerableRDV: number;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         creator: {
             userName: string;
             info: {
@@ -154,11 +154,11 @@ export declare class SupplyOrderService {
         RDV: unknown;
     }[]>;
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
 }

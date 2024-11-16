@@ -5,9 +5,9 @@ export declare class PassengerInviteService {
     private db;
     constructor(db: DrizzleDB);
     createPassengerInviteByOrderId(inviterId: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         id: string;
         orderId: string;
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     getPassengerInviteById(id: string, userId: string): Promise<{
         id: string;
@@ -195,8 +195,8 @@ export declare class PassengerInviteService {
         RDV: unknown;
     }[]>;
     updatePassengerInviteById(id: string, inviterId: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
-        id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        id: string;
     }[]>;
     decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<{
         orderId: string;
@@ -221,11 +221,11 @@ export declare class PassengerInviteService {
         endedAt: Date;
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[] | {
-        updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        updatedAt: Date;
     }[] | undefined>;
     deletePassengerInviteById(id: string, inviterId: string): Promise<{
-        id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        id: string;
     }[]>;
 }

@@ -1,15 +1,15 @@
 export type PostedStatusType = "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-export const PostedStatusTypes = ["POSTED", "EXPIRED", "CANCEL"];   // not allowing "RESERVED" to be specified
+export const PostedStatusTypes: PostedStatusType[] = ["POSTED", "EXPIRED", "CANCEL"];   // not allowing "RESERVED" to be specified
 
 /* =========== For PassengerInviteTable and RidderInviteTable =========== */
 export type InviteStatusType = "ACCEPTED" | "REJECTED" | "CHECKING" | "CANCEL";
-export const InviteStatusTypes = ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"];
+export const InviteStatusTypes: InviteStatusType[] = ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"];
 
 export type InviterStatusType = "CHECKING" | "CANCEL" | "ACCEPTED" | "REJECTED";
-export const InviterStatusTypes = ["CHECKING", "CANCEL"];   // not allowing "ACCEPTED" or "REJECTED" to be specified
+export const InviterStatusTypes: InviterStatusType[] = ["CHECKING", "CANCEL"];   // not allowing "ACCEPTED" or "REJECTED" to be specified
 
 export type ReceiverStatusType = "CHECKING" | "CANCEL" | "ACCEPTED" | "REJECTED";
-export const ReceiverStatusTypes = ["CHECKING", "ACCEPTED", "REJECTED"];    // not allowing "CANCEL" to be specified
+export const ReceiverStatusTypes: ReceiverStatusType[] = ["CHECKING", "ACCEPTED", "REJECTED"];    // not allowing "CANCEL" to be specified
 /* =========== For PassengerInviteTable and RidderInviteTable =========== */
 
 export type OrderStatusType = "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED"

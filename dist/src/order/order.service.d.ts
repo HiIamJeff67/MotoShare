@@ -26,8 +26,8 @@ export declare class OrderService {
         startAfter: Date;
         endedAt: Date;
         createdAt: Date;
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
         passengerAvatorUrl: string | null;
         ridderAvatorUrl: string | null;
         passengerPhoneNumber: string | null;
@@ -47,8 +47,8 @@ export declare class OrderService {
         createdAt: Date;
         ridderPhoneNumber: never;
         motocycleType: never;
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     searchPaginationOrderByRidderId(ridderId: string, passengerName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
@@ -61,33 +61,33 @@ export declare class OrderService {
         endedAt: Date;
         createdAt: Date;
         passengerPhoneNumber: never;
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     toStartedPassengerStatusById(id: string, passengerId: string): Promise<{
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     toStartedRidderStatusById(id: string, ridderId: string): Promise<{
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     toUnpaidPassengerStatusById(id: string, passengerId: string): Promise<{
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     toUnpaidRidderStatusById(id: string, ridderId: string): Promise<{
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
     toFinishedPassengerStatusById(id: string, passengerId: string): Promise<{
         prevOrderId: string;
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
         historyId: string;
     }[]>;
     toFinishedRidderStatusById(id: string, ridderId: string): Promise<{
         prevOrderId: string;
-        passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-        ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
         historyId: string;
