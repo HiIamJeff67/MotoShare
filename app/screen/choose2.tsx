@@ -2,7 +2,7 @@ import { Text, View, Image, Pressable, StyleSheet, ImageBackground  } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
-const WelcomeScreen = () => {
+const Choose2Screen = () => {
     const navigation = useNavigation();
     return (
         <SafeAreaView style={styles.container}>
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WelcomeScreen;
+export default Choose2Screen;

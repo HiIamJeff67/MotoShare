@@ -19,7 +19,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../(store)/userSlice';
 import * as SecureStore from 'expo-secure-store';
 
-const LoginForm = () => {
+const RidderReg = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -62,7 +62,7 @@ const LoginForm = () => {
     
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/signUpPassenger`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/signUpRidder`,
         {
           userName: username,
           email: email,
@@ -76,7 +76,7 @@ const LoginForm = () => {
       if (response) {
         console.log(response);
         saveToken(response.data.accessToken);
-        dispatch(setUser({ username: response.data.userName, role: 1 }));
+        dispatch(setUser({ username: response.data.userName, role: 2 }));
         Alert.alert('成功', `註冊成功，使用者：${username}`, [{ onPress: () => setLoading(false) }]);
         navigation.navigate('home');
       } else {
@@ -110,28 +110,29 @@ const LoginForm = () => {
         <View className="flex-0 justify-start items-center">
           <Image
             source={require('../../assets/images/motorbike.jpg')}
-            className="w-64 h-64 "
+            className="w-64 h-64"
             resizeMode="contain"
           />
         </View>
-
         <View className="h-0"/>
         <View className="justify-center items-center">
-        <Text className="text-4xl p-5 font-bold text-[#3498db]">乘客註冊</Text>
+          <Text className="text-4xl p-5 font-bold text-[#3498db]">車主註冊</Text>
         </View>
+
+        <View className="h-0"/>
         <View style={styles.inputWrapper}>
           <Image 
             source={require('../../assets/images/user.png')}  // 修改為你自己的圖片
             style={styles.icon} 
           />
-          <TextInput
-            style={styles.textInput}
-            className="rounded-lg bg-[#f1f4ff]"
-            placeholder="使用者名稱"
-            value={username}
-            onChangeText={setUsername}
-            placeholderTextColor="#626262"
-          />
+        <TextInput
+          style={styles.textInput}
+          className="rounded-lg bg-[#f1f4ff]"
+          placeholder="使用者名稱"
+          value={username}
+          onChangeText={setUsername}
+          placeholderTextColor="#626262"
+        />
         </View>
 
         <View className="h-0"/>
@@ -167,7 +168,6 @@ const LoginForm = () => {
         />
         </View>
 
-        <View className="h-0"/>
         <View style={styles.inputWrapper}>
         <Image 
             source={require('../../assets/images/password.png')}  // 修改為你自己的圖片
@@ -183,7 +183,7 @@ const LoginForm = () => {
           placeholderTextColor="#626262"
         />
         </View>
-
+        
         <View className="justify-center items-center">
             <Pressable 
                 style={{ 
@@ -200,7 +200,7 @@ const LoginForm = () => {
             </Text>
             </Pressable>
         </View>
-        <View className="h-0"/>
+        <View className="h-1"/>
         <View className="justify-center items-center">
           <Text className="text-xl p-5 text-[#3498db]">使用其他方式</Text>
         </View>
@@ -247,11 +247,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // 左右內邊距
     marginBottom: 20,
   },
-  icon: {
-    width: 20,
-    height: 20,
-    marginRight: 10, // 圖標與文字之間的距離
-  },
   socialContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between', // 改為 `space-between` 可以避免按鈕重疊
@@ -264,6 +259,11 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     resizeMode: 'contain',
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 10, // 圖標與文字之間的距離
   },
   textInput: {
     flex: 1, // 使輸入框填滿剩餘空間
@@ -286,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginForm;
+export default RidderReg;

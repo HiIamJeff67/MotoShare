@@ -19,7 +19,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../(store)/userSlice';
 import * as SecureStore from 'expo-secure-store';
 
-const LoginForm = () => {
+const RidderLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -255,4 +255,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginForm;
+export default RidderLogin;

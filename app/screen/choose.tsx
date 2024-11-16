@@ -1,8 +1,8 @@
-import { Text, View, Image, Pressable, StyleSheet, ImageBackground  } from 'react-native';
+import { Text, View, Image, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
-const WelcomeScreen = () => {
+const ChooseScreen = () => {
     const navigation = useNavigation();
     return (
         <SafeAreaView style={styles.container}>
@@ -70,4 +70,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WelcomeScreen;
+export default ChooseScreen;

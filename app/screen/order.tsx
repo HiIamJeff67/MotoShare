@@ -101,20 +101,20 @@ const Order = () => {
                 key={order.id}
                 onPress={() => navigation.navigate('orderdetail', { orderid: order.id })}
               >
-              <View style={styles.card}>
-                <View style={styles.header}>
-                  <Text style={styles.orderNumber}>訂單編號: {order.id}</Text>
+                <View style={styles.card}>
+                  <View style={styles.header}>
+                    <Text style={styles.orderNumber}>訂單編號: {order.id}</Text>
+                  </View>
+                  <View style={styles.body}>
+                    <Text style={styles.title}>起點：{order.startAddress}</Text>
+                    <Text style={styles.title}>終點：{order.endAddress}</Text>
+                    {user.role == 1 ? (
+                      <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
+                    ) : null}
+                    <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                    <Text style={styles.title}>初始價格: {order.initPrice}</Text>
+                  </View>
                 </View>
-                <View style={styles.body}>
-                  <Text style={styles.title}>起點：{order.startAddress}</Text>
-                  <Text style={styles.title}>終點：{order.endAddress}</Text>
-                  {user.role == 1 ? (
-                    <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
-                  ) : null}
-                  <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>初始價格: {order.initPrice}</Text>
-                </View>
-              </View>
               </Pressable>
             </View>
           ))}

@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -7,48 +7,28 @@ import { RootState } from "../(store)/index";
 import * as SecureStore from 'expo-secure-store';
 import { useRoute } from '@react-navigation/native';
 
-// 定義 Creator 的資料結構
-interface CreatorInfoType {
-  avatorUrl: string | null;
-  isOnline: boolean;
-  motocyclePhotoUrl: string | null;
-  motocycleType: string | null;
-}
-
-interface CreatorType {
-  info: CreatorInfoType;
-  userName: string;
-}
-
 // 定義每個訂單的資料結構
 interface OrderType {
   id: string;
   description: string;
-  tolerableRDV: number;
   startAfter: Date;
   initPrice: number;
+  suggestPrice: number;
   startAddress: string;
+  suggestStartAddress: string;
+  suggestEndAddress: string;
+  suggestStartAfter: Date;
+  phoneNumber: string;
   endAddress: string;
-  updatedAt: Date;
+  orderUpdatedAt: Date;
   endedAt: Date;
-  creator: CreatorType;
 }
 
-const OrderDetail = () => {
+const MyInviteDetail = () => {
   const user = useSelector((state: RootState) => state.user);
-  const [order, setOrder] = useState<OrderType>();
+  const [invite, setInvite] = useState<OrderType>();
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
-  let roleText = "載入中...";
-
-  if (user.role == 1)
-  {
-    roleText = "車主";
-  }
-  else if (user.role == 2)
-  {
-    roleText = "乘客";
-  }
 
   const getToken = async () => {
     try {
@@ -68,12 +48,12 @@ const OrderDetail = () => {
     let response, url = "";
 
     if (user.role == 1) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/getMyPassengerInviteById`;
     } else if (user.role == 2) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/getPurchaseOrderById`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/getMyRidderInviteById`;
     }
 
-    const SearchOrder = async () => {
+    const SearchInvite = async () => {
       try {
           // 獲取 Token
           const token = await getToken();
@@ -93,8 +73,8 @@ const OrderDetail = () => {
             },
           });
 
-          setOrder(response.data);
-          console.log(response.data);
+          setInvite(response.data);
+          //console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
@@ -104,7 +84,7 @@ const OrderDetail = () => {
       }
     }
 
-    SearchOrder();
+    SearchInvite();
   }, []);
 
   return (
@@ -113,9 +93,9 @@ const OrderDetail = () => {
         <View className='pt-5'/>
           <View style={styles.card}>
               <View style={styles.header}>
-                {order ? (
+                {invite ? (
                   <>
-                    <Text style={styles.orderNumber}>訂單編號: {order?.id}</Text>
+                    <Text style={styles.orderNumber}>訂單編號: {invite?.id}</Text>
                   </>
                   ) : (
                     <Text style={styles.title}>正在加載訂單資料...</Text>
@@ -123,20 +103,15 @@ const OrderDetail = () => {
               </View>
       
               <View style={styles.body}>
-                {order ? (
+                {invite ? (
                 <>
-                  <Text style={styles.title}>{roleText}：{order.creator.userName}</Text>
-                  <Text style={styles.title}>車種：{order.creator.info.motocycleType}</Text>
-                  <Text style={styles.title}>起點：{order.startAddress}</Text>
-                  <Text style={styles.title}>終點：{order.endAddress}</Text>
-                  <Text style={styles.title}>描述: {order.description}</Text>
-                  <Text style={styles.title}>初始價格: {order.initPrice}</Text>
-                  {user.role == 1 ? (
-                    <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
-                  ) : null}
-                  <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>結束時間: {new Date(order.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>起點：{invite.startAddress}</Text>
+                  <Text style={styles.title}>終點：{invite.endAddress}</Text>
+                  <Text style={styles.title}>描述: {invite.description}</Text>
+                  <Text style={styles.title}>初始價格: {invite.initPrice}</Text>
+                  <Text style={styles.title}>開始時間: {new Date(invite.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>結束時間: {new Date(invite.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>更新時間: {new Date(invite.orderUpdatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                 </>
                 ) : (
                   <Text style={styles.title}>正在加載訂單資料...</Text>
@@ -189,4 +164,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OrderDetail;
+export default MyInviteDetail;

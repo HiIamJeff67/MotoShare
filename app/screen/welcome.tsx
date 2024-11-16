@@ -58,8 +58,7 @@ const WelcomeScreen = () => {
             </View>
 
         </SafeAreaView>
-
-);
+    );
 };
 
 export default WelcomeScreen;

@@ -1,20 +1,24 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import WelcomeScreen from './(auth)/welcome';
-import PLoginScreen from './(auth)/plogin';
-import RLoginScreen from './(auth)/rlogin';
-import ChooseScreen from './(auth)/choose';
-import Choose2Screen from './(auth)/choose2';
-import PRegScreen from './(auth)/preg';
-import RRegScreen from './(auth)/rreg';
-import HomeScreen from './(root)/(tabs)/home';
-import ProfileScreen from './(root)/(tabs)/profile';
-import ServiceScreen from './(root)/(tabs)/service';
-import MapScreen from './(root)/map';
-import OrderScreen from './(root)/order';
-import OrderDetailScreen from './(root)/orderdetail';
-import MyOrderScreen from './(root)/myorder';
+import WelcomeScreen from './screen/welcome';
+import PLoginScreen from './screen/plogin';
+import RLoginScreen from './screen/rlogin';
+import ChooseScreen from './screen/choose';
+import Choose2Screen from './screen/choose2';
+import PRegScreen from './screen/preg';
+import RRegScreen from './screen/rreg';
+import HomeScreen from './screen/home';
+import ProfileScreen from './screen/profile';
+import ServiceScreen from './screen/service';
+import MapScreen from './screen/map';
+import OrderScreen from './screen/order';
+import OrderDetailScreen from './screen/orderdetail';
+import MyOrderScreen from './screen/myorder';
+import MyInviteScreen from './screen/myinvite';
+import MyInviteDeScreen from './screen/myinvitede';
+import OtherInviteScreen from './screen/otherinvite';
+import InviteMap from './screen/invitemap';
 import store from './(store)/';
 import { Provider } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -30,6 +34,15 @@ const TopTabNavigator = () => {
     <TopTab.Navigator>
       <TopTab.Screen name="進行中" component={MyOrderScreen} />
       <TopTab.Screen name="已結束" component={ProfileScreen} />
+    </TopTab.Navigator>
+  );
+}
+
+const TopTabNavigator2 = () => {
+  return (
+    <TopTab.Navigator>
+      <TopTab.Screen name="我的邀請" component={MyInviteScreen} />
+      <TopTab.Screen name="別人邀請" component={OtherInviteScreen} />
     </TopTab.Navigator>
   );
 }
@@ -96,8 +109,32 @@ export default function App() {
               headerShown: false,
           }} 
         />
+        <Stack.Screen name="invitemap"
+          component={InviteMap} 
+          options={{ 
+            headerShown: false,
+            title: "主頁",
+            headerTitleAlign: 'center',
+          }}
+        />
         <Stack.Screen name="myorder"
           component={TopTabNavigator} 
+          options={{ 
+            headerShown: true,
+            title: "主頁",
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="myinvitede"
+          component={MyInviteDeScreen} 
+          options={{ 
+            headerShown: true,
+            title: "我的邀請",
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="myinvite"
+          component={TopTabNavigator2} 
           options={{ 
             headerShown: true,
             title: "主頁",
