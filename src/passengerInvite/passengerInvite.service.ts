@@ -12,7 +12,6 @@ import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
 import { ClientCreateOrderException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
-import { text } from 'stream/consumers';
 import { OrderTable } from '../drizzle/schema/order.schema';
 
 @Injectable()
@@ -41,6 +40,7 @@ export class PassengerInviteService {
       startAddress: createPassengerInviteDto.startAddress,
       endAddress: createPassengerInviteDto.endAddress,
       suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
+      suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt || new Date()),
       status: "CHECKING",
     }).returning({
       id: PassengerInviteTable.id,
@@ -66,6 +66,7 @@ export class PassengerInviteService {
       suggestStartAddress: PassengerInviteTable.startAddress,
       suggestEndAddress: PassengerInviteTable.endAddress,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       inviteCreatedAt: PassengerInviteTable.createdAt,
       inviteUdpatedAt: PassengerInviteTable.updatedAt,
       inviteStatus: PassengerInviteTable.status,
@@ -76,6 +77,7 @@ export class PassengerInviteService {
       endAddress: SupplyOrderTable.endAddress,
       description: SupplyOrderTable.description,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       orderCreatedAt: SupplyOrderTable.createdAt,
       orderUpdatedAt: SupplyOrderTable.updatedAt,
       creatorName: RidderTable.userName,
@@ -172,7 +174,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
-      suggetStartAfter: PassengerInviteTable.suggestStartAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -212,7 +216,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
-      suggetStartAfter: PassengerInviteTable.suggestStartAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -259,7 +265,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
-      suggetStartAfter: PassengerInviteTable.suggestStartAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -306,7 +314,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       suggetStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -387,7 +397,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -426,7 +438,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -472,7 +486,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -518,7 +534,9 @@ export class PassengerInviteService {
       initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
       startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -608,6 +626,7 @@ export class PassengerInviteService {
       startAddress: updatePassengerInviteDto.startAddress,
       endAddress: updatePassengerInviteDto.endAddress,
       suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
+      suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt || new Date()),
       updatedAt: new Date(),
       status: updatePassengerInviteDto.status,  // either CHECKING or CANCEL
     }).where(and(
@@ -663,6 +682,7 @@ export class PassengerInviteService {
             inviterEndAddress: PassengerInviteTable.endAddress,
             suggestPrice: PassengerInviteTable.suggestPrice,
             suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+            suggestEndedAt: PassengerInviteTable.suggestEndedAt,
             inviterDescription: PassengerInviteTable.briefDescription,
             inviteStatus: PassengerInviteTable.status,
         });
@@ -709,11 +729,13 @@ export class PassengerInviteService {
           passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
           ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
+          endedAt: responseOfDecidingPassengerInvite[0].suggestEndedAt,
           // endAt: , // will be covered the autocomplete function powered by google in the future
         }).returning({
           id: OrderTable.id,
           finalPrice: OrderTable.finalPrice,
           startAfter: OrderTable.startAfter,
+          endedAt: OrderTable.endedAt,
           status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
         });
         if (!responseOfCreatingOrder 
@@ -732,6 +754,7 @@ export class PassengerInviteService {
           passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
           ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
+          endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status,
         }]
       });

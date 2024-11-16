@@ -21,6 +21,7 @@ export const PassengerInviteTable = pgTable('passengerInvite', {
     startAddress: text("startAddress").notNull().default(""),
     endAddress: text("endAddress").notNull().default(""),
     suggestStartAfter: timestamp("suggestStartAfter").notNull().defaultNow(),
+    suggestEndedAt: timestamp("suggestEndedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     status: inviteStatusEnum().notNull().default("CHECKING"),

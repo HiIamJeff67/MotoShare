@@ -40,6 +40,7 @@ export class RidderInviteService {
       startAddress: createRidderInviteDto.startAddress,
       endAddress: createRidderInviteDto.endAddress,
       suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter || new Date()),
+      suggestEndedAt: new Date(createRidderInviteDto.suggestEndedAt || new Date()),
       status: "CHECKING",
     }).returning({
       id: RidderInviteTable.id,
@@ -66,6 +67,7 @@ export class RidderInviteService {
       suggestStartAddress: RidderInviteTable.startAddress,
       suggestEndAddress: RidderInviteTable.endAddress,
       suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       inviteCreatedAt: RidderInviteTable.createdAt,
       inviteUdpatedAt: RidderInviteTable.updatedAt,
       inviteStatus: RidderInviteTable.status,
@@ -76,6 +78,7 @@ export class RidderInviteService {
       endAddress: PurchaseOrderTable.endAddress,
       description: PurchaseOrderTable.description,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       orderCreatedAt: PurchaseOrderTable.createdAt,
       orderUpdatedAt: PurchaseOrderTable.updatedAt,
       creatorName: PassengerTable.userName,
@@ -112,7 +115,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
-      suggetStartAfter: RidderInviteTable.suggestStartAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -152,7 +157,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggetStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -199,7 +206,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggetStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -246,7 +255,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggetStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -324,7 +335,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -363,7 +376,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -409,7 +424,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -455,7 +472,9 @@ export class RidderInviteService {
       initPrice: PurchaseOrderTable.initPrice,
       suggestPrice: RidderInviteTable.suggestPrice,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
       createdAt: RidderInviteTable.createdAt,
       updatedAt: RidderInviteTable.updatedAt,
       status: RidderInviteTable.status,
@@ -545,6 +564,7 @@ export class RidderInviteService {
       startAddress: updateRidderInviteDto.startAddress,
       endAddress: updateRidderInviteDto.endAddress,
       suggestStartAfter: new Date(updateRidderInviteDto.suggestStartAfter || new Date()),
+      suggestEndedAt: new Date(updateRidderInviteDto.suggestEndedAt || new Date()),
       updatedAt: new Date(),
       status: updateRidderInviteDto.status, // either CHECKING or CANCEL
     }).where(and(
@@ -605,6 +625,7 @@ export class RidderInviteService {
             inviterEndAddress: RidderInviteTable.endAddress,
             suggestPrice: RidderInviteTable.suggestPrice,
             suggestStartAfter: RidderInviteTable.suggestStartAfter,
+            suggestEndedAt: RidderInviteTable.suggestEndedAt,
             inviterDescription: RidderInviteTable.briefDescription,
             inviteStatus: RidderInviteTable.status,
         });
@@ -655,11 +676,13 @@ export class RidderInviteService {
           passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
           ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
           startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,  // the receiver accept the suggest start time
+          endedAt: responseOfDecidingRidderInvite[0].suggestEndedAt,
           // endAt: , // will be covered the autocomplete function powered by google in the future
         }).returning({
           id: OrderTable.id,
           finalPrice: OrderTable.finalPrice,
           startAfter: OrderTable.startAfter,
+          endedAt: OrderTable.endedAt,
           status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
         });
         if (!responseOfCreatingOrder 
@@ -678,6 +701,7 @@ export class RidderInviteService {
           passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
           ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
+          endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status, // use either passengerStatus or ridderStatus is fine
         }]
       });

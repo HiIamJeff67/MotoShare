@@ -70,6 +70,10 @@ export class CreatePurchaseOrderDto {
     startAfter?: string   // but at most case, should be specify
 
     @IsOptional()
+    @IsDateString()
+    endedAt?: string
+
+    @IsOptional()
     @IsBooleanString()
     isUrgent?: boolean
 

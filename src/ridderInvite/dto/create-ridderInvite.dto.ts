@@ -55,5 +55,9 @@ export class CreateRidderInviteDto {
 
     @IsOptional()
     @IsDateString()
-    suggestStartAfter?: Date
+    suggestStartAfter?: string
+
+    @IsOptional()
+    @IsDateString()
+    suggestEndedAt?: string
 }

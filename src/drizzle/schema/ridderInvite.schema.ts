@@ -21,6 +21,7 @@ export const RidderInviteTable = pgTable('ridderInvite', {
     startAddress: text("startAddress").notNull(),
     endAddress: text("endAddress").notNull(),
     suggestStartAfter: timestamp("suggestStartAfter").notNull().defaultNow(),
+    suggestEndedAt: timestamp("suggestEndedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     status: inviteStatusEnum().notNull().default("CHECKING"),

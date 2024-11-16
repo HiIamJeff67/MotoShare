@@ -66,7 +66,11 @@ export class CreateSupplyOrderDto {
 
     @IsOptional()
     @IsDateString()
-    startAfter?: Date   // but at most case, should be specify
+    startAfter?: string
+
+    @IsOptional()
+    @IsDateString()
+    endedAt?: string
 
     @IsOptional()
     @MinNumberString(MIN_TOLERABLE_RDV)

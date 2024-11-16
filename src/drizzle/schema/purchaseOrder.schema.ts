@@ -22,6 +22,7 @@ export const PurchaseOrderTable = pgTable("purchaseOrder", {
     startAddress: text("startAddress").notNull().default(""),
     endAddress: text("endAddress").notNull().default(""),
     startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
+    endedAt: timestamp("endedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     isUrgent: boolean("isUrgent").notNull().default(false),

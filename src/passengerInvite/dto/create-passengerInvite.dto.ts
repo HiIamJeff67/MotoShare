@@ -55,5 +55,9 @@ export class CreatePassengerInviteDto {
 
     @IsOptional()
     @IsDateString()
-    suggestStartAfter?: Date
+    suggestStartAfter?: string
+
+    @IsOptional()
+    @IsDateString()
+    suggestEndedAt?: string
 }

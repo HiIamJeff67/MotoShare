@@ -21,7 +21,8 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     endCord: geometry("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     startAddress: text("startAddress").notNull().default(""),
     endAddress: text("endAddress").notNull().default(""),
-    startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
+    startAfter: timestamp("startAfter").notNull().defaultNow(),
+    endedAt: timestamp("endedAt").notNull().defaultNow(),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     tolerableRDV: doublePrecision("tolerableRDV").notNull().default(5),    // unit: kilometers(km)

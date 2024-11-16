@@ -36,6 +36,7 @@ export class PurchaseOrderService {
       startAddress: createPurchaseOrderDto.startAddress,
       endAddress: createPurchaseOrderDto.endAddress,
       startAfter: new Date(createPurchaseOrderDto.startAfter || new Date()),
+      endedAt: new Date(createPurchaseOrderDto.endedAt || new Date()),
       isUrgent: createPurchaseOrderDto.isUrgent,
     }).returning({
       id: PurchaseOrderTable.id,
@@ -64,6 +65,7 @@ export class PurchaseOrderService {
         startAddress: true,
         endAddress: true,
         createdAt: true,
+        endedAt: true,
         updatedAt: true,
         startAfter: true,
         isUrgent: true,
@@ -106,6 +108,7 @@ export class PurchaseOrderService {
         startAddress: true,
         endAddress: true,
         createdAt: true,
+        endedAt: true,
         updatedAt: true,
         startAfter: true,
         isUrgent: true,
@@ -164,6 +167,7 @@ export class PurchaseOrderService {
       createdAt: PurchaseOrderTable.createdAt,
       updatedAt: PurchaseOrderTable.updatedAt,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
     }).from(PurchaseOrderTable)
@@ -204,6 +208,7 @@ export class PurchaseOrderService {
       createdAt: PurchaseOrderTable.createdAt,
       updatedAt: PurchaseOrderTable.updatedAt,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
       distance: sql`ST_Distance(
@@ -251,6 +256,7 @@ export class PurchaseOrderService {
       createdAt: PurchaseOrderTable.createdAt,
       updatedAt: PurchaseOrderTable.updatedAt,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
       distance: sql`ST_Distance(
@@ -298,6 +304,7 @@ export class PurchaseOrderService {
       createdAt: PurchaseOrderTable.createdAt,
       updatedAt: PurchaseOrderTable.updatedAt,
       startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
       RDV: sql`
@@ -390,6 +397,7 @@ export class PurchaseOrderService {
       endAddress: updatePurchaseOrderDto.endAddress,
       updatedAt: new Date(),
       startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
+      endedAt: new Date(updatePurchaseOrderDto.endedAt || new Date()),
       isUrgent: updatePurchaseOrderDto.isUrgent,
       status: updatePurchaseOrderDto.status,
     }).where(and(
