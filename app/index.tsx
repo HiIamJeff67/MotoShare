@@ -19,6 +19,7 @@ import store from './(store)/';
 import { Provider } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import "../global.css";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
