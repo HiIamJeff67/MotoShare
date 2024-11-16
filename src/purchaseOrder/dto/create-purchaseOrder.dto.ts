@@ -1,4 +1,19 @@
-import { IsBooleanString, IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString, Max, Min } from "class-validator";
+import { 
+    IsBooleanString, 
+    IsDateString, 
+    IsLatitude, 
+    IsLongitude, 
+    IsNotEmpty, 
+    IsNumberString, 
+    IsOptional, 
+    IsString, 
+    MaxLength, 
+    MinLength 
+} from "class-validator";
+import { 
+    MaxNumberString, 
+    MinNumberString 
+} from "../../decorators";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
 
@@ -7,14 +22,14 @@ import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/
 
 export class CreatePurchaseOrderDto {
     @IsOptional()
-    @Min(MIN_DESCRIPTION_LENGTH)
-    @Max(MAX_DESCRIPTION_LENGTH)
+    @MinLength(MIN_DESCRIPTION_LENGTH)
+    @MaxLength(MAX_DESCRIPTION_LENGTH)
     @IsString()
     description?: string
 
     @IsNotEmpty()
-    @Min(MIN_INIT_PRICE)
-    @Max(MAX_INIT_PRICE)
+    @MaxNumberString(MAX_INIT_PRICE)
+    @MinNumberString(MIN_INIT_PRICE)
     @IsNumberString()
     initPrice: number
 

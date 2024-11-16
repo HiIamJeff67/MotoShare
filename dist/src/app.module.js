@@ -20,6 +20,7 @@ const order_module_1 = require("./order/order.module");
 const auth_module_1 = require("./auth/auth.module");
 const passengerInvite_module_1 = require("./passengerInvite/passengerInvite.module");
 const ridderInvite_module_1 = require("./ridderInvite/ridderInvite.module");
+const history_module_1 = require("./history/history.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             order_module_1.OrderModule,
             passengerInvite_module_1.PassengerInviteModule,
             ridderInvite_module_1.RidderInviteModule,
+            history_module_1.HistoryModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

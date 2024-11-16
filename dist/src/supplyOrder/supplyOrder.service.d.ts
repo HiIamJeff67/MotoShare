@@ -7,12 +7,10 @@ export declare class SupplyOrderService {
     constructor(db: DrizzleDB);
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
         id: string;
-        createdAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -25,6 +23,7 @@ export declare class SupplyOrderService {
         startAddress: string;
         endAddress: string;
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -32,7 +31,6 @@ export declare class SupplyOrderService {
     getSupplyOrderById(id: string): Promise<{
         id: string;
         description: string | null;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -45,6 +43,7 @@ export declare class SupplyOrderService {
         startAddress: string;
         endAddress: string;
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -150,7 +149,6 @@ export declare class SupplyOrderService {
     }[]>;
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
         id: string;
-        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{

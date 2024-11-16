@@ -11,6 +11,7 @@ export declare const ClientOrderNotFoundException: NotFoundException;
 export declare const ClientCollectionNotFoundException: NotFoundException;
 export declare const ClientSignInUserNameNotFoundException: NotFoundException;
 export declare const ClientSignInEmailNotFoundException: NotFoundException;
+export declare const ClientHistoryNotFoundException: NotFoundException;
 export declare const ClientSignInUserException: ForbiddenException;
 export declare const ClientSignInPasswordNotMatchException: ForbiddenException;
 export declare const ClientSignUpUserException: ForbiddenException;

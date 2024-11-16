@@ -6,7 +6,6 @@ export declare class PassengerInviteService {
     constructor(db: DrizzleDB);
     createPassengerInviteByOrderId(inviterId: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
         id: string;
-        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
@@ -179,10 +178,9 @@ export declare class PassengerInviteService {
     }[]>;
     updatePassengerInviteById(id: string, inviterId: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
         id: string;
-        updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<import("pg").QueryResult<never> | {
+    decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<{
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
@@ -203,7 +201,10 @@ export declare class PassengerInviteService {
         ridderStartAddress: string;
         startAfter: Date;
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
-    } | undefined>;
+    }[] | {
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[] | undefined>;
     deletePassengerInviteById(id: string, inviterId: string): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

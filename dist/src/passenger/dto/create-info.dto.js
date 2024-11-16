@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePassengerInfoDto = void 0;
 const class_validator_1 = require("class-validator");
+const decorators_1 = require("../../decorators");
+const context_constant_1 = require("../../constants/context.constant");
+const info_constant_1 = require("../../constants/info.constant");
 class CreatePassengerInfoDto {
 }
 exports.CreatePassengerInfoDto = CreatePassengerInfoDto;
@@ -21,6 +24,8 @@ __decorate([
 ], CreatePassengerInfoDto.prototype, "isOnline", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, decorators_1.MinNumberString)(info_constant_1.MIN_AGE),
+    (0, decorators_1.MaxNumberString)(info_constant_1.MIN_AGE),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreatePassengerInfoDto.prototype, "age", void 0);
@@ -31,6 +36,8 @@ __decorate([
 ], CreatePassengerInfoDto.prototype, "phoneNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MinLength)(context_constant_1.MIN_SELF_INTRODUCTION_LENGTH),
+    (0, class_validator_1.MaxLength)(context_constant_1.MAX_SELF_INTRODUCTION_LENGTH),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreatePassengerInfoDto.prototype, "selfIntroduction", void 0);

@@ -82,6 +82,12 @@ export const ClientSignInEmailNotFoundException = new NotFoundException({
     message: "Failed to sign in, email not found",
 });
 
+// E-C-109
+export const ClientHistoryNotFoundException = new NotFoundException({
+    case: "E-C-109",
+    message: "Failed to find any histories",
+});
+
 /* ============================== Error about select operation ============================== */
 
 

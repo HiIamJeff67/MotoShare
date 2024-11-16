@@ -10,15 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateOrderDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
-const create_order_dto_1 = require("./create-order.dto");
 const class_validator_1 = require("class-validator");
-class UpdateOrderDto extends (0, mapped_types_1.PartialType)(create_order_dto_1.CreateOrderDto) {
+const status_tpye_1 = require("../../types/status.tpye");
+class UpdateOrderDto {
 }
 exports.UpdateOrderDto = UpdateOrderDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(status_tpye_1.OrderStatusTypes, { message: "The status of order must be either UNSTARTED, STARTED, UNPAID, or FINISHED" }),
     __metadata("design:type", String)
 ], UpdateOrderDto.prototype, "status", void 0);
 //# sourceMappingURL=update-order.dto.js.map

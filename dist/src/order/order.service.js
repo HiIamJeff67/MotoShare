@@ -67,7 +67,7 @@ let OrderService = class OrderService {
             .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id));
     }
-    async searchPaginationOrderForPassengerById(passengerId, ridderName = undefined, limit, offset) {
+    async searchPaginationOrderByPassengerId(passengerId, ridderName = undefined, limit, offset) {
         const query = this.db.select({
             id: order_schema_1.OrderTable.id,
             ridderStartAddress: order_schema_1.OrderTable.ridderStartAddress,
@@ -95,7 +95,7 @@ let OrderService = class OrderService {
             .offset(offset);
         return await query;
     }
-    async searchPaginationOrderForRidderById(ridderId, passengerName = undefined, limit, offset) {
+    async searchPaginationOrderByRidderId(ridderId, passengerName = undefined, limit, offset) {
         const query = this.db.select({
             id: order_schema_1.OrderTable.id,
             passengerStartAddress: order_schema_1.OrderTable.passengerStartAddress,
@@ -238,7 +238,6 @@ let OrderService = class OrderService {
                     throw exceptions_1.ClientCreateHistoryException;
                 }
                 return [{
-                        prevOrderDeletedAt: new Date(),
                         ...responseOfCreatingHistory[0],
                     }];
             }
@@ -328,7 +327,6 @@ let OrderService = class OrderService {
                     throw exceptions_1.ClientCreateHistoryException;
                 }
                 return [{
-                        prevOrderDeletedAt: new Date(),
                         ...responseOfCreatingHistory[0],
                     }];
             }
@@ -378,7 +376,6 @@ let OrderService = class OrderService {
                 throw exceptions_1.ClientCreateHistoryException;
             }
             return {
-                prevOrderDeletedAt: new Date(),
                 ...responseOfCreatingHistory,
             };
         });

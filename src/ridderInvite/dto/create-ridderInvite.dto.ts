@@ -1,17 +1,31 @@
-import { IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString, Max, Min } from "class-validator"
-import { MAX_SUGGEST_PRICE, MIN_INIT_PRICE, MIN_SUGGEST_PRICE } from "../../constants/price.constant"
+import { 
+    IsDateString, 
+    IsLatitude, 
+    IsLongitude, 
+    IsNotEmpty, 
+    IsNumberString, 
+    IsOptional, 
+    IsString, 
+    MaxLength, 
+    MinLength 
+} from "class-validator"
+import { 
+    MaxNumberString, 
+    MinNumberString 
+} from "../../decorators"
+import { MAX_SUGGEST_PRICE, MIN_SUGGEST_PRICE } from "../../constants/price.constant"
 import { MAX_BRIEF_DESCRIPTION_LENGTH, MIN_BRIEF_DESCRIPTION_LENGTH } from "../../constants/context.constant"
 
 export class CreateRidderInviteDto {
     @IsOptional()
-    @Min(MIN_BRIEF_DESCRIPTION_LENGTH)
-    @Max(MAX_BRIEF_DESCRIPTION_LENGTH)
+    @MinLength(MIN_BRIEF_DESCRIPTION_LENGTH)
+    @MaxLength(MAX_BRIEF_DESCRIPTION_LENGTH)
     @IsString()
     briefDescription?: string
 
     @IsNotEmpty()
-    @Min(MIN_SUGGEST_PRICE)
-    @Max(MAX_SUGGEST_PRICE)
+    @MinNumberString(MIN_SUGGEST_PRICE)
+    @MaxNumberString(MAX_SUGGEST_PRICE)
     @IsNumberString()
     suggestPrice: number
 

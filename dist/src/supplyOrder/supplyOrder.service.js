@@ -42,7 +42,6 @@ let SupplyOrderService = class SupplyOrderService {
             tolerableRDV: createSupplyOrderDto.tolerableRDV,
         }).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
-            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });
     }
@@ -293,7 +292,6 @@ let SupplyOrderService = class SupplyOrderService {
             status: updateSupplyOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
-            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });
     }

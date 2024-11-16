@@ -36,7 +36,7 @@ export declare class OrderService {
         motocycleLicense: string | null;
         motocyclePhotoUrl: string | null;
     }[]>;
-    searchPaginationOrderForPassengerById(passengerId: string, ridderName: string | undefined, limit: number, offset: number): Promise<{
+    searchPaginationOrderByPassengerId(passengerId: string, ridderName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         ridderStartAddress: string;
         ridderName: never;
@@ -49,7 +49,7 @@ export declare class OrderService {
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[]>;
-    searchPaginationOrderForRidderById(ridderId: string, passengerName: string | undefined, limit: number, offset: number): Promise<{
+    searchPaginationOrderByRidderId(ridderId: string, passengerName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         passengerStartAddress: string;
         passengerEndAddress: string;
@@ -79,298 +79,300 @@ export declare class OrderService {
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[] | {
-        historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+        historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
         historyId: string;
-        prevOrderDeletedAt: Date;
     }[]>;
     toFinishedRidderStatusById(id: string, ridderId: string): Promise<{
         prevOrderId: string;
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[] | {
-        historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+        historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
         historyId: string;
-        prevOrderDeletedAt: Date;
     }[]>;
     cancelAndDeleteOrderById(id: string, userId: string): Promise<{
+        [x: number]: {
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
+            historyId: string;
+        };
         length: number;
         toString(): string;
         toLocaleString(): string;
         toLocaleString(locales: string | string[], options?: Intl.NumberFormatOptions & Intl.DateTimeFormatOptions): string;
         pop(): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | undefined;
         push(...items: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]): number;
         concat(...items: ConcatArray<{
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>[]): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         concat(...items: ({
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | ConcatArray<{
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>)[]): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         join(separator?: string): string;
         reverse(): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         shift(): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | undefined;
         slice(start?: number, end?: number): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         sort(compareFn?: ((a: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, b: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }) => number) | undefined): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         splice(start: number, deleteCount?: number): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         splice(start: number, deleteCount: number, ...items: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         unshift(...items: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]): number;
         indexOf(searchElement: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, fromIndex?: number): number;
         lastIndexOf(searchElement: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, fromIndex?: number): number;
         every<S extends {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => value is S, thisArg?: any): this is S[];
         every(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => unknown, thisArg?: any): boolean;
         some(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => unknown, thisArg?: any): boolean;
         forEach(callbackfn: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => void, thisArg?: any): void;
         map<U>(callbackfn: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => U, thisArg?: any): U[];
         filter<S extends {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => value is S, thisArg?: any): S[];
         filter(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => unknown, thisArg?: any): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         reduce(callbackfn: (previousValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         };
         reduce(callbackfn: (previousValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, initialValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         };
         reduce<U>(callbackfn: (previousValue: U, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => U, initialValue: U): U;
         reduceRight(callbackfn: (previousValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         };
         reduceRight(callbackfn: (previousValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, initialValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         };
         reduceRight<U>(callbackfn: (previousValue: U, currentValue: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, currentIndex: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => U, initialValue: U): U;
         find<S extends {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, obj: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => value is S, thisArg?: any): S | undefined;
         find(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, obj: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => unknown, thisArg?: any): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | undefined;
         findIndex(predicate: (value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, obj: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => unknown, thisArg?: any): number;
         fill(value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, start?: number, end?: number): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         copyWithin(target: number, start: number, end?: number): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[];
         entries(): ArrayIterator<[number, {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }]>;
         keys(): ArrayIterator<number>;
         values(): ArrayIterator<{
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>;
         includes(searchElement: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, fromIndex?: number): boolean;
         flatMap<U, This = undefined>(callback: (this: This, value: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }, index: number, array: {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }[]) => U | readonly U[], thisArg?: This | undefined): U[];
         flat<A, D extends number = 1>(this: A, depth?: D | undefined): FlatArray<A, D>[];
         [Symbol.iterator](): ArrayIterator<{
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         }>;
         [Symbol.unscopables]: {
@@ -412,9 +414,8 @@ export declare class OrderService {
             at?: boolean | undefined;
         };
         at(index: number): {
-            historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
+            historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | undefined;
-        prevOrderDeletedAt: Date;
     }>;
 }

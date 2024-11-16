@@ -32,7 +32,10 @@ let SupplyOrderController = class SupplyOrderController {
             const res = await this.supplyOrderService.createSupplyOrderByCreatorId(ridder.id, createSupplyOrderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreateSupplyOrderException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.ForbiddenException
@@ -154,7 +157,10 @@ let SupplyOrderController = class SupplyOrderController {
             const res = await this.supplyOrderService.updateSupplyOrderById(id, ridder.id, updateSupplyOrderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException

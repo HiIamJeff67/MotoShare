@@ -49,7 +49,6 @@ let PassengerInviteService = class PassengerInviteService {
         }).returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
         });
     }
@@ -460,7 +459,6 @@ let PassengerInviteService = class PassengerInviteService {
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")))
             .returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
-            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
         });
     }
@@ -544,26 +542,30 @@ let PassengerInviteService = class PassengerInviteService {
                     || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
                 }
-                return {
-                    orderId: responseOfCreatingOrder[0].id,
-                    status: responseOfDecidingPassengerInvite[0].inviteStatus,
-                    price: responseOfCreatingOrder[0].finalPrice,
-                    passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
-                    passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
-                    ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
-                    passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
-                    passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
-                    ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
-                    startAfter: responseOfCreatingOrder[0].startAfter,
-                    orderStatus: responseOfCreatingOrder[0].status,
-                };
+                return [{
+                        orderId: responseOfCreatingOrder[0].id,
+                        status: responseOfDecidingPassengerInvite[0].inviteStatus,
+                        price: responseOfCreatingOrder[0].finalPrice,
+                        passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+                        passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+                        ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
+                        passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+                        passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
+                        ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+                        startAfter: responseOfCreatingOrder[0].startAfter,
+                        orderStatus: responseOfCreatingOrder[0].status,
+                    }];
             });
         }
         else if (decidePassengerInviteDto.status === "REJECTED") {
             return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 status: decidePassengerInviteDto.status,
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id));
+            }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id))
+                .returning({
+                status: passengerInvite_schema_1.PassengerInviteTable.status,
+                updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            });
         }
     }
     async deletePassengerInviteById(id, inviterId) {

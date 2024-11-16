@@ -13,13 +13,13 @@ exports.UpdatePurchaseOrderDto = void 0;
 const mapped_types_1 = require("@nestjs/mapped-types");
 const create_purchaseOrder_dto_1 = require("./create-purchaseOrder.dto");
 const class_validator_1 = require("class-validator");
-const status_interface_1 = require("../../../src/interfaces/status.interface");
+const status_tpye_1 = require("../../types/status.tpye");
 class UpdatePurchaseOrderDto extends (0, mapped_types_1.PartialType)(create_purchaseOrder_dto_1.CreatePurchaseOrderDto) {
 }
 exports.UpdatePurchaseOrderDto = UpdatePurchaseOrderDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_interface_1.PostedStatusTypes, { message: "The status of PurchaseOrder must be either POSTED, EXPIRED, or CANCEL" }),
+    (0, class_validator_1.IsIn)(status_tpye_1.PostedStatusTypes, { message: "The status of PurchaseOrder must be either POSTED, EXPIRED, or CANCEL" }),
     __metadata("design:type", String)
 ], UpdatePurchaseOrderDto.prototype, "status", void 0);
 //# sourceMappingURL=update-purchaseOrder.dto.js.map

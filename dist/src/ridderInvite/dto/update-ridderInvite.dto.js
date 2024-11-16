@@ -13,13 +13,13 @@ exports.DecideRidderInviteDto = exports.UpdateRidderInviteDto = void 0;
 const mapped_types_1 = require("@nestjs/mapped-types");
 const create_ridderInvite_dto_1 = require("./create-ridderInvite.dto");
 const class_validator_1 = require("class-validator");
-const status_interface_1 = require("../../interfaces/status.interface");
+const status_tpye_1 = require("../../types/status.tpye");
 class UpdateRidderInviteDto extends (0, mapped_types_1.PartialType)(create_ridderInvite_dto_1.CreateRidderInviteDto) {
 }
 exports.UpdateRidderInviteDto = UpdateRidderInviteDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_interface_1.InviteStatusTypes, { message: "The status of PassengerInvite must be either CHECKING or CANCEL" }),
+    (0, class_validator_1.IsIn)(status_tpye_1.InviteStatusTypes, { message: "The status of PassengerInvite must be either CHECKING or CANCEL" }),
     __metadata("design:type", String)
 ], UpdateRidderInviteDto.prototype, "status", void 0);
 class DecideRidderInviteDto {
@@ -27,7 +27,7 @@ class DecideRidderInviteDto {
 exports.DecideRidderInviteDto = DecideRidderInviteDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_interface_1.ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" }),
+    (0, class_validator_1.IsIn)(status_tpye_1.ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" }),
     __metadata("design:type", String)
 ], DecideRidderInviteDto.prototype, "status", void 0);
 //# sourceMappingURL=update-ridderInvite.dto.js.map

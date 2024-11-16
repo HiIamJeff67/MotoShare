@@ -541,26 +541,30 @@ let RidderInviteService = class RidderInviteService {
                     || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
                 }
-                return {
-                    orderId: responseOfCreatingOrder[0].id,
-                    status: responseOfDecidingRidderInvite[0].inviteStatus,
-                    price: responseOfCreatingOrder[0].finalPrice,
-                    passsengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
-                    passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
-                    ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
-                    passengerStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
-                    passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
-                    ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
-                    startAfter: responseOfCreatingOrder[0].startAfter,
-                    orderStatus: responseOfCreatingOrder[0].status,
-                };
+                return [{
+                        orderId: responseOfCreatingOrder[0].id,
+                        status: responseOfDecidingRidderInvite[0].inviteStatus,
+                        price: responseOfCreatingOrder[0].finalPrice,
+                        passsengerStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
+                        passengerEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
+                        ridderStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+                        passengerStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
+                        passengerEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
+                        ridderStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
+                        startAfter: responseOfCreatingOrder[0].startAfter,
+                        orderStatus: responseOfCreatingOrder[0].status,
+                    }];
             });
         }
         else if (decideRidderInviteDto.status === "REJECTED") {
             return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
                 status: decideRidderInviteDto.status,
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id));
+            }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id))
+                .returning({
+                status: ridderInvite_schema_1.RidderInviteTable.status,
+                updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
+            });
         }
     }
     async deleteRidderInviteById(id, inviterId) {

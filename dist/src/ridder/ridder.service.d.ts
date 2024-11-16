@@ -14,9 +14,9 @@ export declare class RidderService {
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
+            motocycleType: string | null;
             avatorUrl: string | null;
             createdAt: Date;
-            motocycleType: string | null;
             motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
@@ -28,10 +28,10 @@ export declare class RidderService {
             age: number | null;
             phoneNumber: string | null;
             selfIntroduction: string | null;
-            avatorUrl: string | null;
-            createdAt: Date;
             motocycleLicense: string | null;
             motocycleType: string | null;
+            avatorUrl: string | null;
+            createdAt: Date;
             motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
@@ -68,8 +68,8 @@ export declare class RidderService {
         email: string;
         info: {
             isOnline: boolean;
-            avatorUrl: string | null;
             motocycleType: string | null;
+            avatorUrl: string | null;
         } | null;
     }[]>;
     updateRidderById(id: string, updateRidderDto: UpdateRidderDto): Promise<{

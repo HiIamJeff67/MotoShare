@@ -6,5 +6,5 @@ import { UpdateHistoryDto } from './dto/update-history.dto';
 export class HistoryController {
   constructor(private readonly historyService: HistoryService) {}
 
-
+  
 }

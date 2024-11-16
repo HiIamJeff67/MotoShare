@@ -68,7 +68,7 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrderForPassengerById(passenger, ridderName = undefined, limit = "10", offset = "0", response) {
         try {
-            const res = await this.orderService.searchPaginationOrderForPassengerById(passenger.id, ridderName, +limit, +offset);
+            const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -85,7 +85,7 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrderForridderById(ridder, passengerName = undefined, limit = "10", offset = "0", response) {
         try {
-            const res = await this.orderService.searchPaginationOrderForRidderById(ridder.id, passengerName, +limit, +offset);
+            const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -106,9 +106,12 @@ let OrderController = class OrderController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.orderService.toStartedPassengerStatusById(id, passenger.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -127,9 +130,12 @@ let OrderController = class OrderController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.orderService.toUnpaidPassengerStatusById(id, passenger.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -148,9 +154,12 @@ let OrderController = class OrderController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.orderService.toFinishedPassengerStatusById(id, passenger.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -171,9 +180,12 @@ let OrderController = class OrderController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.orderService.toStartedRidderStatusById(id, ridder.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updateAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -194,7 +206,10 @@ let OrderController = class OrderController {
             const res = await this.orderService.toUnpaidRidderStatusById(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -215,7 +230,10 @@ let OrderController = class OrderController {
             const res = await this.orderService.toFinishedRidderStatusById(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                prevOrderDeletedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -236,9 +254,12 @@ let OrderController = class OrderController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.orderService.cancelAndDeleteOrderById(id, passenger.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                prevOrderDeletedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException

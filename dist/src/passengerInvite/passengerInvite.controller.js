@@ -34,7 +34,10 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.createPassengerInviteByOrderId(passenger.id, orderId, createPassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreatePassengerInviteException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -231,9 +234,12 @@ let PassengerInviteController = class PassengerInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, updatePassengerInviteDto);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -252,9 +258,12 @@ let PassengerInviteController = class PassengerInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, decidePassengerInviteDto);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -273,11 +282,11 @@ let PassengerInviteController = class PassengerInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.passengerInviteService.deletePassengerInviteById(id, passenger.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
-                ...res,
+                ...res[0],
             });
         }
         catch (error) {

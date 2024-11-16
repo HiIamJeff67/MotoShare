@@ -42,7 +42,6 @@ let PurchaseOrderService = class PurchaseOrderService {
             isUrgent: createPurchaseOrderDto.isUrgent,
         }).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
     }
@@ -288,7 +287,6 @@ let PurchaseOrderService = class PurchaseOrderService {
             status: updatePurchaseOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
     }

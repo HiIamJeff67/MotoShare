@@ -1,0 +1,12 @@
+export type PostedStatusType = "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+export declare const PostedStatusTypes: string[];
+export type InviteStatusType = "ACCEPTED" | "REJECTED" | "CHECKING" | "CANCEL";
+export declare const InviteStatusTypes: string[];
+export type InviterStatusType = "CHECKING" | "CANCEL" | "ACCEPTED" | "REJECTED";
+export declare const InviterStatusTypes: string[];
+export type ReceiverStatusType = "CHECKING" | "CANCEL" | "ACCEPTED" | "REJECTED";
+export declare const ReceiverStatusTypes: string[];
+export type OrderStatusType = "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+export declare const OrderStatusTypes: never[];
+export type HistoryStatusType = "FINISHED" | "EXPIRED" | "CANCEL";
+export declare const HistoryStatusTypes: never[];

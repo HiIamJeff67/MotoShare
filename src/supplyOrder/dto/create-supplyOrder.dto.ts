@@ -1,4 +1,18 @@
-import { IsDateString, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString, Max, Min } from "class-validator";
+import { 
+    IsDateString, 
+    IsLatitude, 
+    IsLongitude, 
+    IsNotEmpty, 
+    IsNumberString, 
+    IsOptional, 
+    IsString, 
+    MaxLength, 
+    MinLength 
+} from "class-validator";
+import { 
+    MaxNumberString, 
+    MinNumberString 
+} from "../../decorators";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_TOLERABLE_RDV, MIN_TOLERABLE_RDV } from "../../constants/algorithm.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
@@ -7,14 +21,14 @@ import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/
 
 export class CreateSupplyOrderDto {
     @IsOptional()
-    @Min(MIN_DESCRIPTION_LENGTH)
-    @Max(MAX_DESCRIPTION_LENGTH)
+    @MinLength(MIN_DESCRIPTION_LENGTH)
+    @MaxLength(MAX_DESCRIPTION_LENGTH)
     @IsString()
     description?: string
 
     @IsNotEmpty()
-    @Min(MIN_INIT_PRICE)
-    @Max(MAX_INIT_PRICE)
+    @MinNumberString(MIN_INIT_PRICE)
+    @MaxNumberString(MAX_INIT_PRICE)
     @IsNumberString()
     initPrice: number
 
@@ -55,8 +69,8 @@ export class CreateSupplyOrderDto {
     startAfter?: Date   // but at most case, should be specify
 
     @IsOptional()
-    @Min(MIN_TOLERABLE_RDV)
-    @Max(MAX_TOLERABLE_RDV)
+    @MinNumberString(MIN_TOLERABLE_RDV)
+    @MaxNumberString(MAX_TOLERABLE_RDV)
     @IsNumberString()
     tolerableRDV?: number
 

@@ -231,9 +231,9 @@ let RidderInviteController = class RidderInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, updateRidderInviteDto);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -252,9 +252,9 @@ let RidderInviteController = class RidderInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, decideRidderInviteDto);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -273,11 +273,11 @@ let RidderInviteController = class RidderInviteController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.ridderInviteService.deleteRidderInviteById(id, ridder.id);
-            if (!res)
+            if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
-                ...res,
+                ...res[0],
             });
         }
         catch (error) {

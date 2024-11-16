@@ -11,16 +11,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateSupplyOrderDto = void 0;
 const class_validator_1 = require("class-validator");
+const decorators_1 = require("../../decorators");
+const price_constant_1 = require("../../constants/price.constant");
+const algorithm_constant_1 = require("../../constants/algorithm.constant");
+const context_constant_1 = require("../../constants/context.constant");
 class CreateSupplyOrderDto {
 }
 exports.CreateSupplyOrderDto = CreateSupplyOrderDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MinLength)(context_constant_1.MIN_DESCRIPTION_LENGTH),
+    (0, class_validator_1.MaxLength)(context_constant_1.MAX_DESCRIPTION_LENGTH),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateSupplyOrderDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, decorators_1.MinNumberString)(price_constant_1.MIN_INIT_PRICE),
+    (0, decorators_1.MaxNumberString)(price_constant_1.MAX_INIT_PRICE),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "initPrice", void 0);
@@ -61,6 +69,8 @@ __decorate([
 ], CreateSupplyOrderDto.prototype, "startAfter", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, decorators_1.MinNumberString)(algorithm_constant_1.MIN_TOLERABLE_RDV),
+    (0, decorators_1.MaxNumberString)(algorithm_constant_1.MAX_TOLERABLE_RDV),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "tolerableRDV", void 0);

@@ -32,7 +32,10 @@ let PurchaseOrderController = class PurchaseOrderController {
             const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(passenger.id, createPurchaseOrderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreatePurchaseOrderException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             console.log(error);
@@ -155,7 +158,10 @@ let PurchaseOrderController = class PurchaseOrderController {
             const res = await this.purchaseOrderService.updatePurchaseOrderById(id, passenger.id, updatePurchaseOrderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException

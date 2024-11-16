@@ -116,7 +116,10 @@ let RidderController = class RidderController {
             const res = await this.ridderService.updateRidderById(ridder.id, updateRidderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -134,7 +137,10 @@ let RidderController = class RidderController {
             const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto);
             if (!res)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({});
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException

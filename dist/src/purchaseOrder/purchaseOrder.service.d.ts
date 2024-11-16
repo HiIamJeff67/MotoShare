@@ -7,12 +7,10 @@ export declare class PurchaseOrderService {
     constructor(db: DrizzleDB);
     createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
         id: string;
-        createdAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -25,14 +23,14 @@ export declare class PurchaseOrderService {
         startAddress: string;
         endAddress: string;
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
-        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -45,9 +43,10 @@ export declare class PurchaseOrderService {
         startAddress: string;
         endAddress: string;
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         creator: {
             userName: string;
             info: {
@@ -145,7 +144,6 @@ export declare class PurchaseOrderService {
     }[]>;
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
         id: string;
-        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
@@ -154,9 +152,8 @@ export declare class PurchaseOrderService {
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        description: string | null;
-        createdAt: Date;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -169,8 +166,9 @@ export declare class PurchaseOrderService {
         startAddress: string;
         endAddress: string;
         startAfter: Date;
+        createdAt: Date;
         updatedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
 }

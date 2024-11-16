@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString, Max, Min } from "class-validator";
+import { IsIn, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 import { StarRatingType, StarRatingTypes } from "../../types/starRating.type";
 import { MAX_COMMENT_LENGTH, MIN_COMMENT_LENGTH } from "../../constants/context.constant";
 
@@ -8,8 +8,8 @@ export class UpdateHistoryDto {
     starRating?: StarRatingType
 
     @IsOptional()
-    @Min(MIN_COMMENT_LENGTH)
-    @Max(MAX_COMMENT_LENGTH)
+    @MinLength(MIN_COMMENT_LENGTH)
+    @MaxLength(MAX_COMMENT_LENGTH)
     @IsString()
     comment?: string
 }

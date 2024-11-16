@@ -1,6 +1,4 @@
-import { CreateOrderDto } from './create-order.dto';
-declare const UpdateOrderDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateOrderDto>>;
-export declare class UpdateOrderDto extends UpdateOrderDto_base {
-    status?: string;
+import { OrderStatusType } from '../../types/status.tpye';
+export declare class UpdateOrderDto {
+    status?: OrderStatusType;
 }
-export {};

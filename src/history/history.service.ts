@@ -4,11 +4,12 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { HistoryTable } from '../drizzle/schema/history.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
-import { and, desc, eq, or } from 'drizzle-orm';
+import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
+import { ClientHistoryNotFoundException } from '../exceptions';
 
 @Injectable()
 export class HistoryService {
@@ -38,15 +39,15 @@ export class HistoryService {
       motocycleLicense: RidderInfoTable.motocycleLicense,
       motocycleType: RidderInfoTable.motocycleType,
     }).from(HistoryTable)
-      .leftJoin(PassengerTable, eq(PassengerTable.id, HistoryTable.passengerId))
-      .leftJoin(RidderTable, eq(RidderTable.id, HistoryTable.ridderId))
       .where(and(
         eq(HistoryTable.id, id),
         or(
-          eq(PassengerTable.id, userId),
-          eq(RidderTable.id, userId),
+          eq(HistoryTable.passengerId, userId),
+          eq(HistoryTable.ridderId, userId),
         )
       ))
+      .leftJoin(PassengerTable, eq(PassengerTable.id, HistoryTable.passengerId))
+      .leftJoin(RidderTable, eq(RidderTable.id, HistoryTable.ridderId))
       .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
       .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id));
   }
@@ -114,6 +115,7 @@ export class HistoryService {
     return await this.db.update(HistoryTable).set({
       starRatingByPassenger: updateHistoryDto.starRating,
       commentByPassenger: updateHistoryDto.comment,
+      updatedAt: new Date(),
     }).where(and(
       eq(HistoryTable.id, id),
       eq(HistoryTable.passengerId, passengerId),
@@ -130,6 +132,7 @@ export class HistoryService {
     return await this.db.update(HistoryTable).set({
       starRatingByPassenger: updateHistoryDto.starRating,
       commentByPassenger: updateHistoryDto.comment,
+      updatedAt: new Date(),
     }).where(and(
       eq(HistoryTable.id, id),
       eq(HistoryTable.ridderId, ridderId),
@@ -138,4 +141,92 @@ export class HistoryService {
     });
   }
   /* ================================= Update operations ================================= */
+
+
+  /* ================================= Delete operations ================================= */
+  // since we make the history to contain both the id of passengers and ridders,
+  // if the passenger want to delete, we can't just delete the history itself,
+  // of the ridder will see the history dispear..., so we cover this functionality with
+  // delinking the passengerId or ridderId which I set to allow null value.
+  // however, for space complexity, we still need to delete the history
+  // once it doesn't contain the passengerId and ridderId anymore
+  async delinkHistoryByPassengerId(
+    id: string,
+    passengerId: string,
+  ) {
+    const responseOfUpdatingHistory = await this.db.update(HistoryTable).set({
+      passengerId: null,
+    }).where(and(
+      eq(HistoryTable.id, id),
+      eq(HistoryTable.passengerId, passengerId),
+    ))
+      .returning({
+      passengerId: HistoryTable.passengerId,
+      ridderId: HistoryTable.ridderId,
+    });
+    if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+      throw ClientHistoryNotFoundException;
+    }
+
+    if (  // responseOfUpdatingHistory[0].passengerId === null &&
+      responseOfUpdatingHistory[0].ridderId === null) {
+        const responseOfDeletingHistory = await this.db.delete(HistoryTable)
+          .where(and(
+            eq(HistoryTable.id, id),
+            isNull(HistoryTable.passengerId), // double check if it is null value
+            isNull(HistoryTable.ridderId),    // double check if it is null value
+          ))
+          .returning({
+            id: HistoryTable.id,
+          });
+        if (!responseOfDeletingHistory || responseOfDeletingHistory.length === 0) {
+          throw ClientHistoryNotFoundException;
+        }
+    }
+
+    return {
+      id: id,
+    };
+  }
+
+  async delinkHistoryByRidderId(
+    id: string,
+    ridderId: string,
+  ) {
+    const responseOfUpdatingHistory = await this.db.update(HistoryTable).set({
+      ridderId: null,
+    }).where(and(
+      eq(HistoryTable.id, id),
+      eq(HistoryTable.ridderId, ridderId),
+    ))
+      .returning({
+      passengerId: HistoryTable.passengerId,
+      ridderId: HistoryTable.ridderId,
+    });
+    if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+      throw ClientHistoryNotFoundException;
+    }
+
+    if (responseOfUpdatingHistory[0].passengerId === null
+      // && responseOfUpdatingHistory[0].ridderId === null
+    ) {
+        const responseOfDeletingHistory = await this.db.delete(HistoryTable)
+          .where(and(
+            eq(HistoryTable.id, id),
+            isNull(HistoryTable.passengerId), // double check if it is null value
+            isNull(HistoryTable.ridderId),    // double check if it is null value
+          ))
+          .returning({
+            id: HistoryTable.id,
+          });
+        if (!responseOfDeletingHistory || responseOfDeletingHistory.length === 0) {
+          throw ClientHistoryNotFoundException;
+        }
+    }
+
+    return {
+      id: id,
+    };
+  }
+  /* ================================= Delete operations ================================= */
 }

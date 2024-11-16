@@ -116,7 +116,10 @@ let PassengerController = class PassengerController {
             const res = await this.passengerService.updatePassengerById(passenger.id, updatePassengerDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -134,7 +137,9 @@ let PassengerController = class PassengerController {
             const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto);
             if (!res)
                 throw exceptions_1.ClientPassengerNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({});
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException

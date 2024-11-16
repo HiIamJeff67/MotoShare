@@ -1,4 +1,15 @@
-import { IsAlphanumeric, IsBoolean, IsBooleanString, IsInt, IsNumberString, IsOptional, IsString } from "class-validator";
+import { 
+    IsBooleanString, 
+    IsNumberString, 
+    IsOptional, 
+    IsString 
+} from "class-validator";
+import { 
+    MaxNumberString, 
+    MinNumberString 
+} from "../../decorators";
+import { MAX_AGE, MIN_AGE } from "../../constants/info.constant";
+import { MAX_SELF_INTRODUCTION_LENGTH, MIN_SELF_INTRODUCTION_LENGTH } from "../../constants/context.constant";
 
 export class CreateRidderInfoDto {
     // instead of using @IsOptional decorator for the optional fields,
@@ -10,6 +21,8 @@ export class CreateRidderInfoDto {
     isOnline?: boolean
 
     @IsOptional()
+    @MinNumberString(MIN_AGE)
+    @MaxNumberString(MAX_AGE)
     @IsNumberString()
     age?: number
 
@@ -18,6 +31,8 @@ export class CreateRidderInfoDto {
     phoneNumber?: string
 
     @IsOptional()
+    @MinNumberString(MIN_SELF_INTRODUCTION_LENGTH)
+    @MaxNumberString(MAX_SELF_INTRODUCTION_LENGTH)
     @IsString()
     selfIntroduction?: string
 
