@@ -1,5 +1,5 @@
 import { Controller, 
-  Get, Post, Body, Patch, Delete, UseGuards, Query, Res, 
+  Get, Post, Body, Delete, UseGuards, Query, Res, 
   BadRequestException, 
   UnauthorizedException, 
   ForbiddenException, 
@@ -394,7 +394,7 @@ export class PassengerInviteController {
 
   /* ================= Update detail operations used by Passenger ================= */
   @UseGuards(JwtPassengerGuard)
-  @Patch('passenger/updateMyPassengerInviteById')
+  @Post('passenger/updateMyPassengerInviteById')
   async updateMyPassengerInviteById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -430,7 +430,7 @@ export class PassengerInviteController {
 
   /* ================= Accept or Reject operations used by Ridder ================= */
   @UseGuards(JwtRidderGuard)
-  @Patch('ridder/decidePassengerInviteById')
+  @Post('ridder/decidePassengerInviteById')
   async decidePassengerInviteById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

@@ -1,5 +1,5 @@
 import { Controller, 
-  Get, Post, Body, Patch, Delete, Query, Res, UseGuards,
+  Get, Post, Body, Delete, Query, Res, UseGuards,
   BadRequestException, 
   UnauthorizedException, 
   NotFoundException, 
@@ -240,7 +240,7 @@ export class SupplyOrderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Patch('updateMySupplyOrderById')
+  @Post('updateMySupplyOrderById')
   async updateMySupplyOrderById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

@@ -1,6 +1,6 @@
 import { 
   Controller, UseGuards, 
-  Get, Body, Patch, Delete, Query, Res, 
+  Get, Body, Delete, Query, Res, 
   UnauthorizedException, 
   NotFoundException, 
   ConflictException, 
@@ -165,7 +165,7 @@ export class RidderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Patch('updateMe')
+  @Post('updateMe')
   async updateMe(
     @Ridder() ridder: RidderType,
     @Body() updateRidderDto: UpdateRidderDto,

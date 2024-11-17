@@ -1,5 +1,5 @@
 import { Controller, 
-  Get, Post, Body, Patch, Delete, Query, UseGuards, Res, 
+  Get, Post, Body, Delete, Query, UseGuards, Res, 
   NotFoundException, 
   BadRequestException, 
   UnauthorizedException, 
@@ -246,7 +246,7 @@ export class PurchaseOrderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Patch('updateMyPurchaseOrderById')
+  @Post('updateMyPurchaseOrderById')
   async updateMyPurchaseOrderById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string, 

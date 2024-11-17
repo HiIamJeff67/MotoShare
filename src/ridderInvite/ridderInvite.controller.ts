@@ -1,5 +1,5 @@
 import { Controller, 
-  Get, Post, Body, Patch, Delete, UseGuards, Query, Res, 
+  Get, Post, Body, Delete, UseGuards, Query, Res, 
   BadRequestException, 
   UnauthorizedException, 
   ForbiddenException, 
@@ -393,7 +393,7 @@ export class RidderInviteController {
 
   /* ================= Update detail operations used by Ridder ================= */
   @UseGuards(JwtRidderGuard)
-  @Patch('ridder/updateMyRidderInviteById')
+  @Post('ridder/updateMyRidderInviteById')
   async updateMyRidderInviteById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

@@ -1,12 +1,13 @@
 import { 
   Controller, UseGuards, 
-  Get, Body, Patch, Delete, Query, Res, 
+  Get, Body, Delete, Query, Res, 
   NotFoundException, 
   ConflictException, 
   UnauthorizedException, 
   BadRequestException,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
+  Post
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
@@ -162,7 +163,7 @@ export class PassengerController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Patch('updateMe')
+  @Post('updateMe')
   async updateMe(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerDto: UpdatePassengerDto,
@@ -192,7 +193,7 @@ export class PassengerController {
 
   @UseGuards(JwtPassengerGuard)
   // @UseInterceptors(FileInterceptor('file'))
-  @Patch('updateMyInfo')
+  @Post('updateMyInfo')
   async updateMyInfo(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
