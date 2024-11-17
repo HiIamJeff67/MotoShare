@@ -6,19 +6,13 @@ export declare class PurchaseOrderService {
     private db;
     constructor(db: DrizzleDB);
     createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
-        startAddress: string;
-        endAddress: string;
-        initPrice: number;
-        startAfter: Date;
-        endedAt: Date;
-        isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         createdAt: Date;
+        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -27,19 +21,19 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
+        startAfter: Date;
+        endedAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        isUrgent: boolean;
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
-        startAddress: string;
-        endAddress: string;
-        description: string | null;
-        initPrice: number;
-        startAfter: Date;
-        endedAt: Date;
-        isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        description: string | null;
         createdAt: Date;
+        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -48,7 +42,13 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
+        startAfter: Date;
+        endedAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        isUrgent: boolean;
         creator: {
             userName: string;
             info: {
@@ -149,25 +149,19 @@ export declare class PurchaseOrderService {
         RDV: unknown;
     }[]>;
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getAllPurchaseOrders(): Promise<{
-        startAddress: string;
-        endAddress: string;
-        description: string | null;
-        initPrice: number;
-        startAfter: Date;
-        endedAt: Date;
-        isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        description: string | null;
         createdAt: Date;
         creatorId: string;
+        initPrice: number;
         startCord: {
             x: number;
             y: number;
@@ -176,6 +170,12 @@ export declare class PurchaseOrderService {
             x: number;
             y: number;
         };
+        startAddress: string;
+        endAddress: string;
+        startAfter: Date;
+        endedAt: Date;
         updatedAt: Date;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        isUrgent: boolean;
     }[]>;
 }

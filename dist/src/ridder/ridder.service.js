@@ -21,10 +21,13 @@ const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
+const supabase_module_1 = require("../supabase/supabase.module");
+const supabase_js_1 = require("@supabase/supabase-js");
 let RidderService = class RidderService {
-    constructor(config, db) {
+    constructor(config, db, supabase) {
         this.config = config;
         this.db = db;
+        this.supabase = supabase;
     }
     async getRidderById(id) {
         const response = await this.db.select({
@@ -178,7 +181,7 @@ let RidderService = class RidderService {
             eamil: ridder_schema_1.RidderTable.email,
         });
     }
-    async updateRidderInfoByUserId(userId, updateRidderInfoDto) {
+    async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile) {
         return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
             isOnline: updateRidderInfoDto.isOnline,
             age: updateRidderInfoDto.age,
@@ -221,6 +224,7 @@ exports.RidderService = RidderService;
 exports.RidderService = RidderService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [config_1.ConfigService, Object])
+    __param(2, (0, common_1.Inject)(supabase_module_1.SUPABASE)),
+    __metadata("design:paramtypes", [config_1.ConfigService, Object, supabase_js_1.SupabaseClient])
 ], RidderService);
 //# sourceMappingURL=ridder.service.js.map

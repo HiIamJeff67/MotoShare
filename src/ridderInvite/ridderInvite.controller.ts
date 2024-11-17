@@ -426,7 +426,7 @@ export class RidderInviteController {
 
   /* ================= Accept or Reject operations used by Ridder ================= */
   @UseGuards(JwtPassengerGuard)
-  @Patch('passenger/decideRidderInviteById')
+  @Post('passenger/decideRidderInviteById')
   async decidePassengerInviteById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,

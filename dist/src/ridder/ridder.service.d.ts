@@ -2,10 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { SupabaseClient } from '@supabase/supabase-js';
 export declare class RidderService {
     private config;
     private db;
-    constructor(config: ConfigService, db: DrizzleDB);
+    private supabase;
+    constructor(config: ConfigService, db: DrizzleDB, supabase: SupabaseClient);
     private getRidderById;
     getRidderWithInfoByUserName(userName: string): Promise<{
         userName: string;
@@ -41,13 +43,10 @@ export declare class RidderService {
             userId: string;
             orderId: string;
             order: {
-                description: string | null;
-                initPrice: number;
-                startAfter: Date;
-                isUrgent: boolean;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 id: string;
+                description: string | null;
                 createdAt: Date;
+                initPrice: number;
                 startCord: {
                     x: number;
                     y: number;
@@ -56,7 +55,10 @@ export declare class RidderService {
                     x: number;
                     y: number;
                 };
+                startAfter: Date;
                 updatedAt: Date;
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                isUrgent: boolean;
                 creator: {
                     userName: string;
                 };
@@ -76,7 +78,7 @@ export declare class RidderService {
         userName: string;
         eamil: string;
     }[]>;
-    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto): Promise<import("pg").QueryResult<never>>;
+    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedFile: Express.Multer.File): Promise<import("pg").QueryResult<never>>;
     deleteRiddderById(id: string): Promise<{
         id: string;
         userName: string;

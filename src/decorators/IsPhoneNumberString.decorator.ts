@@ -19,7 +19,7 @@ export function IsPhoneNumberString(phoneNumberType: PhoneNumberType, allowedPho
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: `${propertyName} must be a type of phone number in ${PhoneNumberTypeToRegion[phoneNumberType]}`,
+                message: `${propertyName} must be a type of the phone number in ${PhoneNumberTypeToRegion[phoneNumberType]}`,
                 ...validationOptions,
             },
             validator: {

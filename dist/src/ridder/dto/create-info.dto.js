@@ -39,13 +39,14 @@ __decorate([
 ], CreateRidderInfoDto.prototype, "phoneNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, decorators_1.MinNumberString)(context_constant_1.MIN_SELF_INTRODUCTION_LENGTH),
-    (0, decorators_1.MaxNumberString)(context_constant_1.MAX_SELF_INTRODUCTION_LENGTH),
+    (0, class_validator_1.MinLength)(context_constant_1.MIN_SELF_INTRODUCTION_LENGTH),
+    (0, class_validator_1.MaxLength)(context_constant_1.MAX_SELF_INTRODUCTION_LENGTH),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateRidderInfoDto.prototype, "selfIntroduction", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, decorators_1.IsLooseTWLicenseString)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateRidderInfoDto.prototype, "motocycleLicense", void 0);

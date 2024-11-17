@@ -4,7 +4,10 @@ import {
   UnauthorizedException, 
   NotFoundException, 
   ConflictException, 
-  BadRequestException
+  BadRequestException,
+  UseInterceptors,
+  UploadedFile,
+  Post
 } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { Response } from 'express';
@@ -22,6 +25,7 @@ import { Ridder } from '../auth/decorator';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('ridder')
 export class RidderController {
@@ -190,14 +194,16 @@ export class RidderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Patch('updateMyInfo')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('updateMyInfo')
   async updateMyInfo(
     @Ridder() ridder: RidderType,
     @Body() updateRidderInfoDto: UpdateRidderInfoDto,
+    @UploadedFile() file: Express.Multer.File,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto);
+      const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, file);
 
       if (!res) throw ClientRidderNotFoundException;
 

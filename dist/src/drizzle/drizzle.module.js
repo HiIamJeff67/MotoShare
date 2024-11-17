@@ -12,6 +12,7 @@ const config_1 = require("@nestjs/config");
 const node_postgres_1 = require("drizzle-orm/node-postgres");
 const pg_1 = require("pg");
 const schema = require("./schema/schema");
+const exceptions_1 = require("../exceptions");
 exports.DRIZZLE = Symbol("drizzle-connection");
 let DrizzleModule = class DrizzleModule {
 };
@@ -24,6 +25,8 @@ exports.DrizzleModule = DrizzleModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: async (configService) => {
                     const databaseURL = configService.get("DATABASE_URL");
+                    if (!databaseURL)
+                        throw exceptions_1.ServerNeonEnvVarNotFoundException;
                     const pool = new pg_1.Pool({
                         connectionString: databaseURL,
                         ssl: true,

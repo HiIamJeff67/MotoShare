@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./phoneNumber.type"), exports);
 __exportStar(require("./starRating.type"), exports);
 __exportStar(require("./status.tpye"), exports);
+__exportStar(require("./TWlicense.type"), exports);
 //# sourceMappingURL=index.js.map

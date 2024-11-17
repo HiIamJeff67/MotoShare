@@ -605,7 +605,7 @@ export class RidderInviteService {
       }
     });
     if (!purchaseOrder || !purchaseOrder.order) throw ClientInviteNotFoundException;
-    if (receiverId !== purchaseOrder.order.creatorId) throw ClientUserHasNoAccessException;
+    if (receiverId !== purchaseOrder?.order?.creatorId) throw ClientUserHasNoAccessException;
 
     // if the user accept the order, then we should create an unstarted order in orderTable
     // and also delete the order on PurchaseOrderTable(since the passenger is deciding a ridderInvite here)

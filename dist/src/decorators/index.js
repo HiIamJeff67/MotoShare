@@ -16,4 +16,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./IsDateTimeString.decorator"), exports);
 __exportStar(require("./CompareNumberString.decorator"), exports);
+__exportStar(require("./IsPhoneNumberString.decorator"), exports);
+__exportStar(require("./IsLicenseString.decorator"), exports);
 //# sourceMappingURL=index.js.map

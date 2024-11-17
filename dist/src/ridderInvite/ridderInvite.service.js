@@ -495,7 +495,7 @@ let RidderInviteService = class RidderInviteService {
         });
         if (!purchaseOrder || !purchaseOrder.order)
             throw exceptions_1.ClientInviteNotFoundException;
-        if (receiverId !== purchaseOrder.order.creatorId)
+        if (receiverId !== purchaseOrder?.order?.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
         if (decideRidderInviteDto.status === "ACCEPTED") {
             return await this.db.transaction(async (tx) => {

@@ -22,6 +22,7 @@ const auth_interface_1 = require("../interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("./dto/update-info.dto");
+const platform_express_1 = require("@nestjs/platform-express");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;
@@ -132,9 +133,9 @@ let RidderController = class RidderController {
             });
         }
     }
-    async updateMyInfo(ridder, updateRidderInfoDto, response) {
+    async updateMyInfo(ridder, updateRidderInfoDto, file, response) {
         try {
-            const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto);
+            const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, file);
             if (!res)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -249,13 +250,15 @@ __decorate([
 ], RidderController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('updateMyInfo'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_1.Post)('updateMyInfo'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Res)()),
+    __param(2, (0, common_1.UploadedFile)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_interface_1.RidderType,
-        update_info_dto_1.UpdateRidderInfoDto, Object]),
+        update_info_dto_1.UpdateRidderInfoDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "updateMyInfo", null);
 __decorate([

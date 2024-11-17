@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from "./schema/schema"
+import * as schema from "./schema/schema";
+import { ServerNeonEnvVarNotFoundException } from '../exceptions';
 
-export const DRIZZLE = Symbol("drizzle-connection")
+export const DRIZZLE = Symbol("drizzle-connection");
 
 @Module({
     providers: [
@@ -12,7 +13,8 @@ export const DRIZZLE = Symbol("drizzle-connection")
             provide: DRIZZLE,
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => {
-                const databaseURL = configService.get<string>("DATABASE_URL")   // environment variable from .env
+                const databaseURL = configService.get<string>("DATABASE_URL");   // environment variable from .env
+                if (!databaseURL) throw ServerNeonEnvVarNotFoundException;
                 const pool = new Pool({
                     connectionString: databaseURL,
                     ssl: true,

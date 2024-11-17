@@ -15,7 +15,7 @@ function IsPhoneNumberString(phoneNumberType, allowedPhoneNumberTypes, validatio
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: `${propertyName} must be a type of phone number in ${index_1.PhoneNumberTypeToRegion[phoneNumberType]}`,
+                message: `${propertyName} must be a type of the phone number in ${index_1.PhoneNumberTypeToRegion[phoneNumberType]}`,
                 ...validationOptions,
             },
             validator: {

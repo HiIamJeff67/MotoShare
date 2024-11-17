@@ -4,7 +4,9 @@ import {
   NotFoundException, 
   ConflictException, 
   UnauthorizedException, 
-  BadRequestException
+  BadRequestException,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
@@ -22,6 +24,7 @@ import { Passenger } from '../auth/decorator';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('passenger')
 export class PassengerController {
@@ -188,10 +191,12 @@ export class PassengerController {
   }
 
   @UseGuards(JwtPassengerGuard)
+  // @UseInterceptors(FileInterceptor('file'))
   @Patch('updateMyInfo')
   async updateMyInfo(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
+    // @UploadedFile() file: Express.Multer.File,
     @Res() response: Response,
   ) {
     try {

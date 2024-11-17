@@ -68,7 +68,7 @@ export class PassengerInviteController {
   /* ================================= Get operations ================================= */
   @UseGuards(JwtPassengerGuard)
   @Get('passenger/getMyPassengerInviteById')
-  async getPassengerInviteOfPassengerById(
+  async getPassengerInviteForPassengerById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
     @Res() response: Response,
@@ -98,7 +98,7 @@ export class PassengerInviteController {
 
   @UseGuards(JwtRidderGuard)
   @Get('/ridder/getMyPassengerInviteById')
-  async getPassengerInviteOfRidderById(
+  async getPassengerInviteForRidderById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,
     @Res() response: Response,

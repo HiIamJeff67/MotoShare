@@ -7,8 +7,8 @@ export declare class PassengerInviteController {
     private readonly passengerInviteService;
     constructor(passengerInviteService: PassengerInviteService);
     createPassengerInviteByOrderId(passenger: PassengerType, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto, response: Response): Promise<void>;
-    getPassengerInviteOfPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
-    getPassengerInviteOfRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
+    getPassengerInviteForPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
+    getPassengerInviteForRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     searchPaginationPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

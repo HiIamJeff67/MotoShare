@@ -2,9 +2,12 @@ import {
     IsBooleanString, 
     IsNumberString, 
     IsOptional, 
-    IsString 
+    IsString, 
+    MaxLength, 
+    MinLength
 } from "class-validator";
 import { 
+    IsLooseTWLicenseString,
     MaxNumberString, 
     MinNumberString 
 } from "../../decorators";
@@ -34,12 +37,13 @@ export class CreateRidderInfoDto {
     phoneNumber?: string
 
     @IsOptional()
-    @MinNumberString(MIN_SELF_INTRODUCTION_LENGTH)
-    @MaxNumberString(MAX_SELF_INTRODUCTION_LENGTH)
+    @MinLength(MIN_SELF_INTRODUCTION_LENGTH)
+    @MaxLength(MAX_SELF_INTRODUCTION_LENGTH)
     @IsString()
     selfIntroduction?: string
 
     @IsOptional()
+    @IsLooseTWLicenseString()
     @IsString()
     motocycleLicense?: string
 

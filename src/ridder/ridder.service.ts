@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
@@ -11,12 +11,15 @@ import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
+import { SUPABASE } from '../supabase/supabase.module';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class RidderService {
   constructor(
     private config: ConfigService,
     @Inject(DRIZZLE) private db: DrizzleDB,
+    @Inject(SUPABASE) private supabase: SupabaseClient,
   ) {}
 
   /* ================================= Get operations ================================= */
@@ -199,7 +202,10 @@ export class RidderService {
   async updateRidderInfoByUserId(
     userId: string, 
     updateRidderInfoDto: UpdateRidderInfoDto,
+    uploadedFile: Express.Multer.File,
   ) {
+    // await this.supabase.storage.from("AvatorBucket").upload("/passengerAvator", uploadedFile);
+
     return await this.db.update(RidderInfoTable).set({
       isOnline: updateRidderInfoDto.isOnline,
       age: updateRidderInfoDto.age,

@@ -5,10 +5,10 @@ export declare class RidderInviteService {
     private db;
     constructor(db: DrizzleDB);
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         id: string;
-        createdAt: Date;
         orderId: string;
+        createdAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
         id: string;
@@ -193,9 +193,9 @@ export declare class RidderInviteService {
         RDV: unknown;
     }[]>;
     updateRidderInviteById(id: string, inviterId: string, updateRidderInviteDto: UpdateRidderInviteDto): Promise<{
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         id: string;
         updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     decideRidderInviteById(id: string, receiverId: string, decideRidderInviteDto: DecideRidderInviteDto): Promise<{
         orderId: string;
@@ -220,11 +220,11 @@ export declare class RidderInviteService {
         endedAt: Date;
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[] | {
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;
     deleteRidderInviteById(id: string, inviterId: string): Promise<{
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         id: string;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
 }

@@ -50,7 +50,7 @@ let PassengerInviteController = class PassengerInviteController {
             });
         }
     }
-    async getPassengerInviteOfPassengerById(passenger, id, response) {
+    async getPassengerInviteForPassengerById(passenger, id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -71,7 +71,7 @@ let PassengerInviteController = class PassengerInviteController {
             });
         }
     }
-    async getPassengerInviteOfRidderById(ridder, id, response) {
+    async getPassengerInviteForRidderById(ridder, id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -322,7 +322,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
-], PassengerInviteController.prototype, "getPassengerInviteOfPassengerById", null);
+], PassengerInviteController.prototype, "getPassengerInviteForPassengerById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('/ridder/getMyPassengerInviteById'),
@@ -332,7 +332,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
-], PassengerInviteController.prototype, "getPassengerInviteOfRidderById", null);
+], PassengerInviteController.prototype, "getPassengerInviteForRidderById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('passenger/searchMyPaginationPassengerInvites'),

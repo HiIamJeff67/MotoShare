@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { PassengerInviteModule } from './passengerInvite/passengerInvite.module';
 import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
 import { HistoryModule } from './history/history.module';
+import { SupabaseModule } from './supabase/supabase.module';
+import { SupabaseStorageService } from './supabase/supabaseStorage.service';
 
 @Module({
   imports: [
@@ -26,8 +28,9 @@ import { HistoryModule } from './history/history.module';
     PassengerInviteModule,
     RidderInviteModule,
     HistoryModule,
+    SupabaseModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SupabaseStorageService],
 })
 export class AppModule {}
