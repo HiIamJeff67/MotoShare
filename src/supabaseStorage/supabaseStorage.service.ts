@@ -19,7 +19,7 @@ export class SupabaseStorageService {
         infoId: string, // instead of using userId as a part of folder path, we use infoId for more security
         bucketName: SupabaseBucketType, 
         filePath: FilePathType, 
-        uploadedFile: Express.Multer.File
+        uploadedFile: Express.Multer.File, 
     ): Promise<string> {
         try {
             if (!filePath || !bucketName || !uploadedFile) throw ServerSupabaseUploadFileParaNotFoundException;

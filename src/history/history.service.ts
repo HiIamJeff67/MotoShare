@@ -67,6 +67,7 @@ export class HistoryService {
       startAfter: HistoryTable.startAfter, 
       endedAt: HistoryTable.endedAt,
       createdAt: HistoryTable.createdAt,
+      updatedAt: HistoryTable.updatedAt, 
       ridderPhoneNumber: RidderInfoTable.phoneNumber,
       motocycleType: RidderInfoTable.motocycleType,
       status: HistoryTable.status,
@@ -93,6 +94,7 @@ export class HistoryService {
       startAfter: HistoryTable.startAfter, 
       endedAt: HistoryTable.endedAt, 
       createdAt: HistoryTable.createdAt, 
+      updatedAt: HistoryTable.updatedAt, 
       passengerPhoneNumber: PassengerInfoTable.phoneNumber, 
       status: HistoryTable.status, 
     }).from(HistoryTable)
