@@ -31,11 +31,15 @@ export class HistoryService {
       finalEndAddress: HistoryTable.finalEndAddress, 
       startAfter: HistoryTable.startAfter, 
       endedAt: HistoryTable.endedAt, 
-      createdAt: HistoryTable.createdAt, 
-      updatedAt: HistoryTable.updatedAt,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl, 
       motocycleLicense: RidderInfoTable.motocycleLicense, 
       motocycleType: RidderInfoTable.motocycleType, 
+      starRatingByPassenger: HistoryTable.starRatingByPassenger,
+      starRatingByRidder: HistoryTable.starRatingByRidder,
+      commentByPassenger: HistoryTable.commentByPassenger,
+      commentByRidder: HistoryTable.commentByRidder,
+      createdAt: HistoryTable.createdAt, 
+      updatedAt: HistoryTable.updatedAt,
     }).from(HistoryTable)
       .where(and(
         eq(HistoryTable.id, id),
