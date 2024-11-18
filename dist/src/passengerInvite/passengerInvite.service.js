@@ -531,10 +531,9 @@ let PassengerInviteService = class PassengerInviteService {
                     .returning({
                     receiverId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
                     receiverStartCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-                    receiverEndCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
                     receiverStartAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-                    receiverEndAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
                     tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+                    receiverDescription: supplyOrder_schema_1.SupplyOrderTable.description,
                     orderStatus: supplyOrder_schema_1.SupplyOrderTable.status,
                 });
                 if (!responseOfDeletingSupplyOrder
@@ -546,12 +545,14 @@ let PassengerInviteService = class PassengerInviteService {
                     passengerId: responseOfDecidingPassengerInvite[0].inviterId,
                     prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
                     finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
+                    passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
+                    ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription,
                     passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
                     passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
                     ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
                     passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
                     passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
-                    ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+                    ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
                     startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
                     endedAt: responseOfDecidingPassengerInvite[0].suggestEndedAt,
                 }).returning({
@@ -574,7 +575,7 @@ let PassengerInviteService = class PassengerInviteService {
                         ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
                         passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
                         passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
-                        ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+                        ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
                         startAfter: responseOfCreatingOrder[0].startAfter,
                         endedAt: responseOfCreatingOrder[0].endedAt,
                         orderStatus: responseOfCreatingOrder[0].status,

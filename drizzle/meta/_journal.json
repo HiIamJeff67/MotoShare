@@ -85,6 +85,13 @@
       "when": 1731728984246,
       "tag": "0011_slow_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1731909702469,
+      "tag": "0012_nosy_guardian",
+      "breakpoints": true
     }
   ]
 }

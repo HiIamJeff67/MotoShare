@@ -23,6 +23,8 @@ export const HistoryTable = pgTable("history", {
     // and in api layer, we use split to decode this field
     prevOrderId: text("prevOrderId").notNull().default(""), 
     finalPrice: integer("finalPrice").notNull(),
+    passengerDescription: text("passengerDescription"),
+    ridderDescription: text("ridderDescription"),
     passengerStartCord: geometry("passengerStartCord",  { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord",  { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

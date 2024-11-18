@@ -22,7 +22,6 @@ const passengerInvite_module_1 = require("./passengerInvite/passengerInvite.modu
 const ridderInvite_module_1 = require("./ridderInvite/ridderInvite.module");
 const history_module_1 = require("./history/history.module");
 const supabase_module_1 = require("./supabase/supabase.module");
-const supabaseStorage_service_1 = require("./supabase/supabaseStorage.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -43,7 +42,7 @@ exports.AppModule = AppModule = __decorate([
             supabase_module_1.SupabaseModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, supabaseStorage_service_1.SupabaseStorageService],
+        providers: [app_service_1.AppService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

@@ -14,4 +14,4 @@ exports.TWLicenseRegex = [
     exports.SuperLargeHeavyMotocycleLicenseRegex
 ];
 exports.ValidLicenseLengths = [7, 8];
-//# sourceMappingURL=TWlicense.type.js.map
+//# sourceMappingURL=TWLicense.type.js.map

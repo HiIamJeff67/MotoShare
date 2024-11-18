@@ -13,7 +13,6 @@ import { PassengerInviteModule } from './passengerInvite/passengerInvite.module'
 import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
 import { HistoryModule } from './history/history.module';
 import { SupabaseModule } from './supabase/supabase.module';
-import { SupabaseStorageService } from './supabase/supabaseStorage.service';
 
 @Module({
   imports: [
@@ -31,6 +30,6 @@ import { SupabaseStorageService } from './supabase/supabaseStorage.service';
     SupabaseModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SupabaseStorageService],
+  providers: [AppService],
 })
 export class AppModule {}

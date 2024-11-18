@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
@@ -21,6 +21,14 @@ exports.ServerSupabaseConnectionException = new common_1.InternalServerErrorExce
 exports.ServerSupabaseEnvVarNotFoundException = new common_1.InternalServerErrorException({
     case: "E-S-851",
     message: "Cannot find some necessary environment variables for connecting to Supabase server",
+});
+exports.ServerSupabaseUploadFileParaNotFoundException = new common_1.InternalServerErrorException({
+    case: "E-S-852",
+    message: "Missing parameters while uploading file to Supabase server",
+});
+exports.ServerSupabaseUploadFileException = new common_1.InternalServerErrorException({
+    case: "E-S-853",
+    message: "Failed to upload file to Supabase storage",
 });
 exports.ServerUnknownException = new common_1.InternalServerErrorException({
     case: "E-S-999",

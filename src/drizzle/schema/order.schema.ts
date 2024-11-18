@@ -22,19 +22,23 @@ export const OrderTable = pgTable("order", {
     // and in api layer, we use split to decode this field
     prevOrderId: text("prevOrderId").notNull().default(""),
     finalPrice: integer("finalPrice").notNull(),
+    passengerDescription: text("passengerDescription"),
+    ridderDescription: text("ridderDescription"),
     passengerStartCord: geometry("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: geometry("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: geometry("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+    // ridderEndCord: geometry("ridderEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerStartAddress: text("passengerStartAddress").notNull().default(""),
     passengerEndAddress: text("passengerEndAddress").notNull().default(""),
     ridderStartAddress: text("ridderStartAddress").notNull().default(""),
+    // ridderEndAddress: text("ridderEndAddress").notNull().default(""),
     // note that there's no need to specify the end cord of ridder
     startAfter: timestamp("startAfter").notNull().defaultNow(),
     endedAt: timestamp("endedAt").notNull().defaultNow(),
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     passengerStatus: passengerOrderStatusEnum().notNull().default("UNSTARTED"),
     ridderStatus: ridderOrderStatusEnum().notNull().default("UNSTARTED"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 export const OrderRelation = relations(OrderTable, ({ one }) => ({

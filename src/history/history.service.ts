@@ -8,7 +8,6 @@ import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
-import { OrderTable } from '../drizzle/schema/order.schema';
 import { ClientHistoryNotFoundException } from '../exceptions';
 
 @Injectable()
@@ -18,11 +17,11 @@ export class HistoryService {
   /* ================================= Get operations ================================= */
   async getHistoryById(id: string, userId: string) {
     return await this.db.select({
-      id: HistoryTable.id,
-      passengerName: PassengerTable.userName,
+      id: HistoryTable.id, 
+      passengerName: PassengerTable.userName, 
       passengerAvatorUrl: PassengerInfoTable.avatorUrl, 
-      passengerPhoneNumber: PassengerInfoTable.phoneNumber,
-      ridderName: RidderTable.userName,
+      passengerPhoneNumber: PassengerInfoTable.phoneNumber, 
+      ridderName: RidderTable.userName, 
       ridderAvatorUrl: RidderInfoTable.avatorUrl, 
       ridderPhoneNumber: RidderInfoTable.phoneNumber, 
       finalPrice: HistoryTable.finalPrice, 
@@ -35,9 +34,9 @@ export class HistoryService {
       startAfter: HistoryTable.startAfter, 
       endedAt: HistoryTable.endedAt, 
       createdAt: HistoryTable.createdAt, 
-      motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
-      motocycleLicense: RidderInfoTable.motocycleLicense,
-      motocycleType: RidderInfoTable.motocycleType,
+      motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl, 
+      motocycleLicense: RidderInfoTable.motocycleLicense, 
+      motocycleType: RidderInfoTable.motocycleType, 
     }).from(HistoryTable)
       .where(and(
         eq(HistoryTable.id, id),
@@ -85,16 +84,16 @@ export class HistoryService {
     offset: number,
   ) {
     return await this.db.select({
-      id: HistoryTable.id,
+      id: HistoryTable.id, 
       passengerStartAddress: HistoryTable.passengerStartAddress, 
       passengerEndAddress: HistoryTable.passengerEndAddress, 
       passengerAvatorUrl: PassengerInfoTable.avatorUrl, 
       finalPrice: HistoryTable.finalPrice, 
       startAfter: HistoryTable.startAfter, 
-      endedAt: HistoryTable.endedAt,
-      createdAt: HistoryTable.createdAt,
-      passengerPhoneNumber: PassengerInfoTable.phoneNumber,
-      status: HistoryTable.status,
+      endedAt: HistoryTable.endedAt, 
+      createdAt: HistoryTable.createdAt, 
+      passengerPhoneNumber: PassengerInfoTable.phoneNumber, 
+      status: HistoryTable.status, 
     }).from(HistoryTable)
     .where(eq(HistoryTable.ridderId, ridderId))
     .leftJoin(PassengerTable, eq(PassengerTable.id, HistoryTable.ridderId))

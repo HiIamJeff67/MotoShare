@@ -30,6 +30,18 @@ export const ServerSupabaseEnvVarNotFoundException = new InternalServerErrorExce
     message: "Cannot find some necessary environment variables for connecting to Supabase server",
 })
 
+// E-S-852
+export const ServerSupabaseUploadFileParaNotFoundException = new InternalServerErrorException({
+    case: "E-S-852",
+    message: "Missing parameters while uploading file to Supabase server",
+});
+
+// E-S-853
+export const ServerSupabaseUploadFileException = new InternalServerErrorException({
+    case: "E-S-853",
+    message: "Failed to upload file to Supabase storage",
+})
+
 // E-S-999
 export const ServerUnknownException = new InternalServerErrorException({
     case: "E-S-999", 

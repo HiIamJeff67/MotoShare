@@ -706,10 +706,9 @@ export class PassengerInviteService {
           .returning({
             receiverId: SupplyOrderTable.creatorId,
             receiverStartCord: SupplyOrderTable.startCord,
-            receiverEndCord: SupplyOrderTable.endCord,
             receiverStartAddress: SupplyOrderTable.startAddress,
-            receiverEndAddress: SupplyOrderTable.endAddress,
             tolerableRDV: SupplyOrderTable.tolerableRDV,
+            receiverDescription: SupplyOrderTable.description,
             orderStatus: SupplyOrderTable.status,
         });
         if (!responseOfDeletingSupplyOrder
@@ -722,12 +721,14 @@ export class PassengerInviteService {
           passengerId: responseOfDecidingPassengerInvite[0].inviterId,
           prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
           finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
+          passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
+          ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription, 
           passengerStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
           passengerEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
           ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
           passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
           passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
-          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
           endedAt: responseOfDecidingPassengerInvite[0].suggestEndedAt,
           // endAt: , // will be covered the autocomplete function powered by google in the future
@@ -752,7 +753,7 @@ export class PassengerInviteService {
           ridderStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
           passengerStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
           passengerEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
-          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+          ridderStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
           endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status,

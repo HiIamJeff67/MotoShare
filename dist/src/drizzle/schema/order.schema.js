@@ -15,6 +15,8 @@ exports.OrderTable = (0, pg_core_1.pgTable)("order", {
     }).notNull(),
     prevOrderId: (0, pg_core_1.text)("prevOrderId").notNull().default(""),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
+    passengerDescription: (0, pg_core_1.text)("passengerDescription"),
+    ridderDescription: (0, pg_core_1.text)("ridderDescription"),
     passengerStartCord: (0, pg_core_1.geometry)("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: (0, pg_core_1.geometry)("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: (0, pg_core_1.geometry)("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
@@ -23,10 +25,10 @@ exports.OrderTable = (0, pg_core_1.pgTable)("order", {
     ridderStartAddress: (0, pg_core_1.text)("ridderStartAddress").notNull().default(""),
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
     endedAt: (0, pg_core_1.timestamp)("endedAt").notNull().defaultNow(),
-    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
-    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
     passengerStatus: (0, enums_1.passengerOrderStatusEnum)().notNull().default("UNSTARTED"),
     ridderStatus: (0, enums_1.ridderOrderStatusEnum)().notNull().default("UNSTARTED"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
 });
 exports.OrderRelation = (0, drizzle_orm_1.relations)(exports.OrderTable, ({ one }) => ({
     passenger: one(schema_1.PassengerTable, {

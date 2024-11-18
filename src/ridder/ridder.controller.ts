@@ -199,7 +199,7 @@ export class RidderController {
   async updateMyInfo(
     @Ridder() ridder: RidderType,
     @Body() updateRidderInfoDto: UpdateRidderInfoDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | undefined = undefined,
     @Res() response: Response,
   ) {
     try {

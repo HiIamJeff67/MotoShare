@@ -13,7 +13,6 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
-import e from 'express';
 
 @Injectable()
 export class PurchaseOrderService {

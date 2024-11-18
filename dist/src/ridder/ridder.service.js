@@ -23,6 +23,7 @@ const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema"
 const exceptions_1 = require("../exceptions");
 const supabase_module_1 = require("../supabase/supabase.module");
 const supabase_js_1 = require("@supabase/supabase-js");
+const utils_1 = require("../utils");
 let RidderService = class RidderService {
     constructor(config, db, supabase) {
         this.config = config;
@@ -181,7 +182,15 @@ let RidderService = class RidderService {
             eamil: ridder_schema_1.RidderTable.email,
         });
     }
-    async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile) {
+    async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile = undefined) {
+        if (uploadedFile) {
+            const convertedFile = (0, utils_1.multerToFile)(uploadedFile);
+            const hashedFileName = await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND")));
+            const filePath = `passengerAvators/${hashedFileName.replace('.', '').substring(0, 10)}`;
+            const responseOfUploadAvator = await this.supabase.storage.from("AvatorBucket").upload(filePath, convertedFile);
+            const url = await this.supabase.storage.from("AvatorBucket").getPublicUrl(filePath);
+            console.log(url);
+        }
         return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
             isOnline: updateRidderInfoDto.isOnline,
             age: updateRidderInfoDto.age,

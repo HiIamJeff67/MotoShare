@@ -133,7 +133,7 @@ let RidderController = class RidderController {
             });
         }
     }
-    async updateMyInfo(ridder, updateRidderInfoDto, file, response) {
+    async updateMyInfo(ridder, updateRidderInfoDto, file = undefined, response) {
         try {
             const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, file);
             if (!res)
@@ -239,7 +239,7 @@ __decorate([
 ], RidderController.prototype, "searchPaginationRidders", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('updateMe'),
+    (0, common_1.Post)('updateMe'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),

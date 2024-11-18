@@ -82,6 +82,38 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        passengerDescription: import("drizzle-orm/pg-core").PgColumn<{
+            name: "passengerDescription";
+            tableName: "history";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        ridderDescription: import("drizzle-orm/pg-core").PgColumn<{
+            name: "ridderDescription";
+            tableName: "history";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         passengerStartCord: import("drizzle-orm/pg-core").PgColumn<{
             name: "passengerStartCord";
             tableName: "history";

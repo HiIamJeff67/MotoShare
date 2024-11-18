@@ -8,6 +8,8 @@ export declare class OrderService {
         passengerName: string | null;
         ridderName: string | null;
         finalPrice: number;
+        passengerDescription: string | null;
+        ridderDescription: string | null;
         passengerStartCord: {
             x: number;
             y: number;

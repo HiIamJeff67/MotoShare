@@ -13,6 +13,7 @@ import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
 import { SUPABASE } from '../supabase/supabase.module';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { multerToFile } from '../utils';
 
 @Injectable()
 export class RidderService {
@@ -202,9 +203,16 @@ export class RidderService {
   async updateRidderInfoByUserId(
     userId: string, 
     updateRidderInfoDto: UpdateRidderInfoDto,
-    uploadedFile: Express.Multer.File,
+    uploadedFile: Express.Multer.File | undefined = undefined,
   ) {
-    // await this.supabase.storage.from("AvatorBucket").upload("/passengerAvator", uploadedFile);
+    if (uploadedFile) {
+      const convertedFile = multerToFile(uploadedFile);
+      const hashedFileName = await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND")));
+      const filePath = `passengerAvators/${hashedFileName.replace('.', '').substring(0, 10)}`;
+      const responseOfUploadAvator = await this.supabase.storage.from("AvatorBucket").upload(filePath, convertedFile);
+      const url = await this.supabase.storage.from("AvatorBucket").getPublicUrl(filePath);
+      console.log(url);
+    }
 
     return await this.db.update(RidderInfoTable).set({
       isOnline: updateRidderInfoDto.isOnline,

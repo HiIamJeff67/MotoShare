@@ -78,7 +78,7 @@ export declare class RidderService {
         userName: string;
         eamil: string;
     }[]>;
-    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedFile: Express.Multer.File): Promise<import("pg").QueryResult<never>>;
+    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
     deleteRiddderById(id: string): Promise<{
         id: string;
         userName: string;

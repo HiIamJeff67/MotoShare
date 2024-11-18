@@ -321,7 +321,7 @@ __decorate([
 ], OrderController.prototype, "searchPaginationOrdersByRidderId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Patch)('passenger/toStartedStatusById'),
+    (0, common_1.Post)('passenger/toStartedStatusById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
@@ -331,7 +331,7 @@ __decorate([
 ], OrderController.prototype, "toStartedPassengerStatusById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Patch)('passenger/toUnpaidStatusById'),
+    (0, common_1.Post)('passenger/toUnpaidStatusById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
@@ -341,7 +341,7 @@ __decorate([
 ], OrderController.prototype, "toUnpaidPassengerStatusById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Patch)('passenger/toFinishedStatusById'),
+    (0, common_1.Post)('passenger/toFinishedStatusById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
@@ -351,7 +351,7 @@ __decorate([
 ], OrderController.prototype, "toFinishedPassengerStatusById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('ridder/toStartedStatusById'),
+    (0, common_1.Post)('ridder/toStartedStatusById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
@@ -361,7 +361,7 @@ __decorate([
 ], OrderController.prototype, "toStartedRidderStatusById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('ridder/toUnpaidStatusById'),
+    (0, common_1.Post)('ridder/toUnpaidStatusById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
@@ -371,7 +371,7 @@ __decorate([
 ], OrderController.prototype, "toUnpaidRidderStatusById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('ridder/toFinishedStatusById'),
+    (0, common_1.Post)('ridder/toFinishedStatusById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),

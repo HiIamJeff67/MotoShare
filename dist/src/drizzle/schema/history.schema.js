@@ -15,6 +15,8 @@ exports.HistoryTable = (0, pg_core_1.pgTable)("history", {
     }),
     prevOrderId: (0, pg_core_1.text)("prevOrderId").notNull().default(""),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
+    passengerDescription: (0, pg_core_1.text)("passengerDescription"),
+    ridderDescription: (0, pg_core_1.text)("ridderDescription"),
     passengerStartCord: (0, pg_core_1.geometry)("passengerStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     passengerEndCord: (0, pg_core_1.geometry)("passengerEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     ridderStartCord: (0, pg_core_1.geometry)("ridderStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),

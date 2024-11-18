@@ -276,7 +276,7 @@ __decorate([
 ], SupplyOrderController.prototype, "searchSimilarRouteSupplyOrders", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Patch)('updateMySupplyOrderById'),
+    (0, common_1.Post)('updateMySupplyOrderById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Body)()),
