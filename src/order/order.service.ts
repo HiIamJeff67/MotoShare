@@ -47,7 +47,6 @@ export class OrderService {
       ridderStartAddress: OrderTable.ridderStartAddress,
       startAfter: OrderTable.startAfter,
       endedAt: OrderTable.endedAt,
-      createdAt: OrderTable.createdAt,
       passengerStatus: OrderTable.passengerStatus,
       ridderStatus: OrderTable.ridderStatus,
       passengerAvatorUrl: PassengerInfoTable.avatorUrl,
@@ -57,6 +56,8 @@ export class OrderService {
       motocycleType: RidderInfoTable.motocycleType,
       motocycleLicense: RidderInfoTable.motocycleLicense,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
+      createdAt: OrderTable.createdAt,
+      updatedAt: OrderTable.updatedAt,
     }).from(OrderTable)
       .where(and(
         eq(OrderTable.id, id),
@@ -91,6 +92,7 @@ export class OrderService {
       motocycleType: RidderInfoTable.motocycleType,
       passengerStatus: OrderTable.passengerStatus,
       ridderStatus: OrderTable.ridderStatus,
+      updatedAt: OrderTable.updatedAt,
     }).from(OrderTable);
 
     if (ridderName) {
@@ -131,6 +133,7 @@ export class OrderService {
       passengerPhoneNumber: PassengerInfoTable.phoneNumber,
       passengerStatus: OrderTable.passengerStatus,
       ridderStatus: OrderTable.ridderStatus,
+      updatedAt: OrderTable.updatedAt,
     }).from(OrderTable);
 
     if (passengerName) {

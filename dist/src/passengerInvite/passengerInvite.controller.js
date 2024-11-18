@@ -244,6 +244,8 @@ let PassengerInviteController = class PassengerInviteController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ConflictException
                 || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }

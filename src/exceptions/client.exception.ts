@@ -201,6 +201,12 @@ export const ClientNoChangeOnPasswordException = new ConflictException({
     message: "There's no changes on password",
 });
 
+// E-C-351
+export const ClientEndBeforeStartException = new ConflictException({
+    case: "E-C-351",
+    message: "The end time is earlier than the start time",
+});
+
 /* ============================== Error about update operation ============================== */
 
 // E-C-999

@@ -7,6 +7,6 @@ export declare class CreatePassengerInviteDto {
     endCordLatitude: number;
     startAddress: string;
     endAddress: string;
-    suggestStartAfter?: string;
-    suggestEndedAt?: string;
+    suggestStartAfter: string;
+    suggestEndedAt: string;
 }

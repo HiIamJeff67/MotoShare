@@ -7,7 +7,7 @@ export declare class CreatePurchaseOrderDto {
     endCordLatitude: number;
     startAddress: string;
     endAddress: string;
-    startAfter?: string;
-    endedAt?: string;
+    startAfter: string;
+    endedAt: string;
     isUrgent?: boolean;
 }

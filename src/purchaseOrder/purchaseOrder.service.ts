@@ -13,6 +13,7 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
+import { ClientEndBeforeStartException, ClientPurchaseOrderNotFoundException } from '../exceptions';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -34,8 +35,8 @@ export class PurchaseOrderService {
       )`,
       startAddress: createPurchaseOrderDto.startAddress,
       endAddress: createPurchaseOrderDto.endAddress,
-      startAfter: new Date(createPurchaseOrderDto.startAfter || new Date()),
-      endedAt: new Date(createPurchaseOrderDto.endedAt || new Date()),
+      startAfter: new Date(createPurchaseOrderDto.startAfter),
+      endedAt: new Date(createPurchaseOrderDto.endedAt),
       isUrgent: createPurchaseOrderDto.isUrgent,
     }).returning({
       id: PurchaseOrderTable.id,
@@ -210,7 +211,7 @@ export class PurchaseOrderService {
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${PurchaseOrderTable.startCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
@@ -258,7 +259,7 @@ export class PurchaseOrderService {
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
       status: PurchaseOrderTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${PurchaseOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
@@ -387,6 +388,37 @@ export class PurchaseOrderService {
       ? { x: updatePurchaseOrderDto.endCordLongitude, y: updatePurchaseOrderDto.endCordLatitude }
       : undefined;
 
+    if (updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+      const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (updatePurchaseOrderDto.startAfter && !updatePurchaseOrderDto.endedAt) {
+      const tempResponse = await this.db.select({
+        endedAt: PurchaseOrderTable.endedAt,
+      }).from(PurchaseOrderTable)
+        .where(and(
+          eq(PurchaseOrderTable.id, id), 
+          eq(PurchaseOrderTable.creatorId, creatorId),
+          ne(PurchaseOrderTable.status, "RESERVED"),
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (!updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+      const tempResponse = await this.db.select({
+        startAfter: PurchaseOrderTable.startAfter,
+      }).from(PurchaseOrderTable)
+        .where(and(
+          eq(PurchaseOrderTable.id, id), 
+          eq(PurchaseOrderTable.creatorId, creatorId), 
+          ne(PurchaseOrderTable.status, "RESERVED"), 
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    }
+
     return await this.db.update(PurchaseOrderTable).set({
       description: updatePurchaseOrderDto.description,
       initPrice: updatePurchaseOrderDto.initPrice,
@@ -395,8 +427,14 @@ export class PurchaseOrderService {
       startAddress: updatePurchaseOrderDto.startAddress,
       endAddress: updatePurchaseOrderDto.endAddress,
       updatedAt: new Date(),
-      startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
-      endedAt: new Date(updatePurchaseOrderDto.endedAt || new Date()),
+      ...(updatePurchaseOrderDto.startAfter
+        ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
+        : {}
+      ),
+      ...(updatePurchaseOrderDto.endedAt
+        ? { endedAt: new Date(updatePurchaseOrderDto.endedAt) }
+        : {}
+      ),
       isUrgent: updatePurchaseOrderDto.isUrgent,
       status: updatePurchaseOrderDto.status,
     }).where(and(

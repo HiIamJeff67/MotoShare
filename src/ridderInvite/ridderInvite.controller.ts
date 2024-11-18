@@ -3,7 +3,8 @@ import { Controller,
   BadRequestException, 
   UnauthorizedException, 
   ForbiddenException, 
-  NotFoundException
+  NotFoundException,
+  ConflictException
 } from '@nestjs/common';
 import { RidderInviteService } from './ridderInvite.service';
 import { Response } from 'express';
@@ -413,6 +414,8 @@ export class RidderInviteController {
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof ConflictException
         || error instanceof NotFoundException)) {
           error = ClientUnknownException;
       }

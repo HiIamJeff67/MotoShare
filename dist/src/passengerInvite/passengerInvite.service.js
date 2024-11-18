@@ -44,8 +44,8 @@ let PassengerInviteService = class PassengerInviteService {
       )`,
             startAddress: createPassengerInviteDto.startAddress,
             endAddress: createPassengerInviteDto.endAddress,
-            suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
-            suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt || new Date()),
+            suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
+            suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
             status: "CHECKING",
         }).returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
@@ -84,6 +84,8 @@ let PassengerInviteService = class PassengerInviteService {
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
             phoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
         }).from(passengerInvite_schema_1.PassengerInviteTable)
             .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder_schema_1.SupplyOrderTable.id))
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, userId), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, userId))))
@@ -94,14 +96,11 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
             suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
@@ -128,20 +127,17 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.startCord},
         ${passengerInvite_schema_1.PassengerInviteTable.startCord}
       )`,
@@ -169,20 +165,16 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
-            status: passengerInvite_schema_1.PassengerInviteTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
         ${passengerInvite_schema_1.PassengerInviteTable.endCord}
       )`,
@@ -210,19 +202,15 @@ let PassengerInviteService = class PassengerInviteService {
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             receiverName: ridder_schema_1.RidderTable.userName,
             avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
-            suggetStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
-            status: passengerInvite_schema_1.PassengerInviteTable.status,
             RDV: (0, drizzle_orm_1.sql) `
         ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord},
@@ -283,12 +271,9 @@ let PassengerInviteService = class PassengerInviteService {
             suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
@@ -316,12 +301,9 @@ let PassengerInviteService = class PassengerInviteService {
             suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
@@ -356,12 +338,9 @@ let PassengerInviteService = class PassengerInviteService {
             suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
@@ -396,12 +375,9 @@ let PassengerInviteService = class PassengerInviteService {
             suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
             inviterName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
             suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
             suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
             updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             status: passengerInvite_schema_1.PassengerInviteTable.status,
@@ -465,6 +441,33 @@ let PassengerInviteService = class PassengerInviteService {
             && updatePassengerInviteDto.endCordLatitude !== undefined)
             ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
             : undefined;
+        if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+            const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
+            const tempResponse = await this.db.select({
+                suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            }).from(passengerInvite_schema_1.PassengerInviteTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(tempResponse[0].suggestEndedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+            const tempResponse = await this.db.select({
+                suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            }).from(passengerInvite_schema_1.PassengerInviteTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientEndBeforeStartException;
+            const [startAfter, endedAt] = [new Date(tempResponse[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
         return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
             briefDescription: updatePassengerInviteDto.briefDescription,
             suggestPrice: updatePassengerInviteDto.suggestPrice,
@@ -472,8 +475,12 @@ let PassengerInviteService = class PassengerInviteService {
             endCord: newEndCord,
             startAddress: updatePassengerInviteDto.startAddress,
             endAddress: updatePassengerInviteDto.endAddress,
-            suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
-            suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt || new Date()),
+            ...(updatePassengerInviteDto.suggestStartAfter
+                ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
+                : {}),
+            ...(updatePassengerInviteDto.suggestEndedAt
+                ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
+                : {}),
             updatedAt: new Date(),
             status: updatePassengerInviteDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")))

@@ -12,7 +12,9 @@ import {
 } from "class-validator";
 import { 
     MaxNumberString, 
-    MinNumberString 
+    MinNumberString,
+    IsStartBeforeEnd,
+    IsEndAfterStart
 } from "../../decorators";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
@@ -65,13 +67,15 @@ export class CreatePurchaseOrderDto {
     // @IsDate()
     // updatedAt?: Date    // not recommand to specify this field
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsStartBeforeEnd('endedAt')
     @IsDateString()
-    startAfter?: string   // but at most case, should be specify
+    startAfter: string   // but at most case, should be specify
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsEndAfterStart('startAfter')
     @IsDateString()
-    endedAt?: string
+    endedAt: string
 
     @IsOptional()
     @IsBooleanString()

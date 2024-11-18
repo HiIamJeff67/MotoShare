@@ -10,7 +10,7 @@ function IsOnlyDate(validationOptions) {
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: 'Please provide only date like 2020-12-08',
+                message: `${propertyName} must be this form of date: YYYY-MM-DD`,
                 ...validationOptions,
             },
             validator: {
@@ -23,4 +23,4 @@ function IsOnlyDate(validationOptions) {
         });
     };
 }
-//# sourceMappingURL=IsDateTimeString.decorator.js.map
+//# sourceMappingURL=IsOnlyDate.decorator.js.map

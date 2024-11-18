@@ -8,8 +8,8 @@ export function IsOnlyDate(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       constraints: [],
       options: {
-        message: 'Please provide only date like 2020-12-08',
-        ...validationOptions,
+        message: `${propertyName} must be this form of date: YYYY-MM-DD`, 
+        ...validationOptions, 
       },
       validator: {
         validate(value: any) {

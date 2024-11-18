@@ -19,6 +19,7 @@ const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const purchaseOrder_schema_1 = require("../../src/drizzle/schema/purchaseOrder.schema");
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
+const exceptions_1 = require("../exceptions");
 let PurchaseOrderService = class PurchaseOrderService {
     constructor(db) {
         this.db = db;
@@ -38,8 +39,8 @@ let PurchaseOrderService = class PurchaseOrderService {
       )`,
             startAddress: createPurchaseOrderDto.startAddress,
             endAddress: createPurchaseOrderDto.endAddress,
-            startAfter: new Date(createPurchaseOrderDto.startAfter || new Date()),
-            endedAt: new Date(createPurchaseOrderDto.endedAt || new Date()),
+            startAfter: new Date(createPurchaseOrderDto.startAfter),
+            endedAt: new Date(createPurchaseOrderDto.endedAt),
             isUrgent: createPurchaseOrderDto.isUrgent,
         }).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
@@ -149,7 +150,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
@@ -186,7 +187,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
@@ -281,6 +282,33 @@ let PurchaseOrderService = class PurchaseOrderService {
             && updatePurchaseOrderDto.endCordLatitude !== undefined)
             ? { x: updatePurchaseOrderDto.endCordLongitude, y: updatePurchaseOrderDto.endCordLatitude }
             : undefined;
+        if (updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+            const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (updatePurchaseOrderDto.startAfter && !updatePurchaseOrderDto.endedAt) {
+            const tempResponse = await this.db.select({
+                endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (!updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+            const tempResponse = await this.db.select({
+                startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
         return await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
             description: updatePurchaseOrderDto.description,
             initPrice: updatePurchaseOrderDto.initPrice,
@@ -289,8 +317,12 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAddress: updatePurchaseOrderDto.startAddress,
             endAddress: updatePurchaseOrderDto.endAddress,
             updatedAt: new Date(),
-            startAfter: new Date(updatePurchaseOrderDto.startAfter || new Date()),
-            endedAt: new Date(updatePurchaseOrderDto.endedAt || new Date()),
+            ...(updatePurchaseOrderDto.startAfter
+                ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
+                : {}),
+            ...(updatePurchaseOrderDto.endedAt
+                ? { endedAt: new Date(updatePurchaseOrderDto.endedAt) }
+                : {}),
             isUrgent: updatePurchaseOrderDto.isUrgent,
             status: updatePurchaseOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({

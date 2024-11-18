@@ -10,6 +10,8 @@ import {
     MinLength 
 } from "class-validator";
 import { 
+    IsEndAfterStart,
+    IsStartBeforeEnd,
     MaxNumberString, 
     MinNumberString 
 } from "../../decorators";
@@ -53,11 +55,13 @@ export class CreatePassengerInviteDto {
     @IsString()
     endAddress: string
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsStartBeforeEnd('suggestEndedAt')
     @IsDateString()
-    suggestStartAfter?: string
+    suggestStartAfter: string
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsEndAfterStart('suggestStartAfter')
     @IsDateString()
-    suggestEndedAt?: string
+    suggestEndedAt: string
 }

@@ -10,6 +10,8 @@ import {
     MinLength 
 } from "class-validator";
 import { 
+    IsStartBeforeEnd,
+    IsEndAfterStart,
     MaxNumberString, 
     MinNumberString 
 } from "../../decorators";
@@ -64,13 +66,15 @@ export class CreateSupplyOrderDto {
     // @IsDate()
     // updatedAt?: Date    // not recommand to specify this field
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsStartBeforeEnd('endedAt')
     @IsDateString()
-    startAfter?: string
+    startAfter: string
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsEndAfterStart('startAfter')
     @IsDateString()
-    endedAt?: string
+    endedAt: string
 
     @IsOptional()
     @MinNumberString(MIN_TOLERABLE_RDV)

@@ -27,7 +27,6 @@ export declare class OrderService {
         ridderStartAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         passengerAvatorUrl: string | null;
@@ -37,6 +36,8 @@ export declare class OrderService {
         motocycleType: string | null;
         motocycleLicense: string | null;
         motocyclePhotoUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
     searchPaginationOrderByPassengerId(passengerId: string, ridderName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
@@ -51,6 +52,7 @@ export declare class OrderService {
         motocycleType: never;
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        updatedAt: Date;
     }[]>;
     searchPaginationOrderByRidderId(ridderId: string, passengerName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
@@ -65,6 +67,7 @@ export declare class OrderService {
         passengerPhoneNumber: never;
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
         ridderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        updatedAt: Date;
     }[]>;
     toStartedPassengerStatusById(id: string, passengerId: string): Promise<{
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";

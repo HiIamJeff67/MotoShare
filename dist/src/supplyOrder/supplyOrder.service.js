@@ -19,6 +19,7 @@ const supplyOrder_schema_1 = require("../../src/drizzle/schema/supplyOrder.schem
 const drizzle_orm_1 = require("drizzle-orm");
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
+const exceptions_1 = require("../exceptions");
 let SupplyOrderService = class SupplyOrderService {
     constructor(db) {
         this.db = db;
@@ -38,8 +39,8 @@ let SupplyOrderService = class SupplyOrderService {
       )`,
             startAddress: createSupplyOrderDto.startAddress,
             endAddress: createSupplyOrderDto.endAddress,
-            startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
-            endedAt: new Date(createSupplyOrderDto.endedAt || new Date()),
+            startAfter: new Date(createSupplyOrderDto.startAfter),
+            endedAt: new Date(createSupplyOrderDto.endedAt),
             tolerableRDV: createSupplyOrderDto.tolerableRDV,
         }).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
@@ -152,7 +153,7 @@ let SupplyOrderService = class SupplyOrderService {
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.startCord}, 
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
@@ -190,7 +191,7 @@ let SupplyOrderService = class SupplyOrderService {
             tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
-            distance: (0, drizzle_orm_1.sql) `ST_Distance(
+            manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${supplyOrder_schema_1.SupplyOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
@@ -286,6 +287,33 @@ let SupplyOrderService = class SupplyOrderService {
             && updateSupplyOrderDto.endCordLatitude !== undefined)
             ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
             : undefined;
+        if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+            const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
+            const tempResponse = await this.db.select({
+                endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
+            }).from(supplyOrder_schema_1.SupplyOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
+        else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+            const tempResponse = await this.db.select({
+                startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+            }).from(supplyOrder_schema_1.SupplyOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
+            if (!tempResponse || tempResponse.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
+            if (startAfter >= endedAt)
+                throw exceptions_1.ClientEndBeforeStartException;
+        }
         return await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
             description: updateSupplyOrderDto.description,
             initPrice: updateSupplyOrderDto.initPrice,
@@ -294,8 +322,12 @@ let SupplyOrderService = class SupplyOrderService {
             startAddress: updateSupplyOrderDto.startAddress,
             endAddress: updateSupplyOrderDto.endAddress,
             updatedAt: new Date(),
-            startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
-            endedAt: new Date(updateSupplyOrderDto.endedAt || new Date()),
+            ...(updateSupplyOrderDto.startAfter
+                ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
+                : {}),
+            ...(updateSupplyOrderDto.endedAt
+                ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
+                : {}),
             tolerableRDV: updateSupplyOrderDto.tolerableRDV,
             status: updateSupplyOrderDto.status,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({

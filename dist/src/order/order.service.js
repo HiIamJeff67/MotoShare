@@ -52,7 +52,6 @@ let OrderService = class OrderService {
             ridderStartAddress: order_schema_1.OrderTable.ridderStartAddress,
             startAfter: order_schema_1.OrderTable.startAfter,
             endedAt: order_schema_1.OrderTable.endedAt,
-            createdAt: order_schema_1.OrderTable.createdAt,
             passengerStatus: order_schema_1.OrderTable.passengerStatus,
             ridderStatus: order_schema_1.OrderTable.ridderStatus,
             passengerAvatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
@@ -62,6 +61,8 @@ let OrderService = class OrderService {
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
             motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
+            createdAt: order_schema_1.OrderTable.createdAt,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
         }).from(order_schema_1.OrderTable)
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, userId), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderId, userId))))
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))
@@ -83,6 +84,7 @@ let OrderService = class OrderService {
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             passengerStatus: order_schema_1.OrderTable.passengerStatus,
             ridderStatus: order_schema_1.OrderTable.ridderStatus,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
         }).from(order_schema_1.OrderTable);
         if (ridderName) {
             query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId))
@@ -112,6 +114,7 @@ let OrderService = class OrderService {
             passengerPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.phoneNumber,
             passengerStatus: order_schema_1.OrderTable.passengerStatus,
             ridderStatus: order_schema_1.OrderTable.ridderStatus,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
         }).from(order_schema_1.OrderTable);
         if (passengerName) {
             query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))

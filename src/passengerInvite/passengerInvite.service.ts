@@ -11,7 +11,7 @@ import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientCreateOrderException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
 import { OrderTable } from '../drizzle/schema/order.schema';
 
 @Injectable()
@@ -39,8 +39,8 @@ export class PassengerInviteService {
       )`,
       startAddress: createPassengerInviteDto.startAddress,
       endAddress: createPassengerInviteDto.endAddress,
-      suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter || new Date()),
-      suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt || new Date()),
+      suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
+      suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
       status: "CHECKING",
     }).returning({
       id: PassengerInviteTable.id,
@@ -87,6 +87,8 @@ export class PassengerInviteService {
       motocycleType: RidderInfoTable.motocycleType,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
       phoneNumber: RidderInfoTable.phoneNumber,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
     }).from(PassengerInviteTable)
       .leftJoin(SupplyOrderTable, eq(PassengerInviteTable.orderId, SupplyOrderTable.id))
       .where(and(
@@ -167,14 +169,11 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
-      startAddress: SupplyOrderTable.startAddress,
-      endAddress: SupplyOrderTable.endAddress,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
       suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
@@ -209,20 +208,17 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
-      startAddress: SupplyOrderTable.startAddress,
-      endAddress: SupplyOrderTable.endAddress,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${SupplyOrderTable.startCord},
         ${PassengerInviteTable.startCord}
       )`,
@@ -258,20 +254,16 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
-      startAddress: SupplyOrderTable.startAddress,
-      endAddress: SupplyOrderTable.endAddress,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
-      status: PassengerInviteTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${SupplyOrderTable.endCord},
         ${PassengerInviteTable.endCord}
       )`,
@@ -307,19 +299,15 @@ export class PassengerInviteService {
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
-      startAddress: SupplyOrderTable.startAddress,
-      endAddress: SupplyOrderTable.endAddress,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
       receiverName: RidderTable.userName,
       avatorUrl: RidderInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
-      suggetStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
-      status: PassengerInviteTable.status,
       RDV: sql`
         ST_Distance(
           ${SupplyOrderTable.startCord},
@@ -394,12 +382,9 @@ export class PassengerInviteService {
       suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -435,12 +420,9 @@ export class PassengerInviteService {
       suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -483,12 +465,9 @@ export class PassengerInviteService {
       suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -531,12 +510,9 @@ export class PassengerInviteService {
       suggestEndAddress: PassengerInviteTable.endAddress,
       inviterName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
-      initPrice: SupplyOrderTable.initPrice,
       suggestPrice: PassengerInviteTable.suggestPrice,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
       suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
       createdAt: PassengerInviteTable.createdAt,
       updatedAt: PassengerInviteTable.updatedAt,
       status: PassengerInviteTable.status,
@@ -618,6 +594,38 @@ export class PassengerInviteService {
       ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
       : undefined;
 
+    // check if endedAt is earlier than startAfter
+    if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+      const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
+      const tempResponse = await this.db.select({
+        suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      }).from(PassengerInviteTable)
+        .where(and(
+          eq(PassengerInviteTable.id, id), 
+          eq(PassengerInviteTable.userId, inviterId), 
+          eq(PassengerInviteTable.status, "CHECKING"),
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientInviteNotFoundException;
+
+      const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(tempResponse[0].suggestEndedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+      const tempResponse = await this.db.select({
+        suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      }).from(PassengerInviteTable)
+        .where(and(
+          eq(PassengerInviteTable.id, id), 
+          eq(PassengerInviteTable.userId, inviterId), 
+          eq(PassengerInviteTable.status, "CHECKING"),
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientEndBeforeStartException;
+
+      const [startAfter, endedAt] = [new Date(tempResponse[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    }
+
     return await this.db.update(PassengerInviteTable).set({
       briefDescription: updatePassengerInviteDto.briefDescription,
       suggestPrice: updatePassengerInviteDto.suggestPrice,
@@ -625,8 +633,14 @@ export class PassengerInviteService {
       endCord: newEndCord,
       startAddress: updatePassengerInviteDto.startAddress,
       endAddress: updatePassengerInviteDto.endAddress,
-      suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter || new Date()),
-      suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt || new Date()),
+      ...(updatePassengerInviteDto.suggestStartAfter
+        ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
+        : {}
+      ),
+      ...(updatePassengerInviteDto.suggestEndedAt
+        ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
+        : {}
+      ),
       updatedAt: new Date(),
       status: updatePassengerInviteDto.status,  // either CHECKING or CANCEL
     }).where(and(

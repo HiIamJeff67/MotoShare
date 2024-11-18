@@ -34,6 +34,7 @@ export class HistoryService {
       startAfter: HistoryTable.startAfter, 
       endedAt: HistoryTable.endedAt, 
       createdAt: HistoryTable.createdAt, 
+      updatedAt: HistoryTable.updatedAt,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl, 
       motocycleLicense: RidderInfoTable.motocycleLicense, 
       motocycleType: RidderInfoTable.motocycleType, 

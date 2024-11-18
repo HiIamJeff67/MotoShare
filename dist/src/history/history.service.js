@@ -45,6 +45,7 @@ let HistoryService = class HistoryService {
             startAfter: history_schema_1.HistoryTable.startAfter,
             endedAt: history_schema_1.HistoryTable.endedAt,
             createdAt: history_schema_1.HistoryTable.createdAt,
+            updatedAt: history_schema_1.HistoryTable.updatedAt,
             motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
             motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,

@@ -29,4 +29,5 @@ export declare const ClientCreateHistoryException: ForbiddenException;
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;
+export declare const ClientEndBeforeStartException: ConflictException;
 export declare const ClientUnknownException: InternalServerErrorException;

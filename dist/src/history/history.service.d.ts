@@ -30,6 +30,7 @@ export declare class HistoryService {
         startAfter: Date;
         endedAt: Date;
         createdAt: Date;
+        updatedAt: Date;
         motocyclePhotoUrl: string | null;
         motocycleLicense: string | null;
         motocycleType: string | null;

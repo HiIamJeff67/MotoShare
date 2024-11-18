@@ -12,6 +12,7 @@ import {
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
+import { ClientEndBeforeStartException, ClientSupplyOrderNotFoundException } from '../exceptions';
 
 @Injectable()
 export class SupplyOrderService {
@@ -33,8 +34,8 @@ export class SupplyOrderService {
       )`,
       startAddress: createSupplyOrderDto.startAddress,
       endAddress: createSupplyOrderDto.endAddress,
-      startAfter: new Date(createSupplyOrderDto.startAfter || new Date()),
-      endedAt: new Date(createSupplyOrderDto.endedAt || new Date()),
+      startAfter: new Date(createSupplyOrderDto.startAfter),
+      endedAt: new Date(createSupplyOrderDto.endedAt),
       tolerableRDV: createSupplyOrderDto.tolerableRDV,
     }) .returning({
       id: SupplyOrderTable.id,
@@ -212,7 +213,7 @@ export class SupplyOrderService {
       tolerableRDV: SupplyOrderTable.tolerableRDV,
       motocycleType: RidderInfoTable.motocycleType,
       status: SupplyOrderTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${SupplyOrderTable.startCord}, 
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
@@ -261,7 +262,7 @@ export class SupplyOrderService {
       tolerableRDV: SupplyOrderTable.tolerableRDV,
       motocycleType: RidderInfoTable.motocycleType,
       status: SupplyOrderTable.status,
-      distance: sql`ST_Distance(
+      manhattanDistance: sql`ST_Distance(
         ${SupplyOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
       )`
@@ -390,6 +391,37 @@ export class SupplyOrderService {
       ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
       : undefined;
 
+    if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+      const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
+      const tempResponse = await this.db.select({
+        endedAt: SupplyOrderTable.endedAt,
+      }).from(SupplyOrderTable)
+        .where(and(
+          ne(SupplyOrderTable.status, "RESERVED"),
+          eq(SupplyOrderTable.id, id), 
+          eq(SupplyOrderTable.creatorId, creatorId),
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+
+      const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    } else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+      const tempResponse = await this.db.select({
+        startAfter: SupplyOrderTable.startAfter,
+      }).from(SupplyOrderTable)
+        .where(and(
+          ne(SupplyOrderTable.status, "RESERVED"),
+          eq(SupplyOrderTable.id, id), 
+          eq(SupplyOrderTable.creatorId, creatorId),
+        ));
+      if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+
+      const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
+      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+    }
+
     return await this.db.update(SupplyOrderTable).set({
       description: updateSupplyOrderDto.description,
       initPrice: updateSupplyOrderDto.initPrice,
@@ -398,8 +430,14 @@ export class SupplyOrderService {
       startAddress: updateSupplyOrderDto.startAddress,
       endAddress: updateSupplyOrderDto.endAddress,
       updatedAt: new Date(),
-      startAfter: new Date(updateSupplyOrderDto.startAfter || new Date()),
-      endedAt: new Date(updateSupplyOrderDto.endedAt || new Date()),
+      ...(updateSupplyOrderDto.startAfter
+        ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
+        : {}
+      ),
+      ...(updateSupplyOrderDto.endedAt
+        ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
+        : {}
+      ),
       tolerableRDV: updateSupplyOrderDto.tolerableRDV,
       status: updateSupplyOrderDto.status,
     }).where(and(
