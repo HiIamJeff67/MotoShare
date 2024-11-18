@@ -13,17 +13,17 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/";
 import { useNavigation } from '@react-navigation/native';
 
 // 定義每個訂單的資料結構
 interface OrderType {
   id: string;
   tolerableRDV: number;
-  startAfter: Date;
-  initPrice: number;
+  updatedAt: Date;
   startAddress: string;
   endAddress: string;
+  creatorName: string;
 }
 
 const Order = () => {
@@ -31,6 +31,16 @@ const Order = () => {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const navigation = useNavigation();
+  let roleText = "載入中...";
+
+  if (user.role == 1)
+  {
+    roleText = "車主";
+  }
+  else if (user.role == 2)
+  {
+    roleText = "乘客";
+  }
 
   const dismissKeyboard = () => {
     // 只在非 Web 平台上執行 Keyboard.dismiss()
@@ -58,6 +68,7 @@ const Order = () => {
       });
 
       setOrders(response.data);
+      //console.log(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -106,13 +117,10 @@ const Order = () => {
                     <Text style={styles.orderNumber}>訂單編號: {order.id}</Text>
                   </View>
                   <View style={styles.body}>
+                    <Text style={styles.title}>{roleText}：{order.creatorName}</Text>
                     <Text style={styles.title}>起點：{order.startAddress}</Text>
                     <Text style={styles.title}>終點：{order.endAddress}</Text>
-                    {user.role == 1 ? (
-                      <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
-                    ) : null}
-                    <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                    <Text style={styles.title}>初始價格: {order.initPrice}</Text>
+                    <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   </View>
                 </View>
               </Pressable>
@@ -126,6 +134,7 @@ const Order = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 20,
   },

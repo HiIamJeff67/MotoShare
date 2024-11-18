@@ -8,11 +8,9 @@ const WelcomeScreen = () => {
     
     return (
         <SafeAreaView className="flex-1 bg-[#ffffff]">
-            <StatusBar barStyle="dark-content" />
-            
             <View className="justify-center items-center mt-20">
                 <Image
-                    source={require('../../assets/images/motorbike.jpg')}
+                    source={require('../../../assets/images/motorbike.jpg')}
                     className="w-64 h-64 absolute top-32"
                     resizeMode="contain"
                 />
@@ -22,7 +20,7 @@ const WelcomeScreen = () => {
                 style={{ 
                     top: 350,
                 }}>
-                                   
+
                 <Text className="text-[#3498db] text-4xl pb-5 font-bold">海大的共享機車系統</Text>
                 <Text className="text-[#3498db] text-base mt-[-10]">助你輕鬆抵達每一個角落</Text>
             </View>
@@ -34,7 +32,7 @@ const WelcomeScreen = () => {
                         width: 300,
                         height: 50,
                         position: 'absolute',
-                        top: 560,
+                        top: 400,
                         justifyContent: 'center',
                         alignItems: 'center',                                                                     
                     }}
@@ -47,7 +45,7 @@ const WelcomeScreen = () => {
 
             <View className="justify-center items-center"
                 style={{ 
-                    top:  630,
+                    top:  500,
                 }}>
                 
                 <Pressable 

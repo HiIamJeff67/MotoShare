@@ -1,12 +1,11 @@
-import { Text, View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/";
 import * as SecureStore from 'expo-secure-store';
-import { useRoute } from '@react-navigation/native';
-import 'react-native-get-random-values';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 // 定義 Creator 的資料結構
 interface CreatorInfoType {
@@ -35,19 +34,21 @@ interface OrderType {
   creator: CreatorType;
 }
 
-const MyOrder = () => {
+const OrderDetail = () => {
   const user = useSelector((state: RootState) => state.user);
   const [order, setOrder] = useState<OrderType>();
   const route = useRoute();
+  const { orderid } = route.params as { orderid: string };
+  const navigation = useNavigation();
   let roleText = "載入中...";
 
   if (user.role == 1)
   {
-    roleText = "乘客";
+    roleText = "車主";
   }
   else if (user.role == 2)
   {
-    roleText = "車主";
+    roleText = "乘客";
   }
 
   const getToken = async () => {
@@ -68,9 +69,9 @@ const MyOrder = () => {
     let response, url = "";
 
     if (user.role == 1) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchPaginationOrders`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
     } else if (user.role == 2) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchPaginationOrders`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/getPurchaseOrderById`;
     }
 
     const SearchOrder = async () => {
@@ -85,8 +86,7 @@ const MyOrder = () => {
 
           response = await axios.get(url, {
             params: {
-              limit: 10,
-              offset: 0,
+              id: orderid,
             },
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
@@ -95,7 +95,7 @@ const MyOrder = () => {
           });
 
           setOrder(response.data);
-          console.log(response.data);
+          //console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
@@ -127,17 +127,28 @@ const MyOrder = () => {
                 {order ? (
                 <>
                   <Text style={styles.title}>{roleText}：{order.creator.userName}</Text>
-                  <Text style={styles.title}>車種：{order.creator.info.motocycleType}</Text>
                   <Text style={styles.title}>起點：{order.startAddress}</Text>
                   <Text style={styles.title}>終點：{order.endAddress}</Text>
-                  <Text style={styles.title}>描述: {order.description}</Text>
+                  <Text style={styles.title}>開車時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   <Text style={styles.title}>初始價格: {order.initPrice}</Text>
                   {user.role == 1 ? (
                     <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
                   ) : null}
-                  <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>結束時間: {new Date(order.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                  <Text style={styles.title}>備註: {order.description}</Text>
+                  <View className="justify-center items-center py-2">
+                    <Pressable
+                      style={{
+                        height: 50,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      className="rounded-[12px] shadow-lg w-full bg-green-500"
+                      onPress={() => navigation.navigate('invitemap', { orderid: orderid })}
+                    >
+                      <Text className="font-semibold text-lg">建立邀請</Text>
+                    </Pressable>
+                  </View>
                 </>
                 ) : (
                   <Text style={styles.title}>正在加載訂單資料...</Text>
@@ -153,6 +164,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingHorizontal: 20,
+      paddingVertical: 20,
     },
     card: {
       backgroundColor: 'white',
@@ -190,4 +202,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MyOrder;
+export default OrderDetail;

@@ -21,7 +21,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/index";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -33,6 +33,8 @@ import axios from "axios";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute } from '@react-navigation/native';
+import 'react-native-get-random-values';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 const InviteMap = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -58,6 +60,7 @@ const InviteMap = () => {
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
+  const navigation = useNavigation();
 
   const getToken = async () => {
     try {
@@ -133,11 +136,20 @@ const InviteMap = () => {
       });
 
       console.log("Update Response:", response.data);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1, // 設為 1，因為我們要有兩個頁面：HomeScreen 和 InvScreen
+          routes: [{ name: 'home' }, { name: 'myinvite' }],
+        })
+      );
+      Alert.alert("成功", "送出邀請成功");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
       } else {
         console.log("An unexpected error occurred:", error);
+        Alert.alert("錯誤", "伺服器錯誤");
       }
     }
   };

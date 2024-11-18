@@ -1,39 +1,62 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import WelcomeScreen from './screen/welcome';
-import PLoginScreen from './screen/plogin';
-import RLoginScreen from './screen/rlogin';
-import ChooseScreen from './screen/choose';
-import Choose2Screen from './screen/choose2';
-import PRegScreen from './screen/preg';
-import RRegScreen from './screen/rreg';
+import WelcomeScreen from './screen/auth/welcome';
+import PLoginScreen from './screen/auth/plogin';
+import RLoginScreen from './screen/auth/rlogin';
+import ChooseScreen from './screen/auth/choose';
+import Choose2Screen from './screen/auth/choose2';
+import PRegScreen from './screen/auth/preg';
+import RRegScreen from './screen/auth/rreg';
 import HomeScreen from './screen/home';
 import ProfileScreen from './screen/profile';
 import ServiceScreen from './screen/service';
-import MapScreen from './screen/map';
-import OrderScreen from './screen/order';
-import OrderDetailScreen from './screen/orderdetail';
-import MyOrderScreen from './screen/myorder';
-import MyInviteScreen from './screen/myinvite';
-import MyInviteDeScreen from './screen/myinvitede';
-import OtherInviteScreen from './screen/otherinvite';
-import InviteMap from './screen/invitemap';
+import MapScreen from './screen/order/map';
+import OrderScreen from './screen/order/order';
+import OrderDetailScreen from './screen/order/orderdetail';
+import MyOrderScreen from './screen/myorder/myorder';
+import MyOrderDeScreen from './screen/myorder/myorderde';
+import MyOrderHisScreen from './screen/myorder/myorderhis';
+import MyOrderHisDeScreen from './screen/myorder/myorderhisde';
+import MyInviteScreen from './screen/invite/myinvite';
+import MyInviteDeScreen from './screen/invite/myinvitede';
+import OtherInviteScreen from './screen/invite/otherinvite';
+import OtherInviteDeScreen from './screen/invite/otherinvitede';
+import InviteMap from './screen/invite/invitemap';
 import store from './(store)/';
 import { Provider } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import "../global.css";
+import { View, Pressable } from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
+const CustomBackHeader = ({ navigation }: { navigation: any }) => (
+  <View
+    style={{
+      justifyContent: "center",
+      alignItems: "center",
+      left: 15, // 控制距離左邊的距離
+      top: 15, // 控制距離上方的距離
+    }}
+  >
+    <Pressable 
+      className='rounded-full'
+      onPress={() => navigation.goBack()}>
+      <Ionicons name="arrow-back-circle" size={50} color="black" />
+    </Pressable>
+  </View>
+);
+
 const TopTabNavigator = () => {
   return (
     <TopTab.Navigator>
       <TopTab.Screen name="進行中" component={MyOrderScreen} />
-      <TopTab.Screen name="已結束" component={ProfileScreen} />
+      <TopTab.Screen name="已結束" component={MyOrderHisScreen} />
     </TopTab.Navigator>
   );
 }
@@ -111,17 +134,38 @@ export default function App() {
         />
         <Stack.Screen name="invitemap"
           component={InviteMap} 
-          options={{ 
-            headerShown: false,
-            title: "主頁",
-            headerTitleAlign: 'center',
-          }}
+          options={({ navigation }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: "transparent", // 設定 header 背景透明
+            },
+            headerTransparent: true, // 確保背景完全透明
+            headerTitle: "", // 移除標題文字
+            headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
+          })}
         />
         <Stack.Screen name="myorder"
           component={TopTabNavigator} 
           options={{ 
             headerShown: true,
+            headerShadowVisible: false,
             title: "主頁",
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="myorderde"
+          component={MyOrderDeScreen} 
+          options={{ 
+            headerShown: true,
+            title: "訂單管理",
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="myorderhisde"
+          component={MyOrderHisDeScreen} 
+          options={{ 
+            headerShown: true,
+            title: "訂單管理",
             headerTitleAlign: 'center',
           }}
         />
@@ -133,10 +177,19 @@ export default function App() {
             headerTitleAlign: 'center',
           }}
         />
+        <Stack.Screen name="otherinvitede"
+          component={OtherInviteDeScreen} 
+          options={{ 
+            headerShown: true,
+            title: "別人邀請",
+            headerTitleAlign: 'center',
+          }}
+        />
         <Stack.Screen name="myinvite"
           component={TopTabNavigator2} 
           options={{ 
             headerShown: true,
+            headerShadowVisible: false,
             title: "主頁",
             headerTitleAlign: 'center',
           }}
@@ -160,9 +213,15 @@ export default function App() {
         />
         <Stack.Screen name="map" 
           component={MapScreen}
-          options={{ 
-            headerShown: false,
-          }}
+          options={({ navigation }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: "transparent", // 設定 header 背景透明
+            },
+            headerTransparent: true, // 確保背景完全透明
+            headerTitle: "", // 移除標題文字
+            headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
+          })}
         />
         <Stack.Screen name="plogin" 
           component={PLoginScreen} 

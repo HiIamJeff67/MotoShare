@@ -1,7 +1,7 @@
 import { Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { RootState } from '../(store)/index';
+import { RootState } from '../(store)/';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';

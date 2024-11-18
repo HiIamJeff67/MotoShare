@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { RootState } from '../(store)/index';
+import { RootState } from '../(store)/';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { useNavigation } from '@react-navigation/native';
 

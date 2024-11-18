@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { RootState } from '../(store)/index';
+import { RootState } from '../(store)/';
 
 const Home = () => {
   const user = useSelector((state: RootState) => state.user);

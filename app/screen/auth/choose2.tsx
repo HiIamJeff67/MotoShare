@@ -16,7 +16,7 @@ const Choose2Screen = () => {
 
         <View className="justify-center items-center">
             <Image
-                source={require('../../assets/images/motorbike.jpg')}
+                source={require('../../../assets/images/motorbike.jpg')}
                 style={{ 
                     width: 300, 
                     height: 300,

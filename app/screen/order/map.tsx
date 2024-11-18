@@ -21,7 +21,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -32,6 +32,8 @@ import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Entypo } from "@expo/vector-icons";
+import 'react-native-get-random-values';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 const MapWithBottomSheet = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -55,6 +57,7 @@ const MapWithBottomSheet = () => {
   const user = useSelector((state: RootState) => state.user);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const navigation = useNavigation();
 
   const getToken = async () => {
     try {
@@ -128,11 +131,20 @@ const MapWithBottomSheet = () => {
       });
 
       console.log("Update Response:", response.data);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'home' }],
+        })
+      );
+      Alert.alert("成功", "送出訂單成功");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
       } else {
         console.log("An unexpected error occurred:", error);
+        Alert.alert("錯誤", "伺服器錯誤");
       }
     }
   };

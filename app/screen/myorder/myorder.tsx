@@ -1,35 +1,41 @@
-import { Text, View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/index";
 import * as SecureStore from 'expo-secure-store';
-import 'react-native-get-random-values';
+import { useNavigation } from '@react-navigation/native';
 
 // 定義每個訂單的資料結構
 interface OrderType {
   id: string;
   description: string;
+  tolerableRDV: number;
   startAfter: Date;
   initPrice: number;
-  suggestPrice: number;
-  startAddress: string;
-  endAddress: string;
+  finalStartAddress: string;
+  finalEndAddress: string;
   updatedAt: Date;
-  suggestStartAfter: Date;
   endedAt: Date;
+  passengerStatus: string;
+  ridderStatus: string;
+  ridderName: string;
+  passengerName: string;
+  passengerStartAddress: string;
 }
 
-const OtherOrder = () => {
+const MyOrder = () => {
   const user = useSelector((state: RootState) => state.user);
-  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [order, setOrder] = useState<OrderType[]>([]);
+  const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 1)
+  if (user.role == 2) //home.tsx才正確
   {
     roleText = "乘客";
   }
-  else if (user.role == 2)
+  else if (user.role == 1)
   {
     roleText = "車主";
   }
@@ -52,9 +58,9 @@ const OtherOrder = () => {
     let response, url = "";
 
     if (user.role == 1) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/ridder/searchMyPaginationPasssengerInvites`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchPaginationOrders`;
     } else if (user.role == 2) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/passenger/searchMyPaginationRidderInvites`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchPaginationOrders`;
     }
 
     const SearchOrder = async () => {
@@ -78,8 +84,8 @@ const OtherOrder = () => {
             },
           });
 
-          setOrders(response.data);
-          console.log(response.data);
+          setOrder(response.data);
+          //console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
@@ -91,31 +97,35 @@ const OtherOrder = () => {
 
     SearchOrder();
   }, []);
-
+  
   return (
     <ScrollView>
+      <SafeAreaView>
         <View className='pt-5'/>
-
-        {orders.map((order) => (
-          <View key={order.id} style={styles.container}>
-            <View style={styles.card}>
-                <View style={styles.header}>
-                  <Text style={styles.orderNumber}>訂單編號: {order.id}</Text>
+        {order.map((order) => (
+          (order.passengerStatus != "FinishedStatus" || order.ridderStatus != "FinishedStatus") ? (
+            <View key={order.id} style={styles.container}>
+              <Pressable
+              key={order.id}
+              onPress={() => navigation.navigate('myorderde', { orderid: order.id })}
+              >
+                <View style={styles.card}>
+                    <View style={styles.header}>
+                      <Text style={styles.orderNumber}>我的訂單編號: {order?.id}</Text>
+                    </View>
+                    <View style={styles.body}>
+                      <Text style={styles.title}>{roleText}：{user.role == 1 ? order.ridderName : order.passengerName}</Text>
+                      <Text style={styles.title}>起點：{order.finalStartAddress}</Text>
+                      <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
+                      <Text style={styles.title}>開車時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                      <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                    </View>
                 </View>
-        
-                <View style={styles.body}>
-                  <Text style={styles.title}>起點：{order.startAddress}</Text>
-                  <Text style={styles.title}>終點：{order.endAddress}</Text>
-                  <Text style={styles.title}>初始價格: {order.initPrice}</Text>
-                  <Text style={styles.title}>推薦價格: {order.suggestPrice}</Text>
-                  <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>推薦開始時間: {new Date(order.suggestStartAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>結束時間: {new Date(order.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                </View>
+              </Pressable>
             </View>
-          </View>
-        ))}
+            ) : null
+          ))}
+        </SafeAreaView>
       </ScrollView>
   );
 };
@@ -124,6 +134,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingHorizontal: 20,
+      paddingVertical: 20,
     },
     card: {
       backgroundColor: 'white',
@@ -161,4 +172,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OtherOrder;
+export default MyOrder;

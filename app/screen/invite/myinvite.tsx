@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-nati
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/index";
+import { RootState } from "../../(store)/index";
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,6 +18,8 @@ interface OrderType {
   updatedAt: Date;
   suggestStartAfter: Date;
   endedAt: Date;
+  status: String;
+  receiverName: string;
 }
 
 const MyInvite = () => {
@@ -95,9 +97,10 @@ const MyInvite = () => {
 
   return (
     <ScrollView>
-        <View className='pt-5'/>
+      <View className='pt-5'/>
 
-        {invites.map((invite) => (
+      {invites.map((invite) => (
+        invite.status == "CHECKING" ? (
           <View key={invite.id} style={styles.container}>
             <Pressable
               key={invite.id}
@@ -105,24 +108,21 @@ const MyInvite = () => {
             >
               <View style={styles.card}>
                   <View style={styles.header}>
-                    <Text style={styles.orderNumber}>訂單編號: {invite.id}</Text>
+                    <Text style={styles.orderNumber}>邀請編號: {invite.id}</Text>
                   </View>
           
                   <View style={styles.body}>
-                    <Text style={styles.title}>起點：{invite.startAddress}</Text>
-                    <Text style={styles.title}>終點：{invite.endAddress}</Text>
-                    <Text style={styles.title}>初始價格: {invite.initPrice}</Text>
-                    <Text style={styles.title}>推薦價格: {invite.suggestPrice}</Text>
-                    <Text style={styles.title}>開始時間: {new Date(invite.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                    <Text style={styles.title}>推薦開始時間: {new Date(invite.suggestStartAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                    <Text style={styles.title}>結束時間: {new Date(invite.endedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
+                    <Text style={styles.title}>你邀請了：{invite.receiverName}</Text>
+                    <Text style={styles.title}>推薦起點：{invite.startAddress}</Text>
+                    <Text style={styles.title}>推薦終點：{invite.endAddress}</Text>
                     <Text style={styles.title}>更新時間: {new Date(invite.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   </View>
               </View>
             </Pressable>
           </View>
-        ))}
-      </ScrollView>
+        ) : null
+      ))}
+    </ScrollView>
   );
 };
 
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingHorizontal: 20,
+      paddingVertical: 20,
     },
     card: {
       backgroundColor: 'white',
