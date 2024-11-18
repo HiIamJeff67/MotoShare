@@ -22,6 +22,7 @@ const auth_interface_1 = require("../../src/interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
 const update_info_dto_1 = require("./dto/update-info.dto");
 const update_passenger_dto_1 = require("./dto/update-passenger.dto");
+const platform_express_1 = require("@nestjs/platform-express");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -132,9 +133,9 @@ let PassengerController = class PassengerController {
             });
         }
     }
-    async updateMyInfo(passenger, updatePassengerInfoDto, response) {
+    async updateMyInfo(passenger, updatePassengerInfoDto, file = undefined, response) {
         try {
-            const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto);
+            const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto, file);
             if (!res)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -255,13 +256,15 @@ __decorate([
 ], PassengerController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     (0, common_1.Post)('updateMyInfo'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Res)()),
+    __param(2, (0, common_1.UploadedFile)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_interface_1.PassengerType,
-        update_info_dto_1.UpdatePassengerInfoDto, Object]),
+        update_info_dto_1.UpdatePassengerInfoDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "updateMyInfo", null);
 __decorate([

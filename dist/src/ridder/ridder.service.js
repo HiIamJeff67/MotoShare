@@ -21,14 +21,12 @@ const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
-const supabase_module_1 = require("../supabase/supabase.module");
-const supabase_js_1 = require("@supabase/supabase-js");
-const utils_1 = require("../utils");
+const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
 let RidderService = class RidderService {
-    constructor(config, db, supabase) {
+    constructor(storage, config, db) {
+        this.storage = storage;
         this.config = config;
         this.db = db;
-        this.supabase = supabase;
     }
     async getRidderById(id) {
         const response = await this.db.select({
@@ -183,14 +181,12 @@ let RidderService = class RidderService {
         });
     }
     async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile = undefined) {
-        if (uploadedFile) {
-            const convertedFile = (0, utils_1.multerToFile)(uploadedFile);
-            const hashedFileName = await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND")));
-            const filePath = `passengerAvators/${hashedFileName.replace('.', '').substring(0, 10)}`;
-            const responseOfUploadAvator = await this.supabase.storage.from("AvatorBucket").upload(filePath, convertedFile);
-            const url = await this.supabase.storage.from("AvatorBucket").getPublicUrl(filePath);
-            console.log(url);
-        }
+        const ridderInfo = await this.db.select({
+            infoId: ridderInfo_schema_1.RidderInfoTable.id,
+        }).from(ridderInfo_schema_1.RidderInfoTable)
+            .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
+        if (!ridderInfo || ridderInfo.length === 0)
+            throw exceptions_1.ClientRidderNotFoundException;
         return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
             isOnline: updateRidderInfoDto.isOnline,
             age: updateRidderInfoDto.age,
@@ -199,7 +195,10 @@ let RidderService = class RidderService {
             motocycleLicense: updateRidderInfoDto.motocycleLicense,
             motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
             motocycleType: updateRidderInfoDto.motocycleType,
-            avatorUrl: updateRidderInfoDto.avatorUrl,
+            ...(uploadedFile
+                ? { avatorUrl: await this.storage.uploadFile(ridderInfo[0].infoId, "AvatorBucket", "ridderAvators/", uploadedFile)
+                }
+                : {}),
         }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
     }
     async deleteRiddderById(id) {
@@ -232,8 +231,8 @@ let RidderService = class RidderService {
 exports.RidderService = RidderService;
 exports.RidderService = RidderService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __param(2, (0, common_1.Inject)(supabase_module_1.SUPABASE)),
-    __metadata("design:paramtypes", [config_1.ConfigService, Object, supabase_js_1.SupabaseClient])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [supabaseStorage_service_1.SupabaseStorageService,
+        config_1.ConfigService, Object])
 ], RidderService);
 //# sourceMappingURL=ridder.service.js.map

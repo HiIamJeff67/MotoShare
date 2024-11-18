@@ -2,10 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
+import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 export declare class PassengerService {
     private config;
+    private storage;
     private db;
-    constructor(config: ConfigService, db: DrizzleDB);
+    constructor(config: ConfigService, storage: SupabaseStorageService, db: DrizzleDB);
     private getPassengerById;
     getPassengerWithInfoByUserName(userName: string): Promise<{
         userName: string;
@@ -70,7 +72,7 @@ export declare class PassengerService {
         userName: string;
         eamil: string;
     }[]>;
-    updatePassengerInfoByUserId(userId: string, updatePassengerInfoDto: UpdatePassengerInfoDto): Promise<import("pg").QueryResult<never>>;
+    updatePassengerInfoByUserId(userId: string, updatePassengerInfoDto: UpdatePassengerInfoDto, uploadedFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
     deletePassengerById(id: string): Promise<{
         id: string;
         userName: string;

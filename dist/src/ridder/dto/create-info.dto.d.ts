@@ -6,5 +6,4 @@ export declare class CreateRidderInfoDto {
     motocycleLicense?: string;
     motocylePhotoUrl?: string;
     motocycleType?: string;
-    avatorUrl?: string;
 }

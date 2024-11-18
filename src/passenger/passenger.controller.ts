@@ -192,16 +192,16 @@ export class PassengerController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  // @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
   @Post('updateMyInfo')
   async updateMyInfo(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
-    // @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | undefined = undefined,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto);
+      const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto, file);
 
       if (!res) throw ClientPassengerNotFoundException;
 

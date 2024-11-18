@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const ridder_service_1 = require("./ridder.service");
 const ridder_controller_1 = require("./ridder.controller");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
-const supabase_module_1 = require("../supabase/supabase.module");
+const supabaseStorage_module_1 = require("../supabaseStorage/supabaseStorage.module");
 let RidderModule = class RidderModule {
 };
 exports.RidderModule = RidderModule;
@@ -19,7 +19,7 @@ exports.RidderModule = RidderModule = __decorate([
     (0, common_1.Module)({
         controllers: [ridder_controller_1.RidderController],
         providers: [ridder_service_1.RidderService],
-        imports: [drizzle_module_1.DrizzleModule, supabase_module_1.SupabaseModule],
+        imports: [drizzle_module_1.DrizzleModule, supabaseStorage_module_1.SupabaseStorageModule],
     })
 ], RidderModule);
 //# sourceMappingURL=ridder.module.js.map

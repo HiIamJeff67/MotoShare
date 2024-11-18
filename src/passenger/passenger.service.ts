@@ -11,11 +11,13 @@ import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schem
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientPassengerNotFoundException } from '../exceptions';
+import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 
 @Injectable()
 export class PassengerService {
   constructor(
     private config: ConfigService,
+    private storage: SupabaseStorageService,
     @Inject(DRIZZLE) private db: DrizzleDB
   ) {}
   
@@ -195,13 +197,29 @@ export class PassengerService {
   async updatePassengerInfoByUserId(
     userId: string, 
     updatePassengerInfoDto: UpdatePassengerInfoDto,
+    uploadedFile: Express.Multer.File | undefined = undefined,
   ) {
+    const passengerInfo = await this.db.select({
+      infoId: PassengerInfoTable.id,
+    }).from(PassengerInfoTable)
+      .where(eq(PassengerInfoTable.userId, userId));
+    if (!passengerInfo || passengerInfo.length === 0) throw ClientPassengerNotFoundException;
+
     return await this.db.update(PassengerInfoTable).set({
       isOnline: updatePassengerInfoDto.isOnline,
       age: updatePassengerInfoDto.age,
       phoneNumber: updatePassengerInfoDto.phoneNumber,
       selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-      avatorUrl: updatePassengerInfoDto.avatorUrl,
+      ...(uploadedFile
+        ? { avatorUrl: await this.storage.uploadFile(
+              passengerInfo[0].infoId,
+              "AvatorBucket",
+              "passengerAvators/",
+              uploadedFile
+            ) 
+          }
+        : {}
+      ),
     }).where(eq(PassengerInfoTable.userId, userId));
   }
   // note that we don't need to modify the collection

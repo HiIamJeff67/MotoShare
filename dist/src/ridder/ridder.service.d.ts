@@ -2,12 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 export declare class RidderService {
+    private storage;
     private config;
     private db;
-    private supabase;
-    constructor(config: ConfigService, db: DrizzleDB, supabase: SupabaseClient);
+    constructor(storage: SupabaseStorageService, config: ConfigService, db: DrizzleDB);
     private getRidderById;
     getRidderWithInfoByUserName(userName: string): Promise<{
         userName: string;

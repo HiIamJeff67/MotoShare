@@ -14,13 +14,14 @@ import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, Clie
 import { SUPABASE } from '../supabase/supabase.module';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { multerToFile } from '../utils';
+import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 
 @Injectable()
 export class RidderService {
   constructor(
+    private storage: SupabaseStorageService,
     private config: ConfigService,
     @Inject(DRIZZLE) private db: DrizzleDB,
-    @Inject(SUPABASE) private supabase: SupabaseClient,
   ) {}
 
   /* ================================= Get operations ================================= */
@@ -205,14 +206,12 @@ export class RidderService {
     updateRidderInfoDto: UpdateRidderInfoDto,
     uploadedFile: Express.Multer.File | undefined = undefined,
   ) {
-    if (uploadedFile) {
-      const convertedFile = multerToFile(uploadedFile);
-      const hashedFileName = await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND")));
-      const filePath = `passengerAvators/${hashedFileName.replace('.', '').substring(0, 10)}`;
-      const responseOfUploadAvator = await this.supabase.storage.from("AvatorBucket").upload(filePath, convertedFile);
-      const url = await this.supabase.storage.from("AvatorBucket").getPublicUrl(filePath);
-      console.log(url);
-    }
+    const ridderInfo = await this.db.select({
+      infoId: RidderInfoTable.id,
+    }).from(RidderInfoTable)
+      .where(eq(RidderInfoTable.userId, userId));
+
+    if (!ridderInfo || ridderInfo.length === 0) throw ClientRidderNotFoundException;
 
     return await this.db.update(RidderInfoTable).set({
       isOnline: updateRidderInfoDto.isOnline,
@@ -222,7 +221,16 @@ export class RidderService {
       motocycleLicense: updateRidderInfoDto.motocycleLicense,
       motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
       motocycleType: updateRidderInfoDto.motocycleType,
-      avatorUrl: updateRidderInfoDto.avatorUrl,
+      ...(uploadedFile 
+        ? { avatorUrl: await this.storage.uploadFile(
+              ridderInfo[0].infoId, 
+              "AvatorBucket", 
+              "ridderAvators/", 
+              uploadedFile
+            ) 
+          } 
+        : {}
+      ),
     }).where(eq(RidderInfoTable.userId, userId));
   }
   // note that we don't need to modify the collection

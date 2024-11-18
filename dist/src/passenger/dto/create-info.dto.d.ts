@@ -3,5 +3,4 @@ export declare class CreatePassengerInfoDto {
     age?: number;
     phoneNumber?: string;
     selfIntroduction?: string;
-    avatorUrl?: string;
 }

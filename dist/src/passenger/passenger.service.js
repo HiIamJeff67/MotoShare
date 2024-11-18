@@ -21,9 +21,11 @@ const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
 const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
+const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
 let PassengerService = class PassengerService {
-    constructor(config, db) {
+    constructor(config, storage, db) {
         this.config = config;
+        this.storage = storage;
         this.db = db;
     }
     async getPassengerById(id) {
@@ -172,13 +174,22 @@ let PassengerService = class PassengerService {
             eamil: passenger_schema_1.PassengerTable.email,
         });
     }
-    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto) {
+    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto, uploadedFile = undefined) {
+        const passengerInfo = await this.db.select({
+            infoId: passengerInfo_schema_1.PassengerInfoTable.id,
+        }).from(passengerInfo_schema_1.PassengerInfoTable)
+            .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+        if (!passengerInfo || passengerInfo.length === 0)
+            throw exceptions_1.ClientPassengerNotFoundException;
         return await this.db.update(passengerInfo_schema_1.PassengerInfoTable).set({
             isOnline: updatePassengerInfoDto.isOnline,
             age: updatePassengerInfoDto.age,
             phoneNumber: updatePassengerInfoDto.phoneNumber,
             selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-            avatorUrl: updatePassengerInfoDto.avatorUrl,
+            ...(uploadedFile
+                ? { avatorUrl: await this.storage.uploadFile(passengerInfo[0].infoId, "AvatorBucket", "passengerAvators/", uploadedFile)
+                }
+                : {}),
         }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
     }
     async deletePassengerById(id) {
@@ -200,7 +211,8 @@ let PassengerService = class PassengerService {
 exports.PassengerService = PassengerService;
 exports.PassengerService = PassengerService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [config_1.ConfigService, Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        supabaseStorage_service_1.SupabaseStorageService, Object])
 ], PassengerService);
 //# sourceMappingURL=passenger.service.js.map

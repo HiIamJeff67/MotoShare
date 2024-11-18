@@ -40,8 +40,4 @@ export class CreatePassengerInfoDto {
     @MaxLength(MAX_SELF_INTRODUCTION_LENGTH)
     @IsString()
     selfIntroduction?: string
-
-    @IsOptional()
-    @IsString()
-    avatorUrl?: string
 }
