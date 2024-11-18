@@ -10,21 +10,16 @@ export declare class OrderService {
         finalPrice: number;
         passengerDescription: string | null;
         ridderDescription: string | null;
-        passengerStartCord: {
+        finalStartCord: {
             x: number;
             y: number;
         };
-        passengerEndCord: {
+        finalEndCord: {
             x: number;
             y: number;
         };
-        ridderStartCord: {
-            x: number;
-            y: number;
-        };
-        passengerStartAddress: string;
-        passengerEndAddress: string;
-        ridderStartAddress: string;
+        finalStartAddress: string;
+        finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
         passengerStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
@@ -41,8 +36,17 @@ export declare class OrderService {
     }[]>;
     searchPaginationOrderByPassengerId(passengerId: string, ridderName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        ridderStartAddress: string;
         ridderName: never;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
         ridderAvatorUrl: never;
         finalPrice: number;
         startAfter: Date;
@@ -56,8 +60,16 @@ export declare class OrderService {
     }[]>;
     searchPaginationOrderByRidderId(ridderId: string, passengerName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
-        passengerStartAddress: string;
-        passengerEndAddress: string;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
         passengerName: never;
         passengerAvatorUrl: never;
         finalPrice: number;

@@ -18,4 +18,6 @@ __exportStar(require("./IsOnlyDate.decorator"), exports);
 __exportStar(require("./CompareNumberString.decorator"), exports);
 __exportStar(require("./IsPhoneNumberString.decorator"), exports);
 __exportStar(require("./IsLicenseString.decorator"), exports);
+__exportStar(require("./IsStartBeforeEnd.decorator"), exports);
+__exportStar(require("./IsEndAfterStart.decorator"), exports);
 //# sourceMappingURL=index.js.map

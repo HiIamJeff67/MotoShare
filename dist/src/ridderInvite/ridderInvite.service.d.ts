@@ -6,8 +6,8 @@ export declare class RidderInviteService {
     constructor(db: DrizzleDB);
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
-        createdAt: Date;
         orderId: string;
+        createdAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
@@ -179,21 +179,16 @@ export declare class RidderInviteService {
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
-        passsengerStartCord: {
+        finalStartCord: {
             x: number;
             y: number;
         };
-        passengerEndCord: {
+        finalEndCord: {
             x: number;
             y: number;
         };
-        ridderStartCord: {
-            x: number;
-            y: number;
-        };
-        passengerStartAddress: string;
-        passengerEndAddress: string;
-        ridderStartAddress: string;
+        finalStartAddress: string;
+        finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";

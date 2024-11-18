@@ -11,6 +11,7 @@ export declare class SupplyOrderService {
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -24,7 +25,6 @@ export declare class SupplyOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -32,6 +32,7 @@ export declare class SupplyOrderService {
     getSupplyOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -45,7 +46,6 @@ export declare class SupplyOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";

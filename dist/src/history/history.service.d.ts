@@ -12,21 +12,16 @@ export declare class HistoryService {
         ridderAvatorUrl: string | null;
         ridderPhoneNumber: string | null;
         finalPrice: number;
-        passengerStartCord: {
+        finalStartCord: {
             x: number;
             y: number;
         };
-        passengerEndCord: {
+        finalEndCord: {
             x: number;
             y: number;
         };
-        ridderStartCord: {
-            x: number;
-            y: number;
-        };
-        passengerStartAddress: string;
-        passengerEndAddress: string;
-        ridderStartAddress: string;
+        finalStartAddress: string;
+        finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
         createdAt: Date;
@@ -37,26 +32,45 @@ export declare class HistoryService {
     }[]>;
     searchPaginationHistoryByPassengerId(passengerId: string, limit: number, offset: number): Promise<{
         id: string;
-        ridderStartAddress: string;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
         ridderName: string | null;
-        ridderAvatorUrl: string | null;
+        avatorUrl: string | null;
         finalPrice: number;
         startAfter: Date;
         endedAt: Date;
         createdAt: Date;
+        updatedAt: Date;
         ridderPhoneNumber: string | null;
         motocycleType: string | null;
         status: "EXPIRED" | "CANCEL" | "FINISHED";
     }[]>;
     searchPaginationHistoryByRidderId(ridderId: string, limit: number, offset: number): Promise<{
         id: string;
-        passengerStartAddress: string;
-        passengerEndAddress: string;
-        passengerAvatorUrl: string | null;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
+        avatorUrl: string | null;
         finalPrice: number;
         startAfter: Date;
         endedAt: Date;
         createdAt: Date;
+        updatedAt: Date;
         passengerPhoneNumber: string | null;
         status: "EXPIRED" | "CANCEL" | "FINISHED";
     }[]>;

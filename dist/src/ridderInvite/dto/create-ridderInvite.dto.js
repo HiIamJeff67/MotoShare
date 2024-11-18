@@ -63,11 +63,13 @@ __decorate([
 ], CreateRidderInviteDto.prototype, "endAddress", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, decorators_1.IsStartBeforeEnd)('suggestEndedAt'),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateRidderInviteDto.prototype, "suggestStartAfter", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, decorators_1.IsEndAfterStart)('suggestEndedAt'),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateRidderInviteDto.prototype, "suggestEndedAt", void 0);

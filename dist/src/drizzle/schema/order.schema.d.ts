@@ -114,8 +114,8 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        passengerStartCord: import("drizzle-orm/pg-core").PgColumn<{
-            name: "passengerStartCord";
+        finalStartCord: import("drizzle-orm/pg-core").PgColumn<{
+            name: "finalStartCord";
             tableName: "order";
             dataType: "json";
             columnType: "PgGeometryObject";
@@ -133,8 +133,8 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        passengerEndCord: import("drizzle-orm/pg-core").PgColumn<{
-            name: "passengerEndCord";
+        finalEndCord: import("drizzle-orm/pg-core").PgColumn<{
+            name: "finalEndCord";
             tableName: "order";
             dataType: "json";
             columnType: "PgGeometryObject";
@@ -152,27 +152,8 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        ridderStartCord: import("drizzle-orm/pg-core").PgColumn<{
-            name: "ridderStartCord";
-            tableName: "order";
-            dataType: "json";
-            columnType: "PgGeometryObject";
-            data: {
-                x: number;
-                y: number;
-            };
-            driverParam: string;
-            notNull: true;
-            hasDefault: false;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: undefined;
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        passengerStartAddress: import("drizzle-orm/pg-core").PgColumn<{
-            name: "passengerStartAddress";
+        finalStartAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "finalStartAddress";
             tableName: "order";
             dataType: "string";
             columnType: "PgText";
@@ -187,24 +168,8 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        passengerEndAddress: import("drizzle-orm/pg-core").PgColumn<{
-            name: "passengerEndAddress";
-            tableName: "order";
-            dataType: "string";
-            columnType: "PgText";
-            data: string;
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: [string, ...string[]];
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        ridderStartAddress: import("drizzle-orm/pg-core").PgColumn<{
-            name: "ridderStartAddress";
+        finalEndAddress: import("drizzle-orm/pg-core").PgColumn<{
+            name: "finalEndAddress";
             tableName: "order";
             dataType: "string";
             columnType: "PgText";

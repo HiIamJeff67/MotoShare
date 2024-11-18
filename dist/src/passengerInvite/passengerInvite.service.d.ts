@@ -178,21 +178,16 @@ export declare class PassengerInviteService {
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
-        passengerStartCord: {
+        finalStartCord: {
             x: number;
             y: number;
         };
-        passengerEndCord: {
+        finalEndCord: {
             x: number;
             y: number;
         };
-        ridderStartCord: {
-            x: number;
-            y: number;
-        };
-        passengerStartAddress: string;
-        passengerEndAddress: string;
-        ridderStartAddress: string;
+        finalStartAddress: string;
+        finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
