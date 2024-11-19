@@ -4,7 +4,7 @@ import { MAX_COMMENT_LENGTH, MIN_COMMENT_LENGTH } from "../../constants/context.
 
 export class RateAndCommentHistoryDto {
     @IsOptional()
-    @IsIn(StarRatingTypes, { message: "The value of starRating must be either 0, 1, 2, 3, 4, or 5" })
+    @IsIn(StarRatingTypes, { message: "The value of starRating must be either 1, 2, 3, 4, or 5" })
     starRating?: StarRatingType
 
     @IsOptional()
