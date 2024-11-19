@@ -63,7 +63,7 @@ export class CreateRidderInviteDto {
     suggestStartAfter: string
 
     @IsNotEmpty()
-    @IsEndAfterStart('suggestEndedAt')
+    @IsEndAfterStart('suggestStartAfter')
     @IsAfterNow()
     @IsDateString()
     suggestEndedAt: string

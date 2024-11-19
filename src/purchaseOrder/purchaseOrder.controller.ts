@@ -79,6 +79,10 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;

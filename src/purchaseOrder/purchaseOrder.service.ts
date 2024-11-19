@@ -24,7 +24,7 @@ export class PurchaseOrderService {
     const response = await this.db.update(PurchaseOrderTable).set({
       status: "EXPIRED",
     }).where(and(
-      eq(PurchaseOrderTable.status, "EXPIRED"),
+      eq(PurchaseOrderTable.status, "POSTED"),
       gt(PurchaseOrderTable.startAfter, new Date()),
     )).returning({
       id: PurchaseOrderTable.id,
