@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql, like, ne } from 'drizzle-orm';
+import { desc, and, eq, sql, like, ne, gte } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
@@ -468,6 +468,56 @@ export class PurchaseOrderService {
   /* ================================= Test operations ================================= */
   async getAllPurchaseOrders() {
     return await this.db.select().from(PurchaseOrderTable);
+  }
+
+  async searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined = undefined, limit: number, offset: number) {
+    if (updateExpiredData) {
+      const responseOfUpdatingExpiredPurchaseOrder = await this.db.update(PurchaseOrderTable).set({
+        status: "EXPIRED",
+      }).where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        gte(PurchaseOrderTable.startAfter, new Date()),
+      )).returning({
+        id: PurchaseOrderTable.id,
+      });
+      if (!responseOfUpdatingExpiredPurchaseOrder) {
+        throw { message: "test" }
+      }
+    }
+
+    const query = this.db.select({
+      id: PurchaseOrderTable.id,
+      creatorName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      initPrice: PurchaseOrderTable.initPrice,
+      startCord: PurchaseOrderTable.startCord,
+      endCord: PurchaseOrderTable.endCord,
+      startAddress: PurchaseOrderTable.startAddress,
+      endAddress: PurchaseOrderTable.endAddress,
+      createdAt: PurchaseOrderTable.createdAt,
+      updatedAt: PurchaseOrderTable.updatedAt,
+      startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      isUrgent: PurchaseOrderTable.isUrgent,
+      status: PurchaseOrderTable.status,
+    }).from(PurchaseOrderTable)
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
+    
+    if (userName) {
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, userName + "%"),
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
+    }
+      
+    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+         .orderBy(desc(PurchaseOrderTable.updatedAt))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query; // await should be place here, since we done the query right here
   }
   /* ================================= Test operations ================================= */
 }

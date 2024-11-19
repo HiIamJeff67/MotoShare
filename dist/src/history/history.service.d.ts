@@ -24,11 +24,15 @@ export declare class HistoryService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
         motocyclePhotoUrl: string | null;
         motocycleLicense: string | null;
         motocycleType: string | null;
+        starRatingByPassenger: "0" | "1" | "2" | "3" | "4" | "5";
+        starRatingByRidder: "0" | "1" | "2" | "3" | "4" | "5";
+        commentByPassenger: string | null;
+        commentByRidder: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
     searchPaginationHistoryByPassengerId(passengerId: string, limit: number, offset: number): Promise<{
         id: string;

@@ -105,6 +105,14 @@ let PurchaseOrderService = class PurchaseOrderService {
         });
     }
     async searchPaginationPurchaseOrders(creatorName = undefined, limit, offset) {
+        const responseOfUpdatingExpiredPurchaseOrder = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+            status: "EXPIRED",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+        });
+        if (!responseOfUpdatingExpiredPurchaseOrder) {
+            throw { message: "test" };
+        }
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,

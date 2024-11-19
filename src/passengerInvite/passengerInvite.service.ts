@@ -100,61 +100,6 @@ export class PassengerInviteService {
       )
       .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
       .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id));
-    // return await this.db.query.PassengerInviteTable.findFirst({
-    //   where: and(
-    //     eq(PassengerInviteTable.id, id), 
-    //     or(
-    //       eq(PassengerInviteTable.userId, userId), 
-    //       eq(SupplyOrderTable.creatorId, userId)
-    //     )
-    //   ),
-    //   columns: {
-    //     id: true,
-    //     userId: true,
-    //     suggestPrice: true,
-    //     briefDescription: true,
-    //     startCord: true,
-    //     endCord: true,
-    //     suggestStartAfter: true,
-    //     createdAt: true,
-    //     updatedAt: true,
-    //     status: true,
-    //   },
-    //   with: {
-    //     order: {
-    //       columns: {
-    //         creatorId: true,
-    //         initPrice: true,
-    //         startCord: true,
-    //         endCord: true,
-    //         description: true,
-    //         startAfter: true,
-    //         createdAt: true,
-    //         updatedAt: true,
-    //       },
-    //       with: {
-    //         creator: {
-    //           columns: {
-    //             userName: true,
-    //           },
-    //           with: {
-    //             info: {
-    //               columns: {
-    //                 isOnline: true,
-    //                 avatorUrl: true,
-    //                 motocycleType: true,
-    //                 motocyclePhotoUrl: true,
-    //                 // the below things can be display, since the passenger must have validate to see this
-    //                 phoneNumber: true,
-    //                 motocycleLicense: true,
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
   }
 
   /* ================= Search PassengerInvite operations used by Passengers ================= */

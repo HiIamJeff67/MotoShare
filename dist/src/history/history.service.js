@@ -42,11 +42,15 @@ let HistoryService = class HistoryService {
             finalEndAddress: history_schema_1.HistoryTable.finalEndAddress,
             startAfter: history_schema_1.HistoryTable.startAfter,
             endedAt: history_schema_1.HistoryTable.endedAt,
-            createdAt: history_schema_1.HistoryTable.createdAt,
-            updatedAt: history_schema_1.HistoryTable.updatedAt,
             motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
             motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+            starRatingByPassenger: history_schema_1.HistoryTable.starRatingByPassenger,
+            starRatingByRidder: history_schema_1.HistoryTable.starRatingByRidder,
+            commentByPassenger: history_schema_1.HistoryTable.commentByPassenger,
+            commentByRidder: history_schema_1.HistoryTable.commentByRidder,
+            createdAt: history_schema_1.HistoryTable.createdAt,
+            updatedAt: history_schema_1.HistoryTable.updatedAt,
         }).from(history_schema_1.HistoryTable)
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.passengerId, userId), (0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.ridderId, userId))))
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, history_schema_1.HistoryTable.passengerId))

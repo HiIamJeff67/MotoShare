@@ -23,6 +23,7 @@ const decorator_1 = require("../auth/decorator");
 const create_purchaseOrder_dto_1 = require("./dto/create-purchaseOrder.dto");
 const update_purchaseOrder_dto_1 = require("./dto/update-purchaseOrder.dto");
 const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
+const constants_1 = require("../constants");
 let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
@@ -88,12 +89,16 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }

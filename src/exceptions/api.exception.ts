@@ -12,6 +12,14 @@ export const ApiMissingBodyOrWrongDtoException = new BadRequestException({
     message: "Require body and customized dto of current route",
 });
 
+// E-A-010
+export const ApiSearchingLimitTooLarge = (maxLimit: number) => {
+    return new NotAcceptableException({
+        case: "E-A-100",
+        message: `Cannot search with the limit greater than ${maxLimit}`
+    });
+}
+
 // E-A-100
 export const ApiPrevOrderIdFormException = new NotAcceptableException({
     case: "E-A-100",
