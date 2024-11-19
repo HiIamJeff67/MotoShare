@@ -27,6 +27,10 @@ interface OrderType {
   ridderStatus: string;
   ridderName: string;
   passengerName: string;
+  starRatingByPassenger: number;
+  starRatingByRidder: number;
+  commentByPassenger: string;
+  commentByRidder: string;
 }
 
 const MyOrderHistoryDetail = () => {
@@ -172,7 +176,7 @@ const MyOrderHistoryDetail = () => {
                     <Text style={styles.title}>正在加載歷史資料...</Text>
                 )}
               </View>
-                
+              
               <View style={styles.body}>
                 {order ? (
                 <>
@@ -181,10 +185,9 @@ const MyOrderHistoryDetail = () => {
                   <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
                   <Text style={styles.title}>開始時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   <Text style={styles.title}>最終價格: {order.finalPrice}</Text>
-                  <Text style={styles.title}>我的備註: {user.role == 1 ? order.passengerDescription : order.ridderDescription}</Text>
-                  <Text style={styles.title}>對方備註: {user.role == 1 ? order.ridderDescription : order.passengerDescription}</Text> 
                   <Text style={styles.title}>最後更新: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <View className="justify-center items-center py-2">
+                  {(user.role == 1 && order.starRatingByPassenger == 0) || (user.role == 2 && order.starRatingByRidder == 0) ? ( 
+                    <View className="justify-center items-center py-2">
                     <Pressable
                       style={{
                         height: 50,
@@ -197,12 +200,26 @@ const MyOrderHistoryDetail = () => {
                       <Text className="font-semibold text-lg">評分</Text>
                     </Pressable>
                   </View>
+                  ) : null }
                 </>
                 ) : (
                   <Text style={styles.title}>正在加載歷史資料...</Text>
                 )}
               </View>
           </View>
+          {order ? (
+            <>
+            <View className="h-5"/>
+            {(user.role == 1 && order.starRatingByRidder > 0) || (user.role == 2 && order.starRatingByPassenger > 0) ? (
+              <View style={styles.card}>
+                <View style={styles.body}>
+                  <Text style={styles.title}>對方給你的評分：{user.role == 1 ? order?.starRatingByRidder : order?.starRatingByPassenger}</Text>
+                  <Text style={styles.title}>對方給你的留言：{user.role == 1 ? order?.commentByRidder : order?.commentByPassenger}</Text>
+                </View>
+              </View>
+            ) : null}
+            </>
+          ) : null }
           {/* 彈出窗口 */}
           <Modal
             animationType="slide"
@@ -213,7 +230,7 @@ const MyOrderHistoryDetail = () => {
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>請輸入評分(0-5):</Text>
+                <Text style={styles.modalText}>請輸入評分(1-5):</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="評分"

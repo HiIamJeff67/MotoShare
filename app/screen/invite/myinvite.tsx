@@ -13,8 +13,8 @@ interface OrderType {
   startAfter: Date;
   initPrice: number;
   suggestPrice: number;
-  startAddress: string;
-  endAddress: string;
+  suggestStartAddress: string;
+  suggestEndAddress: string;
   updatedAt: Date;
   suggestStartAfter: Date;
   endedAt: Date;
@@ -113,8 +113,8 @@ const MyInvite = () => {
           
                   <View style={styles.body}>
                     <Text style={styles.title}>你邀請了：{invite.receiverName}</Text>
-                    <Text style={styles.title}>推薦起點：{invite.startAddress}</Text>
-                    <Text style={styles.title}>推薦終點：{invite.endAddress}</Text>
+                    <Text style={styles.title}>推薦起點：{invite.suggestStartAddress}</Text>
+                    <Text style={styles.title}>推薦終點：{invite.suggestEndAddress}</Text>
                     <Text style={styles.title}>更新時間: {new Date(invite.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   </View>
               </View>

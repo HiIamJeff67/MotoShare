@@ -104,6 +104,11 @@ const InviteMap = () => {
         return;
       }
 
+      let endDate = new Date(selectedDate);
+      endDate.setDate(endDate.getDate() + 1);
+      console.log("selectedDate", new Date(selectedDate));
+      console.log("endDate", endDate);
+
       const data = {
         briefDescription: orderDescription,
         suggestPrice: initialPrice,
@@ -114,6 +119,7 @@ const InviteMap = () => {
         endCordLongitude: destination?.longitude,
         endCordLatitude: destination?.latitude,
         suggestStartAfter: selectedDate,
+        suggestEndedAt: endDate,
       };
 
       let url = "";
@@ -123,6 +129,8 @@ const InviteMap = () => {
       } else if (user.role == 2) {
         url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/createRidderInviteByOrderId`;
       }
+
+      console.log(user.role);
 
       // 使用獲取到的 Token 發送請求
       const response = await axios.post(url, data, {

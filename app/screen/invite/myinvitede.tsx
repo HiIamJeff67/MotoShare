@@ -187,7 +187,7 @@ const MyInviteDetail = () => {
                 )}
               </View>
           </View>
-
+          <View className="h-5"/>
           <View style={styles.card}>
               <View style={styles.body}>
                 {invite ? (

@@ -100,6 +100,9 @@ const MapWithBottomSheet = () => {
         Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
         return;
       }
+      
+      let endDate = new Date(selectedDate);
+      endDate.setDate(endDate.getDate() + 1);
 
       const data = {
         description: orderDescription,
@@ -111,6 +114,7 @@ const MapWithBottomSheet = () => {
         endCordLongitude: destination?.longitude,
         endCordLatitude: destination?.latitude,
         startAfter: selectedDate,
+        endedAt: endDate,
         isUrgent: false,
       };
 
