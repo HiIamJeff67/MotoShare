@@ -12,10 +12,12 @@ import { Passenger, Ridder } from '../auth/decorator';
 import { Response } from 'express';
 import { 
   ApiMissingParameterException, 
+  ApiSearchingLimitTooLarge, 
   ClientOrderNotFoundException, 
   ClientUnknownException 
 } from '../exceptions';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
+import { MAX_SEARCH_LIMIT } from '../constants';
 
 @Controller('order')
 export class OrderController {
@@ -93,6 +95,10 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
@@ -120,6 +126,10 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;

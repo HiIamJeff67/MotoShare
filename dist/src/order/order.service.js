@@ -29,6 +29,18 @@ let OrderService = class OrderService {
     constructor(db) {
         this.db = db;
     }
+    async updateExpiredOrdersToStartedStatus() {
+        const response = await this.db.update(order_schema_1.OrderTable).set({
+            passengerStatus: "STARTED",
+            ridderStatus: "STARTED",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerStatus, "UNSTARTED"), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderStatus, "UNSTARTED")), (0, drizzle_orm_1.gt)(order_schema_1.OrderTable.startAfter, new Date()))).returning({
+            id: order_schema_1.OrderTable.id,
+        });
+        if (!response) {
+            throw exceptions_1.ServerNeonAutoUpdateExpiredOrderException;
+        }
+        return response.length;
+    }
     async getOrderStatusById(id) {
         return await this.db.select({
             passengerStatus: order_schema_1.OrderTable.passengerStatus,
@@ -69,6 +81,7 @@ let OrderService = class OrderService {
             .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, order_schema_1.OrderTable.ridderId));
     }
     async searchPaginationOrderByPassengerId(passengerId, ridderName = undefined, limit, offset) {
+        await this.updateExpiredOrdersToStartedStatus();
         const query = this.db.select({
             id: order_schema_1.OrderTable.id,
             ridderName: ridder_schema_1.RidderTable.userName,
@@ -102,6 +115,7 @@ let OrderService = class OrderService {
         return await query;
     }
     async searchPaginationOrderByRidderId(ridderId, passengerName = undefined, limit, offset) {
+        await this.updateExpiredOrdersToStartedStatus();
         const query = this.db.select({
             id: order_schema_1.OrderTable.id,
             finalStartCord: order_schema_1.OrderTable.finalStartCord,

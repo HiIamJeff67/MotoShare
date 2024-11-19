@@ -20,9 +20,21 @@ const drizzle_orm_1 = require("drizzle-orm");
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
+const purchaseOrder_schema_1 = require("../drizzle/schema/purchaseOrder.schema");
 let SupplyOrderService = class SupplyOrderService {
     constructor(db) {
         this.db = db;
+    }
+    async updateExpiredSupplyOrders() {
+        const response = await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
+            status: "EXPIRED",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.gt)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+            id: supplyOrder_schema_1.SupplyOrderTable.id,
+        });
+        if (!response) {
+            throw exceptions_1.ServerNeonAutoUpdateExpiredSupplyOrderException;
+        }
+        return response.length;
     }
     async createSupplyOrderByCreatorId(creatorId, createSupplyOrderDto) {
         return await this.db.insert(supplyOrder_schema_1.SupplyOrderTable).values({
@@ -107,6 +119,7 @@ let SupplyOrderService = class SupplyOrderService {
         });
     }
     async searchPaginationSupplyOrders(creatorName = undefined, limit, offset) {
+        await this.updateExpiredSupplyOrders();
         const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
@@ -137,6 +150,7 @@ let SupplyOrderService = class SupplyOrderService {
         return await query;
     }
     async searchCurAdjacentSupplyOrders(creatorName = undefined, limit, offset, getAdjacentSupplyOrdersDto) {
+        await this.updateExpiredSupplyOrders();
         const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
@@ -175,6 +189,7 @@ let SupplyOrderService = class SupplyOrderService {
         return await query;
     }
     async searchDestAdjacentSupplyOrders(creatorName = undefined, limit, offset, getAdjacentSupplyOrdersDto) {
+        await this.updateExpiredSupplyOrders();
         const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,
@@ -213,6 +228,7 @@ let SupplyOrderService = class SupplyOrderService {
         return await query;
     }
     async searchSimilarRouteSupplyOrders(creatorName = undefined, limit, offset, getSimilarRouteSupplyOrdersDto) {
+        await this.updateExpiredSupplyOrders();
         const query = this.db.select({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             creatorName: ridder_schema_1.RidderTable.userName,

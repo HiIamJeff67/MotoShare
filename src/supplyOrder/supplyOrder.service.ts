@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, desc, eq, like, ne, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, like, ne, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -12,11 +12,31 @@ import {
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientEndBeforeStartException, ClientSupplyOrderNotFoundException } from '../exceptions';
+import { ClientEndBeforeStartException, ClientSupplyOrderNotFoundException, ServerNeonAutoUpdateExpiredSupplyOrderException } from '../exceptions';
+import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 
 @Injectable()
 export class SupplyOrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  /* ================================= Detected And Update Expired SupplyOrders ================================= */
+  private async updateExpiredSupplyOrders() {
+    const response = await this.db.update(SupplyOrderTable).set({
+      status: "EXPIRED",
+    }).where(and(
+      eq(SupplyOrderTable.status, "POSTED"),
+      gt(PurchaseOrderTable.startAfter, new Date()),
+    )).returning({
+      id: SupplyOrderTable.id,
+    });
+    if (!response) {
+      throw ServerNeonAutoUpdateExpiredSupplyOrderException;
+    }
+
+    return response.length;
+  }
+  /* ================================= Detected And Update Expired SupplyOrders ================================= */
+
 
   /* ================================= Create operations ================================= */
   async createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto) {
@@ -156,6 +176,8 @@ export class SupplyOrderService {
     limit: number, 
     offset: number
   ) {
+    await this.updateExpiredSupplyOrders();
+
     const query = this.db.select({
       id: SupplyOrderTable.id,
       creatorName: RidderTable.userName,
@@ -197,6 +219,8 @@ export class SupplyOrderService {
     offset: number, 
     getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
+    await this.updateExpiredSupplyOrders();
+
     const query = this.db.select({
       id: SupplyOrderTable.id,
       creatorName: RidderTable.userName,
@@ -246,6 +270,8 @@ export class SupplyOrderService {
     offset: number,
     getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto
   ) {
+    await this.updateExpiredSupplyOrders();
+
     const query = this.db.select({
       id: SupplyOrderTable.id,
       creatorName: RidderTable.userName,
@@ -295,6 +321,7 @@ export class SupplyOrderService {
     offset: number,
     getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto
   ) {
+    await this.updateExpiredSupplyOrders();
     // consider the similarity of the given route and every other passible route in SupplyOrderTable
     // RDV = (|ridder.start - passenger.start| + |passenger.start - passenger.end| + |passenger.end - ridder.end|) - (|ridder.start - ridder.end|)
 

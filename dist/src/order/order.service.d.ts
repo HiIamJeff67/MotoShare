@@ -2,6 +2,7 @@ import { DrizzleDB } from '../drizzle/types/drizzle';
 export declare class OrderService {
     private db;
     constructor(db: DrizzleDB);
+    private updateExpiredOrdersToStartedStatus;
     private getOrderStatusById;
     getOrderById(id: string, userId: string): Promise<{
         id: string;

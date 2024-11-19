@@ -14,7 +14,8 @@ import {
     MaxNumberString, 
     MinNumberString,
     IsStartBeforeEnd,
-    IsEndAfterStart
+    IsEndAfterStart,
+    IsAfterNow
 } from "../../decorators";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
@@ -69,11 +70,13 @@ export class CreatePurchaseOrderDto {
 
     @IsNotEmpty()
     @IsStartBeforeEnd('endedAt')
+    @IsAfterNow()
     @IsDateString()
     startAfter: string   // but at most case, should be specify
 
     @IsNotEmpty()
     @IsEndAfterStart('startAfter')
+    @IsAfterNow()
     @IsDateString()
     endedAt: string
 

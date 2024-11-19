@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { and, desc, eq, ne, or } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, ne, or } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
@@ -13,7 +13,8 @@ import {
   ClientCreateHistoryException, 
   ClientOrderNotFoundException, 
   ClientPurchaseOrderNotFoundException, 
-  ClientSupplyOrderNotFoundException ,
+  ClientSupplyOrderNotFoundException, 
+  ServerNeonAutoUpdateExpiredOrderException,
 } from '../exceptions';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 import { HistoryTable } from '../drizzle/schema/history.schema';
@@ -21,6 +22,29 @@ import { HistoryTable } from '../drizzle/schema/history.schema';
 @Injectable()
 export class OrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  private async updateExpiredOrdersToStartedStatus() {
+    const response = await this.db.update(OrderTable).set({
+      passengerStatus: "STARTED",
+      ridderStatus: "STARTED",
+    }).where(and(
+      or(
+        eq(OrderTable.passengerStatus, "UNSTARTED"),
+        eq(OrderTable.ridderStatus, "UNSTARTED"),
+      ),
+      gt(OrderTable.startAfter, new Date()),
+    )).returning({
+      id: OrderTable.id,
+    });
+    if (!response) {
+      throw ServerNeonAutoUpdateExpiredOrderException;
+    }
+
+    return response.length;
+  }
+  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+
 
   /* ================================= Get operations ================================= */
   private async getOrderStatusById(id: string) {
@@ -77,6 +101,8 @@ export class OrderService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredOrdersToStartedStatus();
+
     const query = this.db.select({
       id: OrderTable.id,
       ridderName: RidderTable.userName,
@@ -121,6 +147,8 @@ export class OrderService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredOrdersToStartedStatus();
+
     const query = this.db.select({
       id: OrderTable.id,
       finalStartCord: OrderTable.finalStartCord,

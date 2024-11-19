@@ -24,6 +24,17 @@ let PurchaseOrderService = class PurchaseOrderService {
     constructor(db) {
         this.db = db;
     }
+    async updateExpiredPurchaseOrders() {
+        const response = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+            status: "EXPIRED",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "EXPIRED"), (0, drizzle_orm_1.gt)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+        });
+        if (!response) {
+            throw exceptions_1.ServerNeonAutoUpdateExpiredPurchaseOrderException;
+        }
+        return response.length;
+    }
     async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
         return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
             creatorId: creatorId,
@@ -105,14 +116,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         });
     }
     async searchPaginationPurchaseOrders(creatorName = undefined, limit, offset) {
-        const responseOfUpdatingExpiredPurchaseOrder = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
-            status: "EXPIRED",
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
-            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-        });
-        if (!responseOfUpdatingExpiredPurchaseOrder) {
-            throw { message: "test" };
-        }
+        await this.updateExpiredPurchaseOrders();
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
@@ -143,6 +147,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         return await query;
     }
     async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit, offset, getAdjacentPurchaseOrdersDto) {
+        await this.updateExpiredPurchaseOrders();
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
@@ -180,6 +185,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         return await query;
     }
     async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit, offset, getAdjacentPurchaseOrdersDto) {
+        await this.updateExpiredPurchaseOrders();
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
@@ -217,6 +223,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         return await query;
     }
     async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit, offset, getSimilarRoutePurchaseOrdersDto) {
+        await this.updateExpiredPurchaseOrders();
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
@@ -347,6 +354,46 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async getAllPurchaseOrders() {
         return await this.db.select().from(purchaseOrder_schema_1.PurchaseOrderTable);
+    }
+    async searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData, userName = undefined, limit, offset) {
+        if (updateExpiredData) {
+            const responseOfUpdatingExpiredPurchaseOrder = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+                status: "EXPIRED",
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+                id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            });
+            if (!responseOfUpdatingExpiredPurchaseOrder) {
+                throw { message: "test" };
+            }
+        }
+        const query = this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
+        if (userName) {
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, userName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
+        return await query;
     }
 };
 exports.PurchaseOrderService = PurchaseOrderService;

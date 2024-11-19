@@ -11,8 +11,9 @@ import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { ApiSearchingLimitTooLarge, ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
 import { OrderTable } from '../drizzle/schema/order.schema';
+import { MAX_SEARCH_LIMIT } from '../constants';
 
 @Injectable()
 export class PassengerInviteService {
@@ -111,6 +112,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -150,6 +155,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -196,6 +205,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -241,6 +254,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -320,6 +337,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -358,6 +379,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -403,6 +428,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,
@@ -448,6 +477,10 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
+    if (+limit > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+    }
+    
     const query = this.db.select({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,

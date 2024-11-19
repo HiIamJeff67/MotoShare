@@ -24,6 +24,7 @@ const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
 const order_schema_1 = require("../drizzle/schema/order.schema");
+const constants_1 = require("../constants");
 let PassengerInviteService = class PassengerInviteService {
     constructor(db) {
         this.db = db;
@@ -93,6 +94,9 @@ let PassengerInviteService = class PassengerInviteService {
             .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id));
     }
     async searchPaginationPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -124,6 +128,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchCurAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -162,6 +169,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchDestAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -199,6 +209,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchSimilarRoutePassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -264,6 +277,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchPaginationPasssengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -294,6 +310,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -331,6 +350,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchDestAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -368,6 +390,9 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchSimilarRoutePassengerInvitesByReceverId(receiverId, inviterName = undefined, limit, offset) {
+        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+        }
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -513,6 +538,10 @@ let PassengerInviteService = class PassengerInviteService {
                 }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id))
                     .returning({
                     inviterId: passengerInvite_schema_1.PassengerInviteTable.userId,
+                    inviterStartCord: passengerInvite_schema_1.PassengerInviteTable.startCord,
+                    inviterEndCord: passengerInvite_schema_1.PassengerInviteTable.endCord,
+                    inviterStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+                    inviterEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
                     suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
                     suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
                     suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
@@ -533,10 +562,6 @@ let PassengerInviteService = class PassengerInviteService {
                 }).where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, supplyOrder.order.id))
                     .returning({
                     receiverId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
-                    receiverStartCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-                    receiverEndCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
-                    receiverStartAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-                    receiverEndAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
                     tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
                     receiverDescription: supplyOrder_schema_1.SupplyOrderTable.description,
                     orderStatus: supplyOrder_schema_1.SupplyOrderTable.status,
@@ -552,10 +577,10 @@ let PassengerInviteService = class PassengerInviteService {
                     finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
                     passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
                     ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription,
-                    finalStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
-                    finalEndCord: responseOfDeletingSupplyOrder[0].receiverEndCord,
-                    finalStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
-                    finalEndAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+                    finalStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+                    finalEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+                    finalStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+                    finalEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
                     startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
                     endedAt: responseOfDecidingPassengerInvite[0].suggestEndedAt,
                 }).returning({
@@ -573,10 +598,10 @@ let PassengerInviteService = class PassengerInviteService {
                         orderId: responseOfCreatingOrder[0].id,
                         status: responseOfDecidingPassengerInvite[0].inviteStatus,
                         price: responseOfCreatingOrder[0].finalPrice,
-                        finalStartCord: responseOfDeletingSupplyOrder[0].receiverStartCord,
-                        finalEndCord: responseOfDeletingSupplyOrder[0].receiverEndCord,
-                        finalStartAddress: responseOfDeletingSupplyOrder[0].receiverStartAddress,
-                        finalEndAddress: responseOfDeletingSupplyOrder[0].receiverEndAddress,
+                        finalStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
+                        finalEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+                        finalStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
+                        finalEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
                         startAfter: responseOfCreatingOrder[0].startAfter,
                         endedAt: responseOfCreatingOrder[0].endedAt,
                         orderStatus: responseOfCreatingOrder[0].status,

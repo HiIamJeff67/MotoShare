@@ -109,6 +109,9 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
@@ -125,6 +128,9 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
@@ -141,6 +147,9 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, +limit, +offset, getSimilarRoutePurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
@@ -205,6 +214,46 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     getAllPurchaseOrders() {
         return this.purchaseOrderService.getAllPurchaseOrders();
+    }
+    async testWithExpired(creatorName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async testWithoutExpired(creatorName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
 };
 exports.PurchaseOrderController = PurchaseOrderController;
@@ -310,6 +359,26 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PurchaseOrderController.prototype, "getAllPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('testWithExpired'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "testWithExpired", null);
+__decorate([
+    (0, common_1.Get)('testWithoutExpired'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "testWithoutExpired", null);
 exports.PurchaseOrderController = PurchaseOrderController = __decorate([
     (0, common_1.Controller)('purchaseOrder'),
     __metadata("design:paramtypes", [purchaseOrder_service_1.PurchaseOrderService])

@@ -10,6 +10,7 @@ import {
     MinLength 
 } from "class-validator";
 import { 
+    IsAfterNow,
     IsEndAfterStart,
     IsStartBeforeEnd,
     MaxNumberString, 
@@ -57,11 +58,13 @@ export class CreatePassengerInviteDto {
 
     @IsNotEmpty()
     @IsStartBeforeEnd('suggestEndedAt')
+    @IsAfterNow()
     @IsDateString()
     suggestStartAfter: string
 
     @IsNotEmpty()
     @IsEndAfterStart('suggestStartAfter')
+    @IsAfterNow()
     @IsDateString()
     suggestEndedAt: string
 }

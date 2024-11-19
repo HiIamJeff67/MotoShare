@@ -20,6 +20,7 @@ const auth_interface_1 = require("../interfaces/auth.interface");
 const decorator_1 = require("../auth/decorator");
 const exceptions_1 = require("../exceptions");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const constants_1 = require("../constants");
 let OrderController = class OrderController {
     constructor(orderService) {
         this.orderService = orderService;
@@ -68,6 +69,9 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrdersByPassengerId(passenger, ridderName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
@@ -85,6 +89,9 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrdersByRidderId(ridder, passengerName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;

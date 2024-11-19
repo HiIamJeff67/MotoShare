@@ -18,7 +18,7 @@ class RateAndCommentHistoryDto {
 exports.RateAndCommentHistoryDto = RateAndCommentHistoryDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(starRating_type_1.StarRatingTypes, { message: "The value of starRating must be either 0, 1, 2, 3, 4, or 5" }),
+    (0, class_validator_1.IsIn)(starRating_type_1.StarRatingTypes, { message: "The value of starRating must be either 1, 2, 3, 4, or 5" }),
     __metadata("design:type", String)
 ], RateAndCommentHistoryDto.prototype, "starRating", void 0);
 __decorate([

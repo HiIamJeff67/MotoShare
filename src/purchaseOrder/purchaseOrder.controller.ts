@@ -166,6 +166,10 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(
         creatorName, 
         +limit, 
@@ -196,6 +200,10 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(
         creatorName, 
         +limit, 
@@ -226,6 +234,10 @@ export class PurchaseOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(
         creatorName, 
         +limit, 

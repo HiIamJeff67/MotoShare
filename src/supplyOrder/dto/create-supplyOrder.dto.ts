@@ -13,7 +13,8 @@ import {
     IsStartBeforeEnd,
     IsEndAfterStart,
     MaxNumberString, 
-    MinNumberString 
+    MinNumberString, 
+    IsAfterNow
 } from "../../decorators";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_TOLERABLE_RDV, MIN_TOLERABLE_RDV } from "../../constants/algorithm.constant";
@@ -68,11 +69,13 @@ export class CreateSupplyOrderDto {
 
     @IsNotEmpty()
     @IsStartBeforeEnd('endedAt')
+    @IsAfterNow()
     @IsDateString()
     startAfter: string
 
     @IsNotEmpty()
     @IsEndAfterStart('startAfter')
+    @IsAfterNow()
     @IsDateString()
     endedAt: string
 

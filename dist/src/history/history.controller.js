@@ -21,6 +21,7 @@ const decorator_1 = require("../auth/decorator");
 const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
 const enums_1 = require("../enums");
+const constants_1 = require("../constants");
 let HistoryController = class HistoryController {
     constructor(historyService) {
         this.historyService = historyService;
@@ -70,6 +71,9 @@ let HistoryController = class HistoryController {
     }
     async searchPaginationHistoriesByPassengerId(passenger, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.historyService.searchPaginationHistoryByPassengerId(passenger.id, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientHistoryNotFoundException;
@@ -87,6 +91,9 @@ let HistoryController = class HistoryController {
     }
     async searchPaginationHistoriesByRidderId(ridder, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.historyService.searchPaginationHistoryByRidderId(ridder.id, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientHistoryNotFoundException;

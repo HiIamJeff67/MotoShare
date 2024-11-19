@@ -22,6 +22,7 @@ const decorator_1 = require("../auth/decorator");
 const auth_interface_1 = require("../interfaces/auth.interface");
 const create_ridderInvite_dto_1 = require("./dto/create-ridderInvite.dto");
 const update_ridderInvite_dto_1 = require("./dto/update-ridderInvite.dto");
+const constants_1 = require("../constants");
 let RidderInviteController = class RidderInviteController {
     constructor(ridderInviteService) {
         this.ridderInviteService = ridderInviteService;
@@ -91,6 +92,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchPaginationRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchPaginationRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -108,6 +112,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchCurAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -125,6 +132,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchDestAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -142,6 +152,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchSimilarRouteRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -159,6 +172,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchPaginationRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchPaginationRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -176,6 +192,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchCurAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -193,6 +212,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchDestAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -210,6 +232,9 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchMySimilarRouteRidderInvitesByReceverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByReceverId(passenger.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;

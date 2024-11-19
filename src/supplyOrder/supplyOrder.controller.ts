@@ -9,6 +9,7 @@ import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
+  ApiSearchingLimitTooLarge,
   ClientCreateSupplyOrderException,
   ClientSupplyOrderNotFoundException,
   ClientUnknownException, 
@@ -24,6 +25,7 @@ import {
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
 } from './dto/get-supplyOrder.dto';
+import { MAX_SEARCH_LIMIT } from '../constants';
 
 @Controller('supplyOrder')
 export class SupplyOrderController {
@@ -127,6 +129,10 @@ export class SupplyOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
@@ -152,6 +158,10 @@ export class SupplyOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(
         creatorName, 
         +limit, 
@@ -182,6 +192,10 @@ export class SupplyOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(
         creatorName,
         +limit, 
@@ -212,6 +226,10 @@ export class SupplyOrderController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(
         creatorName,
         +limit, 

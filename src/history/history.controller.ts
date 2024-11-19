@@ -5,8 +5,9 @@ import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { Passenger, Ridder } from '../auth/decorator';
 import { PassengerType, RidderType } from '../interfaces';
 import { Response } from 'express';
-import { ApiMissingParameterException, ClientHistoryNotFoundException, ClientUnknownException } from '../exceptions';
+import { ApiMissingParameterException, ApiSearchingLimitTooLarge, ClientHistoryNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
+import { MAX_SEARCH_LIMIT } from '../constants';
 
 @Controller('history')
 export class HistoryController {
@@ -84,6 +85,10 @@ export class HistoryController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.historyService.searchPaginationHistoryByPassengerId(passenger.id, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;
@@ -110,6 +115,10 @@ export class HistoryController {
     @Res() response: Response,
   ) {
     try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
       const res = await this.historyService.searchPaginationHistoryByRidderId(ridder.id, +limit, +offset);
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;

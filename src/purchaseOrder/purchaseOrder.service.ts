@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql, like, ne, gte } from 'drizzle-orm';
+import { desc, and, eq, sql, like, ne, gte, gt } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
@@ -13,11 +13,30 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
-import { ClientEndBeforeStartException, ClientPurchaseOrderNotFoundException } from '../exceptions';
+import { ClientEndBeforeStartException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
 
 @Injectable()
 export class PurchaseOrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  private async updateExpiredPurchaseOrders() {
+    const response = await this.db.update(PurchaseOrderTable).set({
+      status: "EXPIRED",
+    }).where(and(
+      eq(PurchaseOrderTable.status, "EXPIRED"),
+      gt(PurchaseOrderTable.startAfter, new Date()),
+    )).returning({
+      id: PurchaseOrderTable.id,
+    });
+    if (!response) {  // response.length can potentially be 0, since there's no expited orders
+      throw ServerNeonAutoUpdateExpiredPurchaseOrderException;
+    }
+
+    return response.length;
+  }
+  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+
 
   /* ================================= Create operations ================================= */
   async createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto) {
@@ -155,6 +174,8 @@ export class PurchaseOrderService {
     limit: number, 
     offset: number,
   ) {
+    await this.updateExpiredPurchaseOrders();
+
     const query = this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
@@ -196,6 +217,8 @@ export class PurchaseOrderService {
     offset: number,
     getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
   ) {
+    await this.updateExpiredPurchaseOrders();
+
     const query = this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
@@ -244,6 +267,8 @@ export class PurchaseOrderService {
     offset: number,
     getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
   ) {
+    await this.updateExpiredPurchaseOrders();
+
     const query = this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
@@ -292,6 +317,8 @@ export class PurchaseOrderService {
     offset: number,
     getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto
   ) {
+    await this.updateExpiredPurchaseOrders();
+
     const query = this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,

@@ -18,6 +18,24 @@ export const ServerNeonEnvVarNotFoundException = new InternalServerErrorExceptio
     message: "Cannot find some necessary environment variables for connecting to Neon server",
 });
 
+// E-S-810
+export const ServerNeonAutoUpdateExpiredPurchaseOrderException = new InternalServerErrorException({
+    case: "E-S-810",
+    message: "Failed to update expired purchaseOrders before user get them",
+});
+
+// E-S-811
+export const ServerNeonAutoUpdateExpiredSupplyOrderException = new InternalServerErrorException({
+    case: "E-S-811",
+    message: "Failed to update expired supplyOrders before user get them",
+});
+
+// E-S-812
+export const ServerNeonAutoUpdateExpiredOrderException = new InternalServerErrorException({
+    case: "E-S-812",
+    message: "Failed to update start status of orders before user get them",
+});
+
 // E-S-850
 export const ServerSupabaseConnectionException = new InternalServerErrorException({
     case: "E-S-850",

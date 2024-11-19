@@ -23,6 +23,7 @@ const decorator_1 = require("../auth/decorator");
 const create_supplyOrder_dto_1 = require("./dto/create-supplyOrder.dto");
 const update_supplyOrder_dto_1 = require("./dto/update-supplyOrder.dto");
 const get_supplyOrder_dto_1 = require("./dto/get-supplyOrder.dto");
+const constants_1 = require("../constants");
 let SupplyOrderController = class SupplyOrderController {
     constructor(supplyOrderService) {
         this.supplyOrderService = supplyOrderService;
@@ -87,6 +88,9 @@ let SupplyOrderController = class SupplyOrderController {
     }
     async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
@@ -103,6 +107,9 @@ let SupplyOrderController = class SupplyOrderController {
     }
     async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
@@ -119,6 +126,9 @@ let SupplyOrderController = class SupplyOrderController {
     }
     async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
@@ -135,6 +145,9 @@ let SupplyOrderController = class SupplyOrderController {
     }
     async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, +limit, +offset, getSimilarRouteSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;

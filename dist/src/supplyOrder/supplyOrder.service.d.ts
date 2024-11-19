@@ -5,6 +5,7 @@ import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dt
 export declare class SupplyOrderService {
     private db;
     constructor(db: DrizzleDB);
+    private updateExpiredSupplyOrders;
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";

@@ -64,12 +64,14 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, decorators_1.IsStartBeforeEnd)('suggestEndedAt'),
+    (0, decorators_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePassengerInviteDto.prototype, "suggestStartAfter", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, decorators_1.IsEndAfterStart)('suggestStartAfter'),
+    (0, decorators_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePassengerInviteDto.prototype, "suggestEndedAt", void 0);
