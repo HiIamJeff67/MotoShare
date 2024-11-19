@@ -51,6 +51,9 @@ let PurchaseOrderController = class PurchaseOrderController {
     }
     async getMyPurchaseOrders(passenger, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;

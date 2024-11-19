@@ -13,7 +13,6 @@ import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
 import { ClientEndBeforeStartException, ClientSupplyOrderNotFoundException, ServerNeonAutoUpdateExpiredSupplyOrderException } from '../exceptions';
-import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 
 @Injectable()
 export class SupplyOrderService {
@@ -25,7 +24,7 @@ export class SupplyOrderService {
       status: "EXPIRED",
     }).where(and(
       eq(SupplyOrderTable.status, "POSTED"),
-      gt(PurchaseOrderTable.startAfter, new Date()),
+      gt(SupplyOrderTable.startAfter, new Date()),
     )).returning({
       id: SupplyOrderTable.id,
     });

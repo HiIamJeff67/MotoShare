@@ -27,7 +27,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     async updateExpiredPurchaseOrders() {
         const response = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
             status: "EXPIRED",
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "EXPIRED"), (0, drizzle_orm_1.gt)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.gt)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
         });
         if (!response) {

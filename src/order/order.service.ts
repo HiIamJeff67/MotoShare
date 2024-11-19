@@ -14,7 +14,7 @@ import {
   ClientOrderNotFoundException, 
   ClientPurchaseOrderNotFoundException, 
   ClientSupplyOrderNotFoundException, 
-  ServerNeonAutoUpdateExpiredOrderException,
+  ServerNeonAutoUpdateExpiredOrderException, 
 } from '../exceptions';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 import { HistoryTable } from '../drizzle/schema/history.schema';

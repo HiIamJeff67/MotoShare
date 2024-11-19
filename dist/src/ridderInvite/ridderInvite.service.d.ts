@@ -55,8 +55,8 @@ export declare class RidderInviteService {
     searchPaginationRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         receiverName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -69,8 +69,8 @@ export declare class RidderInviteService {
     searchCurAdjacentRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         receiverName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -84,8 +84,8 @@ export declare class RidderInviteService {
     searchDestAdjacentRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         receiverName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -99,8 +99,8 @@ export declare class RidderInviteService {
     searchSimilarRouteRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         receiverName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -114,8 +114,8 @@ export declare class RidderInviteService {
     searchPaginationRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -128,8 +128,8 @@ export declare class RidderInviteService {
     searchCurAdjacentRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -143,8 +143,8 @@ export declare class RidderInviteService {
     searchDestAdjacentRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         suggestPrice: number;
@@ -158,8 +158,8 @@ export declare class RidderInviteService {
     searchSimilarRouteRidderInvitesByReceverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
-        suggestStartAddress: Date;
-        suggestEndAddress: Date;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
         inviterName: never;
         avatorUrl: never;
         suggestPrice: number;

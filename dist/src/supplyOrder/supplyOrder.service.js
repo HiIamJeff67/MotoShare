@@ -20,7 +20,6 @@ const drizzle_orm_1 = require("drizzle-orm");
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
-const purchaseOrder_schema_1 = require("../drizzle/schema/purchaseOrder.schema");
 let SupplyOrderService = class SupplyOrderService {
     constructor(db) {
         this.db = db;
@@ -28,7 +27,7 @@ let SupplyOrderService = class SupplyOrderService {
     async updateExpiredSupplyOrders() {
         const response = await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
             status: "EXPIRED",
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.gt)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.gt)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date()))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
         });
         if (!response) {
