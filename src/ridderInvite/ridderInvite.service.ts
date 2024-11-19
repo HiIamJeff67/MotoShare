@@ -635,6 +635,10 @@ export class RidderInviteService {
         }).where(eq(RidderInviteTable.id, id))
           .returning({
             inviterId: RidderInviteTable.userId,
+            inviterStartCord: RidderInviteTable.startCord,
+            inviterEndCord: RidderInviteTable.endCord,
+            inviterStartAddress: RidderInviteTable.startAddress,
+            inviterEndAddress: RidderInviteTable.endAddress,
             suggestPrice: RidderInviteTable.suggestPrice,
             suggestStartAfter: RidderInviteTable.suggestStartAfter,
             suggestEndedAt: RidderInviteTable.suggestEndedAt,
@@ -663,10 +667,6 @@ export class RidderInviteService {
         }).where(eq(PurchaseOrderTable.id, purchaseOrder.order.id))
           .returning({
             receiverId: PurchaseOrderTable.creatorId,
-            receiverStartCord: PurchaseOrderTable.startCord,
-            receiverEndCord: PurchaseOrderTable.endCord,
-            receiverStartAddress: PurchaseOrderTable.startAddress,
-            receiverEndAddress: PurchaseOrderTable.endAddress,
             isUrgent: PurchaseOrderTable.isUrgent,
             receiverDescription: PurchaseOrderTable.description,
             orderStatus: PurchaseOrderTable.status,
@@ -684,10 +684,10 @@ export class RidderInviteService {
           finalPrice: responseOfDecidingRidderInvite[0].suggestPrice, // the receiver accept the suggest price
           passengerDescription: responseOfDeletingPurchaseOrder[0].receiverDescription,
           ridderDescription: responseOfDecidingRidderInvite[0].inviterDescription,
-          finalStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
-          finalEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
-          finalStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
-          finalEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
+          finalStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+          finalEndCord: responseOfDecidingRidderInvite[0].inviterEndCord,
+          finalStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
+          finalEndAddress: responseOfDecidingRidderInvite[0].inviterEndAddress,
           startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,  // the receiver accept the suggest start time
           endedAt: responseOfDecidingRidderInvite[0].suggestEndedAt,
           // endAt: , // will be covered the autocomplete function powered by google in the future
@@ -707,10 +707,10 @@ export class RidderInviteService {
           orderId: responseOfCreatingOrder[0].id,
           status: responseOfDecidingRidderInvite[0].inviteStatus,
           price: responseOfCreatingOrder[0].finalPrice,
-          finalStartCord: responseOfDeletingPurchaseOrder[0].receiverStartCord,
-          finalEndCord: responseOfDeletingPurchaseOrder[0].receiverEndCord,
-          finalStartAddress: responseOfDeletingPurchaseOrder[0].receiverStartAddress,
-          finalEndAddress: responseOfDeletingPurchaseOrder[0].receiverEndAddress,
+          finalStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
+          finalEndCord: responseOfDecidingRidderInvite[0].inviterEndCord,
+          finalStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
+          finalEndAddress: responseOfDecidingRidderInvite[0].inviterEndAddress,
           startAfter: responseOfCreatingOrder[0].startAfter,
           endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status, // use either passengerStatus or ridderStatus is fine

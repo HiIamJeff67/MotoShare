@@ -719,7 +719,6 @@ export class PassengerInviteService {
           finalEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
           endedAt: responseOfDecidingPassengerInvite[0].suggestEndedAt,
-          // endAt: , // will be covered the autocomplete function powered by google in the future
         }).returning({
           id: OrderTable.id,
           finalPrice: OrderTable.finalPrice,
