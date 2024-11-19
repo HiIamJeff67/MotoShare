@@ -281,10 +281,24 @@ const MapWithBottomSheet = () => {
                 // 顯示目的地詳細資訊的頁面
                 <View>
                   <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
+                  <View className= "h-5"/>
                   {origin && destination && (
                     <>
-                      <Text>起始位置: {originAddress}</Text>
-                      <Text>目的地址: {destinationAddress}</Text>
+                      <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
+                      <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                      <View className="flex-row items-center">
+                        <Text style={styles.bottomSheetText}>開始時間：</Text>
+                        <Text style={styles.bottomSheetText}>
+                          {selectedDate
+                            ? selectedDate.toLocaleString('en-GB', {
+                                timeZone: "Asia/Taipei",
+                              })
+                            : "未選擇日期"}
+                        </Text>
+                        <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
+                          <Entypo name="calendar" size={24} color="black" />
+                        </TouchableOpacity>
+                      </View>
                       <TextInput
                         style={styles.input}
                         placeholder="初始價格"
@@ -301,19 +315,6 @@ const MapWithBottomSheet = () => {
                       />
                     </>
                   )}
-                  <View className="flex-row items-center">
-                    <Text className="font-bold text-xl">開始時間：</Text>
-                    <Text className="font-bold text-xl mr-3">
-                      {selectedDate
-                        ? selectedDate.toLocaleString('en-GB', {
-                            timeZone: "Asia/Taipei",
-                          })
-                        : "No date selected"}
-                    </Text>
-                    <TouchableOpacity onPress={() => showDatePicker()}>
-                      <Entypo name="calendar" size={24} color="black" />
-                    </TouchableOpacity>
-                  </View>
                   <DateTimePickerModal
                     date={selectedDate}
                     mode="datetime"
@@ -325,22 +326,35 @@ const MapWithBottomSheet = () => {
                     onCancel={hideDatePicker}
                     timeZoneName={"Asia/Taipei"}
                   />
-                  <Button
-                    title="返回"
-                    onPress={() => {
-                      setOrigin(null);
-                      setDestination(null);
-                      setShowDetailsPage(false);
-                    }}
-                  />
-                  <View className="justify-center items-center py-2">
+                  <View className="flex flex-row justify-center items-center">
                     <Pressable
                       style={{
                         height: 50,
+                        width: 150,
                         justifyContent: "center",
                         alignItems: "center",
+                        backgroundColor: "#3498db",
+                        marginRight: 60,
                       }}
-                      className="rounded-[12px] shadow-lg w-full bg-green-500"
+                      className="rounded-full shadow-lg"
+                      onPress={() => {
+                        setOrigin(null);
+                        setDestination(null);
+                        setShowDetailsPage(false);
+                      }}
+                    >
+                      <Text className="font-semibold text-lg">返回</Text>
+                    </Pressable>
+                    <View className="h-5"/>
+                    <Pressable
+                      style={{
+                        height: 50,
+                        width: 150,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#228B22",
+                      }}
+                      className="rounded-full shadow-lg"
                       onPress={() => updateOrderData()}
                     >
                       <Text className="font-semibold text-lg">送出訂單</Text>
@@ -409,20 +423,19 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   searchContainer: {
-    flex: 0.2,
+    flex: 0.3,
     marginHorizontal: 10,
     marginVertical: 5,
   },
   textInputContainer: {
-    backgroundColor: "rgba(0,0,0,0)",
     zIndex: 1,
   },
   textInput: {
-    height: 40,
+    height: 50,
     color: "#5d5d5d",
     fontSize: 16,
-    backgroundColor: "#fff",
-    borderRadius: 5,
+    backgroundColor: "#f1f4ff",
+    borderRadius: 10,
     paddingLeft: 10,
   },
   predefinedPlacesDescription: {
@@ -439,9 +452,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   bottomSheetTitle: {
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 10,
+  },
+  bottomSheetText: {
+    fontSize: 15,
+    marginBottom: 15,
+  },
+  bottomSheetDate: {
+    fontSize: 15,
+    marginBottom: 15,
+    marginLeft: 10,
   },
   input: {
     height: 50,
