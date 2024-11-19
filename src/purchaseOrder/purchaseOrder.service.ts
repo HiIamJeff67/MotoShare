@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql, like, ne, gte, gt } from 'drizzle-orm';
+import { desc, and, eq, sql, like, ne, gte, lt } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
@@ -25,7 +25,7 @@ export class PurchaseOrderService {
       status: "EXPIRED",
     }).where(and(
       eq(PurchaseOrderTable.status, "POSTED"),
-      gt(PurchaseOrderTable.startAfter, new Date()),
+      lt(PurchaseOrderTable.startAfter, new Date()),
     )).returning({
       id: PurchaseOrderTable.id,
     });

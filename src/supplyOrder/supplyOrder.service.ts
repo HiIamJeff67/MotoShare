@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, desc, eq, gt, gte, like, ne, sql } from 'drizzle-orm';
+import { and, desc, eq, like, lt, ne, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -24,7 +24,7 @@ export class SupplyOrderService {
       status: "EXPIRED",
     }).where(and(
       eq(SupplyOrderTable.status, "POSTED"),
-      gt(SupplyOrderTable.startAfter, new Date()),
+      lt(SupplyOrderTable.startAfter, new Date()),
     )).returning({
       id: SupplyOrderTable.id,
     });

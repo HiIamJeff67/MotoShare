@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { and, desc, eq, gt, gte, ne, or } from 'drizzle-orm';
+import { and, desc, eq, lt, ne, or } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
@@ -33,7 +33,7 @@ export class OrderService {
         eq(OrderTable.passengerStatus, "UNSTARTED"),
         eq(OrderTable.ridderStatus, "UNSTARTED"),
       ),
-      gt(OrderTable.startAfter, new Date()),
+      lt(OrderTable.startAfter, new Date()),
     )).returning({
       id: OrderTable.id,
     });
