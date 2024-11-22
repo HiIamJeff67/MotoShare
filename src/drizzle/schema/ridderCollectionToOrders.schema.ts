@@ -1,4 +1,4 @@
-import { pgTable, uuid, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, uuid, primaryKey, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -6,7 +6,7 @@ import {
     PurchaseOrderTable,
 } from "./schema";
 
-// this table is for the internal node for the many-to-many relationship between PassengerCollectionTable and SupplyOrderTable
+// this table is for the internal node for the many-to-many relationship from the RidderTable directly to the PurchaseOrderTable
 export const RidderCollectionsToOrders = pgTable("ridderCollectionsToOrders", {
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade',
@@ -16,7 +16,9 @@ export const RidderCollectionsToOrders = pgTable("ridderCollectionsToOrders", {
     }).notNull(),
 }, (table) => {
     return {
-        pk: primaryKey({ columns: [table.userId, table.orderId] })
+        pk: primaryKey({ columns: [table.userId, table.orderId] }), 
+        userIdIndex: index("ridderCollectionsToOrders_userIdIndex").on(table.userId), 
+        orderIdIndex: index("ridderCollectionsToOrders_orderIdIndex").on(table.orderId), 
     };
 });
 

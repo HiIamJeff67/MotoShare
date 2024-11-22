@@ -1,4 +1,4 @@
-import { pgTable, uuid, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, uuid, primaryKey, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -6,7 +6,7 @@ import {
     SupplyOrderTable,
 } from "./schema";
 
-// this table is for the internal node for the many-to-many relationship between PassengerCollectionTable and SupplyOrderTable
+// this table is for the internal node for the many-to-many relationship from the PassengerTable directly to the SupplyOrderTable
 export const PassengerCollectionsToOrders = pgTable("passengerCollectionsToOrders", {
     userId: uuid("userId").references(() => PassengerTable.id, {
         onDelete: 'cascade',
@@ -16,7 +16,9 @@ export const PassengerCollectionsToOrders = pgTable("passengerCollectionsToOrder
     }).notNull(),
 }, (table) => {
     return {
-        pk: primaryKey({ columns: [table.userId, table.orderId] })
+        pk: primaryKey({ columns: [table.userId, table.orderId] }), 
+        userIdIndex: index("passengerCollectionsToOrders_userIdIndex").on(table.userId), 
+        orderIdIndex: index("passengerCollectionsToOrders_orderIdIndex").on(table.orderId), 
     };
 });
 

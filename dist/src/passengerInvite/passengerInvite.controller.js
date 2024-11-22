@@ -22,6 +22,7 @@ const decorator_1 = require("../auth/decorator");
 const auth_interface_1 = require("../interfaces/auth.interface");
 const create_passengerInvite_dto_1 = require("./dto/create-passengerInvite.dto");
 const update_passengerInvite_dto_1 = require("./dto/update-passengerInvite.dto");
+const constants_1 = require("../constants");
 let PassengerInviteController = class PassengerInviteController {
     constructor(passengerInviteService) {
         this.passengerInviteService = passengerInviteService;
@@ -94,6 +95,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchPaginationPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchPaginationPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -101,7 +105,29 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -111,6 +137,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchCurAdjacentPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -118,7 +147,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -128,6 +158,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchDestAdjacentPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -135,7 +168,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -145,6 +179,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchSimilarRoutePassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -152,7 +189,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -162,6 +200,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchPaginationPasssengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchPaginationPasssengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -169,7 +210,29 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -179,6 +242,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchCurAdjacentPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -186,7 +252,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -196,6 +263,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchDestAdjacentPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -203,7 +273,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -213,6 +284,9 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchMySimilarRoutePassengerInvitesByReceverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
             const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByReceverId(ridder.id, inviterName, +limit, +offset);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
@@ -220,7 +294,8 @@ let PassengerInviteController = class PassengerInviteController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -245,8 +320,7 @@ let PassengerInviteController = class PassengerInviteController {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException
-                || error instanceof common_1.ConflictException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.ConflictException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -349,6 +423,18 @@ __decorate([
 ], PassengerInviteController.prototype, "searchPaginationPassengerInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyAboutToStartPassengerInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerInviteController.prototype, "searchAboutToStartPassengerInvitesByInviterId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('passenger/searchMyCurAdjacentPassengerInvites'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('receiverName')),
@@ -395,6 +481,18 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerInviteController.prototype, "searchPaginationPasssengerInvitesByReceiverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMyAboutToStartPassengerInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerInviteController.prototype, "searchAboutToStartPassengerInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('ridder/searchMyCurAdjacentPassengerInvites'),

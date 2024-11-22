@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { and, desc, eq, lt, ne, or } from 'drizzle-orm';
+import { and, asc, desc, eq, lt, ne, or } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
@@ -23,7 +23,7 @@ import { HistoryTable } from '../drizzle/schema/history.schema';
 export class OrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
-  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  /* ================================= Detect And Update Expired Orders operation ================================= */
   private async updateExpiredOrdersToStartedStatus() {
     const response = await this.db.update(OrderTable).set({
       passengerStatus: "STARTED",
@@ -43,7 +43,7 @@ export class OrderService {
 
     return response.length;
   }
-  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  /* ================================= Detect And Update Expired Orders operation ================================= */
 
 
   /* ================================= Get operations ================================= */
@@ -141,6 +141,52 @@ export class OrderService {
     return await query;
   }
 
+  async searchAboutToStartOrderByPassengerId(
+    passengerId: string, 
+    ridderName: string | undefined = undefined, 
+    limit: number, 
+    offset: number, 
+  ) {
+    await this.updateExpiredOrdersToStartedStatus();
+
+    const query = this.db.select({
+      id: OrderTable.id,
+      ridderName: RidderTable.userName,
+      finalStartCord: OrderTable.finalStartCord,
+      finalEndCord: OrderTable.finalEndCord,
+      finalStartAddress: OrderTable.finalStartAddress,
+      finalEndAddress: OrderTable.finalEndAddress,
+      ridderAvatorUrl: RidderInfoTable.avatorUrl,
+      finalPrice: OrderTable.finalPrice,
+      startAfter: OrderTable.startAfter,
+      endedAt: OrderTable.endedAt,
+      createdAt: OrderTable.createdAt,
+      ridderPhoneNumber: RidderInfoTable.phoneNumber,
+      motocycleType: RidderInfoTable.motocycleType,
+      passengerStatus: OrderTable.passengerStatus,
+      ridderStatus: OrderTable.ridderStatus,
+      updatedAt: OrderTable.updatedAt,
+    }).from(OrderTable);
+
+    if (ridderName) {
+      query.leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
+           .where(and(
+            eq(OrderTable.passengerId, passengerId),
+            eq(RidderTable.userName, ridderName),
+           ));
+    } else {
+      query.where(eq(OrderTable.passengerId, passengerId))
+           .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+         .orderBy(asc(OrderTable.startAfter))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
+  }
+
   async searchPaginationOrderByRidderId(
     ridderId: string,
     passengerName: string | undefined = undefined,
@@ -180,6 +226,51 @@ export class OrderService {
 
     query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
          .orderBy(desc(OrderTable.updatedAt))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
+  }
+
+  async searchAboutToStartOrderByRidderId(
+    ridderId: string, 
+    passengerName: string | undefined = undefined, 
+    limit: number, 
+    offset: number, 
+  ) {
+    await this.updateExpiredOrdersToStartedStatus();
+
+    const query = this.db.select({
+      id: OrderTable.id,
+      finalStartCord: OrderTable.finalStartCord,
+      finalEndCord: OrderTable.finalEndCord,
+      finalStartAddress: OrderTable.finalStartAddress,
+      finalEndAddress: OrderTable.finalEndAddress,
+      passengerName: PassengerTable.userName,
+      passengerAvatorUrl: PassengerInfoTable.avatorUrl,
+      finalPrice: OrderTable.finalPrice,
+      startAfter: OrderTable.startAfter,
+      endedAt: OrderTable.endedAt,
+      createdAt: OrderTable.createdAt,
+      passengerPhoneNumber: PassengerInfoTable.phoneNumber,
+      passengerStatus: OrderTable.passengerStatus,
+      ridderStatus: OrderTable.ridderStatus,
+      updatedAt: OrderTable.updatedAt,
+    }).from(OrderTable);
+
+    if (passengerName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
+           .where(and(
+            eq(OrderTable.ridderId, ridderId),
+            eq(PassengerTable.userName, passengerName),
+           ));
+    } else {
+      query.where(eq(OrderTable.ridderId, ridderId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+         .orderBy(asc(OrderTable.startAfter))
          .limit(limit)
          .offset(offset);
     

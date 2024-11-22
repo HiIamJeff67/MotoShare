@@ -33,7 +33,7 @@ let OrderService = class OrderService {
         const response = await this.db.update(order_schema_1.OrderTable).set({
             passengerStatus: "STARTED",
             ridderStatus: "STARTED",
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerStatus, "UNSTARTED"), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderStatus, "UNSTARTED")), (0, drizzle_orm_1.gt)(order_schema_1.OrderTable.startAfter, new Date()))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerStatus, "UNSTARTED"), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderStatus, "UNSTARTED")), (0, drizzle_orm_1.lt)(order_schema_1.OrderTable.startAfter, new Date()))).returning({
             id: order_schema_1.OrderTable.id,
         });
         if (!response) {
@@ -114,6 +114,40 @@ let OrderService = class OrderService {
             .offset(offset);
         return await query;
     }
+    async searchAboutToStartOrderByPassengerId(passengerId, ridderName = undefined, limit, offset) {
+        await this.updateExpiredOrdersToStartedStatus();
+        const query = this.db.select({
+            id: order_schema_1.OrderTable.id,
+            ridderName: ridder_schema_1.RidderTable.userName,
+            finalStartCord: order_schema_1.OrderTable.finalStartCord,
+            finalEndCord: order_schema_1.OrderTable.finalEndCord,
+            finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
+            finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
+            ridderAvatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            finalPrice: order_schema_1.OrderTable.finalPrice,
+            startAfter: order_schema_1.OrderTable.startAfter,
+            endedAt: order_schema_1.OrderTable.endedAt,
+            createdAt: order_schema_1.OrderTable.createdAt,
+            ridderPhoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+            passengerStatus: order_schema_1.OrderTable.passengerStatus,
+            ridderStatus: order_schema_1.OrderTable.ridderStatus,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
+        }).from(order_schema_1.OrderTable);
+        if (ridderName) {
+            query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, passengerId), (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, ridderName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, passengerId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(order_schema_1.OrderTable.startAfter))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
     async searchPaginationOrderByRidderId(ridderId, passengerName = undefined, limit, offset) {
         await this.updateExpiredOrdersToStartedStatus();
         const query = this.db.select({
@@ -143,6 +177,39 @@ let OrderService = class OrderService {
         }
         query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
             .orderBy((0, drizzle_orm_1.desc)(order_schema_1.OrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchAboutToStartOrderByRidderId(ridderId, passengerName = undefined, limit, offset) {
+        await this.updateExpiredOrdersToStartedStatus();
+        const query = this.db.select({
+            id: order_schema_1.OrderTable.id,
+            finalStartCord: order_schema_1.OrderTable.finalStartCord,
+            finalEndCord: order_schema_1.OrderTable.finalEndCord,
+            finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
+            finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
+            passengerName: passenger_schema_1.PassengerTable.userName,
+            passengerAvatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            finalPrice: order_schema_1.OrderTable.finalPrice,
+            startAfter: order_schema_1.OrderTable.startAfter,
+            endedAt: order_schema_1.OrderTable.endedAt,
+            createdAt: order_schema_1.OrderTable.createdAt,
+            passengerPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.phoneNumber,
+            passengerStatus: order_schema_1.OrderTable.passengerStatus,
+            ridderStatus: order_schema_1.OrderTable.ridderStatus,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
+        }).from(order_schema_1.OrderTable);
+        if (passengerName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderId, ridderId), (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, passengerName)));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderId, ridderId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(order_schema_1.OrderTable.startAfter))
             .limit(limit)
             .offset(offset);
         return await query;

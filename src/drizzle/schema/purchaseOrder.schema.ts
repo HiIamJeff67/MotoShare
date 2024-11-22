@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, boolean, geometry, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, boolean, geometry, uuid, index, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -23,10 +23,17 @@ export const PurchaseOrderTable = pgTable("purchaseOrder", {
     endAddress: text("endAddress").notNull().default(""),
     startAfter: timestamp("startAfter").notNull().defaultNow(), // expected start after
     endedAt: timestamp("endedAt").notNull().defaultNow(),
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     isUrgent: boolean("isUrgent").notNull().default(false),
     status: postedStatusEnum().notNull().default("POSTED"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        creatorIdIndex: index("purchaseOrder_creatorIdIndex").on(table.creatorId), 
+        startAfterIndex: index("puchaseOrder_startAfterIndex").on(table.startAfter.asc()), 
+        statusStartAfterIndex: index("purchaseOrder_statusStartAfterIndex").on(table.status.asc(), table.startAfter.asc()), 
+        updatedAtIndex: index("purchaseOrder_updatedAtIndex").on(table.updatedAt.desc()), 
+    };
 });
 
 export const PurchaseOrderRelation = relations(PurchaseOrderTable, ({ one, many }) => ({

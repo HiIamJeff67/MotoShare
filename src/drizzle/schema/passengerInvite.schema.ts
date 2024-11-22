@@ -1,4 +1,4 @@
-import { geometry, integer, pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, text, uuid, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { PassengerTable, SupplyOrderTable } from "./schema";
@@ -27,6 +27,14 @@ export const PassengerInviteTable = pgTable('passengerInvite', {
     status: inviteStatusEnum().notNull().default("CHECKING"),
     // we don't specify the enums of notificationType, since we may extend the types of notification in the future
     notificationType: text("notificationType").notNull().default("INVITE"),
+}, (table) => {
+    return {
+        userIdIndex: index("passengerInvite_userIdIndex").on(table.userId), 
+        orderIdIndex: index("passengerInvite_orderIdIndex").on(table.orderId), 
+        startAfterIndex: index("passengerInvite_startAfterIndex").on(table.suggestStartAfter.asc()), 
+        statusStartAfterIndex: index("passengerInvite_statusStartAfterIndex").on(table.status.asc(), table.suggestStartAfter.asc()), 
+        updatedAtIndex: index("passengerInvite_updatedAtIndex").on(table.updatedAt.desc()), 
+    };
 });
 
 export const PassengerInviteRelation = relations(PassengerInviteTable, ({ one }) => ({

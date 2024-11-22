@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { RateAndCommentHistoryDto } from './dto/update-history.dto';
 import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
@@ -96,7 +96,8 @@ export class HistoryController {
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       
@@ -126,7 +127,8 @@ export class HistoryController {
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       

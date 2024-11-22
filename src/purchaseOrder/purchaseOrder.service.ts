@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { desc, and, eq, sql, like, ne, gte, lt } from 'drizzle-orm';
+import { desc, and, eq, sql, like, ne, gte, lt, asc } from 'drizzle-orm';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
-import { point } from '../../src/interfaces/point.interface';
+import { point } from '../../src/interfaces';
 
 import { PurchaseOrderTable } from '../../src/drizzle/schema/purchaseOrder.schema';
 import { 
@@ -19,7 +19,7 @@ import { ClientEndBeforeStartException, ClientPurchaseOrderNotFoundException, Se
 export class PurchaseOrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
-  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  /* ================================= Detect And Update Expired PurchaseOrders operation ================================= */
   private async updateExpiredPurchaseOrders() {
     const response = await this.db.update(PurchaseOrderTable).set({
       status: "EXPIRED",
@@ -35,7 +35,7 @@ export class PurchaseOrderService {
 
     return response.length;
   }
-  /* ================================= Detected And Update Expired PurchaseOrders ================================= */
+  /* ================================= Detect And Update Expired PurchaseOrders operation ================================= */
 
 
   /* ================================= Create operations ================================= */
@@ -209,6 +209,48 @@ export class PurchaseOrderService {
          .offset(offset);
     
     return await query; // await should be place here, since we done the query right here
+  }
+
+  async searchAboutToStartPurchaseOrders(
+    creatorName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredPurchaseOrders();
+
+    const query = this.db.select({
+      id: PurchaseOrderTable.id,
+      creatorName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      initPrice: PurchaseOrderTable.initPrice,
+      startCord: PurchaseOrderTable.startCord,
+      endCord: PurchaseOrderTable.endCord,
+      startAddress: PurchaseOrderTable.startAddress,
+      endAddress: PurchaseOrderTable.endAddress,
+      createdAt: PurchaseOrderTable.createdAt,
+      updatedAt: PurchaseOrderTable.updatedAt,
+      startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      isUrgent: PurchaseOrderTable.isUrgent,
+      status: PurchaseOrderTable.status,
+    }).from(PurchaseOrderTable)
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
+    
+    if (creatorName) {
+      query.where(and(
+        eq(PurchaseOrderTable.status, "POSTED"),
+        like(PassengerTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(PurchaseOrderTable.status, "POSTED"));
+    }
+      
+    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+         .orderBy(asc(PurchaseOrderTable.startAfter))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
   }
 
   async searchCurAdjacentPurchaseOrders(

@@ -54,7 +54,7 @@ export class PassengerService {
             // phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
-            createdAt: true,
+            updatedAt: true,
           }
         },
       }
@@ -76,7 +76,7 @@ export class PassengerService {
             phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
-            createdAt: true,
+            updatedAt: true,
           }
         },
       }
@@ -220,6 +220,7 @@ export class PassengerService {
           }
         : {}
       ),
+      updatedAt: new Date(), 
     }).where(eq(PassengerInfoTable.userId, userId));
   }
   // note that we don't need to modify the collection

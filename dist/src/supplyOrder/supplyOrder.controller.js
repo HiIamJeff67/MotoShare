@@ -97,7 +97,28 @@ let SupplyOrderController = class SupplyOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            if (!(error instanceof common_1.NotFoundException)) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(creatorName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -116,7 +137,8 @@ let SupplyOrderController = class SupplyOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            if (!(error instanceof common_1.NotFoundException)) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -135,7 +157,8 @@ let SupplyOrderController = class SupplyOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            if (!(error instanceof common_1.NotFoundException)) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -154,7 +177,8 @@ let SupplyOrderController = class SupplyOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            if (!(error instanceof common_1.NotFoundException)) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -254,6 +278,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchPaginationSupplyOrders", null);
+__decorate([
+    (0, common_1.Get)('searchAboutToStartSupplyOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "searchAboutToStartSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('searchCurAdjacentSupplyOrders'),
     __param(0, (0, common_1.Query)('creatorName')),

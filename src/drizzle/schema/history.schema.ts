@@ -1,4 +1,4 @@
-import { geometry, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -38,6 +38,12 @@ export const HistoryTable = pgTable("history", {
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("udpatedAt").notNull().defaultNow(),
     status: historyStatusEnum().notNull().default("FINISHED"),
+}, (table) => {
+    return {
+        passengerIdIndex: index("history_passengerIdIndex").on(table.passengerId), 
+        ridderIdIndex: index("history_ridderIdIndex").on(table.ridderId), 
+        updatedAtIndex: index("history_updatedAtIndex").on(table.updatedAt.desc()), 
+    };
 });
 
 export const HistoryRelation = relations(HistoryTable, ({ one }) => ({

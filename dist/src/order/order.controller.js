@@ -79,7 +79,29 @@ let OrderController = class OrderController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartOrdersByPassengerId(passenger, ridderName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchAboutToStartOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -99,7 +121,29 @@ let OrderController = class OrderController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartOrdersByRidderId(ridder, passengerName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchAboutToStartOrderByRidderId(ridder.id, passengerName, +limit, +offset);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -304,7 +348,7 @@ __decorate([
 ], OrderController.prototype, "getOrderForRidderById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('passenger/searchPaginationOrders'),
+    (0, common_1.Get)('passenger/searchMyPaginationOrders'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('ridderName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -315,8 +359,20 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "searchPaginationOrdersByPassengerId", null);
 __decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyAboutToStartOrders'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('ridderName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "searchAboutToStartOrdersByPassengerId", null);
+__decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('ridder/searchPaginationOrders'),
+    (0, common_1.Get)('ridder/searchMyPaginationOrders'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('passengerName')),
     __param(2, (0, common_1.Query)('limit')),
@@ -326,6 +382,18 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "searchPaginationOrdersByRidderId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMyAboutToStartOrders'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('passengerName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "searchAboutToStartOrdersByRidderId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Post)('passenger/toStartedStatusById'),

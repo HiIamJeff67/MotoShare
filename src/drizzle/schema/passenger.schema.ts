@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -15,6 +15,11 @@ export const PassengerTable = pgTable("passenger", {
     userName: text("userName").notNull().unique(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+}, (table) => {
+    return {
+        userNameIndex: uniqueIndex("passenger_userNameIndex").on(table.userName), // for searching user by name
+        emailIndex: uniqueIndex("passenger_emailIndex").on(table.email), // for validating if there's a such user with the given email while logging in
+    };
 });
 
 export const PassengerRelation = relations(PassengerTable, ({ one, many }) => ({

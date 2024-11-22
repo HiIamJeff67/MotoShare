@@ -1,4 +1,4 @@
-import { geometry, integer, pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
+import { geometry, integer, pgTable, text, uuid, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { PurchaseOrderTable, RidderTable } from "./schema";
@@ -27,6 +27,14 @@ export const RidderInviteTable = pgTable('ridderInvite', {
     status: inviteStatusEnum().notNull().default("CHECKING"),
     // we don't specify the enums of notificationType, since we may extend the types of notification in the future
     notificationType: text("notificationType").notNull().default("INVITE"),
+}, (table) => {
+    return {
+        userIdIndex: index("ridderInvite_userIdIndex").on(table.userId), 
+        orderIdIndex: index("ridderInvite_orderIdIndex").on(table.orderId), 
+        startAfterIndex: index("ridderInvite_startAfterIndex").on(table.suggestStartAfter.asc()), 
+        statusStartAfterIndex: index("ridderInvite_statusStartAfterIndex").on(table.status.asc(), table.suggestStartAfter.asc()), 
+        updateAtIndex: index("ridderInvite_updatedAtIndex").on(table.updatedAt.desc()), 
+    };
 });
 
 export const RidderInviteRelation = relations(RidderInviteTable, ({ one }) => ({

@@ -3,7 +3,8 @@ import { Controller,
   NotFoundException, 
   BadRequestException, 
   UnauthorizedException, 
-  ForbiddenException
+  ForbiddenException,
+  NotAcceptableException
 } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { Response } from 'express';
@@ -150,8 +151,37 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      console.log(error)
-      if (!(error instanceof NotFoundException)) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @Get('searchAboutToStartPurchaseOrders')
+  async searchAboutToStartPurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Res() response: Response,
+  ) {
+    try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, +limit, +offset);
+
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;
       }
 
@@ -185,7 +215,8 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      if (!(error instanceof NotFoundException)) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;
       }
 
@@ -219,7 +250,8 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      if (!(error instanceof NotFoundException)) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;
       }
 
@@ -253,7 +285,8 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      if (!(error instanceof NotFoundException)) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;
       }
 

@@ -18,4 +18,5 @@ __exportStar(require("./phoneNumber.type"), exports);
 __exportStar(require("./starRating.type"), exports);
 __exportStar(require("./status.tpye"), exports);
 __exportStar(require("./TWLicense.type"), exports);
+__exportStar(require("./userRole.type"), exports);
 //# sourceMappingURL=index.js.map

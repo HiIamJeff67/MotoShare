@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
@@ -22,8 +22,16 @@ exports.ServerNeonAutoUpdateExpiredSupplyOrderException = new common_1.InternalS
     case: "E-S-811",
     message: "Failed to update expired supplyOrders before user get them",
 });
-exports.ServerNeonAutoUpdateExpiredOrderException = new common_1.InternalServerErrorException({
+exports.ServerNeonAutoUpdateExpiredPassengerInviteException = new common_1.InternalServerErrorException({
     case: "E-S-812",
+    message: "Faild to update expired passengerInvites before user get them",
+});
+exports.ServerNeonautoUpdateExpiredRidderInviteException = new common_1.InternalServerErrorException({
+    case: "E-S-813",
+    message: "Failed to update expired ridderInvites before user get them",
+});
+exports.ServerNeonAutoUpdateExpiredOrderException = new common_1.InternalServerErrorException({
+    case: "E-S-814",
     message: "Failed to update start status of orders before user get them",
 });
 exports.ServerSupabaseConnectionException = new common_1.InternalServerErrorException({

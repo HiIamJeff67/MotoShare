@@ -10,10 +10,12 @@ export declare class RidderInviteController {
     getRidderInviteOfRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     getRidderInviteOfPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     searchPaginationRidderInvitesByInviterId(ridder: RidderType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchAboutToStartRidderInvitesByInviterId(ridder: RidderType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentRidderInvitesByInviterId(ridder: RidderType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentRidderInvitesByInviterId(ridder: RidderType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchSimilarRouteRidderInvitesByInviterId(ridder: RidderType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchPaginationRidderInvitesByReceiverId(passenger: PassengerType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchAboutToStartRidderInvitesByReceiverId(passenger: PassengerType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentRidderInvitesByReceiverId(passenger: PassengerType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentRidderInvitesByReceiverId(passenger: PassengerType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchMySimilarRouteRidderInvitesByReceverId(passenger: PassengerType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

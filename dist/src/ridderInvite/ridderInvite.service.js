@@ -28,6 +28,17 @@ let RidderInviteService = class RidderInviteService {
     constructor(db) {
         this.db = db;
     }
+    async updateExpiredRidderInvites() {
+        const response = await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
+            status: "CANCEL",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"), (0, drizzle_orm_1.lt)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter, new Date()))).returning({
+            id: ridderInvite_schema_1.RidderInviteTable.id,
+        });
+        if (!response) {
+            throw exceptions_1.ServerNeonautoUpdateExpiredRidderInviteException;
+        }
+        return response.length;
+    }
     async createRidderInviteByOrderId(inviterId, orderId, createRidderInviteDto) {
         return await this.db.insert(ridderInvite_schema_1.RidderInviteTable).values({
             userId: inviterId,
@@ -91,6 +102,7 @@ let RidderInviteService = class RidderInviteService {
             .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id));
     }
     async searchPaginationRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -121,7 +133,40 @@ let RidderInviteService = class RidderInviteService {
             .offset(offset);
         return await query;
     }
+    async searchAboutToStartRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
+        const query = this.db.select({
+            id: ridderInvite_schema_1.RidderInviteTable.id,
+            orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
+            receiverName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
+            suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
+            suggestEndedAt: ridderInvite_schema_1.RidderInviteTable.suggestEndedAt,
+            createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
+            updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
+            status: ridderInvite_schema_1.RidderInviteTable.status,
+        }).from(ridderInvite_schema_1.RidderInviteTable);
+        if (receiverName) {
+            query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, receiverName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
+                .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
     async searchCurAdjacentRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -160,6 +205,7 @@ let RidderInviteService = class RidderInviteService {
         return await query;
     }
     async searchDestAdjacentRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -198,6 +244,7 @@ let RidderInviteService = class RidderInviteService {
         return await query;
     }
     async searchSimilarRouteRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -264,6 +311,7 @@ let RidderInviteService = class RidderInviteService {
         return await query;
     }
     async searchPaginationRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -293,7 +341,39 @@ let RidderInviteService = class RidderInviteService {
             .offset(offset);
         return await query;
     }
+    async searchAboutToStartRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
+        const query = this.db.select({
+            id: ridderInvite_schema_1.RidderInviteTable.id,
+            orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
+            inviterName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
+            suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
+            suggestEndedAt: ridderInvite_schema_1.RidderInviteTable.suggestEndedAt,
+            createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
+            updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
+            status: ridderInvite_schema_1.RidderInviteTable.status,
+        }).from(ridderInvite_schema_1.RidderInviteTable)
+            .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, inviterName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInvite_schema_1.RidderInviteTable.userId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
     async searchCurAdjacentRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -331,6 +411,7 @@ let RidderInviteService = class RidderInviteService {
         return await query;
     }
     async searchDestAdjacentRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
@@ -368,6 +449,7 @@ let RidderInviteService = class RidderInviteService {
         return await query;
     }
     async searchSimilarRouteRidderInvitesByReceverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredRidderInvites();
         const query = this.db.select({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,

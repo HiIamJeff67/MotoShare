@@ -1,4 +1,4 @@
-import { geometry, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { geometry, index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -37,6 +37,14 @@ export const OrderTable = pgTable("order", {
     ridderStatus: ridderOrderStatusEnum().notNull().default("UNSTARTED"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        passengerIdIndex: index("order_passengerIdIndex").on(table.passengerId), 
+        ridderIdIndex: index("order_ridderIdIndex").on(table.ridderId), 
+        startAfterIndex: index("order_startAfterIndex").on(table.startAfter.asc()), 
+        statusStartAfterIndex: index("order_statusStartAfterIndex").on(table.passengerStatus.asc(), table.ridderStatus.asc(), table.startAfter.asc()), 
+        updatedAtIndex: index("order_updatedAtIndex").on(table.updatedAt.desc()), 
+    };
 });
 
 export const OrderRelation = relations(OrderTable, ({ one }) => ({

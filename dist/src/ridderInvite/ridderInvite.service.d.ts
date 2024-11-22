@@ -4,6 +4,7 @@ import { DrizzleDB } from '../drizzle/types/drizzle';
 export declare class RidderInviteService {
     private db;
     constructor(db: DrizzleDB);
+    private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
         createdAt: Date;
@@ -66,6 +67,20 @@ export declare class RidderInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
+    searchAboutToStartRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        receiverName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggestEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
     searchCurAdjacentRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
@@ -112,6 +127,20 @@ export declare class RidderInviteService {
         RDV: unknown;
     }[]>;
     searchPaginationRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        inviterName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggestEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
+    searchAboutToStartRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
         suggestStartAddress: string;

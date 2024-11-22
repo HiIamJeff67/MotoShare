@@ -4,7 +4,8 @@ import { Controller,
   UnauthorizedException, 
   ForbiddenException, 
   NotFoundException,
-  ConflictException
+  ConflictException,
+  NotAcceptableException
 } from '@nestjs/common';
 import { RidderInviteService } from './ridderInvite.service';
 import { Response } from 'express';
@@ -155,7 +156,45 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Get('ridder/searchMyAboutToStartRidderInvites')
+  async searchAboutToStartRidderInvitesByInviterId(
+    @Ridder() ridder: RidderType, 
+    @Query('receiverName') receiverName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10", 
+    @Query('offset') offset: string = "0", 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByInviterId(
+        ridder.id, 
+        receiverName, 
+        +limit, 
+        +offset
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res)
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -191,7 +230,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -227,7 +267,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -263,7 +304,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -302,7 +344,45 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtPassengerGuard)
+  @Get('passenger/searchMyAboutToStartRidderInvites')
+  async searchAboutToStartRidderInvitesByReceiverId(
+    @Passenger() passenger: PassengerType, 
+    @Query('inviterName') inviterName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10", 
+    @Query('offset') offset: string = "0", 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByReceiverId(
+        passenger.id, 
+        inviterName, 
+        +limit, 
+        +offset
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res)
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -338,7 +418,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -374,7 +455,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -410,7 +492,8 @@ export class RidderInviteController {
       response.status(HttpStatusCode.Ok).send(res)
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 

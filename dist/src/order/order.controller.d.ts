@@ -7,7 +7,9 @@ export declare class OrderController {
     getOrderForPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getOrderForRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     searchPaginationOrdersByPassengerId(passenger: PassengerType, ridderName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchAboutToStartOrdersByPassengerId(passenger: PassengerType, ridderName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchPaginationOrdersByRidderId(ridder: RidderType, passengerName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchAboutToStartOrdersByRidderId(ridder: RidderType, passengerName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     toStartedPassengerStatusById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     toUnpaidPassengerStatusById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     toFinishedPassengerStatusById(passenger: PassengerType, id: string, response: Response): Promise<void>;

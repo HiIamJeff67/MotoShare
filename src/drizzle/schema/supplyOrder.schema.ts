@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision, index, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -27,6 +27,13 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     tolerableRDV: doublePrecision("tolerableRDV").notNull().default(5),    // unit: kilometers(km)
     status: postedStatusEnum().notNull().default("POSTED"),
+}, (table) => {
+    return {
+        creatorIdIndex: index("supplyOrder_creatorIdIndex").on(table.creatorId), 
+        startAfterIndex: index("supplyOrder_startAfterIndex").on(table.startAfter.asc()), 
+        statusStartAfterIndex: index("supplyOrder_statusStartAfterIndex").on(table.status.asc(), table.startAfter.asc()),
+        updatedAtIndex: index("supplyOrder_updatedAtIndex").on(table.updatedAt.desc()),
+    }
 });
 // consider to use a index on startCord and endCord to optimize the query
 

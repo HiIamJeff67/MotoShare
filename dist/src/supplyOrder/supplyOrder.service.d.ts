@@ -12,6 +12,7 @@ export declare class SupplyOrderService {
     }[]>;
     getSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -25,7 +26,6 @@ export declare class SupplyOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -33,6 +33,7 @@ export declare class SupplyOrderService {
     getSupplyOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        createdAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -46,7 +47,6 @@ export declare class SupplyOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        createdAt: Date;
         updatedAt: Date;
         tolerableRDV: number;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
@@ -61,6 +61,28 @@ export declare class SupplyOrderService {
         };
     } | undefined>;
     searchPaginationSupplyOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        creatorName: string | null;
+        avatorUrl: never;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        startAddress: string;
+        endAddress: string;
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        endedAt: Date;
+        tolerableRDV: number;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+    }[]>;
+    searchAboutToStartSupplyOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         creatorName: string | null;
         avatorUrl: never;

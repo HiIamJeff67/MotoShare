@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -15,6 +15,11 @@ export const RidderTable = pgTable("ridder", {
     userName: text("userName").notNull().unique(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+}, (table) => {
+    return {
+        userNameIndex: uniqueIndex("ridder_userNameIndex").on(table.userName), 
+        emailIndex: uniqueIndex("ridder_emailIndex").on(table.email), 
+    };
 });
 
 export const RidderRelation = relations(RidderTable, ({ one, many }) => ({

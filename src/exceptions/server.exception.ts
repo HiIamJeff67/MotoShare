@@ -21,19 +21,31 @@ export const ServerNeonEnvVarNotFoundException = new InternalServerErrorExceptio
 // E-S-810
 export const ServerNeonAutoUpdateExpiredPurchaseOrderException = new InternalServerErrorException({
     case: "E-S-810",
-    message: "Failed to update expired purchaseOrders before user get them",
+    message: "Failed to update expired purchaseOrders before user get them", 
 });
 
 // E-S-811
 export const ServerNeonAutoUpdateExpiredSupplyOrderException = new InternalServerErrorException({
     case: "E-S-811",
-    message: "Failed to update expired supplyOrders before user get them",
+    message: "Failed to update expired supplyOrders before user get them", 
 });
 
 // E-S-812
+export const ServerNeonAutoUpdateExpiredPassengerInviteException = new InternalServerErrorException({
+    case: "E-S-812", 
+    message: "Faild to update expired passengerInvites before user get them", 
+});
+
+// E-S-813
+export const ServerNeonautoUpdateExpiredRidderInviteException = new InternalServerErrorException({
+    case: "E-S-813", 
+    message: "Failed to update expired ridderInvites before user get them", 
+});
+
+// E-S-814
 export const ServerNeonAutoUpdateExpiredOrderException = new InternalServerErrorException({
-    case: "E-S-812",
-    message: "Failed to update start status of orders before user get them",
+    case: "E-S-814",
+    message: "Failed to update start status of orders before user get them", 
 });
 
 // E-S-850

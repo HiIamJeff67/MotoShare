@@ -27,7 +27,7 @@ let SupplyOrderService = class SupplyOrderService {
     async updateExpiredSupplyOrders() {
         const response = await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
             status: "EXPIRED",
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.gt)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date()))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.lt)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date()))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
         });
         if (!response) {
@@ -144,6 +144,37 @@ let SupplyOrderService = class SupplyOrderService {
         }
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchAboutToStartSupplyOrders(creatorName = undefined, limit, offset) {
+        await this.updateExpiredSupplyOrders();
+        const query = this.db.select({
+            id: supplyOrder_schema_1.SupplyOrderTable.id,
+            creatorName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
+            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
+            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
+            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
+            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
+            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            status: supplyOrder_schema_1.SupplyOrderTable.status,
+        }).from(supplyOrder_schema_1.SupplyOrderTable)
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+        if (creatorName) {
+            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(supplyOrder_schema_1.SupplyOrderTable.startAfter))
             .limit(limit)
             .offset(offset);
         return await query;

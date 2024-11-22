@@ -4,19 +4,38 @@ import { DecideRidderInviteDto, UpdateRidderInviteDto } from './dto/update-ridde
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
-import { and, desc, eq, like, ne, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, like, lt, ne, or, sql } from 'drizzle-orm';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ClientUserHasNoAccessException, ServerNeonautoUpdateExpiredRidderInviteException } from '../exceptions';
 import { OrderTable } from '../drizzle/schema/order.schema';
 
 @Injectable()
 export class RidderInviteService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  /* ================================= Detect And Update Expired RidderInvites operations ================================= */
+  private async updateExpiredRidderInvites() {
+    const response = await this.db.update(RidderInviteTable).set({
+      status: "CANCEL", 
+    }).where(and(
+      eq(RidderInviteTable.status, "CHECKING"), 
+      lt(RidderInviteTable.suggestStartAfter, new Date()), 
+    )).returning({
+      id: RidderInviteTable.id, 
+    });
+    if (!response) {
+      throw ServerNeonautoUpdateExpiredRidderInviteException;
+    }
+
+    return response.length;
+  }
+  /* ================================= Detect And Update Expired RidderInvites operations ================================= */
+
 
   /* ================================= Create operations ================================= */
   async createRidderInviteByOrderId(
@@ -107,6 +126,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -140,12 +161,55 @@ export class RidderInviteService {
     return await query;
   }
 
+  async searchAboutToStartRidderInvitesByInviterId(
+    inviterId: string, 
+    receiverName: string | undefined = undefined, 
+    limit: number, 
+    offset: number, 
+  ) {
+    await this.updateExpiredRidderInvites();
+
+    const query = this.db.select({
+      id: RidderInviteTable.id,
+      orderId: RidderInviteTable.orderId,
+      suggestStartAddress: RidderInviteTable.startAddress,
+      suggestEndAddress: RidderInviteTable.endAddress,
+      receiverName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: RidderInviteTable.suggestPrice,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
+      createdAt: RidderInviteTable.createdAt,
+      updatedAt: RidderInviteTable.updatedAt,
+      status: RidderInviteTable.status,
+    }).from(RidderInviteTable);
+      
+    if (receiverName) {
+      query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")))
+    } else {  // specify before join -> faster
+      query.where(eq(RidderInviteTable.userId, inviterId))
+           .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+         .orderBy(asc(RidderInviteTable.suggestStartAfter))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
+  }
+
   async searchCurAdjacentRidderInvitesByInviterId(
     inviterId: string,
     receiverName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -192,6 +256,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -238,6 +304,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -315,6 +383,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -347,12 +417,54 @@ export class RidderInviteService {
     return await query;
   }
 
+  async searchAboutToStartRidderInvitesByReceiverId(
+    receiverId: string, 
+    inviterName: string | undefined = undefined, 
+    limit: number, 
+    offset: number, 
+  ) {
+    await this.updateExpiredRidderInvites();
+
+    const query = this.db.select({
+      id: RidderInviteTable.id,
+      orderId: RidderInviteTable.orderId,
+      suggestStartAddress: RidderInviteTable.startAddress,
+      suggestEndAddress: RidderInviteTable.endAddress,
+      inviterName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      suggestPrice: RidderInviteTable.suggestPrice,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
+      createdAt: RidderInviteTable.createdAt,
+      updatedAt: RidderInviteTable.updatedAt,
+      status: RidderInviteTable.status,
+    }).from(RidderInviteTable)
+      .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId));
+      
+    if (inviterName) {
+      query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(PurchaseOrderTable.creatorId, receiverId))
+           .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
+    }
+      
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(asc(RidderInviteTable.suggestStartAfter))
+          .limit(limit)
+          .offset(offset);
+    
+    return await query;
+  }
+
   async searchCurAdjacentRidderInvitesByReceiverId(
     receiverId: string,
     inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -398,6 +510,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,
@@ -443,6 +557,8 @@ export class RidderInviteService {
     limit: number,
     offset: number,
   ) {
+    await this.updateExpiredRidderInvites();
+
     const query = this.db.select({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,

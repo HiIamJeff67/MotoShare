@@ -9,7 +9,7 @@ import { OrderService } from './order.service';
 import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { Passenger, Ridder } from '../auth/decorator';
-import { Response } from 'express';
+import { response, Response } from 'express';
 import { 
   ApiMissingParameterException, 
   ApiSearchingLimitTooLarge, 
@@ -86,7 +86,7 @@ export class OrderController {
 
   /* ================= Search operations ================= */
   @UseGuards(JwtPassengerGuard)
-  @Get('passenger/searchPaginationOrders')
+  @Get('passenger/searchMyPaginationOrders')
   async searchPaginationOrdersByPassengerId(
     @Passenger() passenger: PassengerType,
     @Query('ridderName') ridderName: string | undefined = undefined,
@@ -99,14 +99,57 @@ export class OrderController {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
+      const res = await this.orderService.searchPaginationOrderByPassengerId(
+        passenger.id, 
+        ridderName, 
+        +limit, 
+        +offset
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtPassengerGuard)
+  @Get('passenger/searchMyAboutToStartOrders')
+  async searchAboutToStartOrdersByPassengerId(
+    @Passenger() passenger: PassengerType, 
+    @Query('ridderName') ridderName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10", 
+    @Query('offset') offset: string = "0", 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.orderService.searchAboutToStartOrderByPassengerId(
+        passenger.id, 
+        ridderName, 
+        +limit, 
+        +offset
+      );
+
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 
@@ -117,7 +160,7 @@ export class OrderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('ridder/searchPaginationOrders')
+  @Get('ridder/searchMyPaginationOrders')
   async searchPaginationOrdersByRidderId(
     @Ridder() ridder: RidderType,
     @Query('passengerName') passengerName: string | undefined = undefined,
@@ -130,14 +173,57 @@ export class OrderController {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
+      const res = await this.orderService.searchPaginationOrderByRidderId(
+        ridder.id, 
+        passengerName, 
+        +limit, 
+        +offset
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Get('ridder/searchMyAboutToStartOrders')
+  async searchAboutToStartOrdersByRidderId(
+    @Ridder() ridder: RidderType, 
+    @Query('passengerName') passengerName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10", 
+    @Query('offset') offset: string = "0", 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (+limit > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.orderService.searchAboutToStartOrderByRidderId(
+        ridder.id, 
+        passengerName, 
+        +limit, 
+        +offset
+      );
+
+      if (!res || res.length === 0) throw ClientOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
 

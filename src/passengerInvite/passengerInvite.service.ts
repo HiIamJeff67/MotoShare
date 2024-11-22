@@ -4,20 +4,38 @@ import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
-import { and, desc, eq, like, ne, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, like, lt, ne, or, sql } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ApiSearchingLimitTooLarge, ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException } from '../exceptions';
+import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException, ServerNeonAutoUpdateExpiredPassengerInviteException } from '../exceptions';
 import { OrderTable } from '../drizzle/schema/order.schema';
-import { MAX_SEARCH_LIMIT } from '../constants';
 
 @Injectable()
 export class PassengerInviteService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+
+  /* ================================= Detect And Update Expired PassengerInvites operations ================================= */
+  private async updateExpiredPassengerInvites() {
+    const response = await this.db.update(PassengerInviteTable).set({
+      status: "CANCEL",
+    }).where(and(
+      eq(PassengerInviteTable.status, "CHECKING"),
+      lt(PassengerInviteTable.suggestStartAfter, new Date()), 
+    )).returning({
+      id: PassengerInviteTable.id, 
+    });
+    if (!response) {
+      throw ServerNeonAutoUpdateExpiredPassengerInviteException;
+    }
+
+    return response.length;
+  }
+  /* ================================= Detect And Update Expired PassengerInvites operations ================================= */
+
   
   /* ================================= Create operations ================================= */
   async createPassengerInviteByOrderId(
@@ -112,9 +130,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -148,6 +164,47 @@ export class PassengerInviteService {
     
     return await query;
   }
+
+  async searchAboutToStartPassengerInvitesByInviterId(
+    inviterId: string,
+    receiverName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      receiverName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      status: PassengerInviteTable.status,
+    }).from(PassengerInviteTable);
+      
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName + "%")))
+    } else {  // specify before join -> faster
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+         .orderBy(asc(PassengerInviteTable.suggestStartAfter))
+         .limit(limit)
+         .offset(offset);
+    
+    return await query;
+  }
   
   async searchCurAdjacentPassengerInvitesByInviterId(
     inviterId: string,
@@ -155,9 +212,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -205,9 +260,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -254,9 +307,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -337,9 +388,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -373,15 +422,53 @@ export class PassengerInviteService {
     return await query;
   }
 
+  async searchAboutToStartPassengerInvitesByReceiverId(
+    receiverId: string,
+    inviterName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      inviterName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      status: PassengerInviteTable.status,
+    }).from(PassengerInviteTable)
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+      
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+      
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(asc(PassengerInviteTable.suggestStartAfter))
+          .limit(limit)
+          .offset(offset);
+    
+    return await query;
+  }
+
   async searchCurAdjacentPassengerInvitesByReceiverId(
     receiverId: string,
     inviterName: string | undefined = undefined,
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -428,9 +515,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
 
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -477,9 +562,7 @@ export class PassengerInviteService {
     limit: number,
     offset: number,
   ) {
-    if (+limit > MAX_SEARCH_LIMIT) {
-      throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
-    }
+    await this.updateExpiredPassengerInvites();
     
     const query = this.db.select({
       id: PassengerInviteTable.id,
@@ -747,7 +830,6 @@ export class PassengerInviteService {
     } else if (decidePassengerInviteDto.status === "REJECTED") {
       return await this.db.update(PassengerInviteTable).set({
         status: decidePassengerInviteDto.status,  // must be REJECTED
-        updatedAt: new Date(),
       }).where(eq(PassengerInviteTable.id, id))
         .returning({
           status: PassengerInviteTable.status,

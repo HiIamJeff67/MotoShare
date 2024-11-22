@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, desc, eq, like, lt, ne, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, like, lt, ne, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -18,7 +18,7 @@ import { ClientEndBeforeStartException, ClientSupplyOrderNotFoundException, Serv
 export class SupplyOrderService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
-  /* ================================= Detected And Update Expired SupplyOrders ================================= */
+  /* ================================= Detect And Update Expired SupplyOrders operation ================================= */
   private async updateExpiredSupplyOrders() {
     const response = await this.db.update(SupplyOrderTable).set({
       status: "EXPIRED",
@@ -34,7 +34,7 @@ export class SupplyOrderService {
 
     return response.length;
   }
-  /* ================================= Detected And Update Expired SupplyOrders ================================= */
+  /* ================================= Detect And Update Expired SupplyOrders operation ================================= */
 
 
   /* ================================= Create operations ================================= */
@@ -209,7 +209,49 @@ export class SupplyOrderService {
          .limit(limit)
          .offset(offset);
 
-    return await query
+    return await query;
+  }
+
+  async searchAboutToStartSupplyOrders(
+    creatorName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredSupplyOrders();
+
+    const query = this.db.select({
+      id: SupplyOrderTable.id,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      status: SupplyOrderTable.status,
+    }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+
+    if (creatorName) {
+      query.where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        like(RidderTable.userName, creatorName + "%"),
+      ));
+    } else {
+      query.where(eq(SupplyOrderTable.status, "POSTED"));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+         .orderBy(asc(SupplyOrderTable.startAfter))
+         .limit(limit)
+         .offset(offset);
+
+    return await query;
   }
   
   async searchCurAdjacentSupplyOrders(

@@ -1,4 +1,4 @@
-import { integer, boolean, pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
+import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { PassengerTable } from "./schema";
@@ -13,7 +13,11 @@ export const PassengerInfoTable = pgTable("passengerInfo", {
     phoneNumber: text("phoneNumber").unique(),
     selfIntroduction: text("selfIntroduction"),
     avatorUrl: text("avatorUrl"),
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(), 
+}, (table) => {
+    return {
+        userIdIndex: uniqueIndex("passengerInfo_userIdIndex").on(table.userId), 
+    };
 });
 
 export const PassengerInfoRelation = relations(PassengerInfoTable, ({ one }) => ({

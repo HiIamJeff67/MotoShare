@@ -80,6 +80,28 @@ export declare class PurchaseOrderService {
         isUrgent: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
+    searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        creatorName: string | null;
+        avatorUrl: never;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        startAddress: string;
+        endAddress: string;
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        endedAt: Date;
+        isUrgent: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+    }[]>;
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;

@@ -24,10 +24,20 @@ const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
 const order_schema_1 = require("../drizzle/schema/order.schema");
-const constants_1 = require("../constants");
 let PassengerInviteService = class PassengerInviteService {
     constructor(db) {
         this.db = db;
+    }
+    async updateExpiredPassengerInvites() {
+        const response = await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
+            status: "CANCEL",
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"), (0, drizzle_orm_1.lt)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date()))).returning({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+        });
+        if (!response) {
+            throw exceptions_1.ServerNeonAutoUpdateExpiredPassengerInviteException;
+        }
+        return response.length;
     }
     async createPassengerInviteByOrderId(inviterId, orderId, createPassengerInviteDto) {
         return await this.db.insert(passengerInvite_schema_1.PassengerInviteTable).values({
@@ -94,9 +104,7 @@ let PassengerInviteService = class PassengerInviteService {
             .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id));
     }
     async searchPaginationPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -127,10 +135,40 @@ let PassengerInviteService = class PassengerInviteService {
             .offset(offset);
         return await query;
     }
-    async searchCurAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+    async searchAboutToStartPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
+        const query = this.db.select({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+            orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
+            receiverName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            status: passengerInvite_schema_1.PassengerInviteTable.status,
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
         }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchCurAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -169,9 +207,7 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchDestAdjacentPassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -209,9 +245,7 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchSimilarRoutePassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -277,9 +311,7 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchPaginationPasssengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -309,10 +341,39 @@ let PassengerInviteService = class PassengerInviteService {
             .offset(offset);
         return await query;
     }
-    async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+    async searchAboutToStartPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
+        const query = this.db.select({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+            orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
+            inviterName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            status: passengerInvite_schema_1.PassengerInviteTable.status,
+        }).from(passengerInvite_schema_1.PassengerInviteTable)
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
         }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .orderBy((0, drizzle_orm_1.asc)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter))
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -350,9 +411,7 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchDestAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -390,9 +449,7 @@ let PassengerInviteService = class PassengerInviteService {
         return await query;
     }
     async searchSimilarRoutePassengerInvitesByReceverId(receiverId, inviterName = undefined, limit, offset) {
-        if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-            throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
-        }
+        await this.updateExpiredPassengerInvites();
         const query = this.db.select({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
@@ -611,7 +668,6 @@ let PassengerInviteService = class PassengerInviteService {
         else if (decidePassengerInviteDto.status === "REJECTED") {
             return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 status: decidePassengerInviteDto.status,
-                updatedAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id))
                 .returning({
                 status: passengerInvite_schema_1.PassengerInviteTable.status,

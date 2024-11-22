@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "startAfterIndex" ON "purchaseOrder" USING btree ("startAfter");
