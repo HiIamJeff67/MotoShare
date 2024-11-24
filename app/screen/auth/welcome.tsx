@@ -1,61 +1,115 @@
 import React from 'react';
-import { Text, View, Image, Pressable, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { Text, View, Image, Pressable, StatusBar, Platform } from 'react-native';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { Theme } from '../theme'; // 引入自定義的主題類型
 
 const WelcomeScreen = () => {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
+    const theme = useTheme() as Theme; // 強制轉換為自定義主題類型
+    const { colors } = theme;
     
     return (
-        <SafeAreaView className="flex-1 bg-[#ffffff]">
-            <View className="justify-center items-center mt-20">
+        <View style={{ 
+            flex: 1,
+            backgroundColor: colors.backgroundWhite, 
+            paddingTop: verticalScale(insets.top),
+            paddingBottom: verticalScale(insets.bottom),
+            paddingHorizontal: scale(20), // 設置水平間距
+            paddingVertical: verticalScale(20), // 設置垂直間距
+        }}>
+            {/* 根據平台條件設置 StatusBar */}
+            {Platform.OS === 'ios' ? (
+                <StatusBar barStyle="dark-content"/>
+            ) : (
+                <StatusBar barStyle="dark-content" hidden={true}/>
+            )}
+
+            {/* Top Image */}
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Image
                     source={require('../../../assets/images/motorbike.jpg')}
-                    className="w-64 h-64 absolute top-32"
-                    resizeMode="contain"
-                />
+                    style={{
+                        width: scale(256), // Equivalent to "w-64"
+                        height: verticalScale(256), // Equivalent to "h-64"
+                        resizeMode: 'contain',
+                }} />
             </View>
 
-            <View className="justify-center items-center"
-                style={{ 
-                    top: 350,
-                }}>
-
-                <Text className="text-[#3498db] text-4xl pb-5 font-bold">海大的共享機車系統</Text>
-                <Text className="text-[#3498db] text-base mt-[-10]">助你輕鬆抵達每一個角落</Text>
-            </View>
-            
-            
-            <View className="justify-center items-center">
-                <Pressable 
-                    style={{ 
-                        width: 300,
-                        height: 50,
-                        position: 'absolute',
-                        top: 400,
-                        justifyContent: 'center',
-                        alignItems: 'center',                                                                     
+            {/* Title Section */}
+            <View
+                style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: verticalScale(50),
+                }}
+            >
+                <Text
+                    style={{
+                        color: '#3498db',
+                        fontSize: moderateScale(32), // Equivalent to "text-4xl"
+                        paddingBottom: verticalScale(10),
+                        fontWeight: 'bold',
                     }}
-                    className="rounded-lg bg-[#3498db] shadow-2xl shadow-sky-400 "
+                >
+                    海大的共享機車系統
+                </Text>
+                <Text
+                    style={{
+                        color: '#3498db',
+                        fontSize: moderateScale(15), // Equivalent to "text-base"
+                    }}
+                >
+                    助你輕鬆抵達每一個角落
+                </Text>
+            </View>
+
+            {/* Join Button */}
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Pressable
+                    style={{
+                        width: '100%',
+                        height: verticalScale(40),
+                        marginTop: verticalScale(100),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: moderateScale(10), // Adjusting for rounded corners
+                        backgroundColor: '#3498db',
+                        shadowColor: '#3498db',
+                        shadowOffset: { width: 0, height: verticalScale(5) },
+                        shadowOpacity: 0.5,
+                        shadowRadius: moderateScale(10),
+                    }}
                     onPress={() => navigation.navigate('choose2')}
                 >
-                <Text className="font-semibold text-white text-xl">加入我們</Text>
+                    <Text
+                        style={{
+                            fontWeight: '600',
+                            color: '#ffffff',
+                            fontSize: moderateScale(18), // Equivalent to "text-xl"
+                        }}
+                    >
+                        加入我們
+                    </Text>
                 </Pressable>
             </View>
 
-            <View className="justify-center items-center"
-                style={{ 
-                    top:  500,
-                }}>
-                
-                <Pressable 
-                    onPress={() => navigation.navigate('choose')}
-                >
-                    <Text className="text-[#3498db] text-lg">已經有帳號了?</Text>
+            {/* Existing Account Text */}
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: verticalScale(15) }}>
+                <Pressable onPress={() => navigation.navigate('choose')}>
+                    <Text
+                        style={{
+                            color: '#3498db',
+                            fontSize: moderateScale(16), // Equivalent to "text-lg"
+                        }}
+                    >
+                        已經有帳號了?
+                    </Text>
                 </Pressable>
             </View>
-
-        </SafeAreaView>
+        </View>
     );
 };
 

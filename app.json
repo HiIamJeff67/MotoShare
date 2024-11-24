@@ -23,13 +23,8 @@
       }
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-font"],
-    "experiments": {
-      "typedRoutes": true
-    }
+    "plugins": ["expo-secure-store", "expo-font"]
   }
 }

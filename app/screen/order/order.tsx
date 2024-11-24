@@ -3,7 +3,6 @@ import {
   Text,
   View,
   TouchableWithoutFeedback,
-  StyleSheet,
   Pressable,
   TextInput,
   Platform,
@@ -15,6 +14,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
 import { useNavigation } from '@react-navigation/native';
+import { ScaledSheet, scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -85,13 +85,17 @@ const Order = () => {
   return (
     <ScrollView>
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <View className="pt-5">
-          <View className="flex-row items-center space-x-2 px-4 pb-2">
-            <View className="flex-row flex-1 items-center p-3 rounded-full border border-gray-300 bg-white">
-              <Feather name="search" size={24} color="black" />
+        <View style={{
+            flex: 1,
+            paddingHorizontal: scale(20), // 設置水平間距
+            paddingVertical: verticalScale(15), // 設置垂直間距
+        }}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBox}>
+              <Feather name="search" size={moderateScale(24)} color="black" />
               <TextInput
                 placeholder="使用者"
-                className="ml-2 flex-1"
+                style={styles.searchInput}
                 placeholderTextColor="gray"
                 value={searchInput}
                 onChangeText={(text) => setSearchInput(text)}
@@ -99,12 +103,14 @@ const Order = () => {
               />
             </View>
 
-            <View className="p-3 bg-gray-300 rounded-full ml-2.5">
+            <View style={styles.addButtonContainer}>
               <Pressable onPress={() => {}}>
-                <Feather name="plus" size={24} color="black" />
+                <Feather name="plus" size={moderateScale(24)} color="black" />
               </Pressable>
             </View>
           </View>
+
+          <View style={{ paddingTop: verticalScale(15) }} />
 
           {orders.map((order) => (
             <View key={order.id} style={styles.container}>
@@ -132,45 +138,65 @@ const Order = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingBottom: verticalScale(15),
   },
   card: {
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: moderateScale(10),
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowRadius: moderateScale(4),
     elevation: 5, // Android 的陰影
   },
   header: {
-    borderBottomWidth: 2,
+    borderBottomWidth: scale(2),
     borderBottomColor: "#ddd",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(16),
   },
   orderNumber: {
     color: "#333",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: moderateScale(16),
   },
   body: {
-    padding: 16,
-  },
-  textBase: {
-    marginBottom: 10,
-    fontSize: 14,
-    color: "#666",
+    padding: moderateScale(16),
   },
   title: {
-    marginBottom: 10,
-    fontSize: 18,
+    marginBottom: verticalScale(5),
+    fontSize: moderateScale(15),
     fontWeight: "600",
     color: "#333",
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchBox: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: moderateScale(50),
+    borderWidth: scale(1),
+    borderColor: 'gray',
+    backgroundColor: 'white',
+    paddingHorizontal: scale(16),
+    height: verticalScale(40),
+  },
+  searchInput: {
+    marginLeft: scale(8),
+    flex: 1,
+    fontSize: moderateScale(15),
+  },
+  addButtonContainer: {
+    padding: moderateScale(10),
+    backgroundColor: 'gray',
+    borderRadius: moderateScale(50),
+    marginLeft: scale(10),
   },
 });
 

@@ -1,11 +1,11 @@
-import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, View, ScrollView, Alert, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
 import * as SecureStore from 'expo-secure-store';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { ScaledSheet, scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 // 定義 Creator 的資料結構
 interface CreatorInfoType {
@@ -65,7 +65,7 @@ const OrderDetail = () => {
   };
 
   useEffect(() => {
-    // 透過 orderId 取得訂單資料
+    // 通過 orderId 取得訂單資料
     let response, url = "";
 
     if (user.role == 1) {
@@ -110,8 +110,7 @@ const OrderDetail = () => {
 
   return (
     <ScrollView>
-      <SafeAreaView style={styles.container}>
-        <View className='pt-5'/>
+      <View style={styles.container}>
           <View style={styles.card}>
               <View style={styles.header}>
                 {order ? (
@@ -136,70 +135,102 @@ const OrderDetail = () => {
                   ) : null}
                   <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
                   <Text style={styles.title}>備註: {order.description}</Text>
-                  <View className="justify-center items-center py-2">
-                    <Pressable
-                      style={{
-                        height: 50,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      className="rounded-[12px] shadow-lg w-full bg-green-500"
-                      onPress={() => navigation.navigate('invitemap', { orderid: orderid })}
-                    >
-                      <Text className="font-semibold text-lg">建立邀請</Text>
-                    </Pressable>
-                  </View>
+                  <Pressable
+                    style={[styles.inviteButton]}
+                    onPress={() => navigation.navigate('invitemap', { orderid: orderid })}
+                  >
+                    <Text style={styles.inviteButtonText}>建立邀請</Text>
+                  </Pressable>
                 </>
                 ) : (
                   <Text style={styles.title}>正在加載訂單資料...</Text>
                 )}
               </View>
           </View>
-        </SafeAreaView>
+        </View>
       </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-    },
-    card: {
-      backgroundColor: 'white',
-      borderRadius: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 5, // Android 的陰影
-    },
-    header: {
-      borderBottomWidth: 2,
-      borderBottomColor: '#ddd',
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-    },
-    orderNumber: {
-      color: '#333',
-      fontWeight: 'bold',
-      fontSize: 16,
-    },
-    body: {
-      padding: 16,
-    },
-    textBase: {
-      marginBottom: 10,
-      fontSize: 14,
-      color: '#666',
-    },
-    title: {
-      marginBottom: 10,
-      fontSize: 18,
-      fontWeight: '600',
-      color: '#333',
-    },
+const styles = ScaledSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: scale(20), // 設置水平間距
+    paddingTop: verticalScale(15), // 設置垂直間距
+    paddingBottom: verticalScale(30), // 設置垂直間距
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: moderateScale(10),
+    shadowColor: "#000",
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: moderateScale(4),
+    elevation: 5, // Android 的陰影
+  },
+  header: {
+    borderBottomWidth: scale(2),
+    borderBottomColor: "#ddd",
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(16),
+  },
+  orderNumber: {
+    color: "#333",
+    fontWeight: "bold",
+    fontSize: moderateScale(16),
+  },
+  body: {
+    padding: moderateScale(16),
+  },
+  title: {
+    marginBottom: verticalScale(5),
+    fontSize: moderateScale(15),
+    fontWeight: "600",
+    color: "#333",
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchBox: {
+    height: verticalScale(40),
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: moderateScale(50),
+    borderWidth: scale(1),
+    borderColor: 'gray',
+    backgroundColor: 'white',
+    paddingHorizontal: scale(16),
+  },
+  searchInput: {
+    marginLeft: scale(8),
+    flex: 1,
+    fontSize: moderateScale(20),
+  },
+  addButtonContainer: {
+    padding: moderateScale(12),
+    backgroundColor: 'gray',
+    borderRadius: moderateScale(50),
+    marginLeft: scale(10),
+  },
+  inviteButton: {
+    borderRadius: moderateScale(12),
+    shadowColor: "#000",
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
+    shadowOpacity: 0.3,
+    shadowRadius: moderateScale(4),
+    backgroundColor: "#4CAF50", // green
+    elevation: 5,
+    height: verticalScale(40),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inviteButtonText: {
+    fontSize: moderateScale(18),
+    fontWeight: "bold",
+    color: "white",
+  },
 });
 
 export default OrderDetail;

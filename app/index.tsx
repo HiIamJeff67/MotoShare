@@ -29,7 +29,11 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import "../global.css";
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StatusBar, Platform, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { NavigationContainer } from '@react-navigation/native';
+import { moderateScale, scale } from "react-native-size-matters";
+import { MyTheme, MyDarkTheme } from './screen/theme';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,14 +44,12 @@ const CustomBackHeader = ({ navigation }: { navigation: any }) => (
     style={{
       justifyContent: "center",
       alignItems: "center",
-      left: 15, // 控制距離左邊的距離
-      top: 15, // 控制距離上方的距離
+      marginLeft: scale(10), // 控制距離左邊的距離
     }}
   >
-    <Pressable 
-      className='rounded-full'
+    <Pressable
       onPress={() => navigation.goBack()}>
-      <Ionicons name="arrow-back-circle" size={50} color="black" />
+      <Ionicons name="arrow-back-circle" size={moderateScale(40)} color="black" />
     </Pressable>
   </View>
 );
@@ -82,7 +84,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="home"
-              size={24}
+              size={moderateScale(24)}
               color={focused ? "#3498db" : "black"}
             />
           ),
@@ -97,7 +99,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="shopping-cart"
-              size={24}
+              size={moderateScale(24)}
               color={focused ? "#3498db" : "black"}
             />
           ),
@@ -112,7 +114,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name="account"
-              size={24}
+              size={moderateScale(24)}
               color={focused ? "#3498db" : "black"}
             />
           ),
@@ -123,149 +125,170 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+  const systemTheme = useColorScheme();
+
   return (
     <Provider store={store}>
-      <Stack.Navigator>
-        <Stack.Screen name="welcome" 
-          component={WelcomeScreen} 
-          options={{ 
-              headerShown: false,
-          }} 
-        />
-        <Stack.Screen name="invitemap"
-          component={InviteMap} 
-          options={({ navigation }) => ({
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "transparent", // 設定 header 背景透明
-            },
-            headerTransparent: true, // 確保背景完全透明
-            headerTitle: "", // 移除標題文字
-            headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
-          })}
-        />
-        <Stack.Screen name="myorder"
-          component={TopTabNavigator} 
-          options={{ 
-            headerShown: true,
-            headerShadowVisible: false,
-            title: "主頁",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="myorderde"
-          component={MyOrderDeScreen} 
-          options={{ 
-            headerShown: true,
-            title: "訂單管理",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="myorderhisde"
-          component={MyOrderHisDeScreen} 
-          options={{ 
-            headerShown: true,
-            title: "訂單管理",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="myinvitede"
-          component={MyInviteDeScreen} 
-          options={{ 
-            headerShown: true,
-            title: "我的邀請",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="otherinvitede"
-          component={OtherInviteDeScreen} 
-          options={{ 
-            headerShown: true,
-            title: "別人邀請",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="myinvite"
-          component={TopTabNavigator2} 
-          options={{ 
-            headerShown: true,
-            headerShadowVisible: false,
-            title: "主頁",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="order" 
-          component={OrderScreen}
-          options={{ 
-            headerShown: true,
-            title: "主頁",
-            headerTitleAlign: 'center',
-          }}
-
-        />
-        <Stack.Screen name="orderdetail" 
-          component={OrderDetailScreen} 
-          options={{ 
-            headerShown: true,
-            title: "訂單",
-            headerTitleAlign: 'center',
-          }}
-        />
-        <Stack.Screen name="map" 
-          component={MapScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "transparent", // 設定 header 背景透明
-            },
-            headerTransparent: true, // 確保背景完全透明
-            headerTitle: "", // 移除標題文字
-            headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
-          })}
-        />
-        <Stack.Screen name="plogin" 
-          component={PLoginScreen} 
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="rlogin" 
-          component={RLoginScreen}
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="choose" 
-          component={ChooseScreen} 
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="choose2" 
-          component={Choose2Screen} 
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="preg" 
-          component={PRegScreen} 
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="rreg" 
-          component={RRegScreen} 
-          options={{ 
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="home" 
-          component={TabNavigator}
-          options={{ 
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
+     <NavigationContainer theme={systemTheme === 'dark' ? MyDarkTheme : MyTheme}>
+      <SafeAreaProvider>
+        {/* 根據平台條件設置 StatusBar */}
+        {Platform.OS === 'ios' ? (
+            <StatusBar barStyle="dark-content"/>
+        ) : (
+            <StatusBar barStyle="dark-content" hidden={true}/>
+        )}
+          <Stack.Navigator>
+            <Stack.Screen 
+              name="welcome" 
+              component={WelcomeScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="home" 
+              component={TabNavigator} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="choose" 
+              component={ChooseScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="choose2" 
+              component={Choose2Screen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="plogin" 
+              component={PLoginScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="rlogin" 
+              component={RLoginScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="preg" 
+              component={PRegScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="rreg" 
+              component={RRegScreen} 
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="invitemap"
+              component={InviteMap} 
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "transparent", // 設定 header 背景透明
+                },
+                headerTransparent: true, // 確保背景完全透明
+                headerTitle: "", // 移除標題文字
+                headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
+              })}
+            />
+            <Stack.Screen 
+              name="myorder" 
+              component={TopTabNavigator} 
+              options={{ 
+                headerShown: true,
+                headerShadowVisible: false,
+                title: "我的訂單",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="myinvite" 
+              component={TopTabNavigator2} 
+              options={{ 
+                headerShown: true,
+                headerShadowVisible: false,
+                title: "邀請",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="myorderde" 
+              component={MyOrderDeScreen} 
+              options={{ 
+                headerShown: true,
+                title: "詳情",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="myorderhisde" 
+              component={MyOrderHisDeScreen} 
+              options={{ 
+                headerShown: true,
+                title: "詳情",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="myinvitede" 
+              component={MyInviteDeScreen} 
+              options={{ 
+                headerShown: true,
+                title: "詳情",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="otherinvitede" 
+              component={OtherInviteDeScreen} 
+              options={{ 
+                headerShown: true,
+                title: "詳情",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="order" 
+              component={OrderScreen}
+              options={{ 
+                headerShown: true,
+                title: "訂單",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="orderdetail" 
+              component={OrderDetailScreen} 
+              options={{ 
+                headerShown: true,
+                title: "詳情",
+                headerTitleAlign: 'center',
+                headerBackTitle: '',
+              }}
+            />
+            <Stack.Screen 
+              name="map" 
+              component={MapScreen}
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "transparent", // 設定 header 背景透明
+                },
+                headerTransparent: true,
+                headerTitle: "",
+                headerLeft: () => <CustomBackHeader navigation={navigation} />,
+              })}
+            />
+          </Stack.Navigator>
+        </SafeAreaProvider>
+      </NavigationContainer>
     </Provider>
   );
 }
