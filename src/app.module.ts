@@ -13,6 +13,8 @@ import { PassengerInviteModule } from './passengerInvite/passengerInvite.module'
 import { RidderInviteModule } from './ridderInvite/ridderInvite.module';
 import { HistoryModule } from './history/history.module';
 import { SupabaseModule } from './supabase/supabase.module';
+import { PassengerAuthModule } from './passengerAuth/passengerAuth.module';
+import { RidderAuthModule } from './ridderAuth/ridderAuth.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SupabaseModule } from './supabase/supabase.module';
     RidderInviteModule,
     HistoryModule,
     SupabaseModule,
+    PassengerAuthModule,
+    RidderAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
