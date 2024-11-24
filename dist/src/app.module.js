@@ -22,16 +22,38 @@ const passengerInvite_module_1 = require("./passengerInvite/passengerInvite.modu
 const ridderInvite_module_1 = require("./ridderInvite/ridderInvite.module");
 const history_module_1 = require("./history/history.module");
 const supabase_module_1 = require("./supabase/supabase.module");
+const passengerAuth_module_1 = require("./passengerAuth/passengerAuth.module");
+const ridderAuth_module_1 = require("./ridderAuth/ridderAuth.module");
+const mailer_1 = require("@nestjs-modules/mailer");
+const email_module_1 = require("./email/email.module");
+require("dotenv/config");
+const path_1 = require("path");
+const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            mailer_1.MailerModule.forRoot({
+                transport: {
+                    host: process.env.MAILER_HOST,
+                    port: Number(process.env.MAILER_PORT),
+                    secure: true,
+                    auth: {
+                        user: process.env.GOOGLE_GMAIL,
+                        pass: process.env.GOOGLE_APPLICATION_PASSWORD,
+                    },
+                },
+                template: {
+                    dir: (0, path_1.join)(__dirname, 'emailTemplates'),
+                    adapter: new handlebars_adapter_1.HandlebarsAdapter()
+                }
+            }),
             drizzle_module_1.DrizzleModule,
             auth_module_1.AuthModule,
             passenger_module_1.PassengerModule,
-            config_1.ConfigModule.forRoot({ isGlobal: true }),
             purchaseOrder_module_1.PurchaseOrderModule,
             ridder_module_1.RidderModule,
             supplyOrder_module_1.SupplyOrderModule,
@@ -40,6 +62,9 @@ exports.AppModule = AppModule = __decorate([
             ridderInvite_module_1.RidderInviteModule,
             history_module_1.HistoryModule,
             supabase_module_1.SupabaseModule,
+            passengerAuth_module_1.PassengerAuthModule,
+            ridderAuth_module_1.RidderAuthModule,
+            email_module_1.EmailModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

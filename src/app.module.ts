@@ -15,13 +15,33 @@ import { HistoryModule } from './history/history.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { PassengerAuthModule } from './passengerAuth/passengerAuth.module';
 import { RidderAuthModule } from './ridderAuth/ridderAuth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailModule } from './email/email.module';
+import "dotenv/config";
+import { join } from 'path';
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter"
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.MAILER_HOST, 
+        port: Number(process.env.MAILER_PORT), // enable encryption
+        secure: true, // since we use port 465
+        auth: {
+          user: process.env.GOOGLE_GMAIL, 
+          pass: process.env.GOOGLE_APPLICATION_PASSWORD, 
+        }, 
+      }, 
+      template: {
+        dir: join(__dirname, 'emailTemplates'), 
+        adapter: new HandlebarsAdapter()
+      }
+    }), 
     DrizzleModule, 
     AuthModule,
     PassengerModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     PurchaseOrderModule,
     RidderModule,
     SupplyOrderModule,
@@ -32,6 +52,7 @@ import { RidderAuthModule } from './ridderAuth/ridderAuth.module';
     SupabaseModule,
     PassengerAuthModule,
     RidderAuthModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

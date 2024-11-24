@@ -18,7 +18,7 @@ export class PassengerService {
   constructor(
     private config: ConfigService,
     private storage: SupabaseStorageService,
-    @Inject(DRIZZLE) private db: DrizzleDB
+    @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
   
   /* ================================= Get operations ================================= */

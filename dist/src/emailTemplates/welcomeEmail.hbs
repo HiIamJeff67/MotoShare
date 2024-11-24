@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to MotoShare</title>
+</head>
+<body style="width: 600px; margin: 0; padding: 0; background-color: white;">
+    <table cellpadding="0" cellspacing="0" width="600" style="background-color: #242424; color: white; font-family: Arial, sans-serif;">
+        <!-- 標題 -->
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <h1 style="margin: 0; font-size: 40px; font-weight: bold;">
+                    Welcome to MotoShare
+                </h1>
+            </td>
+        </tr>
+
+        <!-- 圖片 -->
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <img src="{{motorbikeImageUrl}}" alt="Motorbike" style="max-width: 100%; height: auto;">
+            </td>
+        </tr>
+
+        <!-- 歡迎文字 -->
+        <tr>
+            <td style="padding: 20px;">
+                <p style="margin: 0; font-size: 16px; line-height: 1.5; color: white; padding: 15px; margin-bottom: 15px; border-top: 2px #4F4F4F solid; border-bottom: 2px #4F4F4F solid;">
+                    Hi, I'm Jeff, I represent our team to welcome you, {{userName}} to join our motorcycle ride sharing app.
+                </p>
+            </td>
+        </tr>
+
+        <!-- 指南步驟 -->
+        <tr style="background-color: hsl(0, 0%, 16%); border-radius: 15px 15px 0 0;">
+            <td style="padding: 20px; color: white; font-size: 16px;">
+                <p style="margin: 0; font-size: 16px; line-height: 1.5; color: white;">If you haven't authenticated your account, please do so in the setting page.</p>
+                <p style="margin: 0; font-weight: bold; color: white">A quick guide to start your travel:</p>
+                <ul style="margin: 10px 0 0; padding-left: 20px; color: white">
+                    <li style="margin: 5px 0;">Select your start position and end position on built-in Google Map.</li>
+                    <li style="margin: 5px 0;">Provide some extra information such as payment, descriptions.</li>
+                    <li style="margin: 5px 0;">Select existing orders to directly start your travel.</li>
+                    <li style="margin: 5px 0;">Or create your custom purchase orders to let riders know what you want.</li>
+                    <li style="margin: 5px 0;">Once the riders invite you, the app will send a notification to you.</li>
+                    <li style="margin: 5px 0;">Then you can accept it if it meets your demand, or reject it if it doesn't.</li>
+                    <li style="margin: 5px 0;">Now, you can enjoy your travel! Don't forget to leave a comment once done.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr style="background-color: hsl(0, 0%, 16%); border-radius: 0 0 15px 15px;">
+            <td style="padding: 20px; color: white; font-size: 14px; line-height: 1.5;">
+                <p style="margin: 0;">
+                    At the end, I want to thank you again for your participation. Since the app is still not in the official version, if there's any problem with the app, please contact me at this email:
+                    <a href="mailto:motoshare767@gmail.com" style="color: #9370DB; text-decoration: none;">motoshare767@gmail.com</a>
+                </p>
+            </td>
+        </tr>
+
+        <!-- 頁尾 -->
+        <tr>
+            <td align="center" style="padding: 30px;">
+                <p style="margin: 0; font-size: 12px; color: #777;">© {{currentYear}} MotoShare Inc.</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #777;">
+                    Picture designed by 
+                    <a href="https://zh.pngtree.com" style="color: #9370DB; text-decoration: none;">pngtree.com</a>
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

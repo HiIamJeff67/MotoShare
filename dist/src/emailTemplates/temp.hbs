@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Welcome to MotoShare</title>
+    <style>
+      body {
+        line-height: 1.6;
+        background-color: #242424;
+        color: white;
+        margin: 0;
+        padding: 0;
+        width: 600px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 5px;
+        width: 500px;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 0px 15px 0px;
+      }
+      .header {
+        border: 2px hsl(0, 0%, 13%) solid;
+        background-color: hsl(0, 0%, 13%);
+        border-radius: 10px;
+        text-align: center;
+        font-size: 36px;
+        width: 100%;
+        position: relative;
+      }
+      .title {
+        margin: 5px 5px 5px 5px;
+        font-size: 40px;
+        font-weight: bold;
+        background: -webkit-linear-gradient(
+          15deg,
+          rgb(74 60 219) 5%, 
+          rgb(255 10 108) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+      }
+      .title-decoration {
+        width: 30%;
+        position: absolute;
+        right: 0;
+        top: -30%;
+      }
+      .app-icon {
+        padding: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .app-icon-image {
+        width: 500px;
+      }
+      .content {
+        background-color: #242424;
+        padding: 20px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+      .content-title {
+        width: 90%;
+        text-align: center;
+        padding: 15px;
+        margin: 0;
+        margin-bottom: 15px;
+        border-top: 2px #4F4F4F solid;
+        border-bottom: 2px #4F4F4F solid;
+      }
+      .content-paragraph {
+        background-color: hsl(0, 0%, 16%);
+        border-radius: 15px 15px 0px 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding: 15px;
+      }
+      .content-p1 {
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500; 
+        padding: 12px;
+        padding-bottom: 0;
+        margin: 0;
+      }
+      .content-p2 {
+        width: 100%;
+        font-size: 18px;
+        padding: 12px;
+        padding-top: 0;
+        margin: 0;
+        margin-top: 5px;
+      }
+      .content-end {
+        margin: 0;
+        padding: 15px;
+        padding-bottom: 10px;
+        font-size: 14px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+        margin-top: 20px;
+      }
+      ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      li {
+        margin: 5px 0;
+      }
+      a {
+        color: purple;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img class="title-decoration" src="{{titleDecorationUrl}}" alt="">
+        <h1 class="title">Welcome to MotoShare</h1>
+      </div>
+      <div class="app-icon">
+        <img class="app-icon-image" src="{{motorbikeImageUrl}}" alt="Motorbike">
+      </div>
+      <div class="content">
+        <h3 class="content-title">Hi, I'm Jeff, I represent our team to welcome you, {{userName}} to join our motorcycle ride sharing app.</h3>
+        <div class="content-paragraph">
+          <p class="content-p1">If you haven't authenticated your account, please do so in the setting page.</p>
+          <p class="content-p2">A quick guide to start your travel:</p>
+          <ul>
+            <li>Select your start position and end position on built-in google map.</li>
+            <li>Provide some extra information such as payment, descriptions.</li>
+            <li>Select existing orders to directly start your travel.</li>
+            <li>Or create your custom purchase orders to let riders know what exactly you want.</li>
+            <li>Once the riders invite you, the app will send a notification to you.</li>
+            <li>Then you can accept it if it meets your demand, or reject it if it doesn't.</li>
+            <li>Now, you can enjoy your travel! Oh, don't forget to leave a comment once the travel is done.</li>
+          </ul>
+          <h5 class="content-end">
+            At the end, I want to thank you again for your participation. 
+            Since the app is still not on official version, if there's any problem with the app, 
+            please contact me at this email: <a href="mailto:motoshare767@gmail.com">motoshare767@gmail.com</a>
+          </h5>
+        </div>
+      </div>
+      <div class="footer">
+        <div>&copy; {{currentYear}} MotoShare Inc. All rights reserved.</div>
+        <div>&copy; Partial source picture designed by <a href='https://zh.pngtree.com/freepng/ukiyo-e-waves-decoration-illustration_4763632.html'>png 圖片來源於 zh.pngtree.com/</a></div>
+      </div>
+    </div>
+  </body>
+</html>
