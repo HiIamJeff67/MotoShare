@@ -13,23 +13,29 @@ exports.HistoryTable = (0, pg_core_1.pgTable)("history", {
     ridderId: (0, pg_core_1.uuid)("ridderId").references(() => schema_1.RidderTable.id, {
         onDelete: 'set null',
     }),
-    prevOrderId: (0, pg_core_1.text)("prevOrderId").notNull().default(""),
+    prevOrderId: (0, pg_core_1.text)("prevOrderId").notNull(),
     finalPrice: (0, pg_core_1.integer)("finalPrice").notNull(),
     passengerDescription: (0, pg_core_1.text)("passengerDescription"),
     ridderDescription: (0, pg_core_1.text)("ridderDescription"),
     finalStartCord: (0, pg_core_1.geometry)("finalStartCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     finalEndCord: (0, pg_core_1.geometry)("finalEndCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
-    finalStartAddress: (0, pg_core_1.text)("finalStartAddress").notNull().default(""),
-    finalEndAddress: (0, pg_core_1.text)("finalEndAddress").notNull().default(""),
-    startAfter: (0, pg_core_1.timestamp)("startAfter").notNull().defaultNow(),
-    endedAt: (0, pg_core_1.timestamp)("endedAt").notNull().defaultNow(),
+    finalStartAddress: (0, pg_core_1.text)("finalStartAddress").notNull(),
+    finalEndAddress: (0, pg_core_1.text)("finalEndAddress").notNull(),
+    startAfter: (0, pg_core_1.timestamp)("startAfter").notNull(),
+    endedAt: (0, pg_core_1.timestamp)("endedAt").notNull(),
     starRatingByPassenger: (0, enums_1.starRatingEnum)().notNull().default("0"),
     starRatingByRidder: (0, enums_1.starRatingEnum)().notNull().default("0"),
     commentByPassenger: (0, pg_core_1.text)("commentByP"),
     commentByRidder: (0, pg_core_1.text)("commentByR"),
+    status: (0, enums_1.historyStatusEnum)().notNull().default("FINISHED"),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("udpatedAt").notNull().defaultNow(),
-    status: (0, enums_1.historyStatusEnum)().notNull().default("FINISHED"),
+}, (table) => {
+    return {
+        passengerIdIndex: (0, pg_core_1.index)("history_passengerIdIndex").on(table.passengerId),
+        ridderIdIndex: (0, pg_core_1.index)("history_ridderIdIndex").on(table.ridderId),
+        updatedAtIndex: (0, pg_core_1.index)("history_updatedAtIndex").on(table.updatedAt.desc()),
+    };
 });
 exports.HistoryRelation = (0, drizzle_orm_1.relations)(exports.HistoryTable, ({ one }) => ({
     passenger: one(schema_1.PassengerTable, {

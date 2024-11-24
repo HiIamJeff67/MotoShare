@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { ClientInvalidTokenOrTokenExpiredException } from "../../exceptions";
+import { ClientInvalidTokenException } from "../../exceptions";
 
 export const Passenger = createParamDecorator(
     (data: unknown, ctx: ExecutionContext) => {
@@ -7,7 +7,7 @@ export const Passenger = createParamDecorator(
             .switchToHttp()
             .getRequest();
         if (!request || !request.user) {
-            throw ClientInvalidTokenOrTokenExpiredException;
+            throw ClientInvalidTokenException;
         }
         return request.user;
     }

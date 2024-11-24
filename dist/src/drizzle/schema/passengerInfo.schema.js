@@ -14,7 +14,11 @@ exports.PassengerInfoTable = (0, pg_core_1.pgTable)("passengerInfo", {
     phoneNumber: (0, pg_core_1.text)("phoneNumber").unique(),
     selfIntroduction: (0, pg_core_1.text)("selfIntroduction"),
     avatorUrl: (0, pg_core_1.text)("avatorUrl"),
-    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.uniqueIndex)("passengerInfo_userIdIndex").on(table.userId),
+    };
 });
 exports.PassengerInfoRelation = (0, drizzle_orm_1.relations)(exports.PassengerInfoTable, ({ one }) => ({
     user: one(schema_1.PassengerTable, {

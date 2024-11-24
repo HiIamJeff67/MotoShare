@@ -13,7 +13,9 @@ exports.RidderCollectionsToOrders = (0, pg_core_1.pgTable)("ridderCollectionsToO
     }).notNull(),
 }, (table) => {
     return {
-        pk: (0, pg_core_1.primaryKey)({ columns: [table.userId, table.orderId] })
+        pk: (0, pg_core_1.primaryKey)({ columns: [table.userId, table.orderId] }),
+        userIdIndex: (0, pg_core_1.index)("ridderCollectionsToOrders_userIdIndex").on(table.userId),
+        orderIdIndex: (0, pg_core_1.index)("ridderCollectionsToOrders_orderIdIndex").on(table.orderId),
     };
 });
 exports.RidderCollectionsToOrdersRelation = (0, drizzle_orm_1.relations)(exports.RidderCollectionsToOrders, ({ one }) => ({
@@ -26,4 +28,4 @@ exports.RidderCollectionsToOrdersRelation = (0, drizzle_orm_1.relations)(exports
         references: [schema_1.PurchaseOrderTable.id],
     }),
 }));
-//# sourceMappingURL=ridderCollection.schema.js.map
+//# sourceMappingURL=ridderCollectionToOrders.schema.js.map

@@ -12,7 +12,7 @@ export declare class PurchaseOrderService {
     }[]>;
     getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
         id: string;
-        createdAt: Date;
+        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -26,14 +26,14 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        createdAt: Date;
         isUrgent: boolean;
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
-        createdAt: Date;
+        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -47,8 +47,8 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        createdAt: Date;
         isUrgent: boolean;
         creator: {
             userName: string;
@@ -182,7 +182,7 @@ export declare class PurchaseOrderService {
     getAllPurchaseOrders(): Promise<{
         id: string;
         description: string | null;
-        createdAt: Date;
+        updatedAt: Date;
         creatorId: string;
         initPrice: number;
         startCord: {
@@ -197,8 +197,8 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        updatedAt: Date;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        createdAt: Date;
         isUrgent: boolean;
     }[]>;
     searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined, limit: number, offset: number): Promise<{

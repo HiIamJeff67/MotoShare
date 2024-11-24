@@ -53,7 +53,7 @@ let PassengerService = class PassengerService {
                         age: true,
                         selfIntroduction: true,
                         avatorUrl: true,
-                        createdAt: true,
+                        updatedAt: true,
                     }
                 },
             }
@@ -74,7 +74,7 @@ let PassengerService = class PassengerService {
                         phoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
-                        createdAt: true,
+                        updatedAt: true,
                     }
                 },
             }
@@ -190,6 +190,7 @@ let PassengerService = class PassengerService {
                 ? { avatorUrl: await this.storage.uploadFile(passengerInfo[0].infoId, "AvatorBucket", "passengerAvators/", uploadedFile)
                 }
                 : {}),
+            updatedAt: new Date(),
         }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
     }
     async deletePassengerById(id) {

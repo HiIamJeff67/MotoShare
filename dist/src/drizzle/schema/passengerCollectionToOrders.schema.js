@@ -13,7 +13,9 @@ exports.PassengerCollectionsToOrders = (0, pg_core_1.pgTable)("passengerCollecti
     }).notNull(),
 }, (table) => {
     return {
-        pk: (0, pg_core_1.primaryKey)({ columns: [table.userId, table.orderId] })
+        pk: (0, pg_core_1.primaryKey)({ columns: [table.userId, table.orderId] }),
+        userIdIndex: (0, pg_core_1.index)("passengerCollectionsToOrders_userIdIndex").on(table.userId),
+        orderIdIndex: (0, pg_core_1.index)("passengerCollectionsToOrders_orderIdIndex").on(table.orderId),
     };
 });
 exports.PassengerCollectionsToOrdersRelation = (0, drizzle_orm_1.relations)(exports.PassengerCollectionsToOrders, ({ one }) => ({

@@ -60,7 +60,6 @@ export class RidderInviteService {
       endAddress: createRidderInviteDto.endAddress,
       suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter),
       suggestEndedAt: new Date(createRidderInviteDto.suggestEndedAt),
-      status: "CHECKING",
     }).returning({
       id: RidderInviteTable.id,
       orderId: RidderInviteTable.orderId,

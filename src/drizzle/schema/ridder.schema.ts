@@ -11,10 +11,11 @@ import {
 } from "./schema";
 
 export const RidderTable = pgTable("ridder", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userName: text("userName").notNull().unique(),
-    email: text("email").notNull().unique(),
-    password: text("password").notNull(),
+    id: uuid("id").primaryKey().defaultRandom(), 
+    userName: text("userName").notNull().unique(), 
+    email: text("email").notNull().unique(), 
+    password: text("password").notNull(), 
+    accessToken: text("accessToken").notNull().unique(), 
 }, (table) => {
     return {
         userNameIndex: uniqueIndex("ridder_userNameIndex").on(table.userName), 

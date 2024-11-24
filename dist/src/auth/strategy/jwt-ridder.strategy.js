@@ -20,25 +20,38 @@ const passport_jwt_1 = require("passport-jwt");
 const drizzle_module_1 = require("../../drizzle/drizzle.module");
 const ridder_schema_1 = require("../../drizzle/schema/ridder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const exceptions_1 = require("../../exceptions");
 let JwtRidderStrategy = class JwtRidderStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-ridder') {
     constructor(config, db) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: config.get("JWT_SECRET"),
+            passReqToCallback: true,
         });
         this.config = config;
         this.db = db;
     }
-    async validate(payload) {
-        const user = await this.db.select({
+    async validate(req, payload) {
+        let user = undefined;
+        user = await this.db.select({
             id: ridder_schema_1.RidderTable.id,
             userName: ridder_schema_1.RidderTable.userName,
             email: ridder_schema_1.RidderTable.userName,
+            accessToken: ridder_schema_1.RidderTable.accessToken,
         }).from(ridder_schema_1.RidderTable)
             .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, payload.sub))
             .limit(1);
-        return user;
+        if (!user || user.length === 0) {
+            throw exceptions_1.ClientInvalidTokenException;
+        }
+        const userDate = user[0];
+        const currentToken = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        if (currentToken !== userDate.accessToken) {
+            throw exceptions_1.ClientTokenExpiredException;
+        }
+        delete userDate.accessToken;
+        return userDate;
     }
 };
 exports.JwtRidderStrategy = JwtRidderStrategy;

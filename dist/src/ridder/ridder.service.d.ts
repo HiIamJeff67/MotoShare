@@ -17,7 +17,7 @@ export declare class RidderService {
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
-            createdAt: Date;
+            updatedAt: Date;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
         } | null;
@@ -31,7 +31,7 @@ export declare class RidderService {
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
-            createdAt: Date;
+            updatedAt: Date;
             motocycleLicense: string | null;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
@@ -45,7 +45,7 @@ export declare class RidderService {
             order: {
                 id: string;
                 description: string | null;
-                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -56,8 +56,8 @@ export declare class RidderService {
                     y: number;
                 };
                 startAfter: Date;
-                updatedAt: Date;
                 status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                createdAt: Date;
                 isUrgent: boolean;
                 creator: {
                     userName: string;

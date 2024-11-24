@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-export declare const ClientInvalidTokenOrTokenExpiredException: UnauthorizedException;
-export declare const ClientMissingTokenException: UnauthorizedException;
+export declare const ClientInvalidTokenException: UnauthorizedException;
+export declare const ClientTokenExpiredException: UnauthorizedException;
 export declare const ClientUserHasNoAccessException: UnauthorizedException;
 export declare const ClientPassengerNotFoundException: NotFoundException;
 export declare const ClientRidderNotFoundException: NotFoundException;
@@ -26,6 +26,8 @@ export declare const ClientCreateRidderInfoException: ForbiddenException;
 export declare const ClientCreatePassengerCollectionException: ForbiddenException;
 export declare const ClientCreateRidderCollectionException: ForbiddenException;
 export declare const ClientCreateHistoryException: ForbiddenException;
+export declare const ClientCreatePassengerAuthException: ForbiddenException;
+export declare const ClientCreateRidderAuthException: ForbiddenException;
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;

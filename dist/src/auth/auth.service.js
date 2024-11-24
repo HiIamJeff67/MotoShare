@@ -24,6 +24,8 @@ const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
+const passengerAuth_schema_1 = require("../drizzle/schema/passengerAuth.schema");
+const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;
@@ -33,122 +35,182 @@ let AuthService = class AuthService {
     async signUpPassengerWithUserNameAndEmailAndPassword(signUpDto) {
         return await this.db.transaction(async (tx) => {
             const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            const tempAccessToken = await this._tempSignToken(signUpDto.userName, signUpDto.email);
             const responseOfCreatingPassenger = await tx.insert(passenger_schema_1.PassengerTable).values({
                 userName: signUpDto.userName,
                 email: signUpDto.email,
                 password: hash,
+                accessToken: tempAccessToken.accessToken,
             }).returning({
                 id: passenger_schema_1.PassengerTable.id,
                 email: passenger_schema_1.PassengerTable.email,
             });
-            if (!responseOfCreatingPassenger)
+            if (!responseOfCreatingPassenger || responseOfCreatingPassenger.length === 0) {
                 throw exceptions_1.ClientSignUpUserException;
-            const responseOfCreatingInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+            }
+            const responseOfCreatingPassengerInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
-            });
-            if (!responseOfCreatingInfo)
+            }).returning();
+            if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
-            const result = await this.signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
+            }
+            const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(passenger_schema_1.PassengerTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, responseOfCreatingPassenger[0].id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingPassengerAuth = await tx.insert(passengerAuth_schema_1.PassengerAuthTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+                authCode: this._getRandomAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).returning();
+            if (!responseOfCreatingPassengerAuth || responseOfCreatingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientCreatePassengerAuthException;
+            }
             return result;
         });
     }
     async signUpRidderWithEmailAndPassword(signUpDto) {
         return await this.db.transaction(async (tx) => {
             const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            const tempAccessToken = await this._tempSignToken(signUpDto.userName, signUpDto.email);
             const responseOfCreatingRidder = await tx.insert(ridder_schema_1.RidderTable).values({
                 userName: signUpDto.userName,
                 email: signUpDto.email,
                 password: hash,
+                accessToken: tempAccessToken.accessToken,
             }).returning({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,
             });
-            if (!responseOfCreatingRidder)
+            if (!responseOfCreatingRidder || responseOfCreatingRidder.length === 0) {
                 throw exceptions_1.ClientSignUpUserException;
-            const responseOfCreatingInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
+            }
+            const responseOfCreatingRidderInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
-            });
-            if (!responseOfCreatingInfo)
+            }).returning();
+            if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
-            const result = await this.signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
+            }
+            const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(ridder_schema_1.RidderTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, responseOfCreatingRidder[0].id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingRidderAuth = await tx.insert(ridderAuth_schema_1.RidderAuthTable).values({
+                userId: responseOfCreatingRidder[0].id,
+                authCode: this._getRandomAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).returning();
+            if (!responseOfCreatingRidderAuth || responseOfCreatingRidderAuth.length === 0) {
+                throw exceptions_1.ClientCreatePassengerAuthException;
+            }
             return result;
         });
     }
     async signInPassengerEmailAndPassword(signInDto) {
-        let userResponse = null;
-        if (signInDto.userName) {
-            userResponse = await this.db.select({
-                id: passenger_schema_1.PassengerTable.id,
-                email: passenger_schema_1.PassengerTable.email,
-                hash: passenger_schema_1.PassengerTable.password,
-            }).from(passenger_schema_1.PassengerTable)
-                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, signInDto.userName))
-                .limit(1);
-            if (!userResponse || userResponse.length === 0) {
-                throw exceptions_1.ClientSignInUserNameNotFoundException;
+        return await this.db.transaction(async (tx) => {
+            let userResponse = null;
+            if (signInDto.userName) {
+                userResponse = await tx.select({
+                    id: passenger_schema_1.PassengerTable.id,
+                    email: passenger_schema_1.PassengerTable.email,
+                    hash: passenger_schema_1.PassengerTable.password,
+                }).from(passenger_schema_1.PassengerTable)
+                    .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, signInDto.userName))
+                    .limit(1);
+                if (!userResponse || userResponse.length === 0) {
+                    throw exceptions_1.ClientSignInUserNameNotFoundException;
+                }
             }
-        }
-        else if (signInDto.email) {
-            userResponse = await this.db.select({
-                id: passenger_schema_1.PassengerTable.id,
-                email: passenger_schema_1.PassengerTable.email,
-                hash: passenger_schema_1.PassengerTable.password,
-            }).from(passenger_schema_1.PassengerTable)
-                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInDto.email))
-                .limit(1);
-            if (!userResponse || userResponse.length === 0) {
-                throw exceptions_1.ClientSignInEmailNotFoundException;
+            else if (signInDto.email) {
+                userResponse = await tx.select({
+                    id: passenger_schema_1.PassengerTable.id,
+                    email: passenger_schema_1.PassengerTable.email,
+                    hash: passenger_schema_1.PassengerTable.password,
+                }).from(passenger_schema_1.PassengerTable)
+                    .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInDto.email))
+                    .limit(1);
+                if (!userResponse || userResponse.length === 0) {
+                    throw exceptions_1.ClientSignInEmailNotFoundException;
+                }
             }
-        }
-        const user = userResponse[0];
-        const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
-        delete user.hash;
-        if (!pwMatches) {
-            throw exceptions_1.ClientSignInPasswordNotMatchException;
-        }
-        const result = await this.signToken(user.id, user.email);
-        if (!result)
-            throw exceptions_1.ApiGeneratingBearerTokenException;
-        return result;
+            const user = userResponse[0];
+            const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
+            delete user.hash;
+            if (!pwMatches) {
+                throw exceptions_1.ClientSignInPasswordNotMatchException;
+            }
+            const result = await this._signToken(user.id, user.email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(passenger_schema_1.PassengerTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, user.id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
+            return result;
+        });
     }
     async signInRidderByEmailAndPassword(signInDto) {
-        let userResponse = null;
-        if (signInDto.userName) {
-            userResponse = await this.db.select({
-                id: ridder_schema_1.RidderTable.id,
-                email: ridder_schema_1.RidderTable.email,
-                hash: ridder_schema_1.RidderTable.password,
-            }).from(ridder_schema_1.RidderTable)
-                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, signInDto.userName))
-                .limit(1);
-            if (!userResponse || userResponse.length === 0) {
-                throw exceptions_1.ClientSignInUserNameNotFoundException;
+        return await this.db.transaction(async (tx) => {
+            let userResponse = null;
+            if (signInDto.userName) {
+                userResponse = await tx.select({
+                    id: ridder_schema_1.RidderTable.id,
+                    email: ridder_schema_1.RidderTable.email,
+                    hash: ridder_schema_1.RidderTable.password,
+                }).from(ridder_schema_1.RidderTable)
+                    .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, signInDto.userName))
+                    .limit(1);
+                if (!userResponse || userResponse.length === 0) {
+                    throw exceptions_1.ClientSignInUserNameNotFoundException;
+                }
             }
-        }
-        else if (signInDto.email) {
-            userResponse = await this.db.select({
-                id: ridder_schema_1.RidderTable.id,
-                email: ridder_schema_1.RidderTable.email,
-                hash: ridder_schema_1.RidderTable.password,
-            }).from(ridder_schema_1.RidderTable)
-                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInDto.email))
-                .limit(1);
-            if (!userResponse || userResponse.length === 0) {
-                throw exceptions_1.ClientSignInEmailNotFoundException;
+            else if (signInDto.email) {
+                userResponse = await tx.select({
+                    id: ridder_schema_1.RidderTable.id,
+                    email: ridder_schema_1.RidderTable.email,
+                    hash: ridder_schema_1.RidderTable.password,
+                }).from(ridder_schema_1.RidderTable)
+                    .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInDto.email))
+                    .limit(1);
+                if (!userResponse || userResponse.length === 0) {
+                    throw exceptions_1.ClientSignInEmailNotFoundException;
+                }
             }
-        }
-        const user = userResponse[0];
-        const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
-        delete user.hash;
-        if (!pwMatches) {
-            throw exceptions_1.ClientSignInPasswordNotMatchException;
-        }
-        const result = await this.signToken(user.id, user.email);
-        if (!result)
-            throw exceptions_1.ApiGeneratingBearerTokenException;
-        return result;
+            const user = userResponse[0];
+            const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
+            delete user.hash;
+            if (!pwMatches) {
+                throw exceptions_1.ClientSignInPasswordNotMatchException;
+            }
+            const result = await this._signToken(user.id, user.email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(ridder_schema_1.RidderTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, user.id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            return result;
+        });
     }
-    async signToken(userId, email) {
+    async _signToken(userId, email) {
         try {
             const payload = {
                 sub: userId,
@@ -167,6 +229,29 @@ let AuthService = class AuthService {
         catch (error) {
             throw error;
         }
+    }
+    async _tempSignToken(userName, email) {
+        try {
+            const payload = {
+                sub: userName,
+                email: email,
+            };
+            const secret = this.config.get("JWT_TEMP_SECRET");
+            const token = await this.jwt.signAsync(payload, {
+                expiresIn: this.config.get("JWT_TEMP_TOKEN_EXPIRED_TIME") ?? '5m',
+                secret: secret,
+            });
+            return {
+                accessToken: token,
+                expiredIn: this.config.get("JWT_TEMP_TOKEN_EXPIRED_TIME") ?? '5m',
+            };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    _getRandomAuthCode() {
+        return (Math.floor(Math.random() * 900000) + 100000).toString();
     }
 };
 exports.AuthService = AuthService;

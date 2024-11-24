@@ -23,7 +23,7 @@ __exportStar(require("./supplyOrder.schema"), exports);
 __exportStar(require("./order.schema"), exports);
 __exportStar(require("./history.schema"), exports);
 __exportStar(require("./passengerCollectionToOrders.schema"), exports);
-__exportStar(require("./ridderCollection.schema"), exports);
+__exportStar(require("./ridderCollectionToOrders.schema"), exports);
 __exportStar(require("./passengerInvite.schema"), exports);
 __exportStar(require("./ridderInvite.schema"), exports);
 __exportStar(require("./enums"), exports);

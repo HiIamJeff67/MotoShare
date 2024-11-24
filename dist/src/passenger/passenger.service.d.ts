@@ -17,7 +17,7 @@ export declare class PassengerService {
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
-            createdAt: Date;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithInfoByUserId(userId: string): Promise<{
@@ -29,7 +29,7 @@ export declare class PassengerService {
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
-            createdAt: Date;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithCollectionByUserId(userId: string): Promise<{
@@ -40,7 +40,7 @@ export declare class PassengerService {
             order: {
                 id: string;
                 description: string | null;
-                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -51,9 +51,9 @@ export declare class PassengerService {
                     y: number;
                 };
                 startAfter: Date;
-                updatedAt: Date;
                 tolerableRDV: number;
                 status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                createdAt: Date;
                 creator: {
                     userName: string;
                 };

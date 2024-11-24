@@ -66,6 +66,22 @@ export declare const RidderTable: import("drizzle-orm/pg-core").PgTableWithColum
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        accessToken: import("drizzle-orm/pg-core").PgColumn<{
+            name: "accessToken";
+            tableName: "ridder";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "pg";
 }>;

@@ -57,7 +57,6 @@ let PassengerInviteService = class PassengerInviteService {
             endAddress: createPassengerInviteDto.endAddress,
             suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
             suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
-            status: "CHECKING",
         }).returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
             orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,

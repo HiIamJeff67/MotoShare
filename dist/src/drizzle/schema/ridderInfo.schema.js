@@ -17,7 +17,11 @@ exports.RidderInfoTable = (0, pg_core_1.pgTable)("ridderInfo", {
     motocycleLicense: (0, pg_core_1.text)("motocycleLicense").unique(),
     motocycleType: (0, pg_core_1.text)("motocycleType"),
     motocyclePhotoUrl: (0, pg_core_1.text)("motocyclePhotoUrl"),
-    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.uniqueIndex)("ridderInfo_userIdIndex").on(table.userId),
+    };
 });
 exports.RidderInfoRelation = (0, drizzle_orm_1.relations)(exports.RidderInfoTable, ({ one }) => ({
     user: one(schema_1.RidderTable, {

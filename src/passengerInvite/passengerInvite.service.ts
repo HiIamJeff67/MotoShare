@@ -51,16 +51,15 @@ export class PassengerInviteService {
       startCord: sql`ST_SetSRID(
         ST_MakePoint(${createPassengerInviteDto.startCordLongitude}, ${createPassengerInviteDto.startCordLatitude}),
         4326
-      )`,
+      )`, 
       endCord: sql`ST_SetSRID(
         ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
         4326
-      )`,
+      )`, 
       startAddress: createPassengerInviteDto.startAddress,
       endAddress: createPassengerInviteDto.endAddress,
       suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
       suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
-      status: "CHECKING",
     }).returning({
       id: PassengerInviteTable.id,
       orderId: PassengerInviteTable.orderId,

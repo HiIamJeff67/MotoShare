@@ -58,7 +58,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -160,7 +160,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -176,7 +176,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -192,7 +192,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -208,7 +208,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;

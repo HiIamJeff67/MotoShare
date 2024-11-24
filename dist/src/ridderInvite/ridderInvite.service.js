@@ -57,7 +57,6 @@ let RidderInviteService = class RidderInviteService {
             endAddress: createRidderInviteDto.endAddress,
             suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter),
             suggestEndedAt: new Date(createRidderInviteDto.suggestEndedAt),
-            status: "CHECKING",
         }).returning({
             id: ridderInvite_schema_1.RidderInviteTable.id,
             orderId: ridderInvite_schema_1.RidderInviteTable.orderId,

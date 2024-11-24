@@ -17,14 +17,22 @@ exports.PassengerInviteTable = (0, pg_core_1.pgTable)('passengerInvite', {
     suggestPrice: (0, pg_core_1.integer)("suggestPrice").notNull(),
     startCord: (0, pg_core_1.geometry)("startCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     endCord: (0, pg_core_1.geometry)("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
-    startAddress: (0, pg_core_1.text)("startAddress").notNull().default(""),
-    endAddress: (0, pg_core_1.text)("endAddress").notNull().default(""),
-    suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull().defaultNow(),
-    suggestEndedAt: (0, pg_core_1.timestamp)("suggestEndedAt").notNull().defaultNow(),
-    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
-    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+    startAddress: (0, pg_core_1.text)("startAddress").notNull(),
+    endAddress: (0, pg_core_1.text)("endAddress").notNull(),
+    suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull(),
+    suggestEndedAt: (0, pg_core_1.timestamp)("suggestEndedAt").notNull(),
     status: (0, enums_1.inviteStatusEnum)().notNull().default("CHECKING"),
     notificationType: (0, pg_core_1.text)("notificationType").notNull().default("INVITE"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.index)("passengerInvite_userIdIndex").on(table.userId),
+        orderIdIndex: (0, pg_core_1.index)("passengerInvite_orderIdIndex").on(table.orderId),
+        startAfterIndex: (0, pg_core_1.index)("passengerInvite_startAfterIndex").on(table.suggestStartAfter.asc()),
+        statusStartAfterIndex: (0, pg_core_1.index)("passengerInvite_statusStartAfterIndex").on(table.status.asc(), table.suggestStartAfter.asc()),
+        updatedAtIndex: (0, pg_core_1.index)("passengerInvite_updatedAtIndex").on(table.updatedAt.desc()),
+    };
 });
 exports.PassengerInviteRelation = (0, drizzle_orm_1.relations)(exports.PassengerInviteTable, ({ one }) => ({
     inviter: one(schema_1.PassengerTable, {

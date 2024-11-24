@@ -21,23 +21,23 @@ export const HistoryTable = pgTable("history", {
     // should be the form of: "PurchaseOrder" + " " + `${purchaseOrderId}`
     // or "SupplyOrder" + " " + `${supplyOrderId}` (with the place to seperate the text)
     // and in api layer, we use split to decode this field
-    prevOrderId: text("prevOrderId").notNull().default(""), 
+    prevOrderId: text("prevOrderId").notNull(), 
     finalPrice: integer("finalPrice").notNull(),
     passengerDescription: text("passengerDescription"),
     ridderDescription: text("ridderDescription"),
     finalStartCord: geometry("finalStartCord",  { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     finalEndCord: geometry("finalEndCord",  { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
-    finalStartAddress: text("finalStartAddress").notNull().default(""),
-    finalEndAddress: text("finalEndAddress").notNull().default(""),
-    startAfter: timestamp("startAfter").notNull().defaultNow(),
-    endedAt: timestamp("endedAt").notNull().defaultNow(),
+    finalStartAddress: text("finalStartAddress").notNull(),
+    finalEndAddress: text("finalEndAddress").notNull(),
+    startAfter: timestamp("startAfter").notNull(),
+    endedAt: timestamp("endedAt").notNull(),
     starRatingByPassenger: starRatingEnum().notNull().default("0"),
     starRatingByRidder: starRatingEnum().notNull().default("0"),
     commentByPassenger: text("commentByP"),
     commentByRidder: text("commentByR"),
+    status: historyStatusEnum().notNull().default("FINISHED"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("udpatedAt").notNull().defaultNow(),
-    status: historyStatusEnum().notNull().default("FINISHED"),
 }, (table) => {
     return {
         passengerIdIndex: index("history_passengerIdIndex").on(table.passengerId), 

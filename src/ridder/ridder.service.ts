@@ -56,7 +56,7 @@ export class RidderService {
             avatorUrl: true,
             motocycleType: true,
             motocyclePhotoUrl: true,
-            createdAt: true,
+            updatedAt: true,
           }
         },
       }
@@ -81,7 +81,7 @@ export class RidderService {
             motocycleLicense: true,
             motocycleType: true,
             motocyclePhotoUrl: true,
-            createdAt: true,
+            updatedAt: true,
           }
         },
       }

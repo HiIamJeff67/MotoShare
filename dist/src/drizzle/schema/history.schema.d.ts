@@ -58,7 +58,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -160,7 +160,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -176,7 +176,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -192,7 +192,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -208,7 +208,7 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -280,6 +280,22 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        status: import("drizzle-orm/pg-core").PgColumn<{
+            name: "status";
+            tableName: "history";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "EXPIRED" | "CANCEL" | "FINISHED";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["FINISHED", "EXPIRED", "CANCEL"];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "createdAt";
             tableName: "history";
@@ -309,22 +325,6 @@ export declare const HistoryTable: import("drizzle-orm/pg-core").PgTableWithColu
             isAutoincrement: false;
             hasRuntimeDefault: false;
             enumValues: undefined;
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
-        status: import("drizzle-orm/pg-core").PgColumn<{
-            name: "status";
-            tableName: "history";
-            dataType: "string";
-            columnType: "PgEnumColumn";
-            data: "EXPIRED" | "CANCEL" | "FINISHED";
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: ["FINISHED", "EXPIRED", "CANCEL"];
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;

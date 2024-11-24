@@ -19,12 +19,20 @@ exports.RidderInviteTable = (0, pg_core_1.pgTable)('ridderInvite', {
     endCord: (0, pg_core_1.geometry)("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
     startAddress: (0, pg_core_1.text)("startAddress").notNull(),
     endAddress: (0, pg_core_1.text)("endAddress").notNull(),
-    suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull().defaultNow(),
-    suggestEndedAt: (0, pg_core_1.timestamp)("suggestEndedAt").notNull().defaultNow(),
-    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
-    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+    suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull(),
+    suggestEndedAt: (0, pg_core_1.timestamp)("suggestEndedAt").notNull(),
     status: (0, enums_1.inviteStatusEnum)().notNull().default("CHECKING"),
     notificationType: (0, pg_core_1.text)("notificationType").notNull().default("INVITE"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
+    updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.index)("ridderInvite_userIdIndex").on(table.userId),
+        orderIdIndex: (0, pg_core_1.index)("ridderInvite_orderIdIndex").on(table.orderId),
+        startAfterIndex: (0, pg_core_1.index)("ridderInvite_startAfterIndex").on(table.suggestStartAfter.asc()),
+        statusStartAfterIndex: (0, pg_core_1.index)("ridderInvite_statusStartAfterIndex").on(table.status.asc(), table.suggestStartAfter.asc()),
+        updateAtIndex: (0, pg_core_1.index)("ridderInvite_updatedAtIndex").on(table.updatedAt.desc()),
+    };
 });
 exports.RidderInviteRelation = (0, drizzle_orm_1.relations)(exports.RidderInviteTable, ({ one }) => ({
     inviter: one(schema_1.RidderTable, {

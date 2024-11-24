@@ -12,5 +12,7 @@ export declare class AuthService {
     signUpRidderWithEmailAndPassword(signUpDto: SignUpDto): Promise<AuthTokenType>;
     signInPassengerEmailAndPassword(signInDto: SignInDto): Promise<AuthTokenType>;
     signInRidderByEmailAndPassword(signInDto: SignInDto): Promise<AuthTokenType>;
-    signToken(userId: string, email: string): Promise<AuthTokenType>;
+    private _signToken;
+    private _tempSignToken;
+    private _getRandomAuthCode;
 }

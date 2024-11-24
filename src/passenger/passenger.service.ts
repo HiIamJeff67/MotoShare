@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';

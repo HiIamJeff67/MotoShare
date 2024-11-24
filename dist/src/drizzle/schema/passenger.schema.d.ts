@@ -66,6 +66,22 @@ export declare const PassengerTable: import("drizzle-orm/pg-core").PgTableWithCo
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        accessToken: import("drizzle-orm/pg-core").PgColumn<{
+            name: "accessToken";
+            tableName: "passenger";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "pg";
 }>;

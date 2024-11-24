@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientUnknownException = exports.ClientEndBeforeStartException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientMissingTokenException = exports.ClientInvalidTokenOrTokenExpiredException = void 0;
+exports.ClientUnknownException = exports.ClientEndBeforeStartException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateRidderAuthException = exports.ClientCreatePassengerAuthException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientUserHasNoAccessException = exports.ClientTokenExpiredException = exports.ClientInvalidTokenException = void 0;
 const common_1 = require("@nestjs/common");
-exports.ClientInvalidTokenOrTokenExpiredException = new common_1.UnauthorizedException({
+exports.ClientInvalidTokenException = new common_1.UnauthorizedException({
     case: "E-C-001",
-    message: "Invalid user, or token expired"
+    message: "Invalid token detected"
 });
-exports.ClientMissingTokenException = new common_1.UnauthorizedException({
+exports.ClientTokenExpiredException = new common_1.UnauthorizedException({
     case: "E-C-002",
-    message: "Unauthorized",
+    message: "Expired token detected",
 });
 exports.ClientUserHasNoAccessException = new common_1.UnauthorizedException({
     case: "E-C-003",
@@ -111,6 +111,14 @@ exports.ClientCreateRidderCollectionException = new common_1.ForbiddenException(
 exports.ClientCreateHistoryException = new common_1.ForbiddenException({
     case: "E-C-214",
     message: "Failed to create a history",
+});
+exports.ClientCreatePassengerAuthException = new common_1.ForbiddenException({
+    case: "E-C-215",
+    message: "Failed to create a passengerAuth",
+});
+exports.ClientCreateRidderAuthException = new common_1.ForbiddenException({
+    case: "E-C-216",
+    message: "Failed to create a ridderAuth",
 });
 exports.ClientNoChangeOnUserNameException = new common_1.ConflictException({
     case: "E-C-300",

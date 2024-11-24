@@ -162,8 +162,8 @@ export declare const RidderInfoTable: import("drizzle-orm/pg-core").PgTableWithC
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        createdAt: import("drizzle-orm/pg-core").PgColumn<{
-            name: "createdAt";
+        updatedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "updatedAt";
             tableName: "ridderInfo";
             dataType: "date";
             columnType: "PgTimestamp";

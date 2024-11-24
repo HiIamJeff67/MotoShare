@@ -9,6 +9,12 @@ exports.RidderTable = (0, pg_core_1.pgTable)("ridder", {
     userName: (0, pg_core_1.text)("userName").notNull().unique(),
     email: (0, pg_core_1.text)("email").notNull().unique(),
     password: (0, pg_core_1.text)("password").notNull(),
+    accessToken: (0, pg_core_1.text)("accessToken").notNull().unique(),
+}, (table) => {
+    return {
+        userNameIndex: (0, pg_core_1.uniqueIndex)("ridder_userNameIndex").on(table.userName),
+        emailIndex: (0, pg_core_1.uniqueIndex)("ridder_emailIndex").on(table.email),
+    };
 });
 exports.RidderRelation = (0, drizzle_orm_1.relations)(exports.RidderTable, ({ one, many }) => ({
     info: one(schema_1.RidderInfoTable),

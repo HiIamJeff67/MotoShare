@@ -112,7 +112,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -128,7 +128,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             data: string;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -144,7 +144,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -160,7 +160,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             data: Date;
             driverParam: string;
             notNull: true;
-            hasDefault: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;

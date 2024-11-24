@@ -114,8 +114,8 @@ export declare const PassengerInfoTable: import("drizzle-orm/pg-core").PgTableWi
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        createdAt: import("drizzle-orm/pg-core").PgColumn<{
-            name: "createdAt";
+        updatedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "updatedAt";
             tableName: "passengerInfo";
             dataType: "date";
             columnType: "PgTimestamp";

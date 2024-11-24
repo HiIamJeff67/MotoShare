@@ -7,9 +7,9 @@ export declare class RidderInviteService {
     private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
-        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        createdAt: Date;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
         id: string;

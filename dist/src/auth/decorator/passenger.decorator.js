@@ -8,7 +8,7 @@ exports.Passenger = (0, common_1.createParamDecorator)((data, ctx) => {
         .switchToHttp()
         .getRequest();
     if (!request || !request.user) {
-        throw exceptions_1.ClientInvalidTokenOrTokenExpiredException;
+        throw exceptions_1.ClientInvalidTokenException;
     }
     return request.user;
 });

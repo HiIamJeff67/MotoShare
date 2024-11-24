@@ -6,13 +6,9 @@ export declare class JwtRidderStrategy extends JwtRidderStrategy_base {
     private config;
     private db;
     constructor(config: ConfigService, db: DrizzleDB);
-    validate(payload: {
+    validate(req: Request, payload: {
         sub: string;
         email: string;
-    }): Promise<{
-        id: string;
-        userName: string;
-        email: string;
-    }[]>;
+    }): Promise<any>;
 }
 export {};

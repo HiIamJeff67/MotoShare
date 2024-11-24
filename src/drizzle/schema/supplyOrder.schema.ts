@@ -19,14 +19,14 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     initPrice: integer("initPrice").notNull(),
     startCord: geometry("startCord", { type: 'point', mode: 'xy', srid: 4326  }).notNull(),
     endCord: geometry("endCord", { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
-    startAddress: text("startAddress").notNull().default(""),
-    endAddress: text("endAddress").notNull().default(""),
-    startAfter: timestamp("startAfter").notNull().defaultNow(),
-    endedAt: timestamp("endedAt").notNull().defaultNow(),
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+    startAddress: text("startAddress").notNull(),
+    endAddress: text("endAddress").notNull(),
+    startAfter: timestamp("startAfter").notNull(),
+    endedAt: timestamp("endedAt").notNull(),
     tolerableRDV: doublePrecision("tolerableRDV").notNull().default(5),    // unit: kilometers(km)
     status: postedStatusEnum().notNull().default("POSTED"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 }, (table) => {
     return {
         creatorIdIndex: index("supplyOrder_creatorIdIndex").on(table.creatorId), 

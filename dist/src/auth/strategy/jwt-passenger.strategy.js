@@ -20,25 +20,38 @@ const passport_jwt_1 = require("passport-jwt");
 const drizzle_orm_1 = require("drizzle-orm");
 const drizzle_module_1 = require("../../../src/drizzle/drizzle.module");
 const passenger_schema_1 = require("../../../src/drizzle/schema/passenger.schema");
+const exceptions_1 = require("../../exceptions");
 let JwtPassengerStrategy = class JwtPassengerStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-passenger') {
     constructor(config, db) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: config.get("JWT_SECRET"),
+            passReqToCallback: true,
         });
         this.config = config;
         this.db = db;
     }
-    async validate(payload) {
-        const user = await this.db.select({
+    async validate(req, payload) {
+        let user = undefined;
+        user = await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
             email: passenger_schema_1.PassengerTable.email,
+            accessToken: passenger_schema_1.PassengerTable.accessToken,
         }).from(passenger_schema_1.PassengerTable)
             .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, payload.sub))
             .limit(1);
-        return user;
+        if (!user || user.length === 0) {
+            throw exceptions_1.ClientInvalidTokenException;
+        }
+        const userData = user[0];
+        const currentToken = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        if (currentToken !== userData.accessToken) {
+            throw exceptions_1.ClientTokenExpiredException;
+        }
+        delete userData.accessToken;
+        return userData;
     }
 };
 exports.JwtPassengerStrategy = JwtPassengerStrategy;
