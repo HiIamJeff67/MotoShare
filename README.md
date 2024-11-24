@@ -2,6 +2,7 @@
 
 # Please use this branch to place and store the test stuff.
 
+## The following shows some example commands about how to manage this github branch
 1. To Initialize the github in local side : 
 ```
 git init
@@ -31,5 +32,5 @@ git push -u some_name github-branch
 7. To push from local different name branch to the specified github branch : 
 ```
 git push --force some_name local_branch:github_branch
-// git push --force origin main:feature-branch-backend
+// git push --force origin main:feature-branch-test
 ```
