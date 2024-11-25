@@ -10,8 +10,9 @@ import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schem
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
-import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientPassengerNotFoundException } from '../exceptions';
+import { ClientDeleteAccountPasswordNotMatchException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientPassengerNotFoundException } from '../exceptions';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
+import { DeletePassengerDto } from './dto/delete-passenger.dto';
 
 @Injectable()
 export class PassengerService {
@@ -22,7 +23,7 @@ export class PassengerService {
   ) {}
   
   /* ================================= Get operations ================================= */
-  private async getPassengerById(id: string) {
+  private async _getPassengerById(id: string) {
     const response = await this.db.select({
       id: PassengerTable.id,
       userName: PassengerTable.userName,
@@ -155,7 +156,7 @@ export class PassengerService {
     updatePassengerDto: UpdatePassengerDto,
   ) {
     // check if the new password is same as the previous one
-    const user = await this.getPassengerById(id);
+    const user = await this._getPassengerById(id);
     if (!user) {
       throw ClientPassengerNotFoundException;
     }
@@ -164,29 +165,9 @@ export class PassengerService {
       const unMatches = updatePassengerDto.userName === user.userName;  // check if the userName matches the previous one
       if (unMatches) throw ClientNoChangeOnUserNameException;
     }
-    if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {  // if the user want to update its email
-      const emMatches = updatePassengerDto.email === user.email;  // check of the email matches the previous one
-      if (emMatches) throw ClientNoChangeOnEmailException;
-    }
-    if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {  // if the user want to update its password
-      const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash); // check if the password matches the previous one
-      if (pwMatches) throw ClientNoChangeOnPasswordException;
-
-      const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
-      return await this.db.update(PassengerTable).set({
-        userName: updatePassengerDto.userName,
-        email: updatePassengerDto.email,
-        password: hash,
-      }).where(eq(PassengerTable.id, id))
-        .returning({
-          userName: PassengerTable.userName,
-          eamil: PassengerTable.email,
-      });
-    }
 
     return await this.db.update(PassengerTable).set({
       userName: updatePassengerDto.userName,
-      email: updatePassengerDto.email,
     }).where(eq(PassengerTable.id, id))
       .returning({
         userName: PassengerTable.userName,
@@ -199,43 +180,58 @@ export class PassengerService {
     updatePassengerInfoDto: UpdatePassengerInfoDto,
     uploadedFile: Express.Multer.File | undefined = undefined,
   ) {
-    const passengerInfo = await this.db.select({
-      infoId: PassengerInfoTable.id,
-    }).from(PassengerInfoTable)
-      .where(eq(PassengerInfoTable.userId, userId));
-    if (!passengerInfo || passengerInfo.length === 0) throw ClientPassengerNotFoundException;
-
-    return await this.db.update(PassengerInfoTable).set({
-      isOnline: updatePassengerInfoDto.isOnline,
-      age: updatePassengerInfoDto.age,
-      phoneNumber: updatePassengerInfoDto.phoneNumber,
-      selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-      ...(uploadedFile
-        ? { avatorUrl: await this.storage.uploadFile(
-              passengerInfo[0].infoId,
-              "AvatorBucket",
-              "passengerAvators/",
-              uploadedFile
-            ) 
-          }
-        : {}
-      ),
-      updatedAt: new Date(), 
-    }).where(eq(PassengerInfoTable.userId, userId));
+    return await this.db.transaction(async (tx) => {
+      const passengerInfo = await tx.select({
+        infoId: PassengerInfoTable.id,
+      }).from(PassengerInfoTable)
+        .where(eq(PassengerInfoTable.userId, userId));
+      if (!passengerInfo || passengerInfo.length === 0) throw ClientPassengerNotFoundException;
+  
+      return await tx.update(PassengerInfoTable).set({
+        isOnline: updatePassengerInfoDto.isOnline,
+        age: updatePassengerInfoDto.age,
+        phoneNumber: updatePassengerInfoDto.phoneNumber,
+        selfIntroduction: updatePassengerInfoDto.selfIntroduction,
+        ...(uploadedFile
+          ? { avatorUrl: await this.storage.uploadFile(
+                passengerInfo[0].infoId,
+                "AvatorBucket",
+                "passengerAvators/",
+                uploadedFile
+              ) 
+            }
+          : {}
+        ),
+        updatedAt: new Date(), 
+      }).where(eq(PassengerInfoTable.userId, userId));
+    });
   }
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
 
 
   /* ================================= Delete operations ================================= */
-  async deletePassengerById(id: string) {
-    return await this.db.delete(PassengerTable)
-      .where(eq(PassengerTable.id, id))
-      .returning({
-        id: PassengerTable.id,
-        userName: PassengerTable.userName,
-        email: PassengerTable.email,
+  async deletePassengerById(id: string, deletePassengerDto: DeletePassengerDto) {
+    return await this.db.transaction(async (tx) => {
+      const responseOfSelectingPassenger = await tx.select({
+        hash: PassengerTable.password, 
+      }).from(PassengerTable)
+        .where(eq(PassengerTable.id, id));
+      if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+        throw ClientPassengerNotFoundException;
+      }
+
+      const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
+      if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+
+      return await tx.delete(PassengerTable)
+        .where(eq(PassengerTable.id, id))
+        .returning({
+          id: PassengerTable.id,
+          userName: PassengerTable.userName,
+          email: PassengerTable.email,
       });
+    });
   }
   /* ================================= Delete operations ================================= */
 

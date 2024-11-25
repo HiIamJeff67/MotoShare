@@ -28,7 +28,7 @@ let PassengerService = class PassengerService {
         this.storage = storage;
         this.db = db;
     }
-    async getPassengerById(id) {
+    async _getPassengerById(id) {
         const response = await this.db.select({
             id: passenger_schema_1.PassengerTable.id,
             userName: passenger_schema_1.PassengerTable.userName,
@@ -136,7 +136,7 @@ let PassengerService = class PassengerService {
         });
     }
     async updatePassengerById(id, updatePassengerDto) {
-        const user = await this.getPassengerById(id);
+        const user = await this._getPassengerById(id);
         if (!user) {
             throw exceptions_1.ClientPassengerNotFoundException;
         }
@@ -145,29 +145,8 @@ let PassengerService = class PassengerService {
             if (unMatches)
                 throw exceptions_1.ClientNoChangeOnUserNameException;
         }
-        if (updatePassengerDto.email && updatePassengerDto.email.length !== 0) {
-            const emMatches = updatePassengerDto.email === user.email;
-            if (emMatches)
-                throw exceptions_1.ClientNoChangeOnEmailException;
-        }
-        if (updatePassengerDto.password && updatePassengerDto.password.length !== 0) {
-            const pwMatches = await bcrypt.compare(updatePassengerDto.password, user.hash);
-            if (pwMatches)
-                throw exceptions_1.ClientNoChangeOnPasswordException;
-            const hash = await bcrypt.hash(updatePassengerDto.password, Number(this.config.get("SALT_OR_ROUND")));
-            return await this.db.update(passenger_schema_1.PassengerTable).set({
-                userName: updatePassengerDto.userName,
-                email: updatePassengerDto.email,
-                password: hash,
-            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
-                .returning({
-                userName: passenger_schema_1.PassengerTable.userName,
-                eamil: passenger_schema_1.PassengerTable.email,
-            });
-        }
         return await this.db.update(passenger_schema_1.PassengerTable).set({
             userName: updatePassengerDto.userName,
-            email: updatePassengerDto.email,
         }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
             .returning({
             userName: passenger_schema_1.PassengerTable.userName,
@@ -175,31 +154,45 @@ let PassengerService = class PassengerService {
         });
     }
     async updatePassengerInfoByUserId(userId, updatePassengerInfoDto, uploadedFile = undefined) {
-        const passengerInfo = await this.db.select({
-            infoId: passengerInfo_schema_1.PassengerInfoTable.id,
-        }).from(passengerInfo_schema_1.PassengerInfoTable)
-            .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
-        if (!passengerInfo || passengerInfo.length === 0)
-            throw exceptions_1.ClientPassengerNotFoundException;
-        return await this.db.update(passengerInfo_schema_1.PassengerInfoTable).set({
-            isOnline: updatePassengerInfoDto.isOnline,
-            age: updatePassengerInfoDto.age,
-            phoneNumber: updatePassengerInfoDto.phoneNumber,
-            selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-            ...(uploadedFile
-                ? { avatorUrl: await this.storage.uploadFile(passengerInfo[0].infoId, "AvatorBucket", "passengerAvators/", uploadedFile)
-                }
-                : {}),
-            updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+        return await this.db.transaction(async (tx) => {
+            const passengerInfo = await tx.select({
+                infoId: passengerInfo_schema_1.PassengerInfoTable.id,
+            }).from(passengerInfo_schema_1.PassengerInfoTable)
+                .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+            if (!passengerInfo || passengerInfo.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            return await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
+                isOnline: updatePassengerInfoDto.isOnline,
+                age: updatePassengerInfoDto.age,
+                phoneNumber: updatePassengerInfoDto.phoneNumber,
+                selfIntroduction: updatePassengerInfoDto.selfIntroduction,
+                ...(uploadedFile
+                    ? { avatorUrl: await this.storage.uploadFile(passengerInfo[0].infoId, "AvatorBucket", "passengerAvators/", uploadedFile)
+                    }
+                    : {}),
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+        });
     }
-    async deletePassengerById(id) {
-        return await this.db.delete(passenger_schema_1.PassengerTable)
-            .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
-            .returning({
-            id: passenger_schema_1.PassengerTable.id,
-            userName: passenger_schema_1.PassengerTable.userName,
-            email: passenger_schema_1.PassengerTable.email,
+    async deletePassengerById(id, deletePassengerDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassenger = await tx.select({
+                hash: passenger_schema_1.PassengerTable.password,
+            }).from(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id));
+            if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
+            if (!pwMatches)
+                throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            return await tx.delete(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning({
+                id: passenger_schema_1.PassengerTable.id,
+                userName: passenger_schema_1.PassengerTable.userName,
+                email: passenger_schema_1.PassengerTable.email,
+            });
         });
     }
     async getAllPassengers() {

@@ -21,15 +21,5 @@ __decorate([
     (0, class_validator_1.IsAlphanumeric)(undefined, { message: "The userName must be lowercase or uppercase english letters or numbers" }),
     __metadata("design:type", String)
 ], CreateRidderDto.prototype, "userName", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)(),
-    __metadata("design:type", String)
-], CreateRidderDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsStrongPassword)(),
-    __metadata("design:type", String)
-], CreateRidderDto.prototype, "password", void 0);
 ;
 //# sourceMappingURL=create-ridder.dto.js.map

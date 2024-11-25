@@ -7,7 +7,8 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFile,
-  Post
+  Post,
+  NotAcceptableException
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
@@ -26,6 +27,7 @@ import { Passenger } from '../auth/decorator';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { DeletePassengerDto } from './dto/delete-passenger.dto';
 
 @Controller('passenger')
 export class PassengerController {
@@ -227,11 +229,12 @@ export class PassengerController {
   @UseGuards(JwtPassengerGuard)
   @Delete('deleteMe')
   async deleteMe(
-    @Passenger() passenger: PassengerType,
-    @Res() response: Response,
+    @Passenger() passenger: PassengerType, 
+    @Body() deletePassengerDto: DeletePassengerDto, 
+    @Res() response: Response, 
   ) {
     try {
-      const res = await this.passengerService.deletePassengerById(passenger.id);
+      const res = await this.passengerService.deletePassengerById(passenger.id, deletePassengerDto);
 
       if (!res || res.length === 0) throw ClientPassengerNotFoundException;
 
@@ -241,7 +244,8 @@ export class PassengerController {
       });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       

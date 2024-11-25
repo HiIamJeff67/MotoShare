@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const passengerAuth_service_1 = require("./passengerAuth.service");
 const passengerAuth_controller_1 = require("./passengerAuth.controller");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const email_module_1 = require("../email/email.module");
 let PassengerAuthModule = class PassengerAuthModule {
 };
 exports.PassengerAuthModule = PassengerAuthModule;
@@ -18,7 +19,7 @@ exports.PassengerAuthModule = PassengerAuthModule = __decorate([
     (0, common_1.Module)({
         controllers: [passengerAuth_controller_1.PassengerAuthController],
         providers: [passengerAuth_service_1.PassengerAuthService],
-        imports: [drizzle_module_1.DrizzleModule],
+        imports: [drizzle_module_1.DrizzleModule, email_module_1.EmailModule],
     })
 ], PassengerAuthModule);
 //# sourceMappingURL=passengerAuth.module.js.map

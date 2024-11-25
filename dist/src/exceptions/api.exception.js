@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitTooLarge = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitTooLarge = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     case: "E-A-001",
@@ -24,6 +24,14 @@ exports.ApiPrevOrderIdFormException = new common_1.NotAcceptableException({
 exports.ApiGeneratingBearerTokenException = new common_1.InternalServerErrorException({
     case: "E-A-900",
     message: "Failed to generate a bearer token for current user",
+});
+exports.ApiGenerateAuthCodeException = new common_1.InternalServerErrorException({
+    case: "E-A-901",
+    message: "Failed to generate auth code for current user",
+});
+exports.ApiSendEmailForValidationException = new common_1.InternalServerErrorException({
+    case: "E-A-902",
+    message: "Failed to send a email for validation",
 });
 exports.ApiUnknownException = new common_1.InternalServerErrorException({
     case: "E-A-099",

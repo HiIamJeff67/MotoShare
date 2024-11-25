@@ -1,12 +1,14 @@
 import { RidderAuthService } from './ridderAuth.service';
-import { CreateRidderAuthDto } from './dto/create-ridderAuth.dto';
-import { UpdateRidderAuthDto } from './dto/update-ridderAuth.dto';
+import { RidderType } from '../interfaces';
+import { Response } from 'express';
+import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 export declare class RidderAuthController {
     private readonly ridderAuthService;
     constructor(ridderAuthService: RidderAuthService);
-    create(createRidderAuthDto: CreateRidderAuthDto): string;
-    findAll(): string;
-    findOne(id: string): string;
-    update(id: string, updateRidderAuthDto: UpdateRidderAuthDto): string;
-    remove(id: string): string;
+    sendAuthCodeForEmail(ridder: RidderType, response: Response): Promise<void>;
+    sendAuthCodeToResetForgottenPassword(ridder: RidderType, response: Response): Promise<void>;
+    sendAuthCodeToResetEmailOrPassword(ridder: RidderType, response: Response): Promise<void>;
+    validateAuthCodeForEmail(ridder: RidderType, validateRidderInfoDto: ValidateRidderInfoDto, response: Response): Promise<void>;
+    validateAuthCodeToResetForgottenPassword(ridder: RidderType, resetRidderPasswordDto: ResetRidderPasswordDto, response: Response): Promise<void>;
+    validateAuthCodeToResetEmailOrPassword(ridder: RidderType, updateRidderEmailPasswordDto: UpdateRidderEmailPasswordDto, response: Response): Promise<void>;
 }

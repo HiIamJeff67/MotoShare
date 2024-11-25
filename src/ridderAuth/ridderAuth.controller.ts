@@ -1,34 +1,194 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, UnauthorizedException, NotFoundException, InternalServerErrorException, NotAcceptableException, ConflictException, BadRequestException } from '@nestjs/common';
 import { RidderAuthService } from './ridderAuth.service';
-import { CreateRidderAuthDto } from './dto/create-ridderAuth.dto';
-import { UpdateRidderAuthDto } from './dto/update-ridderAuth.dto';
+import { JwtRidderGuard } from '../auth/guard';
+import { Ridder } from '../auth/decorator';
+import { RidderType } from '../interfaces';
+import { Response } from 'express';
+import { ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
+import { HttpStatusCode } from 'axios';
+import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 
-@Controller('ridder-auth')
+@Controller('ridderAuth')
 export class RidderAuthController {
   constructor(private readonly ridderAuthService: RidderAuthService) {}
 
-  @Post()
-  create(@Body() createRidderAuthDto: CreateRidderAuthDto) {
-    return this.ridderAuthService.create(createRidderAuthDto);
+  /* ================================= Send AuthCode ================================= */
+  @UseGuards(JwtRidderGuard)
+  @Get('sendAuthCodeForEmail')
+  async sendAuthCodeForEmail(
+      @Ridder() ridder: RidderType, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.sendAuthenticationCodeById(
+              ridder.id, 
+              "Vaildate Your Email"
+          );
+          
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof InternalServerErrorException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
   }
 
-  @Get()
-  findAll() {
-    return this.ridderAuthService.findAll();
+  @UseGuards(JwtRidderGuard)
+  @Get('sendAuthCodeToResetForgottenPassword')
+  async sendAuthCodeToResetForgottenPassword(
+      @Ridder() ridder: RidderType, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.sendAuthenticationCodeById(
+              ridder.id, 
+              "Reset Your Password"
+          );
+          
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof InternalServerErrorException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ridderAuthService.findOne(+id);
+  @UseGuards(JwtRidderGuard)
+  @Get('sendAuthCodeToResetEmailOrPassword')
+  async sendAuthCodeToResetEmailOrPassword(
+      @Ridder() ridder: RidderType, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.sendAuthenticationCodeById(
+              ridder.id, 
+              "Reset Your Email or Password"
+          );
+          
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof InternalServerErrorException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
+  }
+  /* ================================= Send AuthCode ================================= */
+
+
+  /* ================================= Validate AuthCode ================================= */
+  @UseGuards(JwtRidderGuard)
+  @Post('validateAuthCodeForEmail')
+  async validateAuthCodeForEmail(
+      @Ridder() ridder: RidderType, 
+      @Body() validateRidderInfoDto: ValidateRidderInfoDto, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.validateAuthCodeForEmail(
+              ridder.id, 
+              validateRidderInfoDto, 
+          );
+
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof NotAcceptableException
+              || error instanceof InternalServerErrorException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRidderAuthDto: UpdateRidderAuthDto) {
-    return this.ridderAuthService.update(+id, updateRidderAuthDto);
+  @UseGuards(JwtRidderGuard)
+  @Post('validateAuthCodeToResetForgottenPassword')
+  async validateAuthCodeToResetForgottenPassword(
+      @Ridder() ridder: RidderType, 
+      @Body() resetRidderPasswordDto: ResetRidderPasswordDto, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(
+              ridder.id, 
+              resetRidderPasswordDto, 
+          );
+
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof NotAcceptableException
+              || error instanceof ConflictException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ridderAuthService.remove(+id);
+  @UseGuards(JwtRidderGuard)
+  @Post('validateAuthCodeToResetEmailOrPassword')
+  async validateAuthCodeToResetEmailOrPassword(
+      @Ridder() ridder: RidderType, 
+      @Body() updateRidderEmailPasswordDto: UpdateRidderEmailPasswordDto, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.validateAuthCodeToResetEmailOrPassword(
+              ridder.id, 
+              updateRidderEmailPasswordDto, 
+          );
+
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof NotAcceptableException
+              || error instanceof ConflictException
+              || error instanceof BadRequestException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
   }
+  /* ================================= Validate AuthCode ================================= */
 }

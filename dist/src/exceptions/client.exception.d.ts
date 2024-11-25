@@ -1,7 +1,11 @@
-import { ConflictException, ForbiddenException, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, InternalServerErrorException, NotAcceptableException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 export declare const ClientInvalidTokenException: UnauthorizedException;
 export declare const ClientTokenExpiredException: UnauthorizedException;
 export declare const ClientUserHasNoAccessException: UnauthorizedException;
+export declare const ClientAuthCodeNotPairException: NotAcceptableException;
+export declare const ClientAuthCodeExpiredException: NotAcceptableException;
+export declare const ClientOldPasswordNotMatchException: NotAcceptableException;
+export declare const ClientDeleteAccountPasswordNotMatchException: NotAcceptableException;
 export declare const ClientPassengerNotFoundException: NotFoundException;
 export declare const ClientRidderNotFoundException: NotFoundException;
 export declare const ClientInviteNotFoundException: NotFoundException;

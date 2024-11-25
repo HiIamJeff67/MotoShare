@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { RidderType } from '../interfaces/auth.interface';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
+import { DeleteRidderDto } from './dto/delete-ridder.dto';
 export declare class RidderController {
     private readonly ridderService;
     constructor(ridderService: RidderService);
@@ -13,6 +14,6 @@ export declare class RidderController {
     searchPaginationRidders(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     updateMe(ridder: RidderType, updateRidderDto: UpdateRidderDto, response: Response): Promise<void>;
     updateMyInfo(ridder: RidderType, updateRidderInfoDto: UpdateRidderInfoDto, file: Express.Multer.File | undefined, response: Response): Promise<void>;
-    deleteMe(ridder: RidderType, response: Response): Promise<void>;
+    deleteMe(ridder: RidderType, deleteRidderDto: DeleteRidderDto, response: Response): Promise<void>;
     getAllRidders(response: Response): Promise<void>;
 }

@@ -23,6 +23,7 @@ const decorator_1 = require("../auth/decorator");
 const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("./dto/update-info.dto");
 const platform_express_1 = require("@nestjs/platform-express");
+const delete_ridder_dto_1 = require("./dto/delete-ridder.dto");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;
@@ -153,9 +154,9 @@ let RidderController = class RidderController {
             });
         }
     }
-    async deleteMe(ridder, response) {
+    async deleteMe(ridder, deleteRidderDto, response) {
         try {
-            const res = await this.ridderService.deleteRiddderById(ridder.id);
+            const res = await this.ridderService.deleteRiddderById(ridder.id, deleteRidderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -165,7 +166,8 @@ let RidderController = class RidderController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -265,9 +267,11 @@ __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Delete)('deleteMe'),
     __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Res)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType,
+        delete_ridder_dto_1.DeleteRidderDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "deleteMe", null);
 __decorate([

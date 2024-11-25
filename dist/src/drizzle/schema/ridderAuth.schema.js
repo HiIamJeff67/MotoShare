@@ -9,7 +9,7 @@ exports.RidderAuthTable = (0, pg_core_1.pgTable)("ridderAuth", {
     userId: (0, pg_core_1.uuid)("userId").references(() => ridder_schema_1.RidderTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(),
-    isEamilAuthenticated: (0, pg_core_1.boolean)("isEmailAuthenticated").notNull().default(false),
+    isEmailAuthenticated: (0, pg_core_1.boolean)("isEmailAuthenticated").notNull().default(false),
     isPhoneAuthenticated: (0, pg_core_1.boolean)("isPhoneAuthenticated").notNull().default(false),
     authCode: (0, pg_core_1.text)("authCode").notNull(),
     authCodeExpiredAt: (0, pg_core_1.timestamp)("authCodeExpiredAt").notNull(),

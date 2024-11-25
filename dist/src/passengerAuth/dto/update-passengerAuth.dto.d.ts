@@ -1,5 +1,13 @@
-import { CreatePassengerAuthDto } from './create-passengerAuth.dto';
-declare const UpdatePassengerAuthDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreatePassengerAuthDto>>;
-export declare class UpdatePassengerAuthDto extends UpdatePassengerAuthDto_base {
+import { CreatePassengerEmailPasswordDto } from './create-passengerAuth.dto';
+export declare class ValidatePassengerInfoDto {
+    authCode: string;
+}
+export declare class ResetPassengerPasswordDto {
+    authCode: string;
+    password: string;
+}
+declare const UpdatePassengerEmailPasswordDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreatePassengerEmailPasswordDto>>;
+export declare class UpdatePassengerEmailPasswordDto extends UpdatePassengerEmailPasswordDto_base {
+    authCode: string;
 }
 export {};

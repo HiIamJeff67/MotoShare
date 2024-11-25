@@ -1,2 +1,5 @@
-export declare class CreatePassengerAuthDto {
+export declare class CreatePassengerEmailPasswordDto {
+    email: string;
+    oldPassword: string;
+    newPassword: string;
 }

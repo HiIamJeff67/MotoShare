@@ -12,12 +12,4 @@ export class CreatePassengerDto {
         { message: "The userName must be lowercase or uppercase english letters or numbers" }
     )
     userName: string;
-
-    @IsNotEmpty()
-    @IsEmail()
-    email: string;
-
-    @IsNotEmpty()
-    @IsStrongPassword()
-    password: string;
 }

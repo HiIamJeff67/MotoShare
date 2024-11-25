@@ -34,7 +34,7 @@ export declare const RidderAuthTable: import("drizzle-orm/pg-core").PgTableWithC
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        isEamilAuthenticated: import("drizzle-orm/pg-core").PgColumn<{
+        isEmailAuthenticated: import("drizzle-orm/pg-core").PgColumn<{
             name: "isEmailAuthenticated";
             tableName: "ridderAuth";
             dataType: "boolean";

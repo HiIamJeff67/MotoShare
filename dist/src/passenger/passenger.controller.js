@@ -23,6 +23,7 @@ const decorator_1 = require("../auth/decorator");
 const update_info_dto_1 = require("./dto/update-info.dto");
 const update_passenger_dto_1 = require("./dto/update-passenger.dto");
 const platform_express_1 = require("@nestjs/platform-express");
+const delete_passenger_dto_1 = require("./dto/delete-passenger.dto");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -152,9 +153,9 @@ let PassengerController = class PassengerController {
             });
         }
     }
-    async deleteMe(passenger, response) {
+    async deleteMe(passenger, deletePassengerDto, response) {
         try {
-            const res = await this.passengerService.deletePassengerById(passenger.id);
+            const res = await this.passengerService.deletePassengerById(passenger.id, deletePassengerDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -164,7 +165,8 @@ let PassengerController = class PassengerController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -271,9 +273,11 @@ __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
     (0, common_1.Delete)('deleteMe'),
     __param(0, (0, decorator_1.Passenger)()),
-    __param(1, (0, common_1.Res)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType,
+        delete_passenger_dto_1.DeletePassengerDto, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "deleteMe", null);
 __decorate([

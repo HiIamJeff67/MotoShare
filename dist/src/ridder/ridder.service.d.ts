@@ -3,6 +3,7 @@ import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
+import { DeleteRidderDto } from './dto/delete-ridder.dto';
 export declare class RidderService {
     private storage;
     private config;
@@ -79,7 +80,7 @@ export declare class RidderService {
         eamil: string;
     }[]>;
     updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
-    deleteRiddderById(id: string): Promise<{
+    deleteRiddderById(id: string, deleteRidderDto: DeleteRidderDto): Promise<{
         id: string;
         userName: string;
         email: string;

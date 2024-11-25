@@ -10,6 +10,8 @@ exports.RidderAuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const ridderAuth_service_1 = require("./ridderAuth.service");
 const ridderAuth_controller_1 = require("./ridderAuth.controller");
+const drizzle_module_1 = require("../drizzle/drizzle.module");
+const email_module_1 = require("../email/email.module");
 let RidderAuthModule = class RidderAuthModule {
 };
 exports.RidderAuthModule = RidderAuthModule;
@@ -17,6 +19,7 @@ exports.RidderAuthModule = RidderAuthModule = __decorate([
     (0, common_1.Module)({
         controllers: [ridderAuth_controller_1.RidderAuthController],
         providers: [ridderAuth_service_1.RidderAuthService],
+        imports: [drizzle_module_1.DrizzleModule, email_module_1.EmailModule],
     })
 ], RidderAuthModule);
 //# sourceMappingURL=ridderAuth.module.js.map

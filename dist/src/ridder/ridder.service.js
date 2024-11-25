@@ -151,29 +151,8 @@ let RidderService = class RidderService {
             if (unMatches)
                 throw exceptions_1.ClientNoChangeOnUserNameException;
         }
-        if (updateRidderDto.email && updateRidderDto.email.length !== 0) {
-            const emMatches = updateRidderDto.email === user.email;
-            if (emMatches)
-                throw exceptions_1.ClientNoChangeOnEmailException;
-        }
-        if (updateRidderDto.password && updateRidderDto.password.length !== 0) {
-            const pwMatches = await bcrypt.compare(updateRidderDto.password, user.hash);
-            if (pwMatches)
-                throw exceptions_1.ClientNoChangeOnPasswordException;
-            const hash = await bcrypt.hash(updateRidderDto.password, Number(this.config.get("SALT_OR_ROUND")));
-            return await this.db.update(ridder_schema_1.RidderTable).set({
-                userName: updateRidderDto.userName,
-                email: updateRidderDto.email,
-                password: hash,
-            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-                .returning({
-                userName: ridder_schema_1.RidderTable.userName,
-                eamil: ridder_schema_1.RidderTable.email,
-            });
-        }
         return await this.db.update(ridder_schema_1.RidderTable).set({
             userName: updateRidderDto.userName,
-            email: updateRidderDto.email,
         }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
             .returning({
             userName: ridder_schema_1.RidderTable.userName,
@@ -181,33 +160,48 @@ let RidderService = class RidderService {
         });
     }
     async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile = undefined) {
-        const ridderInfo = await this.db.select({
-            infoId: ridderInfo_schema_1.RidderInfoTable.id,
-        }).from(ridderInfo_schema_1.RidderInfoTable)
-            .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
-        if (!ridderInfo || ridderInfo.length === 0)
-            throw exceptions_1.ClientRidderNotFoundException;
-        return await this.db.update(ridderInfo_schema_1.RidderInfoTable).set({
-            isOnline: updateRidderInfoDto.isOnline,
-            age: updateRidderInfoDto.age,
-            phoneNumber: updateRidderInfoDto.phoneNumber,
-            selfIntroduction: updateRidderInfoDto.selfIntroduction,
-            motocycleLicense: updateRidderInfoDto.motocycleLicense,
-            motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
-            motocycleType: updateRidderInfoDto.motocycleType,
-            ...(uploadedFile
-                ? { avatorUrl: await this.storage.uploadFile(ridderInfo[0].infoId, "AvatorBucket", "ridderAvators/", uploadedFile)
-                }
-                : {}),
-        }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
+        return await this.db.transaction(async (tx) => {
+            const ridderInfo = await tx.select({
+                infoId: ridderInfo_schema_1.RidderInfoTable.id,
+            }).from(ridderInfo_schema_1.RidderInfoTable)
+                .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
+            if (!ridderInfo || ridderInfo.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            return await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
+                isOnline: updateRidderInfoDto.isOnline,
+                age: updateRidderInfoDto.age,
+                phoneNumber: updateRidderInfoDto.phoneNumber,
+                selfIntroduction: updateRidderInfoDto.selfIntroduction,
+                motocycleLicense: updateRidderInfoDto.motocycleLicense,
+                motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
+                motocycleType: updateRidderInfoDto.motocycleType,
+                ...(uploadedFile
+                    ? { avatorUrl: await this.storage.uploadFile(ridderInfo[0].infoId, "AvatorBucket", "ridderAvators/", uploadedFile)
+                    }
+                    : {}),
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
+        });
     }
-    async deleteRiddderById(id) {
-        return await this.db.delete(ridder_schema_1.RidderTable)
-            .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-            .returning({
-            id: ridder_schema_1.RidderTable.id,
-            userName: ridder_schema_1.RidderTable.userName,
-            email: ridder_schema_1.RidderTable.email,
+    async deleteRiddderById(id, deleteRidderDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingRidder = await tx.select({
+                hash: ridder_schema_1.RidderTable.password,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id));
+            if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
+            if (!pwMatches)
+                throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            return await tx.delete(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+                email: ridder_schema_1.RidderTable.email,
+            });
         });
     }
     async testBcryptHashing(secretText, hash) {

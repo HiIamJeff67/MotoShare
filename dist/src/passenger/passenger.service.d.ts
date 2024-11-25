@@ -3,12 +3,13 @@ import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
+import { DeletePassengerDto } from './dto/delete-passenger.dto';
 export declare class PassengerService {
     private config;
     private storage;
     private db;
     constructor(config: ConfigService, storage: SupabaseStorageService, db: DrizzleDB);
-    private getPassengerById;
+    private _getPassengerById;
     getPassengerWithInfoByUserName(userName: string): Promise<{
         userName: string;
         email: string;
@@ -73,7 +74,7 @@ export declare class PassengerService {
         eamil: string;
     }[]>;
     updatePassengerInfoByUserId(userId: string, updatePassengerInfoDto: UpdatePassengerInfoDto, uploadedFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
-    deletePassengerById(id: string): Promise<{
+    deletePassengerById(id: string, deletePassengerDto: DeletePassengerDto): Promise<{
         id: string;
         userName: string;
         email: string;

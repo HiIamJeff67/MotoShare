@@ -32,7 +32,19 @@ export const ApiPrevOrderIdFormException = new NotAcceptableException({
 export const ApiGeneratingBearerTokenException = new InternalServerErrorException({
     case: "E-A-900",
     message: "Failed to generate a bearer token for current user",
-})
+});
+
+// E-A-901
+export const ApiGenerateAuthCodeException = new InternalServerErrorException({
+    case: "E-A-901", 
+    message: "Failed to generate auth code for current user", 
+});
+
+// E-A-902
+export const ApiSendEmailForValidationException = new InternalServerErrorException({
+    case: "E-A-902", 
+    message: "Failed to send a email for validation", 
+});
 
 // E-A-099
 export const ApiUnknownException = new InternalServerErrorException({

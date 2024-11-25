@@ -15,66 +15,192 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderAuthController = void 0;
 const common_1 = require("@nestjs/common");
 const ridderAuth_service_1 = require("./ridderAuth.service");
-const create_ridderAuth_dto_1 = require("./dto/create-ridderAuth.dto");
+const guard_1 = require("../auth/guard");
+const decorator_1 = require("../auth/decorator");
+const interfaces_1 = require("../interfaces");
+const exceptions_1 = require("../exceptions");
+const axios_1 = require("axios");
 const update_ridderAuth_dto_1 = require("./dto/update-ridderAuth.dto");
 let RidderAuthController = class RidderAuthController {
     constructor(ridderAuthService) {
         this.ridderAuthService = ridderAuthService;
     }
-    create(createRidderAuthDto) {
-        return this.ridderAuthService.create(createRidderAuthDto);
+    async sendAuthCodeForEmail(ridder, response) {
+        try {
+            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Vailate Your Email");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    findAll() {
-        return this.ridderAuthService.findAll();
+    async sendAuthCodeToResetForgottenPassword(ridder, response) {
+        try {
+            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Reset Your Password");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    findOne(id) {
-        return this.ridderAuthService.findOne(+id);
+    async sendAuthCodeToResetEmailOrPassword(ridder, response) {
+        try {
+            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Reset Your Email or Password");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    update(id, updateRidderAuthDto) {
-        return this.ridderAuthService.update(+id, updateRidderAuthDto);
+    async validateAuthCodeForEmail(ridder, validateRidderInfoDto, response) {
+        try {
+            const res = await this.ridderAuthService.validateAuthCodeForEmail(ridder.id, validateRidderInfoDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
-    remove(id) {
-        return this.ridderAuthService.remove(+id);
+    async validateAuthCodeToResetForgottenPassword(ridder, resetRidderPasswordDto, response) {
+        try {
+            const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(ridder.id, resetRidderPasswordDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async validateAuthCodeToResetEmailOrPassword(ridder, updateRidderEmailPasswordDto, response) {
+        try {
+            const res = await this.ridderAuthService.validateAuthCodeToResetEmailOrPassword(ridder.id, updateRidderEmailPasswordDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException
+                || error instanceof common_1.BadRequestException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
     }
 };
 exports.RidderAuthController = RidderAuthController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('sendAuthCodeForEmail'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_ridderAuth_dto_1.CreateRidderAuthDto]),
-    __metadata("design:returntype", void 0)
-], RidderAuthController.prototype, "create", null);
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "sendAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('sendAuthCodeToResetForgottenPassword'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], RidderAuthController.prototype, "findAll", null);
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "sendAuthCodeToResetForgottenPassword", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('sendAuthCodeToResetEmailOrPassword'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RidderAuthController.prototype, "findOne", null);
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "sendAuthCodeToResetEmailOrPassword", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('validateAuthCodeForEmail'),
+    __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_ridderAuth_dto_1.UpdateRidderAuthDto]),
-    __metadata("design:returntype", void 0)
-], RidderAuthController.prototype, "update", null);
+    __metadata("design:paramtypes", [interfaces_1.RidderType,
+        update_ridderAuth_dto_1.ValidateRidderInfoDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "validateAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('validateAuthCodeToResetForgottenPassword'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RidderAuthController.prototype, "remove", null);
+    __metadata("design:paramtypes", [interfaces_1.RidderType,
+        update_ridderAuth_dto_1.ResetRidderPasswordDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "validateAuthCodeToResetForgottenPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('validateAuthCodeToResetEmailOrPassword'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.RidderType,
+        update_ridderAuth_dto_1.UpdateRidderEmailPasswordDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "validateAuthCodeToResetEmailOrPassword", null);
 exports.RidderAuthController = RidderAuthController = __decorate([
-    (0, common_1.Controller)('ridder-auth'),
+    (0, common_1.Controller)('ridderAuth'),
     __metadata("design:paramtypes", [ridderAuth_service_1.RidderAuthService])
 ], RidderAuthController);
 //# sourceMappingURL=ridderAuth.controller.js.map

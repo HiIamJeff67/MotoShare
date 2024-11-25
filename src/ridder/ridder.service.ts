@@ -10,11 +10,12 @@ import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
-import { ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
+import { ClientDeleteAccountPasswordNotMatchException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
 import { SUPABASE } from '../supabase/supabase.module';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { multerToFile } from '../utils';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
+import { DeleteRidderDto } from './dto/delete-ridder.dto';
 
 @Injectable()
 export class RidderService {
@@ -171,29 +172,9 @@ export class RidderService {
       const unMatches = updateRidderDto.userName === user.userName;  // check if the userName matches the previous one
       if (unMatches) throw ClientNoChangeOnUserNameException;
     }
-    if (updateRidderDto.email && updateRidderDto.email.length !== 0) {  // if the user want to update its email
-      const emMatches = updateRidderDto.email === user.email;  // check of the email matches the previous one
-      if (emMatches) throw ClientNoChangeOnEmailException;
-    }
-    if (updateRidderDto.password && updateRidderDto.password.length !== 0) {  // if the user want to update its password
-      const pwMatches = await bcrypt.compare(updateRidderDto.password, user.hash); // check if the password matches the previous one
-      if (pwMatches) throw ClientNoChangeOnPasswordException;
-
-      const hash = await bcrypt.hash(updateRidderDto.password, Number(this.config.get("SALT_OR_ROUND")));
-      return await this.db.update(RidderTable).set({
-        userName: updateRidderDto.userName,
-        email: updateRidderDto.email,
-        password: hash,
-      }).where(eq(RidderTable.id, id))
-        .returning({
-          userName: RidderTable.userName,
-          eamil: RidderTable.email,
-      });
-    }
 
     return await this.db.update(RidderTable).set({
       userName: updateRidderDto.userName,
-      email: updateRidderDto.email,
     }).where(eq(RidderTable.id, id))
       .returning({
         userName: RidderTable.userName,
@@ -206,32 +187,34 @@ export class RidderService {
     updateRidderInfoDto: UpdateRidderInfoDto,
     uploadedFile: Express.Multer.File | undefined = undefined,
   ) {
-    const ridderInfo = await this.db.select({
-      infoId: RidderInfoTable.id,
-    }).from(RidderInfoTable)
-      .where(eq(RidderInfoTable.userId, userId));
-
-    if (!ridderInfo || ridderInfo.length === 0) throw ClientRidderNotFoundException;
-
-    return await this.db.update(RidderInfoTable).set({
-      isOnline: updateRidderInfoDto.isOnline,
-      age: updateRidderInfoDto.age,
-      phoneNumber: updateRidderInfoDto.phoneNumber,
-      selfIntroduction: updateRidderInfoDto.selfIntroduction,
-      motocycleLicense: updateRidderInfoDto.motocycleLicense,
-      motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
-      motocycleType: updateRidderInfoDto.motocycleType,
-      ...(uploadedFile 
-        ? { avatorUrl: await this.storage.uploadFile(
-              ridderInfo[0].infoId, 
-              "AvatorBucket", 
-              "ridderAvators/", 
-              uploadedFile
-            ) 
-          } 
-        : {}
-      ),
-    }).where(eq(RidderInfoTable.userId, userId));
+    return await this.db.transaction(async (tx) => {
+      const ridderInfo = await tx.select({
+        infoId: RidderInfoTable.id,
+      }).from(RidderInfoTable)
+        .where(eq(RidderInfoTable.userId, userId));
+      if (!ridderInfo || ridderInfo.length === 0) throw ClientRidderNotFoundException;
+  
+      return await tx.update(RidderInfoTable).set({
+        isOnline: updateRidderInfoDto.isOnline,
+        age: updateRidderInfoDto.age,
+        phoneNumber: updateRidderInfoDto.phoneNumber,
+        selfIntroduction: updateRidderInfoDto.selfIntroduction,
+        motocycleLicense: updateRidderInfoDto.motocycleLicense,
+        motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
+        motocycleType: updateRidderInfoDto.motocycleType,
+        ...(uploadedFile 
+          ? { avatorUrl: await this.storage.uploadFile(
+                ridderInfo[0].infoId, 
+                "AvatorBucket", 
+                "ridderAvators/", 
+                uploadedFile
+              ) 
+            } 
+          : {}
+        ),
+        updatedAt: new Date(), 
+      }).where(eq(RidderInfoTable.userId, userId));
+    });
   }
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
@@ -239,14 +222,27 @@ export class RidderService {
 
 
   /* ================================= Delete operations ================================= */
-  async deleteRiddderById(id: string) {
-    return await this.db.delete(RidderTable)
-      .where(eq(RidderTable.id, id))
-      .returning({
-        id: RidderTable.id,
-        userName: RidderTable.userName,
-        email: RidderTable.email,
+  async deleteRiddderById(id: string, deleteRidderDto: DeleteRidderDto) {
+    return await this.db.transaction(async (tx) => {
+      const responseOfSelectingRidder = await tx.select({
+        hash: RidderTable.password, 
+      }).from(RidderTable)
+        .where(eq(RidderTable.id, id));
+      if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+        throw ClientRidderNotFoundException;
+      }
+
+      const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
+      if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+
+      return await tx.delete(RidderTable)
+        .where(eq(RidderTable.id, id))
+        .returning({
+          id: RidderTable.id,
+          userName: RidderTable.userName,
+          email: RidderTable.email,
       });
+    });
   }
   /* ================================= Delete operations ================================= */
 

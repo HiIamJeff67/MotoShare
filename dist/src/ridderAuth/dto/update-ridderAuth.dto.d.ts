@@ -1,5 +1,13 @@
-import { CreateRidderAuthDto } from './create-ridderAuth.dto';
-declare const UpdateRidderAuthDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateRidderAuthDto>>;
-export declare class UpdateRidderAuthDto extends UpdateRidderAuthDto_base {
+import { CreateRidderEmailPasswordDto } from './create-ridderAuth.dto';
+export declare class ValidateRidderInfoDto {
+    authCode: string;
+}
+export declare class ResetRidderPasswordDto {
+    authCode: string;
+    password: string;
+}
+declare const UpdateRidderEmailPasswordDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateRidderEmailPasswordDto>>;
+export declare class UpdateRidderEmailPasswordDto extends UpdateRidderEmailPasswordDto_base {
+    authCode: string;
 }
 export {};

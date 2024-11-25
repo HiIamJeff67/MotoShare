@@ -34,7 +34,7 @@ export declare const PassengerAuthTable: import("drizzle-orm/pg-core").PgTableWi
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        isEamilAuthenticated: import("drizzle-orm/pg-core").PgColumn<{
+        isEmailAuthenticated: import("drizzle-orm/pg-core").PgColumn<{
             name: "isEmailAuthenticated";
             tableName: "passengerAuth";
             dataType: "boolean";

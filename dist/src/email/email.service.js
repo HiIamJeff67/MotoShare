@@ -19,16 +19,31 @@ let EmailService = class EmailService {
         this.mailer = mailer;
     }
     async sendWelcomeEmail(to, userName) {
-        await this.mailer.sendMail({
-            to,
+        return await this.mailer.sendMail({
+            to: to,
             subject: 'Welcome to MotoShare',
-            template: './welcomeEmail',
+            template: this.config.get("FRONTEND_DEVELOPER")
+                && userName.includes(this.config.get("FRONTEND_DEVELOPER"))
+                ? './bounsWelcomeEmail'
+                : './welcomeEmail',
             context: {
                 userName: userName,
                 titleDecorationUrl: this.config.get("MOTOSHARE_DECORATION_1"),
                 motorbikeImageUrl: this.config.get("MOTOSHARE_ICON"),
-                currentYear: new Date().getFullYear()
+                currentYear: new Date().getFullYear(),
             }
+        });
+    }
+    async sendValidationEamil(to, payload) {
+        return await this.mailer.sendMail({
+            to: to,
+            subject: 'MotoShare Authentication Code',
+            template: './validatedEmail',
+            context: {
+                ...payload,
+                motorbikeImageUrl: this.config.get("MOTOSHARE_ICON"),
+                currentYear: new Date().getFullYear(),
+            },
         });
     }
 };

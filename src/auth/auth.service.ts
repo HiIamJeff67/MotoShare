@@ -320,7 +320,9 @@ export class AuthService {
     }
 
     private _getRandomAuthCode(): string {
-        return (Math.floor(Math.random() * 900000) + 100000).toString();
+        let randomAuthCode = Math.floor(Math.random() * 1000000).toString()
+		while (randomAuthCode.length < 6) randomAuthCode = "0" + randomAuthCode;
+		return randomAuthCode;
     }
     /* ================================= Get Sign Token & Auth Code operations ================================= */
 }

@@ -251,7 +251,10 @@ let AuthService = class AuthService {
         }
     }
     _getRandomAuthCode() {
-        return (Math.floor(Math.random() * 900000) + 100000).toString();
+        let randomAuthCode = Math.floor(Math.random() * 1000000).toString();
+        while (randomAuthCode.length < 6)
+            randomAuthCode = "0" + randomAuthCode;
+        return randomAuthCode;
     }
 };
 exports.AuthService = AuthService;

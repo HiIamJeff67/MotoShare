@@ -7,7 +7,7 @@ export const RidderAuthTable = pgTable("ridderAuth", {
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade', 
     }).notNull().unique(), // one-to-one relationship
-    isEamilAuthenticated: boolean("isEmailAuthenticated").notNull().default(false), 
+    isEmailAuthenticated: boolean("isEmailAuthenticated").notNull().default(false), 
     isPhoneAuthenticated: boolean("isPhoneAuthenticated").notNull().default(false), 
     authCode: text("authCode").notNull(), 
     authCodeExpiredAt: timestamp("authCodeExpiredAt").notNull(), 

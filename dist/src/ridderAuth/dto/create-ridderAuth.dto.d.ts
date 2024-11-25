@@ -1,2 +1,5 @@
-export declare class CreateRidderAuthDto {
+export declare class CreateRidderEmailPasswordDto {
+    email: string;
+    oldPassword: string;
+    newPassword: string;
 }

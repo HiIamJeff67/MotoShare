@@ -7,7 +7,8 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFile,
-  Post
+  Post,
+  NotAcceptableException
 } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { Response } from 'express';
@@ -26,6 +27,7 @@ import { Ridder } from '../auth/decorator';
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteRidderDto } from './dto/delete-ridder.dto';
 
 @Controller('ridder')
 export class RidderController {
@@ -230,11 +232,12 @@ export class RidderController {
   @UseGuards(JwtRidderGuard)
   @Delete('deleteMe')
   async deleteMe(
-    @Ridder() ridder: RidderType,
-    @Res() response: Response,
+    @Ridder() ridder: RidderType, 
+    @Body() deleteRidderDto: DeleteRidderDto, 
+    @Res() response: Response, 
   ) {
     try {
-      const res = await this.ridderService.deleteRiddderById(ridder.id);
+      const res = await this.ridderService.deleteRiddderById(ridder.id, deleteRidderDto);
 
       if (!res || res.length === 0) throw ClientRidderNotFoundException;
 
@@ -244,7 +247,8 @@ export class RidderController {
       });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       

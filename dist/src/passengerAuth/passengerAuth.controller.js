@@ -8,18 +8,199 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerAuthController = void 0;
 const common_1 = require("@nestjs/common");
 const passengerAuth_service_1 = require("./passengerAuth.service");
+const guard_1 = require("../auth/guard");
+const decorator_1 = require("../auth/decorator");
+const interfaces_1 = require("../interfaces");
+const exceptions_1 = require("../exceptions");
+const enums_1 = require("../enums");
+const update_passengerAuth_dto_1 = require("./dto/update-passengerAuth.dto");
 let PassengerAuthController = class PassengerAuthController {
     constructor(passengerAuthService) {
         this.passengerAuthService = passengerAuthService;
     }
+    async sendAuthCodeForEmail(passenger, response) {
+        try {
+            const res = await this.passengerAuthService.sendAuthenticationCodeById(passenger.id, "Vailate Your Email");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async sendAuthCodeToResetForgottenPassword(passenger, response) {
+        try {
+            const res = await this.passengerAuthService.sendAuthenticationCodeById(passenger.id, "Reset Your Password");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async sendAuthCodeToResetEmailOrPassword(passenger, response) {
+        try {
+            const res = await this.passengerAuthService.sendAuthenticationCodeById(passenger.id, "Reset Your Email or Password");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async validateAuthCodeForEmail(passenger, validatePassengerInfoDto, response) {
+        try {
+            const res = await this.passengerAuthService.validateAuthCodeForEmail(passenger.id, validatePassengerInfoDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async validateAuthCodeToResetForgottenPassword(passenger, resetPassengerPasswordDto, response) {
+        try {
+            const res = await this.passengerAuthService.validateAuthCodeToResetForgottenPassword(passenger.id, resetPassengerPasswordDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async validateAuthCodeToResetEmailOrPassword(passenger, updatePassengerEmailPasswordDto, response) {
+        try {
+            const res = await this.passengerAuthService.validateAuthCodeToResetEmailOrPassword(passenger.id, updatePassengerEmailPasswordDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException
+                || error instanceof common_1.BadRequestException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
 };
 exports.PassengerAuthController = PassengerAuthController;
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('sendAuthCodeForEmail'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "sendAuthCodeForEmail", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('sendAuthCodeToResetForgottenPassword'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "sendAuthCodeToResetForgottenPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('sendAuthCodeToResetEmailOrPassword'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "sendAuthCodeToResetEmailOrPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('validateAuthCodeForEmail'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType,
+        update_passengerAuth_dto_1.ValidatePassengerInfoDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "validateAuthCodeForEmail", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('validateAuthCodeToResetForgottenPassword'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType,
+        update_passengerAuth_dto_1.ResetPassengerPasswordDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "validateAuthCodeToResetForgottenPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('validateAuthCodeToResetEmailOrPassword'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType,
+        update_passengerAuth_dto_1.UpdatePassengerEmailPasswordDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "validateAuthCodeToResetEmailOrPassword", null);
 exports.PassengerAuthController = PassengerAuthController = __decorate([
-    (0, common_1.Controller)('passenger-auth'),
+    (0, common_1.Controller)('passengerAuth'),
     __metadata("design:paramtypes", [passengerAuth_service_1.PassengerAuthService])
 ], PassengerAuthController);
 //# sourceMappingURL=passengerAuth.controller.js.map
