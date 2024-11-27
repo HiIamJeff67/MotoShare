@@ -1,4 +1,6 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from "@neondatabase/serverless";
+import { Request } from "express";
 import "dotenv/config"
 
 export const dynamic = 'force-dynamic'; // static by default, unless reading the request
@@ -9,8 +11,9 @@ async function getData() {
     return response[0].version;
 }
  
-export function GET(request: Request) {
-  return new Response(`Hello Vercel Cron, testing neon: ${getData()}`, {
-    status: 200, 
-  });
+export default function handler(
+  request: VercelRequest,
+  response: VercelResponse,
+) {
+  response.status(200).json({ success: true, context: "Hello Vercel Cron", data: getData() });
 }
