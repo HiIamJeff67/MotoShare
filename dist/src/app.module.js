@@ -29,6 +29,7 @@ const email_module_1 = require("./email/email.module");
 require("dotenv/config");
 const path_1 = require("path");
 const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
+const cron_module_1 = require("./cron/cron.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -65,6 +66,7 @@ exports.AppModule = AppModule = __decorate([
             passengerAuth_module_1.PassengerAuthModule,
             ridderAuth_module_1.RidderAuthModule,
             email_module_1.EmailModule,
+            cron_module_1.CronModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

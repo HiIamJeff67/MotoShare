@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dynamic = void 0;
-exports.GET = GET;
+exports.default = handler;
 const serverless_1 = require("@neondatabase/serverless");
 require("dotenv/config");
 exports.dynamic = 'force-dynamic';
@@ -10,9 +10,7 @@ async function getData() {
     const response = await sql `SELECT version()`;
     return response[0].version;
 }
-function GET(request) {
-    return new Response(`result from neon: ${getData()}`, {
-        status: 200,
-    });
+function handler(request, response) {
+    response.status(200).json({ success: true, context: "Hello Vercel Cron", data: getData() });
 }
 //# sourceMappingURL=route.js.map

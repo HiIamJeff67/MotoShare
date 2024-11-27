@@ -39,7 +39,6 @@ export declare class PassengerService {
             userId: string;
             orderId: string;
             order: {
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 id: string;
                 description: string | null;
                 updatedAt: Date;
@@ -54,6 +53,7 @@ export declare class PassengerService {
                 };
                 startAfter: Date;
                 tolerableRDV: number;
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 createdAt: Date;
                 creator: {
                     userName: string;

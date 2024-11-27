@@ -8,8 +8,8 @@ export declare class SupplyOrderService {
     constructor(db: DrizzleDB);
     private updateExpiredSupplyOrders;
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     searchSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
@@ -33,7 +33,6 @@ export declare class SupplyOrderService {
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getSupplyOrderById(id: string): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         description: string | null;
         updatedAt: Date;
@@ -52,6 +51,7 @@ export declare class SupplyOrderService {
         endedAt: Date;
         tolerableRDV: number;
         autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         creator: {
             userName: string;
@@ -185,8 +185,8 @@ export declare class SupplyOrderService {
         RDV: unknown;
     }[]>;
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     startSupplyOrderWithoutInvite(id: string, userId: string, acceptAutoAcceptSupplyOrderDto: AcceptAutoAcceptSupplyOrderDto): Promise<{
         orderId: string;
@@ -206,7 +206,7 @@ export declare class SupplyOrderService {
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[]>;
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
 }
