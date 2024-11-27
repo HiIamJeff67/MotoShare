@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.2.0",
+    "@neondatabase/serverless": "^0.10.4",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",

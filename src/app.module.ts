@@ -20,7 +20,7 @@ import { EmailModule } from './email/email.module';
 import "dotenv/config";
 import { join } from 'path';
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter"
-import { CronModule } from './cron/cron.module';
+import { CronModule } from '../api/cron/cron.module';
 
 @Module({
   imports: [

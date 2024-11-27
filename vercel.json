@@ -24,7 +24,7 @@
     ], 
     "crons": [
         {
-            "path": "/cron/deleteExpiredPurchaseOrdersOrSupplyOrders", 
+            "path": "api/cron", 
             "schedule": "0 23 * * *"
         }
     ]
