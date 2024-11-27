@@ -9,7 +9,7 @@ export class CronController {
 
   // note that all the Cron Jobs are using GET Method
   /* ================================= Automated Delete operations ================================= */
-  @Get('deleteExpiredPurchaseOrders')
+  @Get('/deleteExpiredPurchaseOrders')
   async deleteExpiredPurchaseOrders(@Res() response: Response) {
     try {
       const res = await this.cronService.deleteExpiredPurchaseOrders();
@@ -22,7 +22,7 @@ export class CronController {
     }
   }
 
-  @Get('deleteExpiredSupplyOrders')
+  @Get('/deleteExpiredSupplyOrders')
   async deleteExpiredSupplyOrders(@Res() response: Response) {
     try {
       const res = await this.cronService.deleteExpiredSupplyOrders();

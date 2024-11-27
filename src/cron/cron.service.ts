@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
@@ -9,7 +9,7 @@ import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 @Injectable()
 export class CronService {
   constructor(
-    private config: ConfigModule, 
+    private config: ConfigService, 
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
 
