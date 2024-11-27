@@ -10,4 +10,5 @@ export declare class CreatePurchaseOrderDto {
     startAfter: string;
     endedAt: string;
     isUrgent?: boolean;
+    autoAccept?: boolean;
 }

@@ -1,6 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { Strategy } from "passport-jwt";
 import { DrizzleDB } from "../../drizzle/types/drizzle";
+import { Request } from "express";
 declare const JwtRidderStrategy_base: new (...args: any[]) => Strategy;
 export declare class JwtRidderStrategy extends JwtRidderStrategy_base {
     private config;

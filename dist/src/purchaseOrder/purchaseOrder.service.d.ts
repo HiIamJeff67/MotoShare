@@ -2,6 +2,7 @@ import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
+import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 export declare class PurchaseOrderService {
     private db;
     constructor(db: DrizzleDB);
@@ -10,9 +11,8 @@ export declare class PurchaseOrderService {
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
-    getPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number): Promise<{
+    searchPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
-        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -26,14 +26,15 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
+        updatedAt: Date;
         isUrgent: boolean;
+        autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
-        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -47,9 +48,11 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
         creator: {
             userName: string;
             info: {
@@ -58,10 +61,10 @@ export declare class PurchaseOrderService {
             } | null;
         };
     } | undefined>;
-    searchPaginationPurchaseOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
+    searchPaginationPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: never;
+        avatorUrl: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -78,12 +81,13 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
-    searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: number, offset: number): Promise<{
+    searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: never;
+        avatorUrl: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -100,12 +104,13 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
-    searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
+    searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: never;
+        avatorUrl: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -122,36 +127,14 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         isUrgent: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        manhattanDistance: unknown;
-    }[]>;
-    searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
-        id: string;
-        creatorName: string | null;
-        avatorUrl: never;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        startAddress: string;
-        endAddress: string;
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        endedAt: Date;
-        isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         manhattanDistance: unknown;
     }[]>;
-    searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: number, offset: number, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
+    searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto): Promise<{
         id: string;
         creatorName: string | null;
-        avatorUrl: never;
+        avatorUrl: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -168,6 +151,31 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         isUrgent: boolean;
+        autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        manhattanDistance: unknown;
+    }[]>;
+    searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto): Promise<{
+        id: string;
+        creatorName: string | null;
+        avatorUrl: string | null;
+        initPrice: number;
+        startCord: {
+            x: number;
+            y: number;
+        };
+        endCord: {
+            x: number;
+            y: number;
+        };
+        startAddress: string;
+        endAddress: string;
+        createdAt: Date;
+        updatedAt: Date;
+        startAfter: Date;
+        endedAt: Date;
+        isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         RDV: unknown;
     }[]>;
@@ -175,15 +183,31 @@ export declare class PurchaseOrderService {
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
+    startPurchaseOrderWithoutInvite(id: string, userId: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto): Promise<{
+        orderId: string;
+        price: number;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
+        startAfter: Date;
+        endedAt: Date;
+        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+    }[]>;
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        description: string | null;
-        updatedAt: Date;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -197,9 +221,11 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        isUrgent: boolean;
+        autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
-        isUrgent: boolean;
+        updatedAt: Date;
     }[]>;
     searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined, limit: number, offset: number): Promise<{
         id: string;

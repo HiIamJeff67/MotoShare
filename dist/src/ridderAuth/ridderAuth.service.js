@@ -22,6 +22,7 @@ const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const exceptions_1 = require("../exceptions");
 const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const auth_constant_1 = require("../constants/auth.constant");
 let RidderAuthService = class RidderAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -89,6 +90,8 @@ let RidderAuthService = class RidderAuthService {
             }
             return await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
                 isEmailAuthenticated: true,
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id))
                 .returning({
                 isEmailAuthenticated: ridderAuth_schema_1.RidderAuthTable.isEmailAuthenticated,
@@ -112,6 +115,10 @@ let RidderAuthService = class RidderAuthService {
             if (responseOfSelectingRidderAuth[0].authCodeExpiredAt <= new Date()) {
                 throw exceptions_1.ClientAuthCodeExpiredException;
             }
+            await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id));
             const responseOfSelectingRidder = await tx.select({
                 id: ridder_schema_1.RidderTable.id,
                 hash: ridder_schema_1.RidderTable.password,
@@ -127,6 +134,7 @@ let RidderAuthService = class RidderAuthService {
             const hash = await bcrypt.hash(resetRidderPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
             return await tx.update(ridder_schema_1.RidderTable).set({
                 password: hash,
+                accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
             }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
                 .returning({
                 userName: ridder_schema_1.RidderTable.userName,
@@ -151,6 +159,10 @@ let RidderAuthService = class RidderAuthService {
             if (responseOfSelectingRidderAuth[0].authCodeExpiredAt <= new Date()) {
                 throw exceptions_1.ClientAuthCodeExpiredException;
             }
+            await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id));
             const responseOfSelectingRidder = await tx.select({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,
@@ -181,6 +193,7 @@ let RidderAuthService = class RidderAuthService {
                 return await tx.update(ridder_schema_1.RidderTable).set({
                     ...(flag ? { email: updateRidderEmailPasswordDto.email, } : {}),
                     password: hash,
+                    accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
                 }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
                     .returning({
                     userName: ridder_schema_1.RidderTable.userName,

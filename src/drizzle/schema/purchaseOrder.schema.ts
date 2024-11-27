@@ -24,6 +24,7 @@ export const PurchaseOrderTable = pgTable("purchaseOrder", {
     startAfter: timestamp("startAfter").notNull(),
     endedAt: timestamp("endedAt").notNull(),
     isUrgent: boolean("isUrgent").notNull().default(false),
+    autoAccept: boolean("autoAccept").notNull().default(false),
     status: postedStatusEnum().notNull().default("POSTED"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),

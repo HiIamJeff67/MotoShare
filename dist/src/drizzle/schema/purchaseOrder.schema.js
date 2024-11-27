@@ -19,6 +19,7 @@ exports.PurchaseOrderTable = (0, pg_core_1.pgTable)("purchaseOrder", {
     startAfter: (0, pg_core_1.timestamp)("startAfter").notNull(),
     endedAt: (0, pg_core_1.timestamp)("endedAt").notNull(),
     isUrgent: (0, pg_core_1.boolean)("isUrgent").notNull().default(false),
+    autoAccept: (0, pg_core_1.boolean)("autoAccept").notNull().default(false),
     status: (0, enums_1.postedStatusEnum)().notNull().default("POSTED"),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),

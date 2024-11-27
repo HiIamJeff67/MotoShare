@@ -45,13 +45,13 @@ let JwtRidderStrategy = class JwtRidderStrategy extends (0, passport_1.PassportS
         if (!user || user.length === 0) {
             throw exceptions_1.ClientInvalidTokenException;
         }
-        const userDate = user[0];
+        const userData = user[0];
         const currentToken = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-        if (currentToken !== userDate.accessToken) {
+        if (currentToken !== userData.accessToken) {
             throw exceptions_1.ClientTokenExpiredException;
         }
-        delete userDate.accessToken;
-        return userDate;
+        delete userData.accessToken;
+        return userData;
     }
 };
 exports.JwtRidderStrategy = JwtRidderStrategy;

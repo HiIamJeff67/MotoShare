@@ -11,6 +11,7 @@ import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
   ApiSearchingLimitTooLarge,
+  ClientCreateOrderException,
   ClientCreateSupplyOrderException,
   ClientSupplyOrderNotFoundException,
   ClientUnknownException, 
@@ -27,6 +28,8 @@ import {
   GetSimilarRouteSupplyOrdersDto 
 } from './dto/get-supplyOrder.dto';
 import { MAX_SEARCH_LIMIT } from '../constants';
+import { toBoolean, toNumber } from '../utils/stringParser';
+import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
 
 @Controller('supplyOrder')
 export class SupplyOrderController {
@@ -66,15 +69,25 @@ export class SupplyOrderController {
 
   /* ================================= Get operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Get('getMySupplyOrders')
-  async getMySupplyOrders(
+  @Get('searchMySupplyOrders')
+  async searchMySupplyOrders(
     @Ridder() ridder: RidderType,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      const res = await this.supplyOrderService.getSupplyOrdersByCreatorId(ridder.id, +limit, +offset);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      }
+
+      const res = await this.supplyOrderService.searchSupplyOrdersByCreatorId(
+        ridder.id, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
 
@@ -127,14 +140,20 @@ export class SupplyOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
+      const res = await this.supplyOrderService.searchPaginationSupplyOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
 
@@ -156,14 +175,20 @@ export class SupplyOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(creatorName, +limit, +offset);
+      const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
 
@@ -185,18 +210,20 @@ export class SupplyOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(
         creatorName, 
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getAdjacentSupplyOrdersDto
       );
 
@@ -220,18 +247,20 @@ export class SupplyOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(
         creatorName,
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getAdjacentSupplyOrdersDto
       );
 
@@ -255,18 +284,20 @@ export class SupplyOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(
         creatorName,
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getSimilarRouteSupplyOrdersDto
       );
 
@@ -324,8 +355,49 @@ export class SupplyOrderController {
       });
     }
   }
-  /* ================================= Update operations ================================= */
 
+  /* ================================= Start with AutoAccept SupplyOrders operations ================================= */
+  @UseGuards(JwtPassengerGuard)
+  @Post('startSupplyOrderWithoutInvite')
+  async startSupplyOrderWithoutInvite(
+    @Passenger() passenger: PassengerType, 
+    @Query('id') id: string, 
+    @Body() acceptAutoAcceptSupplyOrder: AcceptAutoAcceptSupplyOrderDto, 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.supplyOrderService.startSupplyOrderWithoutInvite(
+        id,
+        passenger.id, 
+        acceptAutoAcceptSupplyOrder, 
+      );
+
+      if (!res || res.length === 0) throw ClientCreateOrderException;
+
+      response.status(HttpStatusCode.Ok).send({
+        createdAt: new Date(), 
+        ...res[0], 
+      });
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================================= Start with AutoAccept SupplyOrders operations ================================= */
+
+  /* ================================= Update operations ================================= */
 
 
   /* ================================= Delete operations ================================= */

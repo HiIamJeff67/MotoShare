@@ -80,4 +80,9 @@ __decorate([
     (0, class_validator_1.IsBooleanString)(),
     __metadata("design:type", Boolean)
 ], CreatePurchaseOrderDto.prototype, "isUrgent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBooleanString)(),
+    __metadata("design:type", Boolean)
+], CreatePurchaseOrderDto.prototype, "autoAccept", void 0);
 //# sourceMappingURL=create-purchaseOrder.dto.js.map

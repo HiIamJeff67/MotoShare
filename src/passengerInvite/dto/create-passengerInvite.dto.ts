@@ -1,4 +1,5 @@
 import { 
+    IsBooleanString,
     IsDateString, 
     IsLatitude, 
     IsLongitude, 

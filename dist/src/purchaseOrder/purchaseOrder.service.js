@@ -20,6 +20,8 @@ const purchaseOrder_schema_1 = require("../../src/drizzle/schema/purchaseOrder.s
 const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
+const ridderInvite_schema_1 = require("../drizzle/schema/ridderInvite.schema");
+const order_schema_1 = require("../drizzle/schema/order.schema");
 let PurchaseOrderService = class PurchaseOrderService {
     constructor(db) {
         this.db = db;
@@ -53,32 +55,31 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: new Date(createPurchaseOrderDto.startAfter),
             endedAt: new Date(createPurchaseOrderDto.endedAt),
             isUrgent: createPurchaseOrderDto.isUrgent,
+            autoAccept: createPurchaseOrderDto.autoAccept,
         }).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
     }
-    async getPurchaseOrdersByCreatorId(creatorId, limit, offset) {
-        return await this.db.query.PurchaseOrderTable.findMany({
-            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId)),
-            columns: {
-                id: true,
-                initPrice: true,
-                startCord: true,
-                endCord: true,
-                startAddress: true,
-                endAddress: true,
-                createdAt: true,
-                endedAt: true,
-                updatedAt: true,
-                startAfter: true,
-                isUrgent: true,
-                status: true,
-            },
-            orderBy: (0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt),
-            limit: limit,
-            offset: offset,
-        });
+    async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined))).orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
     }
     async getPurchaseOrderById(id) {
         return await this.db.query.PurchaseOrderTable.findFirst({
@@ -96,6 +97,7 @@ let PurchaseOrderService = class PurchaseOrderService {
                 updatedAt: true,
                 startAfter: true,
                 isUrgent: true,
+                autoAccept: true,
                 status: true,
             },
             with: {
@@ -115,9 +117,9 @@ let PurchaseOrderService = class PurchaseOrderService {
             }
         });
     }
-    async searchPaginationPurchaseOrders(creatorName = undefined, limit, offset) {
+    async searchPaginationPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept) {
         await this.updateExpiredPurchaseOrders();
-        const query = this.db.select({
+        return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
@@ -131,24 +133,18 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
-        if (creatorName) {
-            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
-        }
-        else {
-            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
-        }
-        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
             .limit(limit)
             .offset(offset);
-        return await query;
     }
-    async searchAboutToStartPurchaseOrders(creatorName = undefined, limit, offset) {
+    async searchAboutToStartPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept) {
         await this.updateExpiredPurchaseOrders();
-        const query = this.db.select({
+        return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
@@ -162,24 +158,18 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
-        if (creatorName) {
-            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
-        }
-        else {
-            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
-        }
-        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.asc)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter))
             .limit(limit)
             .offset(offset);
-        return await query;
     }
-    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit, offset, getAdjacentPurchaseOrdersDto) {
+    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getAdjacentPurchaseOrdersDto) {
         await this.updateExpiredPurchaseOrders();
-        const query = this.db.select({
+        return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
@@ -193,29 +183,23 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
             manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
-        if (creatorName) {
-            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
-        }
-        else {
-            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
-        }
-        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-            ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
-            ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
-          )`)
+          ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+          ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+        )`)
             .limit(limit)
             .offset(offset);
-        return await query;
     }
-    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit, offset, getAdjacentPurchaseOrdersDto) {
+    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getAdjacentPurchaseOrdersDto) {
         await this.updateExpiredPurchaseOrders();
         const query = this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
@@ -231,31 +215,26 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
             manhattanDistance: (0, drizzle_orm_1.sql) `ST_Distance(
         ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
-        if (creatorName) {
-            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
-        }
-        else {
-            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
-        }
-        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
-            ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
-            ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
-          )`)
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+          ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+        )`)
             .limit(limit)
             .offset(offset);
         return await query;
     }
-    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit, offset, getSimilarRoutePurchaseOrdersDto) {
+    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getSimilarRoutePurchaseOrdersDto) {
         await this.updateExpiredPurchaseOrders();
-        const query = this.db.select({
+        return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             creatorName: passenger_schema_1.PassengerTable.userName,
             avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
@@ -269,6 +248,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
             endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
             RDV: (0, drizzle_orm_1.sql) `
           ST_Distance(
@@ -289,14 +269,8 @@ let PurchaseOrderService = class PurchaseOrderService {
           )
       `,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
-        if (creatorName) {
-            query.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%")));
-        }
-        else {
-            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"));
-        }
-        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
@@ -317,7 +291,6 @@ let PurchaseOrderService = class PurchaseOrderService {
         `)
             .limit(limit)
             .offset(offset);
-        return await query;
     }
     async updatePurchaseOrderById(id, creatorId, updatePurchaseOrderDto) {
         const newStartCord = (updatePurchaseOrderDto.startCordLongitude !== undefined
@@ -362,7 +335,6 @@ let PurchaseOrderService = class PurchaseOrderService {
             endCord: newEndCord,
             startAddress: updatePurchaseOrderDto.startAddress,
             endAddress: updatePurchaseOrderDto.endAddress,
-            updatedAt: new Date(),
             ...(updatePurchaseOrderDto.startAfter
                 ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
                 : {}),
@@ -370,10 +342,65 @@ let PurchaseOrderService = class PurchaseOrderService {
                 ? { endedAt: new Date(updatePurchaseOrderDto.endedAt) }
                 : {}),
             isUrgent: updatePurchaseOrderDto.isUrgent,
+            autoAccept: updatePurchaseOrderDto.autoAccept,
             status: updatePurchaseOrderDto.status,
+            updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        });
+    }
+    async startPurchaseOrderWithoutInvite(id, userId, acceptAutoAcceptPurchaseOrderDto) {
+        return await this.db.transaction(async (tx) => {
+            await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                status: "REJECTED",
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")));
+            const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+                status: "RESERVED",
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true))).returning();
+            if (!responseOfDeletingPurchaseOrder || responseOfDeletingPurchaseOrder.length === 0) {
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            }
+            const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
+                ridderId: userId,
+                passengerId: responseOfDeletingPurchaseOrder[0].creatorId,
+                prevOrderId: "PurchaseOrder" + " " + responseOfDeletingPurchaseOrder[0].id,
+                finalPrice: responseOfDeletingPurchaseOrder[0].initPrice,
+                passengerDescription: responseOfDeletingPurchaseOrder[0].description,
+                ridderDescription: acceptAutoAcceptPurchaseOrderDto.description,
+                finalStartCord: responseOfDeletingPurchaseOrder[0].startCord,
+                finalEndCord: responseOfDeletingPurchaseOrder[0].endCord,
+                finalStartAddress: responseOfDeletingPurchaseOrder[0].startAddress,
+                finalEndAddress: responseOfDeletingPurchaseOrder[0].endAddress,
+                startAfter: responseOfDeletingPurchaseOrder[0].startAfter,
+                endedAt: responseOfDeletingPurchaseOrder[0].endedAt,
+            }).returning({
+                id: order_schema_1.OrderTable.id,
+                finalPrice: order_schema_1.OrderTable.finalPrice,
+                finalStartCord: order_schema_1.OrderTable.finalStartCord,
+                finalEndCord: order_schema_1.OrderTable.finalEndCord,
+                finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
+                finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
+                startAfter: order_schema_1.OrderTable.startAfter,
+                endedAt: order_schema_1.OrderTable.endedAt,
+                status: order_schema_1.OrderTable.passengerStatus,
+            });
+            if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
+                throw exceptions_1.ClientCreateOrderException;
+            }
+            return [{
+                    orderId: responseOfCreatingOrder[0].id,
+                    price: responseOfCreatingOrder[0].finalPrice,
+                    finalStartCord: responseOfCreatingOrder[0].finalStartCord,
+                    finalEndCord: responseOfCreatingOrder[0].finalEndCord,
+                    finalStartAddress: responseOfCreatingOrder[0].finalStartAddress,
+                    finalEndAddress: responseOfCreatingOrder[0].finalEndAddress,
+                    startAfter: responseOfCreatingOrder[0].startAfter,
+                    endedAt: responseOfCreatingOrder[0].endedAt,
+                    orderStatus: responseOfCreatingOrder[0].status,
+                }];
         });
     }
     async deletePurchaseOrderById(id, creatorId) {

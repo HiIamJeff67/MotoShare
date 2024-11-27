@@ -6,9 +6,10 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
-import { and, eq, gt } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientPassengerNotFoundException } from '../exceptions';
 import { EmailService } from '../email/email.service';
+import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
 
 @Injectable()
 export class PassengerAuthService {
@@ -96,6 +97,8 @@ export class PassengerAuthService {
 
 			return await tx.update(PassengerAuthTable).set({
 				isEmailAuthenticated: true, 
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
 			}).where(eq(PassengerAuthTable.userId, id))
 			  .returning({
 				isEmailAuthenticated: PassengerAuthTable.isEmailAuthenticated, 
@@ -128,6 +131,12 @@ export class PassengerAuthService {
 				throw ClientAuthCodeExpiredException;
 			}
 
+			// make sure the authCode is expired after being used
+			await tx.update(PassengerAuthTable).set({
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
+			}).where(eq(PassengerAuthTable.userId, id));
+
 			// reset logic
 			const responseOfSelectingPassenger = await tx.select({
 				id: PassengerTable.id,
@@ -145,6 +154,7 @@ export class PassengerAuthService {
 			const hash = await bcrypt.hash(resetPassengerPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
 			return await tx.update(PassengerTable).set({
 				password: hash, 
+				accessToken: TEMP_ACCESS_TOKEN, 
 			}).where(eq(PassengerTable.id, id))
 				.returning({
 				userName: PassengerTable.userName, 
@@ -174,6 +184,12 @@ export class PassengerAuthService {
 			if (responseOfSelectingPassengerAuth[0].authCodeExpiredAt <= new Date()) {
 				throw ClientAuthCodeExpiredException;
 			}
+
+			// make sure the authCode is expired after being used
+			await tx.update(PassengerAuthTable).set({
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
+			}).where(eq(PassengerAuthTable.userId, id));
 
 			// reset logic
 			const responseOfSelectingPassenger = await tx.select({
@@ -206,6 +222,7 @@ export class PassengerAuthService {
 					return await tx.update(PassengerTable).set({
 						...(flag ? {email: updatePassengerEmailPasswordDto.email, } : {}),
 						password: hash, 
+						accessToken: TEMP_ACCESS_TOKEN, 
 					}).where(eq(PassengerTable.id, id))
 					.returning({
 						userName: PassengerTable.userName, 

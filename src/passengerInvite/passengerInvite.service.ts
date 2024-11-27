@@ -725,7 +725,7 @@ export class PassengerInviteService {
     // Note that the inviter here is the passenger, and the receiver here is the ridder
 
     // vaildate if the ridder by given receiverId is the creator of that SupplyOrder
-    const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
+    const passengerInvite = await this.db.query.PassengerInviteTable.findFirst({
       where: and(
         eq(PassengerInviteTable.id, id),
         eq(PassengerInviteTable.status, "CHECKING"),
@@ -739,8 +739,8 @@ export class PassengerInviteService {
         }
       }
     });
-    if (!supplyOrder || !supplyOrder.order) throw ClientInviteNotFoundException;
-    if (receiverId !== supplyOrder?.order?.creatorId) throw ClientUserHasNoAccessException;
+    if (!passengerInvite || !passengerInvite.order) throw ClientInviteNotFoundException;
+    if (receiverId !== passengerInvite?.order?.creatorId) throw ClientUserHasNoAccessException;
 
     if (decidePassengerInviteDto.status === "ACCEPTED") {
       return await this.db.transaction(async (tx) => {
@@ -769,15 +769,18 @@ export class PassengerInviteService {
           status: "REJECTED",
           updatedAt: new Date(),
         }).where(and(
-          eq(PassengerInviteTable.orderId, supplyOrder.order.id),
+          eq(PassengerInviteTable.orderId, passengerInvite.order.id),
           ne(PassengerInviteTable.id, id),
+          // eq(PassengerInviteTable.status, "CHECKING"),  we have make sure this while we getthe passengerInvite above
         ));
 
         const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({ // will delete this supplyOrder later
           status: "RESERVED",
           updatedAt: new Date(),
-        }).where(eq(SupplyOrderTable.id, supplyOrder.order.id))
-          .returning({
+        }).where(and(
+          eq(SupplyOrderTable.id, passengerInvite.order.id), 
+          eq(SupplyOrderTable.status, "POSTED"), 
+        )).returning({
             receiverId: SupplyOrderTable.creatorId,
             tolerableRDV: SupplyOrderTable.tolerableRDV,
             receiverDescription: SupplyOrderTable.description,
@@ -791,7 +794,7 @@ export class PassengerInviteService {
         const responseOfCreatingOrder = await tx.insert(OrderTable).values({
           ridderId: responseOfDeletingSupplyOrder[0].receiverId,
           passengerId: responseOfDecidingPassengerInvite[0].inviterId,
-          prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
+          prevOrderId: "SupplyOrder" + " " + passengerInvite.order.id,
           finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
           passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
           ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription, 
@@ -824,7 +827,7 @@ export class PassengerInviteService {
           startAfter: responseOfCreatingOrder[0].startAfter,
           endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status,
-        }]
+        }];
       });
     } else if (decidePassengerInviteDto.status === "REJECTED") {
       return await this.db.update(PassengerInviteTable).set({

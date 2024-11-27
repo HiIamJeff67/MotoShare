@@ -1,4 +1,5 @@
 import { 
+    IsBooleanString,
     IsDateString, 
     IsLatitude, 
     IsLongitude, 
@@ -84,6 +85,10 @@ export class CreateSupplyOrderDto {
     @MaxNumberString(MAX_TOLERABLE_RDV)
     @IsNumberString()
     tolerableRDV?: number
+
+    @IsOptional()
+    @IsBooleanString()
+    autoAccept?: boolean
 
     // @IsOptional()
     // @IsString()

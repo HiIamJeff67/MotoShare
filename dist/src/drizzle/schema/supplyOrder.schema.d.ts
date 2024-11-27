@@ -184,6 +184,22 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        autoAccept: import("drizzle-orm/pg-core").PgColumn<{
+            name: "autoAccept";
+            tableName: "supplyOrder";
+            dataType: "boolean";
+            columnType: "PgBoolean";
+            data: boolean;
+            driverParam: boolean;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         status: import("drizzle-orm/pg-core").PgColumn<{
             name: "status";
             tableName: "supplyOrder";

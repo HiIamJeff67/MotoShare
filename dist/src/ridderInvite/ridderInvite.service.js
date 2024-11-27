@@ -572,7 +572,7 @@ let RidderInviteService = class RidderInviteService {
         });
     }
     async decideRidderInviteById(id, receiverId, decideRidderInviteDto) {
-        const purchaseOrder = await this.db.query.RidderInviteTable.findFirst({
+        const ridderInvite = await this.db.query.RidderInviteTable.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")),
             with: {
                 order: {
@@ -583,9 +583,9 @@ let RidderInviteService = class RidderInviteService {
                 }
             }
         });
-        if (!purchaseOrder || !purchaseOrder.order)
+        if (!ridderInvite || !ridderInvite.order)
             throw exceptions_1.ClientInviteNotFoundException;
-        if (receiverId !== purchaseOrder?.order?.creatorId)
+        if (receiverId !== ridderInvite?.order?.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
         if (decideRidderInviteDto.status === "ACCEPTED") {
             return await this.db.transaction(async (tx) => {
@@ -612,12 +612,11 @@ let RidderInviteService = class RidderInviteService {
                 await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
                     status: "REJECTED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, purchaseOrder.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id)));
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, ridderInvite.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id)));
                 const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
                     status: "RESERVED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, purchaseOrder.order.id))
-                    .returning({
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite.order.id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"))).returning({
                     receiverId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
                     isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
                     receiverDescription: purchaseOrder_schema_1.PurchaseOrderTable.description,
@@ -630,7 +629,7 @@ let RidderInviteService = class RidderInviteService {
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
                     ridderId: responseOfDecidingRidderInvite[0].inviterId,
                     passengerId: responseOfDeletingPurchaseOrder[0].receiverId,
-                    prevOrderId: "PurchaseOrder" + " " + purchaseOrder.order.id,
+                    prevOrderId: "PurchaseOrder" + " " + ridderInvite.order.id,
                     finalPrice: responseOfDecidingRidderInvite[0].suggestPrice,
                     passengerDescription: responseOfDeletingPurchaseOrder[0].receiverDescription,
                     ridderDescription: responseOfDecidingRidderInvite[0].inviterDescription,

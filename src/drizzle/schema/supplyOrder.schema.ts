@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, uuid, geometry, doublePrecision, index, uniqueIndex, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { 
@@ -24,6 +24,7 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     startAfter: timestamp("startAfter").notNull(),
     endedAt: timestamp("endedAt").notNull(),
     tolerableRDV: doublePrecision("tolerableRDV").notNull().default(5),    // unit: kilometers(km)
+    autoAccept: boolean("autoAccept").notNull().default(false),
     status: postedStatusEnum().notNull().default("POSTED"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),

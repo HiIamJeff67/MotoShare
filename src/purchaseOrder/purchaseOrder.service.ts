@@ -13,7 +13,10 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
-import { ClientEndBeforeStartException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
+import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
+import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
+import { OrderTable } from '../drizzle/schema/order.schema';
+import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -57,6 +60,7 @@ export class PurchaseOrderService {
       startAfter: new Date(createPurchaseOrderDto.startAfter),
       endedAt: new Date(createPurchaseOrderDto.endedAt),
       isUrgent: createPurchaseOrderDto.isUrgent,
+      autoAccept: createPurchaseOrderDto.autoAccept, 
     }).returning({
       id: PurchaseOrderTable.id,
       status: PurchaseOrderTable.status,
@@ -66,49 +70,34 @@ export class PurchaseOrderService {
 
 
   /* ================================= Get operations ================================= */
-  async getPurchaseOrdersByCreatorId(
+  async searchPurchaseOrdersByCreatorId(
     creatorId: string, 
     limit: number, 
     offset: number,
+    isAutoAccept: boolean, 
   ) {
-    return await this.db.query.PurchaseOrderTable.findMany({
-      where: and(
-        ne(PurchaseOrderTable.status, "RESERVED"),
-        eq(PurchaseOrderTable.creatorId, creatorId),
-      ),
-      columns: {
-        id: true,
-        initPrice: true,
-        startCord: true,
-        endCord: true,
-        startAddress: true,
-        endAddress: true,
-        createdAt: true,
-        endedAt: true,
-        updatedAt: true,
-        startAfter: true,
-        isUrgent: true,
-        status: true,
-      },
-      orderBy: desc(PurchaseOrderTable.updatedAt),
-      limit: limit,
-      offset: offset,
-    });
-    // return await this.db.select({
-    //   id: PurchaseOrderTable.id,
-    //   initPrice: PurchaseOrderTable.initPrice,
-    //   startCord: PurchaseOrderTable.startCord,
-    //   endCord: PurchaseOrderTable.endCord,
-    //   createdAt: PurchaseOrderTable.createdAt,
-    //   updatedAt: PurchaseOrderTable.updatedAt,
-    //   startAfter: PurchaseOrderTable.startAfter,
-    //   isUrgent: PurchaseOrderTable.isUrgent,
-    //   status: PurchaseOrderTable.status,
-    // }).from(PurchaseOrderTable)
-    //   .where(eq(PurchaseOrderTable.creatorId, creatorId))
-    //   .orderBy(desc(PurchaseOrderTable.updatedAt))
-    //   .limit(limit)
-    //   .offset(offset);
+    return await this.db.select({
+      id: PurchaseOrderTable.id,
+      initPrice: PurchaseOrderTable.initPrice,
+      startCord: PurchaseOrderTable.startCord,
+      endCord: PurchaseOrderTable.endCord,
+      startAddress: PurchaseOrderTable.startAddress,
+      endAddress: PurchaseOrderTable.endAddress,
+      startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      createdAt: PurchaseOrderTable.createdAt,
+      updatedAt: PurchaseOrderTable.updatedAt,
+      isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
+      status: PurchaseOrderTable.status,
+    }).from(PurchaseOrderTable)
+      .where(and(
+        eq(PurchaseOrderTable.creatorId, creatorId), 
+        ne(PurchaseOrderTable.status, "RESERVED"), 
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+      )).orderBy(desc(PurchaseOrderTable.updatedAt))
+        .limit(limit)
+        .offset(offset);
   }
 
   // for specifying the details of the other purchaseOrders
@@ -131,6 +120,7 @@ export class PurchaseOrderService {
         updatedAt: true,
         startAfter: true,
         isUrgent: true,
+        autoAccept: true,
         status: true,
       },
       with: {
@@ -173,10 +163,11 @@ export class PurchaseOrderService {
     creatorName: string | undefined = undefined,
     limit: number, 
     offset: number,
+    isAutoAccept: boolean, 
   ) {
     await this.updateExpiredPurchaseOrders();
 
-    const query = this.db.select({
+    return await this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
@@ -190,35 +181,29 @@ export class PurchaseOrderService {
       startAfter: PurchaseOrderTable.startAfter,
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
       status: PurchaseOrderTable.status,
     }).from(PurchaseOrderTable)
-      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
-    
-    if (creatorName) {
-      query.where(and(
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
-        like(PassengerTable.userName, creatorName + "%"),
-      ));
-    } else {
-      query.where(eq(PurchaseOrderTable.status, "POSTED"));
-    }
-      
-    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-         .orderBy(desc(PurchaseOrderTable.updatedAt))
-         .limit(limit)
-         .offset(offset);
-    
-    return await query; // await should be place here, since we done the query right here
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined),
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(desc(PurchaseOrderTable.updatedAt))
+        .limit(limit)
+        .offset(offset);
   }
 
   async searchAboutToStartPurchaseOrders(
     creatorName: string | undefined = undefined,
     limit: number,
     offset: number,
+    isAutoAccept: boolean, 
   ) {
     await this.updateExpiredPurchaseOrders();
 
-    const query = this.db.select({
+    return await this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
@@ -232,36 +217,30 @@ export class PurchaseOrderService {
       startAfter: PurchaseOrderTable.startAfter,
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
       status: PurchaseOrderTable.status,
     }).from(PurchaseOrderTable)
-      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
-    
-    if (creatorName) {
-      query.where(and(
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
-        like(PassengerTable.userName, creatorName + "%"),
-      ));
-    } else {
-      query.where(eq(PurchaseOrderTable.status, "POSTED"));
-    }
-      
-    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-         .orderBy(asc(PurchaseOrderTable.startAfter))
-         .limit(limit)
-         .offset(offset);
-    
-    return await query;
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(asc(PurchaseOrderTable.startAfter))
+        .limit(limit)
+        .offset(offset);
   }
 
   async searchCurAdjacentPurchaseOrders(
     creatorName: string | undefined = undefined,
     limit: number,
     offset: number,
+    isAutoAccept: boolean, 
     getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
   ) {
     await this.updateExpiredPurchaseOrders();
 
-    const query = this.db.select({
+    return await this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
@@ -275,39 +254,33 @@ export class PurchaseOrderService {
       startAfter: PurchaseOrderTable.startAfter,
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
       status: PurchaseOrderTable.status,
       manhattanDistance: sql`ST_Distance(
         ${PurchaseOrderTable.startCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
     }).from(PurchaseOrderTable)
-      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
-    
-    if (creatorName) {
-      query.where(and(
-        eq(PurchaseOrderTable.status, "POSTED"),
-        like(PassengerTable.userName, creatorName + "%")
-      ));
-    } else {
-      query.where(eq(PurchaseOrderTable.status, "POSTED"));
-    }
-
-    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-          .orderBy(sql`ST_Distance(
-            ${PurchaseOrderTable.startCord},
-            ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
-          )`)
-          .limit(limit)
-          .offset(offset);
-
-    return await query;
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
+        eq(PurchaseOrderTable.status, "POSTED"), 
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(sql`ST_Distance(
+          ${PurchaseOrderTable.startCord},
+          ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+        )`)
+        .limit(limit)
+        .offset(offset);
   }
 
   async searchDestAdjacentPurchaseOrders(
     creatorName: string | undefined = undefined,
-    limit: number,
-    offset: number,
-    getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto
+    limit: number, 
+    offset: number, 
+    isAutoAccept: boolean, 
+    getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, 
   ) {
     await this.updateExpiredPurchaseOrders();
 
@@ -325,43 +298,39 @@ export class PurchaseOrderService {
       startAfter: PurchaseOrderTable.startAfter,
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept, 
       status: PurchaseOrderTable.status,
       manhattanDistance: sql`ST_Distance(
         ${PurchaseOrderTable.endCord},
         ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
       )`
     }).from(PurchaseOrderTable)
-      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
-
-    if (creatorName) {
-      query.where(and(
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
-        like(PassengerTable.userName, creatorName + "%"),
-      ));
-    } else {
-      query.where(eq(PurchaseOrderTable.status, "POSTED"));
-    }
-
-    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-          .orderBy(sql`ST_Distance(
-            ${PurchaseOrderTable.endCord},
-            ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
-          )`)
-          .limit(limit)
-          .offset(offset);
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(sql`ST_Distance(
+          ${PurchaseOrderTable.endCord},
+          ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
+        )`)
+        .limit(limit)
+        .offset(offset);
     
     return await query;
   }
 
   async searchSimilarRoutePurchaseOrders(
     creatorName: string | undefined = undefined,
-    limit: number,
-    offset: number,
-    getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto
+    limit: number, 
+    offset: number, 
+    isAutoAccept: boolean, 
+    getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, 
   ) {
     await this.updateExpiredPurchaseOrders();
 
-    const query = this.db.select({
+    return await this.db.select({
       id: PurchaseOrderTable.id,
       creatorName: PassengerTable.userName,
       avatorUrl: PassengerInfoTable.avatorUrl,
@@ -375,6 +344,7 @@ export class PurchaseOrderService {
       startAfter: PurchaseOrderTable.startAfter,
       endedAt: PurchaseOrderTable.endedAt,
       isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
       status: PurchaseOrderTable.status,
       RDV: sql`
           ST_Distance(
@@ -395,19 +365,13 @@ export class PurchaseOrderService {
           )
       `,
     }).from(PurchaseOrderTable)
-      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
-
-    if (creatorName) {
-      query.where(and(
-        eq(PurchaseOrderTable.status, "POSTED"),
-        like(PassengerTable.userName, creatorName + "%"),
-      ));
-    } else {
-      query.where(eq(PurchaseOrderTable.status, "POSTED"));
-    }
-
-    query.leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
-         .orderBy(sql`
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
+        eq(PurchaseOrderTable.status, "POSTED"), 
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(sql`
             ST_Distance(
               ${PurchaseOrderTable.startCord},
               ST_SetSRID(ST_MakePoint(${getSimilarRoutePurchaseOrdersDto.startCordLongitude}, ${getSimilarRoutePurchaseOrdersDto.startCordLatitude}), 4326)
@@ -425,10 +389,8 @@ export class PurchaseOrderService {
               ${PurchaseOrderTable.endCord}
             )
         `)
-         .limit(limit)
-         .offset(offset);
-    
-      return await query;
+        .limit(limit)
+        .offset(offset);
   }
   /* ================= Search operations ================= */
 
@@ -495,7 +457,6 @@ export class PurchaseOrderService {
       endCord: newEndCord,
       startAddress: updatePurchaseOrderDto.startAddress,
       endAddress: updatePurchaseOrderDto.endAddress,
-      updatedAt: new Date(),
       ...(updatePurchaseOrderDto.startAfter
         ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
         : {}
@@ -505,7 +466,9 @@ export class PurchaseOrderService {
         : {}
       ),
       isUrgent: updatePurchaseOrderDto.isUrgent,
+      autoAccept: updatePurchaseOrderDto.autoAccept,
       status: updatePurchaseOrderDto.status,
+      updatedAt: new Date(),
     }).where(and(
       ne(PurchaseOrderTable.status, "RESERVED"),
       eq(PurchaseOrderTable.id, id), 
@@ -515,6 +478,78 @@ export class PurchaseOrderService {
         status: PurchaseOrderTable.status,
       });
   }
+
+  /* ================================= Start with AutoAccept PurchaseOrders operations ================================= */
+  async startPurchaseOrderWithoutInvite(
+    id: string, 
+    userId: string, 
+    acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto,
+  ) {
+    return await this.db.transaction(async (tx) => {
+      await tx.update(RidderInviteTable).set({
+        status: "REJECTED",
+        updatedAt: new Date(),
+      }).where(and(
+        eq(RidderInviteTable.orderId, id),
+        eq(RidderInviteTable.status, "CHECKING"), 
+      )); // could probably don't return any responses, since there's no any invites to that purchaseOrder
+
+      const responseOfDeletingPurchaseOrder = await tx.update(PurchaseOrderTable).set({
+        status: "RESERVED",
+        updatedAt: new Date(),
+      }).where(and(
+        eq(PurchaseOrderTable.id, id), 
+        eq(PurchaseOrderTable.status, "POSTED"), 
+        eq(PurchaseOrderTable.autoAccept, true), // require this field
+      )).returning();
+      if (!responseOfDeletingPurchaseOrder || responseOfDeletingPurchaseOrder.length === 0) {
+        throw ClientPurchaseOrderNotFoundException;
+      }
+
+      const responseOfCreatingOrder = await tx.insert(OrderTable).values({
+        ridderId: userId,
+        passengerId: responseOfDeletingPurchaseOrder[0].creatorId,
+        prevOrderId: "PurchaseOrder" + " " + responseOfDeletingPurchaseOrder[0].id, 
+        finalPrice: responseOfDeletingPurchaseOrder[0].initPrice, // the receiver accept the suggest price
+        passengerDescription: responseOfDeletingPurchaseOrder[0].description,
+        ridderDescription: acceptAutoAcceptPurchaseOrderDto.description,
+        finalStartCord: responseOfDeletingPurchaseOrder[0].startCord,
+        finalEndCord: responseOfDeletingPurchaseOrder[0].endCord,
+        finalStartAddress: responseOfDeletingPurchaseOrder[0].startAddress,
+        finalEndAddress: responseOfDeletingPurchaseOrder[0].endAddress,
+        startAfter: responseOfDeletingPurchaseOrder[0].startAfter,  // the receiver accept the suggest start time
+        endedAt: responseOfDeletingPurchaseOrder[0].endedAt,
+        // endAt: , // will be covered the autocomplete function powered by google in the future
+      }).returning({
+        id: OrderTable.id,
+        finalPrice: OrderTable.finalPrice,
+        finalStartCord: OrderTable.finalStartCord, 
+        finalEndCord: OrderTable.finalEndCord, 
+        finalStartAddress: OrderTable.finalStartAddress, 
+        finalEndAddress: OrderTable.finalEndAddress, 
+        startAfter: OrderTable.startAfter,
+        endedAt: OrderTable.endedAt,
+        status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
+      });
+      if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
+        throw ClientCreateOrderException;
+      }
+
+      return [{
+        orderId: responseOfCreatingOrder[0].id,
+        price: responseOfCreatingOrder[0].finalPrice,
+        finalStartCord: responseOfCreatingOrder[0].finalStartCord, 
+        finalEndCord: responseOfCreatingOrder[0].finalEndCord,
+        finalStartAddress: responseOfCreatingOrder[0].finalStartAddress,
+        finalEndAddress: responseOfCreatingOrder[0].finalEndAddress,
+        startAfter: responseOfCreatingOrder[0].startAfter,
+        endedAt: responseOfCreatingOrder[0].endedAt,
+        orderStatus: responseOfCreatingOrder[0].status, // use either passengerStatus or ridderStatus is fine
+      }];
+    });
+  }
+  /* ================================= Start with AutoAccept PurchaseOrders operations ================================= */
+
   /* ================================= Update operations ================================= */
 
 

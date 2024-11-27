@@ -22,6 +22,7 @@ const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const exceptions_1 = require("../exceptions");
 const email_service_1 = require("../email/email.service");
+const auth_constant_1 = require("../constants/auth.constant");
 let PassengerAuthService = class PassengerAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -89,6 +90,8 @@ let PassengerAuthService = class PassengerAuthService {
             }
             return await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
                 isEmailAuthenticated: true,
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id))
                 .returning({
                 isEmailAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isEmailAuthenticated,
@@ -112,6 +115,10 @@ let PassengerAuthService = class PassengerAuthService {
             if (responseOfSelectingPassengerAuth[0].authCodeExpiredAt <= new Date()) {
                 throw exceptions_1.ClientAuthCodeExpiredException;
             }
+            await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id));
             const responseOfSelectingPassenger = await tx.select({
                 id: passenger_schema_1.PassengerTable.id,
                 hash: passenger_schema_1.PassengerTable.password,
@@ -127,6 +134,7 @@ let PassengerAuthService = class PassengerAuthService {
             const hash = await bcrypt.hash(resetPassengerPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
             return await tx.update(passenger_schema_1.PassengerTable).set({
                 password: hash,
+                accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
             }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
                 .returning({
                 userName: passenger_schema_1.PassengerTable.userName,
@@ -151,6 +159,10 @@ let PassengerAuthService = class PassengerAuthService {
             if (responseOfSelectingPassengerAuth[0].authCodeExpiredAt <= new Date()) {
                 throw exceptions_1.ClientAuthCodeExpiredException;
             }
+            await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id));
             const responseOfSelectingPassenger = await tx.select({
                 id: passenger_schema_1.PassengerTable.id,
                 email: passenger_schema_1.PassengerTable.email,
@@ -181,6 +193,7 @@ let PassengerAuthService = class PassengerAuthService {
                 return await tx.update(passenger_schema_1.PassengerTable).set({
                     ...(flag ? { email: updatePassengerEmailPasswordDto.email, } : {}),
                     password: hash,
+                    accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
                 }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
                     .returning({
                     userName: passenger_schema_1.PassengerTable.userName,

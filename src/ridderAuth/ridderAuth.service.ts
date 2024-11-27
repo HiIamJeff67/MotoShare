@@ -9,6 +9,7 @@ import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSen
 import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 import { eq } from 'drizzle-orm';
 import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
+import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
 
 @Injectable()
 export class RidderAuthService {
@@ -92,7 +93,9 @@ export class RidderAuthService {
 			}
 
 			return await tx.update(RidderAuthTable).set({
-				isEmailAuthenticated: true,
+				isEmailAuthenticated: true, 
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
 			}).where(eq(RidderAuthTable.userId, id))
 			  .returning({
 				isEmailAuthenticated: RidderAuthTable.isEmailAuthenticated, 
@@ -125,6 +128,12 @@ export class RidderAuthService {
 				throw ClientAuthCodeExpiredException;
 			}
 
+			// make sure the authCode is expired after being used
+			await tx.update(RidderAuthTable).set({
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
+			}).where(eq(RidderAuthTable.userId, id));
+
 			// reset logic
 			const responseOfSelectingRidder = await tx.select({
 				id: RidderTable.id,
@@ -142,6 +151,7 @@ export class RidderAuthService {
 			const hash = await bcrypt.hash(resetRidderPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
 			return await tx.update(RidderTable).set({
 				password: hash, 
+				accessToken: TEMP_ACCESS_TOKEN, 
 			}).where(eq(RidderTable.id, id))
 				.returning({
 				userName: RidderTable.userName, 
@@ -171,6 +181,12 @@ export class RidderAuthService {
 			if (responseOfSelectingRidderAuth[0].authCodeExpiredAt <= new Date()) {
 				throw ClientAuthCodeExpiredException;
 			}
+
+			// make sure the authCode is expired after being used
+			await tx.update(RidderAuthTable).set({
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
+			}).where(eq(RidderAuthTable.userId, id));
 
 			// reset logic
 			const responseOfSelectingRidder = await tx.select({
@@ -203,6 +219,7 @@ export class RidderAuthService {
 					return await tx.update(RidderTable).set({
 						...(flag ? {email: updateRidderEmailPasswordDto.email, } : {}),
 						password: hash, 
+						accessToken: TEMP_ACCESS_TOKEN, 
 					}).where(eq(RidderTable.id, id))
 					.returning({
 						userName: RidderTable.userName, 

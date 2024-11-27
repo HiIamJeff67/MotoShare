@@ -7,6 +7,7 @@ import { DrizzleDB } from "../../drizzle/types/drizzle";
 import { RidderTable } from "../../drizzle/schema/ridder.schema";
 import { eq } from "drizzle-orm";
 import { ClientInvalidTokenException, ClientTokenExpiredException } from "../../exceptions";
+import { Request } from "express";
 
 @Injectable()
 export class JwtRidderStrategy extends PassportStrategy(
@@ -46,14 +47,14 @@ export class JwtRidderStrategy extends PassportStrategy(
             throw ClientInvalidTokenException;
         }
         
-        const userDate = user[0];
+        const userData = user[0];
         const currentToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-        if (currentToken !== userDate.accessToken) {
+        if (currentToken !== userData.accessToken) {
             throw ClientTokenExpiredException;
         }
 
-        delete userDate.accessToken;
+        delete userData.accessToken;
 
-        return userDate;
+        return userData;
     }
 }

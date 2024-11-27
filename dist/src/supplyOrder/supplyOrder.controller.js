@@ -24,6 +24,8 @@ const create_supplyOrder_dto_1 = require("./dto/create-supplyOrder.dto");
 const update_supplyOrder_dto_1 = require("./dto/update-supplyOrder.dto");
 const get_supplyOrder_dto_1 = require("./dto/get-supplyOrder.dto");
 const constants_1 = require("../constants");
+const stringParser_1 = require("../utils/stringParser");
+const accept_supplyOrder_dto_1 = require("./dto/accept-supplyOrder.dto");
 let SupplyOrderController = class SupplyOrderController {
     constructor(supplyOrderService) {
         this.supplyOrderService = supplyOrderService;
@@ -48,9 +50,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async getMySupplyOrders(ridder, limit = "10", offset = "0", response) {
+    async searchMySupplyOrders(ridder, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            const res = await this.supplyOrderService.getSupplyOrdersByCreatorId(ridder.id, +limit, +offset);
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            const res = await this.supplyOrderService.searchSupplyOrdersByCreatorId(ridder.id, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -86,12 +91,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
+    async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, +limit, +offset);
+            const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -106,12 +111,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchAboutToStartSupplyOrders(creatorName = undefined, limit = "10", offset = "0", response) {
+    async searchAboutToStartSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(creatorName, +limit, +offset);
+            const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -126,12 +131,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+    async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentSupplyOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -146,12 +151,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentSupplyOrdersDto, response) {
+    async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentSupplyOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, +limit, +offset, getAdjacentSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -166,12 +171,12 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRouteSupplyOrdersDto, response) {
+    async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarRouteSupplyOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, +limit, +offset, getSimilarRouteSupplyOrdersDto);
+            const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarRouteSupplyOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -203,6 +208,31 @@ let SupplyOrderController = class SupplyOrderController {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async startSupplyOrderWithoutInvite(passenger, id, acceptAutoAcceptSupplyOrder, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.supplyOrderService.startSupplyOrderWithoutInvite(id, passenger.id, acceptAutoAcceptSupplyOrder);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreateOrderException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -249,15 +279,16 @@ __decorate([
 ], SupplyOrderController.prototype, "createSupplyOrder", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('getMySupplyOrders'),
+    (0, common_1.Get)('searchMySupplyOrders'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, String, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], SupplyOrderController.prototype, "getMySupplyOrders", null);
+], SupplyOrderController.prototype, "searchMySupplyOrders", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('getSupplyOrderById'),
@@ -273,9 +304,10 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchPaginationSupplyOrders", null);
 __decorate([
@@ -283,9 +315,10 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchAboutToStartSupplyOrders", null);
 __decorate([
@@ -293,10 +326,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchCurAdjacentSupplyOrders", null);
 __decorate([
@@ -304,10 +338,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_supplyOrder_dto_1.GetAdjacentSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchDestAdjacentSupplyOrders", null);
 __decorate([
@@ -315,10 +350,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_supplyOrder_dto_1.GetSimilarRouteSupplyOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchSimilarRouteSupplyOrders", null);
 __decorate([
@@ -332,6 +368,17 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.RidderType, String, update_supplyOrder_dto_1.UpdateSupplyOrderDto, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "updateMySupplyOrderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('startSupplyOrderWithoutInvite'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, accept_supplyOrder_dto_1.AcceptAutoAcceptSupplyOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], SupplyOrderController.prototype, "startSupplyOrderWithoutInvite", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Delete)('deleteMySupplyOrderById'),

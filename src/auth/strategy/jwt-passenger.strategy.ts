@@ -8,6 +8,7 @@ import { DrizzleDB } from "../../../src/drizzle/types/drizzle";
 
 import { PassengerTable } from "../../../src/drizzle/schema/passenger.schema";
 import { ClientInvalidTokenException, ClientTokenExpiredException } from "../../exceptions";
+import { Request } from "express";
 
 @Injectable()
 export class JwtPassengerStrategy extends PassportStrategy(

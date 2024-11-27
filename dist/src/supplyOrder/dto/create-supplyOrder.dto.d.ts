@@ -10,4 +10,5 @@ export declare class CreateSupplyOrderDto {
     startAfter: string;
     endedAt: string;
     tolerableRDV?: number;
+    autoAccept?: boolean;
 }

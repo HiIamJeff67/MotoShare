@@ -24,6 +24,8 @@ const create_purchaseOrder_dto_1 = require("./dto/create-purchaseOrder.dto");
 const update_purchaseOrder_dto_1 = require("./dto/update-purchaseOrder.dto");
 const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
 const constants_1 = require("../constants");
+const stringParser_1 = require("../utils/stringParser");
+const accept_purchaseOrder_dto_1 = require("./dto/accept-purchaseOrder-dto");
 let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
@@ -39,7 +41,6 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
         catch (error) {
-            console.log(error);
             if (!(error instanceof common_1.ForbiddenException
                 || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;
@@ -49,12 +50,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async getMyPurchaseOrders(passenger, limit = "10", offset = "0", response) {
+    async searchMyPurchaseOrders(passenger, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
+            const res = await this.purchaseOrderService.searchPurchaseOrdersByCreatorId(passenger.id, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -90,12 +91,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", response) {
+    async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
+            const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -110,12 +111,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchAboutToStartPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", response) {
+    async searchAboutToStartPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, +limit, +offset);
+            const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -130,12 +131,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
+    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -150,12 +151,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getAdjacentPurchaseOrdersDto, response) {
+    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, +limit, +offset, getAdjacentPurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -170,12 +171,12 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", getSimilarRoutePurchaseOrdersDto, response) {
+    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarRoutePurchaseOrdersDto, response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
                 throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, +limit, +offset, getSimilarRoutePurchaseOrdersDto);
+            const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarRoutePurchaseOrdersDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPurchaseOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -207,6 +208,32 @@ let PurchaseOrderController = class PurchaseOrderController {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async startPurchaseOrderWithoutInvite(ridder, id, acceptAutoAcceptPurchaseOrderDto, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(id, ridder.id, acceptAutoAcceptPurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreateOrderException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -296,15 +323,16 @@ __decorate([
 ], PurchaseOrderController.prototype, "createPurchaseOrder", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('getMyPurchaseOrders'),
+    (0, common_1.Get)('searchMyPurchaseOrders'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, String, Object]),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], PurchaseOrderController.prototype, "getMyPurchaseOrders", null);
+], PurchaseOrderController.prototype, "searchMyPurchaseOrders", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('getPurchaseOrderById'),
@@ -320,9 +348,10 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchPaginationPurchaseOrders", null);
 __decorate([
@@ -330,9 +359,10 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchAboutToStartPurchaseOrders", null);
 __decorate([
@@ -340,10 +370,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchCurAdjacentPurchaseOrders", null);
 __decorate([
@@ -351,10 +382,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchDestAdjacentPurchaseOrders", null);
 __decorate([
@@ -362,10 +394,11 @@ __decorate([
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Body)()),
-    __param(4, (0, common_1.Res)()),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchSimilarRoutePurchaseOrders", null);
 __decorate([
@@ -379,6 +412,17 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, update_purchaseOrder_dto_1.UpdatePurchaseOrderDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "updateMyPurchaseOrderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('startPurchaseOrderWithoutInvite'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, accept_purchaseOrder_dto_1.AcceptAutoAcceptPurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "startPurchaseOrderWithoutInvite", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Delete)('deleteMyPurchaseOrderById'),

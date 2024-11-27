@@ -571,7 +571,7 @@ let PassengerInviteService = class PassengerInviteService {
         });
     }
     async decidePassengerInviteById(id, receiverId, decidePassengerInviteDto) {
-        const supplyOrder = await this.db.query.PassengerInviteTable.findFirst({
+        const passengerInvite = await this.db.query.PassengerInviteTable.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")),
             with: {
                 order: {
@@ -582,9 +582,9 @@ let PassengerInviteService = class PassengerInviteService {
                 }
             }
         });
-        if (!supplyOrder || !supplyOrder.order)
+        if (!passengerInvite || !passengerInvite.order)
             throw exceptions_1.ClientInviteNotFoundException;
-        if (receiverId !== supplyOrder?.order?.creatorId)
+        if (receiverId !== passengerInvite?.order?.creatorId)
             throw exceptions_1.ClientUserHasNoAccessException;
         if (decidePassengerInviteDto.status === "ACCEPTED") {
             return await this.db.transaction(async (tx) => {
@@ -611,12 +611,11 @@ let PassengerInviteService = class PassengerInviteService {
                 await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
                     status: "REJECTED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id)));
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, passengerInvite.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id)));
                 const responseOfDeletingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
                     status: "RESERVED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, supplyOrder.order.id))
-                    .returning({
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite.order.id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"))).returning({
                     receiverId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
                     tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
                     receiverDescription: supplyOrder_schema_1.SupplyOrderTable.description,
@@ -629,7 +628,7 @@ let PassengerInviteService = class PassengerInviteService {
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
                     ridderId: responseOfDeletingSupplyOrder[0].receiverId,
                     passengerId: responseOfDecidingPassengerInvite[0].inviterId,
-                    prevOrderId: "SupplyOrder" + " " + supplyOrder.order.id,
+                    prevOrderId: "SupplyOrder" + " " + passengerInvite.order.id,
                     finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
                     passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
                     ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription,

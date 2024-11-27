@@ -12,6 +12,7 @@ import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
   ApiSearchingLimitTooLarge,
+  ClientCreateOrderException,
   ClientCreatePurchaseOrderException,
   ClientPurchaseOrderNotFoundException,
   ClientUnknownException, 
@@ -28,6 +29,8 @@ import {
   GetSimilarRoutePurchaseOrdersDto 
 } from './dto/get-purchaseOrder.dto';
 import { MAX_SEARCH_LIMIT } from '../constants';
+import { toBoolean, toNumber } from '../utils/stringParser';
+import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 
 
 @Controller('purchaseOrder')
@@ -52,7 +55,6 @@ export class PurchaseOrderController {
         ...res[0],
       });
     } catch (error) {
-      console.log(error)
       if (!(error instanceof ForbiddenException 
         || error instanceof UnauthorizedException)) {
           error = ClientUnknownException;
@@ -72,19 +74,25 @@ export class PurchaseOrderController {
   //   return this.purchaseOrderService.getPurchaseOrderById(id);
   // }
   @UseGuards(JwtPassengerGuard)
-  @Get('getMyPurchaseOrders') // get the purchaseOrder of the passenger
-  async getMyPurchaseOrders(
+  @Get('searchMyPurchaseOrders') // get the purchaseOrder of the passenger
+  async searchMyPurchaseOrders(
     @Passenger() passenger: PassengerType,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.purchaseOrderService.getPurchaseOrdersByCreatorId(passenger.id, +limit, +offset);
+      const res = await this.purchaseOrderService.searchPurchaseOrdersByCreatorId(
+        passenger.id, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
@@ -138,14 +146,20 @@ export class PurchaseOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, +limit, +offset);
+      const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
@@ -167,14 +181,20 @@ export class PurchaseOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
-      const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, +limit, +offset);
+      const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+      );
 
       if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
@@ -196,18 +216,20 @@ export class PurchaseOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(
         creatorName, 
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getAdjacentPurchaseOrdersDto
       );
 
@@ -231,18 +253,20 @@ export class PurchaseOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(
         creatorName, 
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getAdjacentPurchaseOrdersDto
       );
 
@@ -266,18 +290,20 @@ export class PurchaseOrderController {
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
     @Body() getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto,
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
         throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(
         creatorName, 
-        +limit, 
-        +offset, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
         getSimilarRoutePurchaseOrdersDto
       );
 
@@ -334,6 +360,49 @@ export class PurchaseOrderController {
       });
     }
   }
+
+  /* ================================= Start with AutoAccept PurchaseOrders operations ================================= */
+  @UseGuards(JwtRidderGuard)
+  @Post('startPurchaseOrderWithoutInvite')
+  async startPurchaseOrderWithoutInvite(
+    @Ridder() ridder: RidderType, 
+    @Query('id') id: string, 
+    @Body() acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto, 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(
+        id,
+        ridder.id, 
+        acceptAutoAcceptPurchaseOrderDto, 
+      );
+
+      if (!res || res.length === 0) throw ClientCreateOrderException;
+
+      response.status(HttpStatusCode.Ok).send({
+        createdAt: new Date(), 
+        ...res[0], 
+      });
+    } catch (error) {
+      console.log(error)
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================================= Start with AutoAccept PurchaseOrders operations ================================= */
+
   /* ================================= Update operations ================================= */
 
 

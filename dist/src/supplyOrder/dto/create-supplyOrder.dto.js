@@ -83,4 +83,9 @@ __decorate([
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "tolerableRDV", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBooleanString)(),
+    __metadata("design:type", Boolean)
+], CreateSupplyOrderDto.prototype, "autoAccept", void 0);
 //# sourceMappingURL=create-supplyOrder.dto.js.map

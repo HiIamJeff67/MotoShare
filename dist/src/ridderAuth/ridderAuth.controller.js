@@ -27,7 +27,7 @@ let RidderAuthController = class RidderAuthController {
     }
     async sendAuthCodeForEmail(ridder, response) {
         try {
-            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Vailate Your Email");
+            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Vaildate Your Email");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(axios_1.HttpStatusCode.Ok).send(res[0]);

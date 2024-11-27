@@ -721,7 +721,7 @@ export class RidderInviteService {
     // Note that the inviter here is the ridder, and the receiver here is the passenger
 
     // vaildate if the passenger by given receiverId is the creator of that PurchaseOrder
-    const purchaseOrder = await this.db.query.RidderInviteTable.findFirst({
+    const ridderInvite = await this.db.query.RidderInviteTable.findFirst({
       where: and(
         eq(RidderInviteTable.id, id), 
         eq(RidderInviteTable.status, "CHECKING"),  // can only update the invite when it's on CHECKING status
@@ -735,8 +735,8 @@ export class RidderInviteService {
         }
       }
     });
-    if (!purchaseOrder || !purchaseOrder.order) throw ClientInviteNotFoundException;
-    if (receiverId !== purchaseOrder?.order?.creatorId) throw ClientUserHasNoAccessException;
+    if (!ridderInvite || !ridderInvite.order) throw ClientInviteNotFoundException;
+    if (receiverId !== ridderInvite?.order?.creatorId) throw ClientUserHasNoAccessException;
 
     // if the user accept the order, then we should create an unstarted order in orderTable
     // and also delete the order on PurchaseOrderTable(since the passenger is deciding a ridderInvite here)
@@ -771,16 +771,19 @@ export class RidderInviteService {
           status: "REJECTED",
           updatedAt: new Date(),
         }).where(and(
-          eq(RidderInviteTable.orderId, purchaseOrder.order.id),
+          eq(RidderInviteTable.orderId, ridderInvite.order.id),
           ne(RidderInviteTable.id, id),
+          // eq(RidderInviteTable.status, "CHECKING"),  we have make sure this while we getthe ridderInvite above
         ));
 
         // third, cancel the PurchaseOrder so that other ridder cannot repeatedly order it, and get some information from it
         const responseOfDeletingPurchaseOrder = await tx.update(PurchaseOrderTable).set({
           status: "RESERVED",
           updatedAt: new Date(),
-        }).where(eq(PurchaseOrderTable.id, purchaseOrder.order.id))
-          .returning({
+        }).where(and(
+          eq(PurchaseOrderTable.id, ridderInvite.order.id), 
+          eq(PurchaseOrderTable.status, "POSTED"), 
+        )).returning({
             receiverId: PurchaseOrderTable.creatorId,
             isUrgent: PurchaseOrderTable.isUrgent,
             receiverDescription: PurchaseOrderTable.description,
@@ -795,7 +798,7 @@ export class RidderInviteService {
         const responseOfCreatingOrder = await tx.insert(OrderTable).values({
           ridderId: responseOfDecidingRidderInvite[0].inviterId,
           passengerId: responseOfDeletingPurchaseOrder[0].receiverId,
-          prevOrderId: "PurchaseOrder" + " " + purchaseOrder.order.id, 
+          prevOrderId: "PurchaseOrder" + " " + ridderInvite.order.id, 
           finalPrice: responseOfDecidingRidderInvite[0].suggestPrice, // the receiver accept the suggest price
           passengerDescription: responseOfDeletingPurchaseOrder[0].receiverDescription,
           ridderDescription: responseOfDecidingRidderInvite[0].inviterDescription,
@@ -829,7 +832,7 @@ export class RidderInviteService {
           startAfter: responseOfCreatingOrder[0].startAfter,
           endedAt: responseOfCreatingOrder[0].endedAt,
           orderStatus: responseOfCreatingOrder[0].status, // use either passengerStatus or ridderStatus is fine
-        }]
+        }];
       });
     } else if (decideRidderInviteDto.status === "REJECTED") {
       return await this.db.update(RidderInviteTable).set({

@@ -84,6 +84,10 @@ export class CreatePurchaseOrderDto {
     @IsBooleanString()
     isUrgent?: boolean
 
+    @IsOptional()
+    @IsBooleanString()
+    autoAccept?: boolean
+
     // @IsOptional()
     // @IsString()
     // status?: PostedStatusType
