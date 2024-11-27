@@ -6,6 +6,6 @@ import { PostedStatusType, PostedStatusTypes } from '../../types/status.tpye';
 
 export class UpdateSupplyOrderDto extends PartialType(CreateSupplyOrderDto) {
     @IsOptional()
-    @IsIn(PostedStatusTypes, { message: "The status of SupplyOrder must be either POSTED, EXPIRED, or CANCEL" })
+    @IsIn(PostedStatusTypes, { message: "The status of SupplyOrder must be either POSTED, EXPIRED" })
     status?: PostedStatusType
 }

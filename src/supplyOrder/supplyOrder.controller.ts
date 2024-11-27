@@ -371,7 +371,7 @@ export class SupplyOrderController {
       }
 
       const res = await this.supplyOrderService.startSupplyOrderWithoutInvite(
-        id,
+        id, 
         passenger.id, 
         acceptAutoAcceptSupplyOrder, 
       );

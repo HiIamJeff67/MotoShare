@@ -35,6 +35,7 @@ export declare class PurchaseOrderService {
     getPurchaseOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -48,11 +49,10 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        isUrgent: boolean;
         autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
-        updatedAt: Date;
+        isUrgent: boolean;
         creator: {
             userName: string;
             info: {
@@ -206,8 +206,9 @@ export declare class PurchaseOrderService {
     }[]>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        creatorId: string;
         description: string | null;
+        updatedAt: Date;
+        creatorId: string;
         initPrice: number;
         startCord: {
             x: number;
@@ -221,11 +222,10 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        isUrgent: boolean;
         autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
-        updatedAt: Date;
+        isUrgent: boolean;
     }[]>;
     searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined, limit: number, offset: number): Promise<{
         id: string;

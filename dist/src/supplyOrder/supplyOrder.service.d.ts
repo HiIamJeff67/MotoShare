@@ -35,6 +35,7 @@ export declare class SupplyOrderService {
     getSupplyOrderById(id: string): Promise<{
         id: string;
         description: string | null;
+        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -52,7 +53,6 @@ export declare class SupplyOrderService {
         autoAccept: boolean;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
-        updatedAt: Date;
         creator: {
             userName: string;
             info: {

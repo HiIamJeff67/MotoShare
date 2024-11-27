@@ -471,6 +471,11 @@ export class PurchaseOrderService {
       updatedAt: new Date(),
     }).where(and(
       ne(PurchaseOrderTable.status, "RESERVED"),
+      (updatePurchaseOrderDto.startAfter || updatePurchaseOrderDto.endedAt 
+        ? undefined 
+        : ne(PurchaseOrderTable.status, "EXPIRED")
+      ), // if the user don't update startAfter or endedAt in this time, 
+         // then we add the constrant of excluding the "EXPIRED" purchaseOrder
       eq(PurchaseOrderTable.id, id), 
       eq(PurchaseOrderTable.creatorId, creatorId),
     )).returning({
@@ -555,10 +560,9 @@ export class PurchaseOrderService {
 
   /* ================================= Delete operations ================================= */
   async deletePurchaseOrderById(id: string, creatorId: string) {
-    // do the same check as update, since the passenger can only delete the order created by himself
     return await this.db.delete(PurchaseOrderTable)
       .where(and(
-        ne(PurchaseOrderTable.status, "RESERVED"),
+        ne(PurchaseOrderTable.status, "POSTED"),
         eq(PurchaseOrderTable.id, id), 
         eq(PurchaseOrderTable.creatorId, creatorId)
       )).returning({

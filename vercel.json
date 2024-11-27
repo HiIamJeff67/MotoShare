@@ -17,8 +17,15 @@
                 "GET",
                 "POST",
                 "PUT",
+                "PATCH", 
                 "DELETE"
             ]
+        }
+    ], 
+    "crons": [
+        {
+            "path": "/cron/deleteExpiredPurchaseOrdersOrSupplyOrders", 
+            "schedule": "0 23 * * *"
         }
     ]
 }

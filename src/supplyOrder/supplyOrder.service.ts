@@ -472,6 +472,11 @@ export class SupplyOrderService {
       updatedAt: new Date(),
     }).where(and(
       ne(SupplyOrderTable.status, "RESERVED"),
+      (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt 
+        ? undefined 
+        : ne(SupplyOrderTable.status, "EXPIRED")
+      ), // if the user don't update startAfter or endedAt in this time, 
+         // then we add the constrant of excluding the "EXPIRED" supplyOrder
       eq(SupplyOrderTable.id, id), 
       eq(SupplyOrderTable.creatorId, creatorId),
     )).returning({
