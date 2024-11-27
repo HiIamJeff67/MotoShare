@@ -350,7 +350,9 @@ let SupplyOrderService = class SupplyOrderService {
             autoAccept: updateSupplyOrderDto.autoAccept,
             status: updateSupplyOrderDto.status,
             updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt
+            ? undefined
+            : (0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });

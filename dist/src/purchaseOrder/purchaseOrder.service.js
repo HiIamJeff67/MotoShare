@@ -345,7 +345,9 @@ let PurchaseOrderService = class PurchaseOrderService {
             autoAccept: updatePurchaseOrderDto.autoAccept,
             status: updatePurchaseOrderDto.status,
             updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (updatePurchaseOrderDto.startAfter || updatePurchaseOrderDto.endedAt
+            ? undefined
+            : (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
@@ -405,7 +407,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async deletePurchaseOrderById(id, creatorId) {
         return await this.db.delete(purchaseOrder_schema_1.PurchaseOrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });

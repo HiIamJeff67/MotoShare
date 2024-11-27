@@ -19,7 +19,7 @@ class UpdateSupplyOrderDto extends (0, mapped_types_1.PartialType)(create_supply
 exports.UpdateSupplyOrderDto = UpdateSupplyOrderDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_tpye_1.PostedStatusTypes, { message: "The status of SupplyOrder must be either POSTED, EXPIRED, or CANCEL" }),
+    (0, class_validator_1.IsIn)(status_tpye_1.PostedStatusTypes, { message: "The status of SupplyOrder must be either POSTED, EXPIRED" }),
     __metadata("design:type", String)
 ], UpdateSupplyOrderDto.prototype, "status", void 0);
 //# sourceMappingURL=update-supplyOrder.dto.js.map

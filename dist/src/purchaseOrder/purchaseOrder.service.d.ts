@@ -8,8 +8,8 @@ export declare class PurchaseOrderService {
     constructor(db: DrizzleDB);
     private updateExpiredPurchaseOrders;
     createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
     searchPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
@@ -33,6 +33,7 @@ export declare class PurchaseOrderService {
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         description: string | null;
         updatedAt: Date;
@@ -50,7 +51,6 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         autoAccept: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         isUrgent: boolean;
         creator: {
@@ -180,8 +180,8 @@ export declare class PurchaseOrderService {
         RDV: unknown;
     }[]>;
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
     startPurchaseOrderWithoutInvite(id: string, userId: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto): Promise<{
         orderId: string;
@@ -201,10 +201,11 @@ export declare class PurchaseOrderService {
         orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[]>;
     deletePurchaseOrderById(id: string, creatorId: string): Promise<{
-        id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        id: string;
     }[]>;
     getAllPurchaseOrders(): Promise<{
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         description: string | null;
         updatedAt: Date;
@@ -223,7 +224,6 @@ export declare class PurchaseOrderService {
         startAfter: Date;
         endedAt: Date;
         autoAccept: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         isUrgent: boolean;
     }[]>;

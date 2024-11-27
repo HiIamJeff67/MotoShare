@@ -20,6 +20,7 @@ export declare class PurchaseOrderController {
     startPurchaseOrderWithoutInvite(ridder: RidderType, id: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto, response: Response): Promise<void>;
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         id: string;
         description: string | null;
         updatedAt: Date;
@@ -38,7 +39,6 @@ export declare class PurchaseOrderController {
         startAfter: Date;
         endedAt: Date;
         autoAccept: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         isUrgent: boolean;
     }[]>;
