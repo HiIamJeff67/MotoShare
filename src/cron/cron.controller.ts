@@ -8,6 +8,8 @@ export class CronController {
   constructor(private readonly cronService: CronService) {}
 
   // note that all the Cron Jobs are using GET Method
+  // make sure the init route in vercel.json is like: "path": "/api/cron", (with "/" in the head)
+  // and also make sure that all the subroute should have "/" at their head as well
   /* ================================= Automated Delete operations ================================= */
   @Get('/deleteExpiredPurchaseOrders')
   async deleteExpiredPurchaseOrders(@Res() response: Response) {

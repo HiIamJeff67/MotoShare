@@ -8,7 +8,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Post,
-  NotAcceptableException
+  NotAcceptableException,
+  Patch
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
@@ -165,7 +166,7 @@ export class PassengerController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('updateMe')
+  @Patch('updateMe')
   async updateMe(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerDto: UpdatePassengerDto,
@@ -195,7 +196,7 @@ export class PassengerController {
 
   @UseGuards(JwtPassengerGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @Post('updateMyInfo')
+  @Patch('updateMyInfo')
   async updateMyInfo(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
