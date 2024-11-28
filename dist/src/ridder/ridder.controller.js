@@ -24,6 +24,8 @@ const update_ridder_dto_1 = require("./dto/update-ridder.dto");
 const update_info_dto_1 = require("./dto/update-info.dto");
 const platform_express_1 = require("@nestjs/platform-express");
 const delete_ridder_dto_1 = require("./dto/delete-ridder.dto");
+const stringParser_1 = require("../utils/stringParser");
+const constants_1 = require("../constants");
 let RidderController = class RidderController {
     constructor(ridderService) {
         this.ridderService = ridderService;
@@ -97,8 +99,14 @@ let RidderController = class RidderController {
         }
     }
     async searchPaginationRidders(userName = undefined, limit = "10", offset = "0", response) {
+        if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+            throw exceptions_1.ApiSearchingLimitTooLargeException;
+        }
+        if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+            throw exceptions_1.ApiSearchingLimitLessThanZeroException;
+        }
         try {
-            const res = await this.ridderService.searchPaginationRidders(userName, +limit, +offset);
+            const res = await this.ridderService.searchPaginationRidders(userName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true));
             if (!res || res.length == 0)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);

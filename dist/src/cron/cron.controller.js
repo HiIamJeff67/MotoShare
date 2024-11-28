@@ -16,7 +16,6 @@ exports.CronController = void 0;
 const common_1 = require("@nestjs/common");
 const cron_service_1 = require("./cron.service");
 const enums_1 = require("../enums");
-const cronAuth_decorator_1 = require("../decorators/cronAuth.decorator");
 let CronController = class CronController {
     constructor(cronService) {
         this.cronService = cronService;
@@ -236,7 +235,6 @@ __decorate([
 ], CronController.prototype, "updateToStartedOrders", null);
 __decorate([
     (0, common_1.Get)('/updateCronJobsWorkflow'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -274,7 +272,6 @@ __decorate([
 ], CronController.prototype, "deleteExpiredOrders", null);
 __decorate([
     (0, common_1.Get)('/deleteCronJobsWorkflow'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

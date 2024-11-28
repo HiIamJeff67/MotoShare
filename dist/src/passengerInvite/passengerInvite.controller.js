@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PassengerInviteController = void 0;
 const common_1 = require("@nestjs/common");
 const passengerInvite_service_1 = require("./passengerInvite.service");
-const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const enums_1 = require("../enums");
 const exceptions_1 = require("../exceptions");
 const guard_1 = require("../auth/guard");
 const decorator_1 = require("../auth/decorator");
@@ -23,6 +23,7 @@ const auth_interface_1 = require("../interfaces/auth.interface");
 const create_passengerInvite_dto_1 = require("./dto/create-passengerInvite.dto");
 const update_passengerInvite_dto_1 = require("./dto/update-passengerInvite.dto");
 const constants_1 = require("../constants");
+const utils_1 = require("../utils");
 let PassengerInviteController = class PassengerInviteController {
     constructor(passengerInviteService) {
         this.passengerInviteService = passengerInviteService;
@@ -35,7 +36,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.createPassengerInviteByOrderId(passenger.id, orderId, createPassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreatePassengerInviteException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send({
+            response.status(enums_1.HttpStatusCode.Created).send({
                 createdAt: new Date(),
                 ...res[0],
             });
@@ -59,7 +60,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.getPassengerInviteById(id, passenger.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -80,7 +81,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.getPassengerInviteById(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -95,13 +96,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchPaginationPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchPaginationPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchPaginationPassengerInvitesByInviterId(passenger.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -116,13 +120,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchAboutToStartPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByInviterId(passenger.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -137,13 +144,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchCurAdjacentPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -158,13 +168,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchDestAdjacentPassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByInviterId(passenger.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -179,13 +192,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchSimilarRoutePassengerInvitesByInviterId(passenger, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByInviterId(passenger.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByInviterId(passenger.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -200,13 +216,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchPaginationPasssengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchPaginationPasssengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchPaginationPasssengerInvitesByReceiverId(ridder.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -221,13 +240,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchAboutToStartPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByReceiverId(ridder.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -242,13 +264,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchCurAdjacentPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchCurAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -263,13 +288,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchDestAdjacentPassengerInvitesByReceiverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchDestAdjacentPassengerInvitesByReceiverId(ridder.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -284,13 +312,16 @@ let PassengerInviteController = class PassengerInviteController {
     }
     async searchMySimilarRoutePassengerInvitesByReceverId(ridder, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByReceverId(ridder.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.passengerInviteService.searchSimilarRoutePassengerInvitesByReceverId(ridder.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -311,7 +342,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, updatePassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+            response.status(enums_1.HttpStatusCode.Ok).send({
                 updatedAt: new Date(),
                 ...res[0],
             });
@@ -336,7 +367,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, decidePassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+            response.status(enums_1.HttpStatusCode.Ok).send({
                 updatedAt: new Date(),
                 ...res[0],
             });
@@ -360,7 +391,7 @@ let PassengerInviteController = class PassengerInviteController {
             const res = await this.passengerInviteService.deletePassengerInviteById(id, passenger.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+            response.status(enums_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
                 ...res[0],
             });

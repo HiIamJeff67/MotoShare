@@ -15,4 +15,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./multerToFile"), exports);
+__exportStar(require("./stringParser"), exports);
+__exportStar(require("./timeCalculator"), exports);
 //# sourceMappingURL=index.js.map

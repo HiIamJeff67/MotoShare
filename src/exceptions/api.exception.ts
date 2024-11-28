@@ -13,10 +13,18 @@ export const ApiMissingBodyOrWrongDtoException = new BadRequestException({
 });
 
 // E-A-010
-export const ApiSearchingLimitTooLarge = (maxLimit: number) => {
+export const ApiSearchingLimitTooLargeException = (maxLimit: number) => {
     return new NotAcceptableException({
         case: "E-A-100",
         message: `Cannot search with the limit greater than ${maxLimit}`
+    });
+}
+
+// E-A-011
+export const ApiSearchingLimitLessThanZeroException = (minLimit: number) => {
+    return new NotAcceptableException({
+        case: "E-A-011", 
+        message: `Cannot search with the limit less than ${minLimit}`
     });
 }
 

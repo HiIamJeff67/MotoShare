@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
-import { and, eq, lte, ne, or } from 'drizzle-orm';
+import { and, eq, lte, ne } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';

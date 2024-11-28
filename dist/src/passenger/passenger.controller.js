@@ -24,6 +24,8 @@ const update_info_dto_1 = require("./dto/update-info.dto");
 const update_passenger_dto_1 = require("./dto/update-passenger.dto");
 const platform_express_1 = require("@nestjs/platform-express");
 const delete_passenger_dto_1 = require("./dto/delete-passenger.dto");
+const stringParser_1 = require("../utils/stringParser");
+const constants_1 = require("../constants");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -97,8 +99,14 @@ let PassengerController = class PassengerController {
         }
     }
     async searchPaginationPassengers(userName = undefined, limit = "10", offset = "0", response) {
+        if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+            throw exceptions_1.ApiSearchingLimitTooLargeException;
+        }
+        if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+            throw exceptions_1.ApiSearchingLimitLessThanZeroException;
+        }
         try {
-            const res = await this.passengerService.searchPaginationPassengers(userName, +limit, +offset);
+            const res = await this.passengerService.searchPaginationPassengers(userName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true));
             if (!res || res.length == 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);

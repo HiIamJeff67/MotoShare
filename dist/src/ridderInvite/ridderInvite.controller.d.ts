@@ -1,6 +1,6 @@
 import { RidderInviteService } from './ridderInvite.service';
 import { Response } from 'express';
-import { PassengerType, RidderType } from '../interfaces/auth.interface';
+import { PassengerType, RidderType } from '../interfaces';
 import { CreateRidderInviteDto } from './dto/create-ridderInvite.dto';
 import { DecideRidderInviteDto, UpdateRidderInviteDto } from './dto/update-ridderInvite.dto';
 export declare class RidderInviteController {

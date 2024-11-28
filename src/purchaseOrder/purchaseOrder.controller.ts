@@ -12,7 +12,8 @@ import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
-  ApiSearchingLimitTooLarge,
+  ApiSearchingLimitLessThanZeroException,
+  ApiSearchingLimitTooLargeException,
   ClientCreateOrderException,
   ClientCreatePurchaseOrderException,
   ClientPurchaseOrderNotFoundException,
@@ -29,7 +30,7 @@ import {
   GetAdjacentPurchaseOrdersDto, 
   GetSimilarRoutePurchaseOrdersDto 
 } from './dto/get-purchaseOrder.dto';
-import { MAX_SEARCH_LIMIT } from '../constants';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 
@@ -85,7 +86,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchPurchaseOrdersByCreatorId(
@@ -152,7 +156,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(
@@ -187,7 +194,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(
@@ -223,7 +233,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(
@@ -260,7 +273,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(
@@ -297,7 +313,10 @@ export class PurchaseOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(
@@ -458,7 +477,7 @@ export class PurchaseOrderController {
   ) {
     try {
       if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
@@ -487,7 +506,7 @@ export class PurchaseOrderController {
   ) {
     try {
       if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
       }
 
       const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);

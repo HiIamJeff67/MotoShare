@@ -19,10 +19,11 @@ const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const exceptions_1 = require("../exceptions");
 const guard_1 = require("../auth/guard");
 const decorator_1 = require("../auth/decorator");
-const auth_interface_1 = require("../interfaces/auth.interface");
+const interfaces_1 = require("../interfaces");
 const create_ridderInvite_dto_1 = require("./dto/create-ridderInvite.dto");
 const update_ridderInvite_dto_1 = require("./dto/update-ridderInvite.dto");
 const constants_1 = require("../constants");
+const utils_1 = require("../utils");
 let RidderInviteController = class RidderInviteController {
     constructor(ridderInviteService) {
         this.ridderInviteService = ridderInviteService;
@@ -92,10 +93,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchPaginationRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchPaginationRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchPaginationRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -113,10 +117,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchAboutToStartRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -134,10 +141,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchCurAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -155,10 +165,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchDestAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -176,10 +189,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchSimilarRouteRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByInviterId(ridder.id, receiverName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -197,10 +213,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchPaginationRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchPaginationRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchPaginationRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -218,10 +237,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchAboutToStartRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -239,10 +261,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchCurAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -260,10 +285,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchDestAdjacentRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -281,10 +309,13 @@ let RidderInviteController = class RidderInviteController {
     }
     async searchMySimilarRouteRidderInvitesByReceverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByReceverId(passenger.id, inviterName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByReceverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -378,7 +409,7 @@ __decorate([
     __param(2, (0, common_1.Body)()),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, create_ridderInvite_dto_1.CreateRidderInviteDto, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, String, create_ridderInvite_dto_1.CreateRidderInviteDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "createRidderInviteByOrderId", null);
 __decorate([
@@ -388,7 +419,7 @@ __decorate([
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "getRidderInviteOfRidderById", null);
 __decorate([
@@ -398,7 +429,7 @@ __decorate([
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "getRidderInviteOfPassengerById", null);
 __decorate([
@@ -410,7 +441,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchPaginationRidderInvitesByInviterId", null);
 __decorate([
@@ -422,7 +453,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchAboutToStartRidderInvitesByInviterId", null);
 __decorate([
@@ -434,7 +465,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchCurAdjacentRidderInvitesByInviterId", null);
 __decorate([
@@ -446,7 +477,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchDestAdjacentRidderInvitesByInviterId", null);
 __decorate([
@@ -458,7 +489,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchSimilarRouteRidderInvitesByInviterId", null);
 __decorate([
@@ -470,7 +501,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchPaginationRidderInvitesByReceiverId", null);
 __decorate([
@@ -482,7 +513,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchAboutToStartRidderInvitesByReceiverId", null);
 __decorate([
@@ -494,7 +525,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchCurAdjacentRidderInvitesByReceiverId", null);
 __decorate([
@@ -506,7 +537,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchDestAdjacentRidderInvitesByReceiverId", null);
 __decorate([
@@ -518,7 +549,7 @@ __decorate([
     __param(3, (0, common_1.Query)('offset')),
     __param(4, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchMySimilarRouteRidderInvitesByReceverId", null);
 __decorate([
@@ -529,7 +560,7 @@ __decorate([
     __param(2, (0, common_1.Body)()),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, update_ridderInvite_dto_1.UpdateRidderInviteDto, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, String, update_ridderInvite_dto_1.UpdateRidderInviteDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "updateMyRidderInviteById", null);
 __decorate([
@@ -540,7 +571,7 @@ __decorate([
     __param(2, (0, common_1.Body)()),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, update_ridderInvite_dto_1.DecideRidderInviteDto, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, String, update_ridderInvite_dto_1.DecideRidderInviteDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "decidePassengerInviteById", null);
 __decorate([
@@ -550,7 +581,7 @@ __decorate([
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "deleteMyRidderInviteById", null);
 exports.RidderInviteController = RidderInviteController = __decorate([

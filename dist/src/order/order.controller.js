@@ -21,6 +21,7 @@ const decorator_1 = require("../auth/decorator");
 const exceptions_1 = require("../exceptions");
 const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
 const constants_1 = require("../constants");
+const utils_1 = require("../utils");
 let OrderController = class OrderController {
     constructor(orderService) {
         this.orderService = orderService;
@@ -69,10 +70,13 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrdersByPassengerId(passenger, ridderName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchPaginationOrderByPassengerId(passenger.id, ridderName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -90,10 +94,13 @@ let OrderController = class OrderController {
     }
     async searchAboutToStartOrdersByPassengerId(passenger, ridderName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.orderService.searchAboutToStartOrderByPassengerId(passenger.id, ridderName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchAboutToStartOrderByPassengerId(passenger.id, ridderName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -111,10 +118,13 @@ let OrderController = class OrderController {
     }
     async searchPaginationOrdersByRidderId(ridder, passengerName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchPaginationOrderByRidderId(ridder.id, passengerName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -132,10 +142,13 @@ let OrderController = class OrderController {
     }
     async searchAboutToStartOrdersByRidderId(ridder, passengerName = undefined, limit = "10", offset = "0", response) {
         try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
-            const res = await this.orderService.searchAboutToStartOrderByRidderId(ridder.id, passengerName, +limit, +offset);
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.orderService.searchAboutToStartOrderByRidderId(ridder.id, passengerName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);

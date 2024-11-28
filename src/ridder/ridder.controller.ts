@@ -18,7 +18,9 @@ import {
   ApiMissingParameterException, 
   ClientUnknownException, 
   ClientCollectionNotFoundException, 
-  ClientRidderNotFoundException
+  ClientRidderNotFoundException,
+  ApiSearchingLimitTooLargeException,
+  ApiSearchingLimitLessThanZeroException
 } from '../exceptions';
 
 import { JwtRidderGuard } from '../auth/guard';
@@ -29,6 +31,8 @@ import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteRidderDto } from './dto/delete-ridder.dto';
+import { toNumber } from '../utils/stringParser';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 
 @Controller('ridder')
 export class RidderController {
@@ -140,11 +144,19 @@ export class RidderController {
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
-    // !important : note that if you want to get the parameter as number from the url route,
-    //              you must first make sure the type of parameters are all string,
-    //              for each variable you want to read it as a number, add '+' when you passing it to the services
+    if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLargeException;
+    }
+    if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+      throw ApiSearchingLimitLessThanZeroException;
+    }
+    
     try {
-      const res = await this.ridderService.searchPaginationRidders(userName, +limit, +offset);
+      const res = await this.ridderService.searchPaginationRidders(
+        userName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+      );
 
       if (!res || res.length == 0) throw ClientRidderNotFoundException;
 

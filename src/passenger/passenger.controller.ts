@@ -18,7 +18,9 @@ import {
   ApiMissingParameterException, 
   ClientUnknownException, 
   ClientPassengerNotFoundException, 
-  ClientCollectionNotFoundException 
+  ClientCollectionNotFoundException, 
+  ApiSearchingLimitTooLargeException,
+  ApiSearchingLimitLessThanZeroException
 } from '../exceptions';
 
 import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
@@ -29,6 +31,8 @@ import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeletePassengerDto } from './dto/delete-passenger.dto';
+import { toNumber } from '../utils/stringParser';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 
 @Controller('passenger')
 export class PassengerController {
@@ -141,8 +145,19 @@ export class PassengerController {
     @Query('offset') offset: string = "0",
     @Res() response: Response,
   ) {
+    if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+      throw ApiSearchingLimitTooLargeException
+    }
+    if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+      throw ApiSearchingLimitLessThanZeroException;
+    }
+
     try {
-      const res = await this.passengerService.searchPaginationPassengers(userName, +limit, +offset);
+      const res = await this.passengerService.searchPaginationPassengers(
+        userName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+      );
 
       if (!res || res.length == 0) throw ClientPassengerNotFoundException;
 

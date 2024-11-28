@@ -9,15 +9,17 @@ import { OrderService } from './order.service';
 import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { Passenger, Ridder } from '../auth/decorator';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import { 
   ApiMissingParameterException, 
-  ApiSearchingLimitTooLarge, 
+  ApiSearchingLimitLessThanZeroException, 
+  ApiSearchingLimitTooLargeException, 
   ClientOrderNotFoundException, 
   ClientUnknownException 
 } from '../exceptions';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
-import { MAX_SEARCH_LIMIT } from '../constants';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { toNumber } from '../utils';
 
 @Controller('order')
 export class OrderController {
@@ -95,15 +97,18 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.orderService.searchPaginationOrderByPassengerId(
         passenger.id, 
         ridderName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
@@ -132,15 +137,18 @@ export class OrderController {
     @Res() response: Response, 
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.orderService.searchAboutToStartOrderByPassengerId(
         passenger.id, 
         ridderName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
@@ -169,15 +177,18 @@ export class OrderController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.orderService.searchPaginationOrderByRidderId(
         ridder.id, 
         passengerName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
@@ -206,15 +217,18 @@ export class OrderController {
     @Res() response: Response, 
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.orderService.searchAboutToStartOrderByRidderId(
         ridder.id, 
         passengerName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;

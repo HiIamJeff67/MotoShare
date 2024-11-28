@@ -1,4 +1,3 @@
-import { exit } from "process";
 import { PassengerSeedingOperator } from "./_passenger.seed";
 import { PassengerInviteSeedingOperator } from "./_passengerInvite.seed";
 import { PurchaseOrderSeedingOperator } from "./_purchaseOrder.seed";

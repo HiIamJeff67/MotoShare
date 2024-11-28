@@ -11,7 +11,8 @@ import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
-  ApiSearchingLimitTooLarge,
+  ApiSearchingLimitLessThanZeroException,
+  ApiSearchingLimitTooLargeException,
   ClientCreateOrderException,
   ClientCreateSupplyOrderException,
   ClientSupplyOrderNotFoundException,
@@ -28,7 +29,7 @@ import {
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
 } from './dto/get-supplyOrder.dto';
-import { MAX_SEARCH_LIMIT } from '../constants';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
 
@@ -80,7 +81,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchSupplyOrdersByCreatorId(
@@ -146,7 +150,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchPaginationSupplyOrders(
@@ -181,7 +188,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(
@@ -217,7 +227,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(
@@ -254,7 +267,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(
@@ -291,7 +307,10 @@ export class SupplyOrderController {
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(

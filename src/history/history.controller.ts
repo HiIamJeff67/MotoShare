@@ -5,9 +5,16 @@ import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { Passenger, Ridder } from '../auth/decorator';
 import { PassengerType, RidderType } from '../interfaces';
 import { Response } from 'express';
-import { ApiMissingParameterException, ApiSearchingLimitTooLarge, ClientHistoryNotFoundException, ClientUnknownException } from '../exceptions';
+import { 
+  ApiMissingParameterException, 
+  ApiSearchingLimitLessThanZeroException, 
+  ApiSearchingLimitTooLargeException, 
+  ClientHistoryNotFoundException, 
+  ClientUnknownException 
+} from '../exceptions';
 import { HttpStatusCode } from '../enums';
-import { MAX_SEARCH_LIMIT } from '../constants';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { toNumber } from '../utils';
 
 @Controller('history')
 export class HistoryController {
@@ -85,11 +92,18 @@ export class HistoryController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
-      const res = await this.historyService.searchPaginationHistoryByPassengerId(passenger.id, +limit, +offset);
+      const res = await this.historyService.searchPaginationHistoryByPassengerId(
+        passenger.id, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+      );
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;
 
@@ -116,11 +130,18 @@ export class HistoryController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
-      const res = await this.historyService.searchPaginationHistoryByRidderId(ridder.id, +limit, +offset);
+      const res = await this.historyService.searchPaginationHistoryByRidderId(
+        ridder.id, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+      );
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;
 

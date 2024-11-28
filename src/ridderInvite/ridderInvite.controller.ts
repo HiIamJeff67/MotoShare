@@ -13,7 +13,8 @@ import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException, 
-  ApiSearchingLimitTooLarge, 
+  ApiSearchingLimitLessThanZeroException, 
+  ApiSearchingLimitTooLargeException, 
   ClientCreateRidderInviteException, 
   ClientInviteNotFoundException, 
   ClientUnknownException 
@@ -21,7 +22,7 @@ import {
 
 import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { Passenger, Ridder } from '../auth/decorator';
-import { PassengerType, RidderType } from '../interfaces/auth.interface';
+import { PassengerType, RidderType } from '../interfaces';
 
 
 import { CreateRidderInviteDto } from './dto/create-ridderInvite.dto';
@@ -29,7 +30,8 @@ import {
   DecideRidderInviteDto, 
   UpdateRidderInviteDto 
 } from './dto/update-ridderInvite.dto';
-import { MAX_SEARCH_LIMIT } from '../constants';
+import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { toNumber } from '../utils';
 
 @Controller('ridderInvite')
 export class RidderInviteController {
@@ -141,15 +143,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchPaginationRidderInvitesByInviterId(
         ridder.id, 
         receiverName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -178,15 +183,18 @@ export class RidderInviteController {
     @Res() response: Response, 
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByInviterId(
         ridder.id, 
         receiverName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -215,15 +223,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByInviterId(
         ridder.id, 
         receiverName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -252,15 +263,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByInviterId(
         ridder.id, 
         receiverName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -289,15 +303,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByInviterId(
         ridder.id, 
         receiverName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -329,15 +346,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchPaginationRidderInvitesByReceiverId(
         passenger.id, 
         inviterName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -366,15 +386,18 @@ export class RidderInviteController {
     @Res() response: Response, 
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByReceiverId(
         passenger.id, 
         inviterName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -403,15 +426,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchCurAdjacentRidderInvitesByReceiverId(
         passenger.id, 
         inviterName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -440,15 +466,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
       
       const res = await this.ridderInviteService.searchDestAdjacentRidderInvitesByReceiverId(
         passenger.id, 
         inviterName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
@@ -477,15 +506,18 @@ export class RidderInviteController {
     @Res() response: Response,
   ) {
     try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLarge(MAX_SEARCH_LIMIT);
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
       }
 
       const res = await this.ridderInviteService.searchSimilarRouteRidderInvitesByReceverId(
         passenger.id, 
         inviterName, 
-        +limit, 
-        +offset
+        toNumber(limit, true), 
+        toNumber(offset, true), 
       );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;

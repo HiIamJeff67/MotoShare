@@ -53,7 +53,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchMySupplyOrders(ridder, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchSupplyOrdersByCreatorId(ridder.id, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -94,7 +97,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchPaginationSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchPaginationSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -114,7 +120,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchAboutToStartSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchAboutToStartSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -134,7 +143,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchCurAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentSupplyOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchCurAdjacentSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
@@ -154,7 +166,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchDestAdjacentSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentSupplyOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchDestAdjacentSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentSupplyOrdersDto);
             if (!res || res.length === 0)
@@ -174,7 +189,10 @@ let SupplyOrderController = class SupplyOrderController {
     async searchSimilarRouteSupplyOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarRouteSupplyOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.supplyOrderService.searchSimilarRouteSupplyOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarRouteSupplyOrdersDto);
             if (!res || res.length === 0)

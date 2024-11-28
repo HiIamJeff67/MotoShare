@@ -53,7 +53,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchMyPurchaseOrders(passenger, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchPurchaseOrdersByCreatorId(passenger.id, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -94,7 +97,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -114,7 +120,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchAboutToStartPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
             if (!res || res.length === 0)
@@ -134,7 +143,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
@@ -154,7 +166,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
             if (!res || res.length === 0)
@@ -174,7 +189,10 @@ let PurchaseOrderController = class PurchaseOrderController {
     async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarRoutePurchaseOrdersDto, response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarRoutePurchaseOrdersDto);
             if (!res || res.length === 0)
@@ -271,7 +289,7 @@ let PurchaseOrderController = class PurchaseOrderController {
     async testWithExpired(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
             if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
             if (!res || res.length === 0)
@@ -291,7 +309,7 @@ let PurchaseOrderController = class PurchaseOrderController {
     async testWithoutExpired(creatorName = undefined, limit = "10", offset = "0", response) {
         try {
             if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLarge)(constants_1.MAX_SEARCH_LIMIT);
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
             }
             const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);
             if (!res || res.length === 0)
