@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRidderInfoDto = void 0;
 const class_validator_1 = require("class-validator");
-const decorators_1 = require("../../decorators");
+const validator_1 = require("../../validator");
 const info_constant_1 = require("../../constants/info.constant");
 const context_constant_1 = require("../../constants/context.constant");
 const IsPhoneNumberString_validator_1 = require("../../validator/IsPhoneNumberString.validator");
@@ -26,8 +26,8 @@ __decorate([
 ], CreateRidderInfoDto.prototype, "isOnline", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, decorators_1.MinNumberString)(info_constant_1.MIN_AGE),
-    (0, decorators_1.MaxNumberString)(info_constant_1.MAX_AGE),
+    (0, validator_1.MinNumberString)(info_constant_1.MIN_AGE),
+    (0, validator_1.MaxNumberString)(info_constant_1.MAX_AGE),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateRidderInfoDto.prototype, "age", void 0);
@@ -46,7 +46,7 @@ __decorate([
 ], CreateRidderInfoDto.prototype, "selfIntroduction", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, decorators_1.IsLooseTWLicenseString)(),
+    (0, validator_1.IsLooseTWLicenseString)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateRidderInfoDto.prototype, "motocycleLicense", void 0);

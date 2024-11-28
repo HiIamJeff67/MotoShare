@@ -16,6 +16,7 @@ exports.CronController = void 0;
 const common_1 = require("@nestjs/common");
 const cron_service_1 = require("./cron.service");
 const enums_1 = require("../enums");
+const cronAuth_decorator_1 = require("../decorators/cronAuth.decorator");
 let CronController = class CronController {
     constructor(cronService) {
         this.cronService = cronService;
@@ -145,6 +146,7 @@ let CronController = class CronController {
 exports.CronController = CronController;
 __decorate([
     (0, common_1.Get)('/updateToExpiredPurchaseOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -152,6 +154,7 @@ __decorate([
 ], CronController.prototype, "updateToExpiredPurchaseOrders", null);
 __decorate([
     (0, common_1.Get)('/updateToExpiredSupplyOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -159,6 +162,7 @@ __decorate([
 ], CronController.prototype, "updateToExpiredSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('/updateToExpiredPassengerInvites'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -166,6 +170,7 @@ __decorate([
 ], CronController.prototype, "updateToExpiredPassengerInvites", null);
 __decorate([
     (0, common_1.Get)('/updateToExpiredRidderInvites'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -173,6 +178,7 @@ __decorate([
 ], CronController.prototype, "updateToExpiredRidderInvites", null);
 __decorate([
     (0, common_1.Get)('/updateToStartedOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -180,6 +186,7 @@ __decorate([
 ], CronController.prototype, "updateToStartedOrders", null);
 __decorate([
     (0, common_1.Get)('/deleteExpiredPurchaseOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -187,6 +194,7 @@ __decorate([
 ], CronController.prototype, "deleteExpiredPurchaseOrders", null);
 __decorate([
     (0, common_1.Get)('/deleteExpiredSupplyOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -194,6 +202,7 @@ __decorate([
 ], CronController.prototype, "deleteExpiredSupplyOrders", null);
 __decorate([
     (0, common_1.Get)('/deleteExpiredPassengerInvites'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -201,6 +210,7 @@ __decorate([
 ], CronController.prototype, "deleteExpiredPassengerInvites", null);
 __decorate([
     (0, common_1.Get)('/deleteExpiredRidderInvites'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -208,6 +218,7 @@ __decorate([
 ], CronController.prototype, "deleteExpiredRidderInvites", null);
 __decorate([
     (0, common_1.Get)('/deleteExpiredOrders'),
+    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

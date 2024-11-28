@@ -32,7 +32,7 @@
             "schedule": "0 0 * * *"
         },
         {
-            "pat": "/api/cron/updateToExpiredPassengerInvites", 
+            "path": "/api/cron/updateToExpiredPassengerInvites", 
             "schedule": "0 0 * * *"
         },
         {

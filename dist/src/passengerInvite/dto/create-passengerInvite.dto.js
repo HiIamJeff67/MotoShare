@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePassengerInviteDto = void 0;
 const class_validator_1 = require("class-validator");
-const decorators_1 = require("../../decorators");
+const validator_1 = require("../../validator");
 const price_constant_1 = require("../../constants/price.constant");
 const context_constant_1 = require("../../constants/context.constant");
 class CreatePassengerInviteDto {
@@ -26,8 +26,8 @@ __decorate([
 ], CreatePassengerInviteDto.prototype, "briefDescription", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.MinNumberString)(price_constant_1.MIN_SUGGEST_PRICE),
-    (0, decorators_1.MaxNumberString)(price_constant_1.MAX_SUGGEST_PRICE),
+    (0, validator_1.MinNumberString)(price_constant_1.MIN_SUGGEST_PRICE),
+    (0, validator_1.MaxNumberString)(price_constant_1.MAX_SUGGEST_PRICE),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreatePassengerInviteDto.prototype, "suggestPrice", void 0);
@@ -63,15 +63,15 @@ __decorate([
 ], CreatePassengerInviteDto.prototype, "endAddress", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.IsStartBeforeEnd)('suggestEndedAt'),
-    (0, decorators_1.IsAfterNow)(),
+    (0, validator_1.IsStartBeforeEnd)('suggestEndedAt'),
+    (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePassengerInviteDto.prototype, "suggestStartAfter", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.IsEndAfterStart)('suggestStartAfter'),
-    (0, decorators_1.IsAfterNow)(),
+    (0, validator_1.IsEndAfterStart)('suggestStartAfter'),
+    (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePassengerInviteDto.prototype, "suggestEndedAt", void 0);

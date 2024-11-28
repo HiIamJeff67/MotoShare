@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateSupplyOrderDto = void 0;
 const class_validator_1 = require("class-validator");
-const decorators_1 = require("../../decorators");
+const validator_1 = require("../../validator");
 const price_constant_1 = require("../../constants/price.constant");
 const algorithm_constant_1 = require("../../constants/algorithm.constant");
 const context_constant_1 = require("../../constants/context.constant");
@@ -27,8 +27,8 @@ __decorate([
 ], CreateSupplyOrderDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.MinNumberString)(price_constant_1.MIN_INIT_PRICE),
-    (0, decorators_1.MaxNumberString)(price_constant_1.MAX_INIT_PRICE),
+    (0, validator_1.MinNumberString)(price_constant_1.MIN_INIT_PRICE),
+    (0, validator_1.MaxNumberString)(price_constant_1.MAX_INIT_PRICE),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "initPrice", void 0);
@@ -64,22 +64,22 @@ __decorate([
 ], CreateSupplyOrderDto.prototype, "endAddress", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.IsStartBeforeEnd)('endedAt'),
-    (0, decorators_1.IsAfterNow)(),
+    (0, validator_1.IsStartBeforeEnd)('endedAt'),
+    (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateSupplyOrderDto.prototype, "startAfter", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, decorators_1.IsEndAfterStart)('startAfter'),
-    (0, decorators_1.IsAfterNow)(),
+    (0, validator_1.IsEndAfterStart)('startAfter'),
+    (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateSupplyOrderDto.prototype, "endedAt", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, decorators_1.MinNumberString)(algorithm_constant_1.MIN_TOLERABLE_RDV),
-    (0, decorators_1.MaxNumberString)(algorithm_constant_1.MAX_TOLERABLE_RDV),
+    (0, validator_1.MinNumberString)(algorithm_constant_1.MIN_TOLERABLE_RDV),
+    (0, validator_1.MaxNumberString)(algorithm_constant_1.MAX_TOLERABLE_RDV),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateSupplyOrderDto.prototype, "tolerableRDV", void 0);
