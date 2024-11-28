@@ -1,8 +1,7 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { CronService } from './cron.service';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import { HttpStatusCode } from '../enums';
-import { CronAuth } from '../decorators/cronAuth.decorator';
 
 @Controller('api/cron')
 export class CronController {
@@ -82,7 +81,7 @@ export class CronController {
   // hence we collect all the operations to two main parts corresponding to two api routes, 
   // one for automated update operations, another for automated delete operations
   @Get('/updateCronJobsWorkflow')
-  @CronAuth()
+  // @CronAuth()
   async updateCronJobsWorkflow(@Res() response: Response) {
     try {
 
@@ -185,7 +184,7 @@ export class CronController {
 
   /* ================================= Automated Delete Cron Job Workflow ================================= */
   @Get('/deleteCronJobsWorkflow')
-  @CronAuth()
+  // @CronAuth()
   async deleteCronJobsWorkflow(@Res() response: Response) {
     try {
 
