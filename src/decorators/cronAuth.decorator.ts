@@ -1,4 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export function CronAuth() {
   return function (
@@ -6,22 +7,25 @@ export function CronAuth() {
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
-    const originalMethod = descriptor.value;    // store the function(original method) which is under this decorator
-                                                // we can continue the original method only if we pass the authentication
+    const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {    // switch to authenticate logic
-      const context = args[args.length - 2]; // ExecutionContext
-      const request = context
-        .switchToHttp()
-        .getRequest();
-      
-      const authHeader = request.headers['authorization'];
-      
-      if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        throw new UnauthorizedException('Invalid authorization');
-      }
-      
-      return originalMethod.apply(this, args);  // if all authentication pass, using default js function
+    descriptor.value = async function (
+        request: VercelRequest, 
+        response: VercelResponse, 
+        ...args: any[]
+    ) {
+        const authHeader = Array.isArray(request.headers.authorization)
+          ? request.headers.authorization[0]
+          : request.headers.authorization;
+
+        if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return response.status(401).json({ 
+                success: false,
+                message: 'Unauthorized' 
+            });
+        }
+
+        return originalMethod.apply(this, [request, response, ...args]);
     };
 
     return descriptor;
