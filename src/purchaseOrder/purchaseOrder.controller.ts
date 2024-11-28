@@ -4,7 +4,8 @@ import { Controller,
   BadRequestException, 
   UnauthorizedException, 
   ForbiddenException,
-  NotAcceptableException
+  NotAcceptableException,
+  Patch
 } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
 import { Response } from 'express';
@@ -328,7 +329,7 @@ export class PurchaseOrderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('updateMyPurchaseOrderById')
+  @Patch('updateMyPurchaseOrderById')
   async updateMyPurchaseOrderById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string, 

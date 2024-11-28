@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, 
   Delete, 
   ForbiddenException, 
-  Get, NotAcceptableException, NotFoundException, Post, Query, Res,
+  Get, NotAcceptableException, NotFoundException, Patch, Post, Query, Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -239,7 +239,7 @@ export class OrderController {
 
   /* ================================= Update and Transact operations for Passengers ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/toStartedStatusById')
+  @Patch('passenger/toStartedStatusById')
   async toStartedPassengerStatusById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -272,7 +272,7 @@ export class OrderController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/toUnpaidStatusById')
+  @Patch('passenger/toUnpaidStatusById')
   async toUnpaidPassengerStatusById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -305,7 +305,7 @@ export class OrderController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/toFinishedStatusById')
+  @Patch('passenger/toFinishedStatusById')
   async toFinishedPassengerStatusById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -343,7 +343,7 @@ export class OrderController {
 
   /* ================================= Update and Transact operations for Ridders ================================= */
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/toStartedStatusById')
+  @Patch('ridder/toStartedStatusById')
   async toStartedRidderStatusById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,
@@ -376,7 +376,7 @@ export class OrderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/toUnpaidStatusById')
+  @Patch('ridder/toUnpaidStatusById')
   async toUnpaidRidderStatusById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,
@@ -409,7 +409,7 @@ export class OrderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/toFinishedStatusById')
+  @Patch('ridder/toFinishedStatusById')
   async toFinishedRidderStatusById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

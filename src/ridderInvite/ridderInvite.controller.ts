@@ -5,7 +5,8 @@ import { Controller,
   ForbiddenException, 
   NotFoundException,
   ConflictException,
-  NotAcceptableException
+  NotAcceptableException,
+  Patch
 } from '@nestjs/common';
 import { RidderInviteService } from './ridderInvite.service';
 import { Response } from 'express';
@@ -546,7 +547,7 @@ export class RidderInviteController {
 
   /* ================= Accept or Reject operations used by Ridder ================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/decideRidderInviteById')
+  @Patch('passenger/decideRidderInviteById')
   async decidePassengerInviteById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,

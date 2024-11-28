@@ -14,7 +14,7 @@ const class_validator_1 = require("class-validator");
 const decorators_1 = require("../../decorators");
 const context_constant_1 = require("../../constants/context.constant");
 const info_constant_1 = require("../../constants/info.constant");
-const IsPhoneNumberString_decorator_1 = require("../../decorators/IsPhoneNumberString.decorator");
+const IsPhoneNumberString_validator_1 = require("../../validator/IsPhoneNumberString.validator");
 const types_1 = require("../../types");
 class CreatePassengerInfoDto {
 }
@@ -33,7 +33,7 @@ __decorate([
 ], CreatePassengerInfoDto.prototype, "age", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, IsPhoneNumberString_decorator_1.IsPhoneNumberString)("+886", types_1.AllowedPhoneNumberTypes),
+    (0, IsPhoneNumberString_validator_1.IsPhoneNumberString)("+886", types_1.AllowedPhoneNumberTypes),
     (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", String)
 ], CreatePassengerInfoDto.prototype, "phoneNumber", void 0);

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, NotFoundException, NotAcceptableException, Patch } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { RateAndCommentHistoryDto } from './dto/update-history.dto';
 import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
@@ -144,7 +144,7 @@ export class HistoryController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/rateAndCommentHistoryById')
+  @Patch('passenger/rateAndCommentHistoryById')
   async rateAndCommentHistoryForPassengerById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -175,7 +175,7 @@ export class HistoryController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/rateAndCommentHistoryById')
+  @Patch('ridder/rateAndCommentHistoryById')
   async rateAndCommentHistoryForRidderById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

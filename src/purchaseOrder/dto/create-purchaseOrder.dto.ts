@@ -16,7 +16,7 @@ import {
     IsStartBeforeEnd,
     IsEndAfterStart,
     IsAfterNow
-} from "../../decorators";
+} from "../../validator";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
 

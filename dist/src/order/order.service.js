@@ -466,9 +466,9 @@ let OrderService = class OrderService {
             if (!responseOfCreatingHistory || responseOfCreatingHistory.length === 0) {
                 throw exceptions_1.ClientCreateHistoryException;
             }
-            return {
-                ...responseOfCreatingHistory,
-            };
+            return [{
+                    ...responseOfCreatingHistory,
+                }];
         });
     }
 };

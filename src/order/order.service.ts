@@ -596,9 +596,9 @@ export class OrderService {
         throw ClientCreateHistoryException;
       }
 
-      return {
+      return [{
         ...responseOfCreatingHistory,
-      }
+      }];
     });
   }
   /* ================================= Delete operations ================================= */

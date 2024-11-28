@@ -531,7 +531,7 @@ __decorate([
 ], PassengerInviteController.prototype, "searchMySimilarRoutePassengerInvitesByReceverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Post)('passenger/updateMyPassengerInviteById'),
+    (0, common_1.Patch)('passenger/updateMyPassengerInviteById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Body)()),
@@ -542,7 +542,7 @@ __decorate([
 ], PassengerInviteController.prototype, "updateMyPassengerInviteById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Post)('ridder/decidePassengerInviteById'),
+    (0, common_1.Patch)('ridder/decidePassengerInviteById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Body)()),

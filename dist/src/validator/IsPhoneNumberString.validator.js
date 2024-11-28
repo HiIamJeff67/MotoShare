@@ -27,4 +27,4 @@ function IsPhoneNumberString(phoneNumberType, allowedPhoneNumberTypes, validatio
         });
     };
 }
-//# sourceMappingURL=IsPhoneNumberString.decorator.js.map
+//# sourceMappingURL=IsPhoneNumberString.validator.js.map

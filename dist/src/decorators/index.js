@@ -14,11 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./IsOnlyDate.decorator"), exports);
-__exportStar(require("./CompareNumberString.decorator"), exports);
-__exportStar(require("./IsPhoneNumberString.decorator"), exports);
-__exportStar(require("./IsLicenseString.decorator"), exports);
-__exportStar(require("./IsStartBeforeEnd.decorator"), exports);
-__exportStar(require("./IsEndAfterStart.decorator"), exports);
-__exportStar(require("./IsAfterNow.decorator"), exports);
+__exportStar(require("../validator/IsOnlyDate.validator"), exports);
+__exportStar(require("../validator/CompareNumberString.validator"), exports);
+__exportStar(require("../validator/IsPhoneNumberString.validator"), exports);
+__exportStar(require("../validator/IsLicenseString.validator"), exports);
+__exportStar(require("../validator/IsStartBeforeEnd.validator"), exports);
+__exportStar(require("../validator/IsEndAfterStart.validator"), exports);
+__exportStar(require("../validator/IsAfterNow.validator"), exports);
 //# sourceMappingURL=index.js.map

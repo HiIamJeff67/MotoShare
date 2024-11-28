@@ -4,7 +4,8 @@ import { Controller,
   UnauthorizedException, 
   NotFoundException, 
   ForbiddenException,
-  NotAcceptableException} from '@nestjs/common';
+  NotAcceptableException,
+  Patch} from '@nestjs/common';
 import { SupplyOrderService } from './supplyOrder.service';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
@@ -323,7 +324,7 @@ export class SupplyOrderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Post('updateMySupplyOrderById')
+  @Patch('updateMySupplyOrderById')
   async updateMySupplyOrderById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

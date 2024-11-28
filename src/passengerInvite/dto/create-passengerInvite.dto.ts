@@ -16,7 +16,7 @@ import {
     IsStartBeforeEnd,
     MaxNumberString, 
     MinNumberString 
-} from "../../decorators";
+} from "../../validator";
 import { MAX_SUGGEST_PRICE, MIN_SUGGEST_PRICE } from "../../constants/price.constant";
 import { MAX_BRIEF_DESCRIPTION_LENGTH, MIN_BRIEF_DESCRIPTION_LENGTH } from "../../constants/context.constant";
 

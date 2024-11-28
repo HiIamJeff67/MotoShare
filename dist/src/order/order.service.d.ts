@@ -484,5 +484,5 @@ export declare class OrderService {
             historyStatus: "EXPIRED" | "CANCEL" | "FINISHED";
             historyId: string;
         } | undefined;
-    }>;
+    }[]>;
 }

@@ -59,4 +59,4 @@ function IsLooseTWLicenseString(validationOptions) {
         });
     };
 }
-//# sourceMappingURL=IsLicenseString.decorator.js.map
+//# sourceMappingURL=IsLicenseString.validator.js.map

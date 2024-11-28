@@ -8,7 +8,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Post,
-  NotAcceptableException
+  NotAcceptableException,
+  Patch
 } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { Response } from 'express';
@@ -167,7 +168,7 @@ export class RidderController {
 
   /* ================================= Update operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Post('updateMe')
+  @Patch('updateMe')
   async updateMe(
     @Ridder() ridder: RidderType,
     @Body() updateRidderDto: UpdateRidderDto,
@@ -197,7 +198,7 @@ export class RidderController {
 
   @UseGuards(JwtRidderGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @Post('updateMyInfo')
+  @Patch('updateMyInfo')
   async updateMyInfo(
     @Ridder() ridder: RidderType,
     @Body() updateRidderInfoDto: UpdateRidderInfoDto,

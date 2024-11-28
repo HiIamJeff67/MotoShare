@@ -1,26 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IsOnlyDate = IsOnlyDate;
+exports.IsAfterNow = IsAfterNow;
 const class_validator_1 = require("class-validator");
-function IsOnlyDate(validationOptions) {
+function IsAfterNow(validationOptions) {
     return function (object, propertyName) {
         (0, class_validator_1.registerDecorator)({
-            name: 'IsOnlyDate',
+            name: 'IsAfterNow',
             target: object.constructor,
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: `${propertyName} must be this form of date: YYYY-MM-DD`,
+                message: `${propertyName} must be after now`,
                 ...validationOptions,
             },
             validator: {
                 validate(value) {
-                    const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
-                    return (typeof value === 'string' &&
-                        regex.test(value));
-                },
-            },
+                    const now = new Date();
+                    const dateValue = new Date(value);
+                    return isNaN(dateValue.getTime()) ? false : (dateValue > now);
+                }
+            }
         });
     };
 }
-//# sourceMappingURL=IsOnlyDate.decorator.js.map
+//# sourceMappingURL=IsAfterNow.validator.js.map

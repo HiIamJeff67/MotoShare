@@ -9,10 +9,10 @@ import {
 import { 
     MaxNumberString, 
     MinNumberString 
-} from "../../decorators";
+} from "../../validator";
 import { MAX_SELF_INTRODUCTION_LENGTH, MIN_SELF_INTRODUCTION_LENGTH } from "../../constants/context.constant";
 import { MAX_AGE, MIN_AGE } from "../../constants/info.constant";
-import { IsPhoneNumberString } from "../../decorators/IsPhoneNumberString.decorator";
+import { IsPhoneNumberString } from "../../validator/IsPhoneNumberString.validator";
 import { AllowedPhoneNumberTypes } from "../../types";
 
 export class CreatePassengerInfoDto {

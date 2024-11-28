@@ -16,7 +16,7 @@ import {
     MaxNumberString, 
     MinNumberString, 
     IsAfterNow
-} from "../../decorators";
+} from "../../validator";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_TOLERABLE_RDV, MIN_TOLERABLE_RDV } from "../../constants/algorithm.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";

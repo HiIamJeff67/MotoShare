@@ -5,7 +5,8 @@ import { Controller,
   ForbiddenException, 
   NotFoundException,
   ConflictException,
-  NotAcceptableException
+  NotAcceptableException,
+  Patch
 } from '@nestjs/common';
 import { PassengerInviteService } from './passengerInvite.service';
 import { Response } from 'express';
@@ -512,7 +513,7 @@ export class PassengerInviteController {
 
   /* ================= Update detail operations used by Passenger ================= */
   @UseGuards(JwtPassengerGuard)
-  @Post('passenger/updateMyPassengerInviteById')
+  @Patch('passenger/updateMyPassengerInviteById')
   async updateMyPassengerInviteById(
     @Passenger() passenger: PassengerType,
     @Query('id') id: string,
@@ -549,7 +550,7 @@ export class PassengerInviteController {
 
   /* ================= Accept or Reject operations used by Ridder ================= */
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/decidePassengerInviteById')
+  @Patch('ridder/decidePassengerInviteById')
   async decidePassengerInviteById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,

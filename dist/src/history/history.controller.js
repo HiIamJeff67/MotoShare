@@ -241,7 +241,7 @@ __decorate([
 ], HistoryController.prototype, "searchPaginationHistoriesByRidderId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Post)('passenger/rateAndCommentHistoryById'),
+    (0, common_1.Patch)('passenger/rateAndCommentHistoryById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Body)()),
@@ -252,7 +252,7 @@ __decorate([
 ], HistoryController.prototype, "rateAndCommentHistoryForPassengerById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Post)('ridder/rateAndCommentHistoryById'),
+    (0, common_1.Patch)('ridder/rateAndCommentHistoryById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Body)()),

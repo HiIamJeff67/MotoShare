@@ -247,7 +247,7 @@ __decorate([
 ], PassengerController.prototype, "searchPaginationPassengers", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
-    (0, common_1.Post)('updateMe'),
+    (0, common_1.Patch)('updateMe'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -259,7 +259,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    (0, common_1.Post)('updateMyInfo'),
+    (0, common_1.Patch)('updateMyInfo'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.UploadedFile)()),

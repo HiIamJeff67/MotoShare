@@ -24,12 +24,44 @@
     ], 
     "crons": [
         {
-            "path": "/api/cron/deleteExpiredPurchaseOrders", 
+            "path": "/api/cron/updateToExpiredPurchaseOrders", 
             "schedule": "0 0 * * *"
+        },
+        {
+            "path": "/api/cron/updateToExpiredSupplyOrders", 
+            "schedule": "0 0 * * *"
+        },
+        {
+            "pat": "/api/cron/updateToExpiredPassengerInvites", 
+            "schedule": "0 0 * * *"
+        },
+        {
+            "path": "/api/cron/updateToExpiredRidderInvites", 
+            "schedule": "0 0 * * *"
+        },
+        {
+            "path": "/api/cron/updateToStartedOrders",
+            "schedule": "0 0 * * *"
+        },
+        {
+            "path": "/api/cron/deleteExpiredPurchaseOrders", 
+            "schedule": "0 3 * * *"
         }, 
         {
             "path": "/api/cron/deleteExpiredSupplyOrders", 
-            "schedule": "0 0 * * *"
+            "schedule": "0 3 * * *"
+        },
+        {
+            "path": "/api/cron/deleteExpiredPassengerInvites",
+            "schedule":"0 3 * * *"
+        },
+        {
+            "path": "/api/cron/deleteExpiredRidderInvites",
+            "schedule":"0 3 * * *"
+        },
+        {
+            "path": "/api/cron/deleteExpiredOrders",
+            "schedule":"0 3 * * *"
         }
     ]
 }
