@@ -81,6 +81,36 @@ let CronController = class CronController {
             response.status(error.status).send(error.response);
         }
     }
+    async updateCronJobsWorkflow(response) {
+        try {
+            const responseOfUpdatingToExpiredPurchaseOrders = await this.cronService.updateToExpiredPurchaseOrders();
+            const responseOfUpdatingToExpiredSupplyOrders = await this.cronService.updateToExpiredSupplyOrders();
+            const responseOfUpdatingToExpiredPassengerInvites = await this.cronService.updateToExpiredPassengerInvites();
+            const responseOfUpdatingToExpiredRidderInvites = await this.cronService.updateToExpiredRidderInvites();
+            const responseOfUpdatingToStatedOrders = await this.cronService.updateToStartedOrders();
+            response.status(enums_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                message: "All the specified Cron Jobs are done",
+                jobs: {
+                    updateToExpiredPurchaseOrders: Boolean(responseOfUpdatingToExpiredPurchaseOrders),
+                    updateToExpiredSupplyOrders: Boolean(responseOfUpdatingToExpiredSupplyOrders),
+                    updateToExpiredPassengerInvites: Boolean(responseOfUpdatingToExpiredPassengerInvites),
+                    updateToExpiredRidderInvites: Boolean(responseOfUpdatingToExpiredRidderInvites),
+                    updateToStartedOrders: Boolean(responseOfUpdatingToStatedOrders),
+                },
+                dataCounts: {
+                    numberOfExpiredPurchaseOrders: responseOfUpdatingToExpiredPurchaseOrders.length,
+                    numberOfExpiredSupplyOrders: responseOfUpdatingToExpiredSupplyOrders.length,
+                    numberOfExpiredPassengerInvites: responseOfUpdatingToExpiredPassengerInvites.length,
+                    numberOfExpiredRidderInvites: responseOfUpdatingToExpiredRidderInvites.length,
+                    numberOfStartedOrders: responseOfUpdatingToStatedOrders.length,
+                },
+            });
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
     async deleteExpiredPurchaseOrders(response) {
         try {
             const res = await this.cronService.deleteExpiredPurchaseOrders();
@@ -139,91 +169,117 @@ let CronController = class CronController {
             response.status(error.status).send(error.response);
         }
     }
+    async deleteCronJobsWorkflow(response) {
+        try {
+            const responseOfDeleteExpiredPurchaseOrders = await this.cronService.deleteExpiredPurchaseOrders();
+            const responseOfDeleteExpiredSupplyOrders = await this.cronService.deleteExpiredSupplyOrders();
+            const responseOfDeleteExpiredPassengerInvites = await this.cronService.deleteExpiredPassengerInvites();
+            const responseOfDeleteExpiredRidderInvites = await this.cronService.deleteExpiredRidderInvites();
+            const responseOfDeleteExpiredOrders = await this.cronService.deleteExpiredOrders();
+            response.status(enums_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                message: "All the specified Cron Jobs are done",
+                jobs: {
+                    deleteExpiredPurchaseOrders: Boolean(responseOfDeleteExpiredPurchaseOrders),
+                    deleteExpiredSupplyOrders: Boolean(responseOfDeleteExpiredSupplyOrders),
+                    deleteExpiredPassengerInvites: Boolean(responseOfDeleteExpiredPassengerInvites),
+                    deleteExpiredRidderInvites: Boolean(responseOfDeleteExpiredRidderInvites),
+                    deleteExpiredOrders: Boolean(responseOfDeleteExpiredOrders),
+                },
+                dataCount: {
+                    numberOfExpiredPurchaseOrders: responseOfDeleteExpiredPurchaseOrders.length,
+                    numberOfExpiredSupplyOrders: responseOfDeleteExpiredSupplyOrders.length,
+                    numberOfExpiredPassengerInvites: responseOfDeleteExpiredPassengerInvites.length,
+                    numberOfExpiredRidderInvites: responseOfDeleteExpiredRidderInvites.length,
+                    numberOfStartedOrders: responseOfDeleteExpiredOrders.length,
+                },
+            });
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
     test(response) {
         response.status(200).send({ context: "Hello Vercel Cron" });
     }
 };
 exports.CronController = CronController;
 __decorate([
-    (0, common_1.Get)('/updateToExpiredPurchaseOrders'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToExpiredPurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('/updateToExpiredSupplyOrders'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToExpiredSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('/updateToExpiredPassengerInvites'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToExpiredPassengerInvites", null);
 __decorate([
-    (0, common_1.Get)('/updateToExpiredRidderInvites'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToExpiredRidderInvites", null);
 __decorate([
-    (0, common_1.Get)('/updateToStartedOrders'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToStartedOrders", null);
 __decorate([
-    (0, common_1.Get)('/deleteExpiredPurchaseOrders'),
+    (0, common_1.Get)('/updateCronJobsWorkflow'),
     (0, cronAuth_decorator_1.CronAuth)(),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "updateCronJobsWorkflow", null);
+__decorate([
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredPurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('/deleteExpiredSupplyOrders'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('/deleteExpiredPassengerInvites'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredPassengerInvites", null);
 __decorate([
-    (0, common_1.Get)('/deleteExpiredRidderInvites'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredRidderInvites", null);
 __decorate([
-    (0, common_1.Get)('/deleteExpiredOrders'),
-    (0, cronAuth_decorator_1.CronAuth)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredOrders", null);
+__decorate([
+    (0, common_1.Get)('/deleteCronJobsWorkflow'),
+    (0, cronAuth_decorator_1.CronAuth)(),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "deleteCronJobsWorkflow", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Res)()),

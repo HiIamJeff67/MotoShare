@@ -3,15 +3,17 @@ import { Response } from 'express';
 export declare class CronController {
     private readonly cronService;
     constructor(cronService: CronService);
-    updateToExpiredPurchaseOrders(response: Response): Promise<void>;
-    updateToExpiredSupplyOrders(response: Response): Promise<void>;
-    updateToExpiredPassengerInvites(response: Response): Promise<void>;
-    updateToExpiredRidderInvites(response: Response): Promise<void>;
-    updateToStartedOrders(response: Response): Promise<void>;
-    deleteExpiredPurchaseOrders(response: Response): Promise<void>;
-    deleteExpiredSupplyOrders(response: Response): Promise<void>;
-    deleteExpiredPassengerInvites(response: Response): Promise<void>;
-    deleteExpiredRidderInvites(response: Response): Promise<void>;
-    deleteExpiredOrders(response: Response): Promise<void>;
+    private updateToExpiredPurchaseOrders;
+    private updateToExpiredSupplyOrders;
+    private updateToExpiredPassengerInvites;
+    private updateToExpiredRidderInvites;
+    private updateToStartedOrders;
+    updateCronJobsWorkflow(response: Response): Promise<void>;
+    private deleteExpiredPurchaseOrders;
+    private deleteExpiredSupplyOrders;
+    private deleteExpiredPassengerInvites;
+    private deleteExpiredRidderInvites;
+    private deleteExpiredOrders;
+    deleteCronJobsWorkflow(response: Response): Promise<void>;
     test(response: Response): void;
 }
