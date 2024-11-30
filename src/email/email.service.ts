@@ -14,8 +14,8 @@ export class EmailService {
         return await this.mailer.sendMail({
             to: to, 
             subject: 'Welcome to MotoShare', 
-            template: this.config.get("FRONTEND_DEVELOPER") 
-                && userName.includes(this.config.get("FRONTEND_DEVELOPER") as string)
+            template: this.config.get("BACKEND_DEVELOPER") 
+                && userName.includes(this.config.get("BACKEND_DEVELOPER") as string)
                     ? './bounsWelcomeEmail'
                     : './welcomeEmail', 
             context: {

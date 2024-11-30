@@ -25,7 +25,7 @@ import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { response, Response } from 'express';
 import { HttpStatusCode } from '../enums';
 
-@WebSocketGateway(9999)
+@WebSocketGateway(Number(process.env.WE_PORT) ?? 9999)
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private notificationService: NotificationService, 
