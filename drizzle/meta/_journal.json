@@ -162,6 +162,13 @@
       "when": 1732675290907,
       "tag": "0022_petite_molten_man",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1732961492545,
+      "tag": "0023_omniscient_prima",
+      "breakpoints": true
     }
   ]
 }

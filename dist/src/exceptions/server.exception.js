@@ -1,10 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
     messaage: "Specifying not allowed phone number on IsPhoneNumberString decorator",
+});
+exports.ServerTranslateBearerTokenToPayloadException = new common_1.InternalServerErrorException({
+    case: "E-S-700",
+    message: "Failed to translate bearer token to payload",
+});
+exports.ServerUserNotFoundInSocketMapException = new common_1.NotFoundException({
+    case: "E-S-701",
+    message: "Cannot find any user(included Passengers and Ridders) in socket map",
 });
 exports.ServerNeonConnectionException = new common_1.InternalServerErrorException({
     case: "E-S-800",
@@ -49,6 +57,10 @@ exports.ServerSupabaseUploadFileParaNotFoundException = new common_1.InternalSer
 exports.ServerSupabaseUploadFileException = new common_1.InternalServerErrorException({
     case: "E-S-853",
     message: "Failed to upload file to Supabase storage",
+});
+exports.ServerExtractJwtSecretEnvVariableException = new common_1.InternalServerErrorException({
+    case: "E-S-900",
+    message: "Failed to extract the required environment variable JWT_SECRET",
 });
 exports.ServerUnknownException = new common_1.InternalServerErrorException({
     case: "E-S-999",

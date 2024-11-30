@@ -8,7 +8,14 @@ import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
-import { ClientHistoryNotFoundException } from '../exceptions';
+import { 
+  ClientHistoryNotFoundException, 
+  ClientPassengerNotFoundException, 
+  ClientRidderNotFoundException, 
+  ClientWithoutAdvanceAuthorizedUserException 
+} from '../exceptions';
+import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
+import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 
 @Injectable()
 export class HistoryService {
@@ -123,6 +130,14 @@ export class HistoryService {
     passengerId: string, 
     rateAndCommentHistoryDto: RateAndCommentHistoryDto, 
   ) {
+    const passenger = await this.db.select({
+      isEmailAuthenticated: PassengerAuthTable.isEmailAuthenticated, 
+    }).from(PassengerAuthTable)
+      .where(eq(PassengerAuthTable.userId, passengerId));
+
+    if (!passenger || passenger.length === 0) throw ClientPassengerNotFoundException;
+    if (!passenger[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
+
     return await this.db.update(HistoryTable).set({
       starRatingByPassenger: rateAndCommentHistoryDto.starRating,
       commentByPassenger: rateAndCommentHistoryDto.comment,
@@ -140,6 +155,14 @@ export class HistoryService {
     ridderId: string, 
     rateAndCommentHistoryDto: RateAndCommentHistoryDto,
   ) {
+    const ridder = await this.db.select({
+      isEmailAuthenticated: RidderAuthTable.isEmailAuthenticated, 
+    }).from(RidderAuthTable)
+      .where(eq(RidderAuthTable.userId, ridderId));
+
+    if (!ridder || ridder.length === 0) throw ClientRidderNotFoundException;
+    if (!ridder[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
+
     return await this.db.update(HistoryTable).set({
       starRatingByRidder: rateAndCommentHistoryDto.starRating,
       commentByRidder: rateAndCommentHistoryDto.comment,

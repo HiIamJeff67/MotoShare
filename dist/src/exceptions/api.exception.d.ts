@@ -7,4 +7,5 @@ export declare const ApiPrevOrderIdFormException: NotAcceptableException;
 export declare const ApiGeneratingBearerTokenException: InternalServerErrorException;
 export declare const ApiGenerateAuthCodeException: InternalServerErrorException;
 export declare const ApiSendEmailForValidationException: InternalServerErrorException;
+export declare const ApiMissingUserRoleInHeaderWhileConnectingToSocketException: InternalServerErrorException;
 export declare const ApiUnknownException: InternalServerErrorException;

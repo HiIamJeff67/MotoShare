@@ -20,4 +20,5 @@ __exportStar(require("./user.interface"), exports);
 __exportStar(require("./order.interface"), exports);
 __exportStar(require("./invite.interface"), exports);
 __exportStar(require("./email.interface"), exports);
+__exportStar(require("./socket.interface"), exports);
 //# sourceMappingURL=index.js.map

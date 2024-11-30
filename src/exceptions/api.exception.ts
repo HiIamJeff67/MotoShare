@@ -54,6 +54,12 @@ export const ApiSendEmailForValidationException = new InternalServerErrorExcepti
     message: "Failed to send a email for validation", 
 });
 
+// E-A-950
+export const ApiMissingUserRoleInHeaderWhileConnectingToSocketException = new InternalServerErrorException({
+    case: "E-S-950", 
+    message: "Missing userrole field in header while connecting to socket", 
+});
+
 // E-A-099
 export const ApiUnknownException = new InternalServerErrorException({
     case: "E-A-099", 

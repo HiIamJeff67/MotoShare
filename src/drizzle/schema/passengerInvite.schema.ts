@@ -24,7 +24,6 @@ export const PassengerInviteTable = pgTable('passengerInvite', {
     suggestEndedAt: timestamp("suggestEndedAt").notNull(),
     status: inviteStatusEnum().notNull().default("CHECKING"),
     // we don't specify the enums of notificationType, since we may extend the types of notification in the future
-    notificationType: text("notificationType").notNull().default("INVITE"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 }, (table) => {

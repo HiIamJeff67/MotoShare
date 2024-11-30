@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     case: "E-A-001",
@@ -39,6 +39,10 @@ exports.ApiGenerateAuthCodeException = new common_1.InternalServerErrorException
 exports.ApiSendEmailForValidationException = new common_1.InternalServerErrorException({
     case: "E-A-902",
     message: "Failed to send a email for validation",
+});
+exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = new common_1.InternalServerErrorException({
+    case: "E-S-950",
+    message: "Missing userrole field in header while connecting to socket",
 });
 exports.ApiUnknownException = new common_1.InternalServerErrorException({
     case: "E-A-099",

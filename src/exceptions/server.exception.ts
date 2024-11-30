@@ -1,9 +1,21 @@
-import { InternalServerErrorException } from "@nestjs/common"
+import { InternalServerErrorException, NotFoundException } from "@nestjs/common"
 
 // E-S-001
 export const ServerAllowedPhoneNumberException = new InternalServerErrorException({
     case: "E-S-001",
     messaage: "Specifying not allowed phone number on IsPhoneNumberString decorator",
+});
+
+// E-S-700
+export const ServerTranslateBearerTokenToPayloadException = new InternalServerErrorException({
+    case: "E-S-700", 
+    message: "Failed to translate bearer token to payload", 
+});
+
+// E-S-701
+export const ServerUserNotFoundInSocketMapException = new NotFoundException({
+    case: "E-S-701", 
+    message: "Cannot find any user(included Passengers and Ridders) in socket map", 
 });
 
 // E-S-800
@@ -70,7 +82,13 @@ export const ServerSupabaseUploadFileParaNotFoundException = new InternalServerE
 export const ServerSupabaseUploadFileException = new InternalServerErrorException({
     case: "E-S-853",
     message: "Failed to upload file to Supabase storage",
-})
+});
+
+// E-S-900
+export const ServerExtractJwtSecretEnvVariableException = new InternalServerErrorException({
+    case: "E-S-900", 
+    message: "Failed to extract the required environment variable JWT_SECRET", 
+});
 
 // E-S-999
 export const ServerUnknownException = new InternalServerErrorException({

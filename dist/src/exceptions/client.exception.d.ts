@@ -6,6 +6,7 @@ export declare const ClientAuthCodeNotPairException: NotAcceptableException;
 export declare const ClientAuthCodeExpiredException: NotAcceptableException;
 export declare const ClientOldPasswordNotMatchException: NotAcceptableException;
 export declare const ClientDeleteAccountPasswordNotMatchException: NotAcceptableException;
+export declare const ClientWithoutAdvanceAuthorizedUserException: UnauthorizedException;
 export declare const ClientPassengerNotFoundException: NotFoundException;
 export declare const ClientRidderNotFoundException: NotFoundException;
 export declare const ClientInviteNotFoundException: NotFoundException;

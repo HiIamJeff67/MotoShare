@@ -1,5 +1,7 @@
-import { InternalServerErrorException } from "@nestjs/common";
+import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 export declare const ServerAllowedPhoneNumberException: InternalServerErrorException;
+export declare const ServerTranslateBearerTokenToPayloadException: InternalServerErrorException;
+export declare const ServerUserNotFoundInSocketMapException: NotFoundException;
 export declare const ServerNeonConnectionException: InternalServerErrorException;
 export declare const ServerNeonEnvVarNotFoundException: InternalServerErrorException;
 export declare const ServerNeonAutoUpdateExpiredPurchaseOrderException: InternalServerErrorException;
@@ -11,4 +13,5 @@ export declare const ServerSupabaseConnectionException: InternalServerErrorExcep
 export declare const ServerSupabaseEnvVarNotFoundException: InternalServerErrorException;
 export declare const ServerSupabaseUploadFileParaNotFoundException: InternalServerErrorException;
 export declare const ServerSupabaseUploadFileException: InternalServerErrorException;
+export declare const ServerExtractJwtSecretEnvVariableException: InternalServerErrorException;
 export declare const ServerUnknownException: InternalServerErrorException;

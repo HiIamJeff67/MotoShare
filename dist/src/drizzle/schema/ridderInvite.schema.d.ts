@@ -200,22 +200,6 @@ export declare const RidderInviteTable: import("drizzle-orm/pg-core").PgTableWit
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        notificationType: import("drizzle-orm/pg-core").PgColumn<{
-            name: "notificationType";
-            tableName: "ridderInvite";
-            dataType: "string";
-            columnType: "PgText";
-            data: string;
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: [string, ...string[]];
-            baseColumn: never;
-            generated: undefined;
-        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "createdAt";
             tableName: "ridderInvite";

@@ -22,6 +22,8 @@ const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
+const passengerAuth_schema_1 = require("../drizzle/schema/passengerAuth.schema");
+const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 let HistoryService = class HistoryService {
     constructor(db) {
         this.db = db;
@@ -107,6 +109,14 @@ let HistoryService = class HistoryService {
             .offset(offset);
     }
     async rateAndCommentHistoryForPassengerById(id, passengerId, rateAndCommentHistoryDto) {
+        const passenger = await this.db.select({
+            isEmailAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isEmailAuthenticated,
+        }).from(passengerAuth_schema_1.PassengerAuthTable)
+            .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, passengerId));
+        if (!passenger || passenger.length === 0)
+            throw exceptions_1.ClientPassengerNotFoundException;
+        if (!passenger[0].isEmailAuthenticated)
+            throw exceptions_1.ClientWithoutAdvanceAuthorizedUserException;
         return await this.db.update(history_schema_1.HistoryTable).set({
             starRatingByPassenger: rateAndCommentHistoryDto.starRating,
             commentByPassenger: rateAndCommentHistoryDto.comment,
@@ -116,6 +126,14 @@ let HistoryService = class HistoryService {
         });
     }
     async rateAndCommentHistoryForRidderById(id, ridderId, rateAndCommentHistoryDto) {
+        const ridder = await this.db.select({
+            isEmailAuthenticated: ridderAuth_schema_1.RidderAuthTable.isEmailAuthenticated,
+        }).from(ridderAuth_schema_1.RidderAuthTable)
+            .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, ridderId));
+        if (!ridder || ridder.length === 0)
+            throw exceptions_1.ClientRidderNotFoundException;
+        if (!ridder[0].isEmailAuthenticated)
+            throw exceptions_1.ClientWithoutAdvanceAuthorizedUserException;
         return await this.db.update(history_schema_1.HistoryTable).set({
             starRatingByRidder: rateAndCommentHistoryDto.starRating,
             commentByRidder: rateAndCommentHistoryDto.comment,

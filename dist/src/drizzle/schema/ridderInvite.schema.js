@@ -22,7 +22,6 @@ exports.RidderInviteTable = (0, pg_core_1.pgTable)('ridderInvite', {
     suggestStartAfter: (0, pg_core_1.timestamp)("suggestStartAfter").notNull(),
     suggestEndedAt: (0, pg_core_1.timestamp)("suggestEndedAt").notNull(),
     status: (0, enums_1.inviteStatusEnum)().notNull().default("CHECKING"),
-    notificationType: (0, pg_core_1.text)("notificationType").notNull().default("INVITE"),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
 }, (table) => {

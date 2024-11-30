@@ -37,13 +37,19 @@ export const ClientAuthCodeExpiredException = new NotAcceptableException({
 // E-C-012
 export const ClientOldPasswordNotMatchException = new NotAcceptableException({
     case: "E-C-012", 
-    message: "Cannot update new password due to the old password not matching"
+    message: "Cannot update new password due to the old password not matching", 
 });
 
 // E-C-013
 export const ClientDeleteAccountPasswordNotMatchException = new NotAcceptableException({
     case: "E-C-013", 
-    message: "Cannot delete the account due to the given password not matching"
+    message: "Cannot delete the account due to the given password not matching", 
+});
+
+// E-C-014
+export const ClientWithoutAdvanceAuthorizedUserException = new UnauthorizedException({
+    case: "E-C-014", 
+    message: "The user cannot continue the services without email authenticated", 
 });
 
 /* ============================== Error about authorization ============================== */
