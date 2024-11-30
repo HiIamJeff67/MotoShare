@@ -5,7 +5,7 @@ import { Ridder } from '../auth/decorator';
 import { RidderType } from '../interfaces';
 import { Response } from 'express';
 import { ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
-import { HttpStatusCode } from 'axios';
+import { HttpStatusCode } from '../enums';
 import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 
 @Controller('ridderAuth')
