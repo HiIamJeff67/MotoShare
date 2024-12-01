@@ -9,6 +9,7 @@ import {
     RidderCollectionsToOrders,
     RidderInviteTable,
 } from "./schema";
+import { RidderNotificationTable } from "./ridderNotification.schema";
 
 export const RidderTable = pgTable("ridder", {
     id: uuid("id").primaryKey().defaultRandom(), 
@@ -25,9 +26,10 @@ export const RidderTable = pgTable("ridder", {
 
 export const RidderRelation = relations(RidderTable, ({ one, many }) => ({
     info: one(RidderInfoTable), // no need to specify this, since the fk is on info schema
-    collection: many(RidderCollectionsToOrders),
-    supplyOrder: many(SupplyOrderTable),
-    order: many(OrderTable),
-    history: many(HistoryTable),
-    invite: many(RidderInviteTable),
+    collection: many(RidderCollectionsToOrders), 
+    supplyOrder: many(SupplyOrderTable), 
+    order: many(OrderTable), 
+    history: many(HistoryTable), 
+    invite: many(RidderInviteTable), 
+    notification: many(RidderNotificationTable), 
 }));

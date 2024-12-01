@@ -22,6 +22,7 @@ export declare class PurchaseOrderController {
     getAllPurchaseOrders(): Promise<{
         id: string;
         description: string | null;
+        createdAt: Date;
         updatedAt: Date;
         creatorId: string;
         initPrice: number;
@@ -38,8 +39,7 @@ export declare class PurchaseOrderController {
         startAfter: Date;
         endedAt: Date;
         autoAccept: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        createdAt: Date;
+        status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
         isUrgent: boolean;
     }[]>;
     testWithExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

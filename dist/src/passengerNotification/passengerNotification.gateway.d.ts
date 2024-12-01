@@ -1,5 +1,5 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { NotificationService } from './notification.service';
+import { NotificationService } from './passenerNotification.service';
 import { Server, Socket } from "socket.io";
 import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../drizzle/types/drizzle';

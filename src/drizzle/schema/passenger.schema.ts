@@ -9,6 +9,7 @@ import {
     PassengerCollectionsToOrders,
     PassengerInviteTable,
 } from "./schema";
+import { PassengerNotificationTable } from "./passengerNotification.schema";
 
 export const PassengerTable = pgTable("passenger", {
     id: uuid("id").primaryKey().defaultRandom(), 
@@ -30,4 +31,5 @@ export const PassengerRelation = relations(PassengerTable, ({ one, many }) => ({
     orders: many(OrderTable),
     historyOrders: many(HistoryTable),
     invite: many(PassengerInviteTable),
+    notification: many(PassengerNotificationTable), 
 }));

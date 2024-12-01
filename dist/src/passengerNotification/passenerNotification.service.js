@@ -6,18 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotificationModule = void 0;
+exports.NotificationService = void 0;
 const common_1 = require("@nestjs/common");
-const notification_service_1 = require("./notification.service");
-const notification_gateway_1 = require("./notification.gateway");
-const drizzle_module_1 = require("../drizzle/drizzle.module");
-let NotificationModule = class NotificationModule {
+let NotificationService = class NotificationService {
 };
-exports.NotificationModule = NotificationModule;
-exports.NotificationModule = NotificationModule = __decorate([
-    (0, common_1.Module)({
-        providers: [notification_gateway_1.NotificationGateway, notification_service_1.NotificationService],
-        imports: [drizzle_module_1.DrizzleModule],
-    })
-], NotificationModule);
-//# sourceMappingURL=notification.module.js.map
+exports.NotificationService = NotificationService;
+exports.NotificationService = NotificationService = __decorate([
+    (0, common_1.Injectable)()
+], NotificationService);
+//# sourceMappingURL=passenerNotification.service.js.map

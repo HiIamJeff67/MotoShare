@@ -19,7 +19,7 @@ const guard_1 = require("../auth/guard");
 const decorator_1 = require("../auth/decorator");
 const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
-const axios_1 = require("axios");
+const enums_1 = require("../enums");
 const update_ridderAuth_dto_1 = require("./dto/update-ridderAuth.dto");
 let RidderAuthController = class RidderAuthController {
     constructor(ridderAuthService) {
@@ -30,7 +30,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Vaildate Your Email");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -48,7 +48,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Reset Your Password");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -66,7 +66,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Reset Your Email or Password");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -84,7 +84,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.validateAuthCodeForEmail(ridder.id, validateRidderInfoDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -103,7 +103,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(ridder.id, resetRidderPasswordDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -122,7 +122,7 @@ let RidderAuthController = class RidderAuthController {
             const res = await this.ridderAuthService.validateAuthCodeToResetEmailOrPassword(ridder.id, updateRidderEmailPasswordDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException

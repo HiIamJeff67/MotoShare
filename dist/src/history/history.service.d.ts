@@ -55,7 +55,7 @@ export declare class HistoryService {
         updatedAt: Date;
         ridderPhoneNumber: string | null;
         motocycleType: string | null;
-        status: "EXPIRED" | "CANCEL" | "FINISHED";
+        status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
     searchPaginationHistoryByRidderId(ridderId: string, limit: number, offset: number): Promise<{
         id: string;
@@ -76,13 +76,13 @@ export declare class HistoryService {
         createdAt: Date;
         updatedAt: Date;
         passengerPhoneNumber: string | null;
-        status: "EXPIRED" | "CANCEL" | "FINISHED";
+        status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
     rateAndCommentHistoryForPassengerById(id: string, passengerId: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
-        status: "EXPIRED" | "CANCEL" | "FINISHED";
+        status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
     rateAndCommentHistoryForRidderById(id: string, ridderId: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
-        status: "EXPIRED" | "CANCEL" | "FINISHED";
+        status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
     delinkHistoryByPassengerId(id: string, passengerId: string): Promise<{
         id: string;

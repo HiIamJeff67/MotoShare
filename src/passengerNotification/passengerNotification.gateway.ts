@@ -6,7 +6,7 @@ import {
 	OnGatewayConnection,
 	OnGatewayDisconnect, 
 } from '@nestjs/websockets';
-import { NotificationService } from './notification.service';
+import { NotificationService } from './passenerNotification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import * as jwt from 'jsonwebtoken'

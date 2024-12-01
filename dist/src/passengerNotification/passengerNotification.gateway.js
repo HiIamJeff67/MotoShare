@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
-const notification_service_1 = require("./notification.service");
+const passenerNotification_service_1 = require("./passenerNotification.service");
 const jwt = require("jsonwebtoken");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
@@ -143,9 +143,9 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], NotificationGateway.prototype, "server", void 0);
 exports.NotificationGateway = NotificationGateway = __decorate([
-    (0, websockets_1.WebSocketGateway)(9999),
+    (0, websockets_1.WebSocketGateway)({ namespace: 'notifications' }),
     __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [notification_service_1.NotificationService,
+    __metadata("design:paramtypes", [passenerNotification_service_1.NotificationService,
         config_1.ConfigService, Object])
 ], NotificationGateway);
-//# sourceMappingURL=notification.gateway.js.map
+//# sourceMappingURL=passengerNotification.gateway.js.map

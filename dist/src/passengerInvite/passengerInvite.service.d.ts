@@ -219,7 +219,7 @@ export declare class PassengerInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

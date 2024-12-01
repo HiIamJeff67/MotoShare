@@ -7,9 +7,9 @@ export declare class RidderInviteService {
     private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
+        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
-        createdAt: Date;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
         id: string;
@@ -220,7 +220,7 @@ export declare class RidderInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";

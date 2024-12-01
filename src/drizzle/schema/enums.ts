@@ -7,17 +7,63 @@
  */
 
 import { pgEnum } from "drizzle-orm/pg-core";
- 
-// for HistoryTable
-export const starRatingEnum = pgEnum("starRating", ["0", "1", "2", "3", "4", "5"]);
-export const historyStatusEnum = pgEnum("historyStatus", ["FINISHED", "EXPIRED", "CANCEL"]);
+
+/* ================================= Status Enums ================================= */
+export const historyStatusEnum = pgEnum("historyStatus", [
+    "FINISHED", 
+    "EXPIRED", 
+    "CANCEL"
+]);
 
 // for PassengerInviteTable and RidderInviteTable
-export const inviteStatusEnum = pgEnum("inviteStatus", ["ACCEPTED", "REJECTED", "CHECKING", "CANCEL"]);
+export const inviteStatusEnum = pgEnum("inviteStatus", [
+    "ACCEPTED", 
+    "REJECTED", 
+    "CHECKING", 
+    "CANCEL"
+]);
 
 // for OrderTable
 export const passengerOrderStatusEnum = pgEnum("passengerOrderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
-export const ridderOrderStatusEnum = pgEnum("ridderOrderStatus", ["UNSTARTED", "STARTED", "UNPAID", "FINISHED"]);
+export const ridderOrderStatusEnum = pgEnum("ridderOrderStatus", [
+    "UNSTARTED", 
+    "STARTED", 
+    "UNPAID", 
+    "FINISHED"
+]);
 
 // for both PurchaseOrderTable and SupplyOrderTable
-export const postedStatusEnum = pgEnum("postStatus", ["POSTED", "EXPIRED", "CANCEL", "RESERVED"]);
+export const postedStatusEnum = pgEnum("postStatus", [
+    "POSTED", 
+    "EXPIRED", 
+    "CANCEL", 
+    "RESERVED"
+]);
+/* ================================= Status Enums ================================= */
+
+
+/* ================================= Type Enums ================================= */
+// for HistoryTable
+export const starRatingEnum = pgEnum("starRating", [
+    "0", 
+    "1", 
+    "2", 
+    "3", 
+    "4", 
+    "5"
+]);
+
+// for NotificationTable
+export const notificationTypeEnum = pgEnum("notificationType", [
+    "PurchaseOrder", 
+    "SupplyOrder", 
+    "PassengerInvite", 
+    "RidderInvite", 
+    "Order", 
+    "History", 
+    "Payment", 
+    // "PassengerRegularOrder", 
+    // "RidderRegularOrder", 
+    "System"
+]);
+/* ================================= Type Enums ================================= */
