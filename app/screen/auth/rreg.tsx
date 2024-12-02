@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import {
   TextInput,
   Text,
@@ -17,11 +17,28 @@ import {
   StatusBar,
 } from "react-native";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../(store)/userSlice";
-import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { z } from "zod";
+
+const usernameSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9_]+$/, "使用者名稱只能包含英文字母、數字和底線")
+  .min(4, "使用者名稱至少需要4個字元")
+  .max(20, "使用者名稱最多20個字元")
+
+const passwordSchema = z
+  .string()
+  .min(8, "密碼至少需要8個字元")
+  .regex(/[a-z]/, "密碼必須包含至少一個小寫字母")
+  .regex(/[A-Z]/, "密碼必須包含至少一個大寫字母")
+  .regex(/[0-9]/, "密碼必須包含至少一個數字")
+  .regex(/[@$!%*?&]/, "密碼必須包含至少一個特殊字元 @$!%*?&")
+  .refine((val) => !/\s/.test(val), "密碼不能包含空格");
+
+const emailSchema = z
+  .string()
+  .email("請輸入有效的電子郵件地址");
 
 const RidderReg = () => {
   const navigation = useNavigation();
@@ -32,7 +49,7 @@ const RidderReg = () => {
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  const [lockButton, setLockButton] = useState(false);
 
   useEffect(() => {
     const showEvent =
@@ -68,29 +85,76 @@ const RidderReg = () => {
     Alert.alert("社交登入", `您選擇了 ${provider} 登入`);
   };
 
-  const saveToken = async (token: string) => {
-    try {
-      await SecureStore.setItemAsync("userToken", token);
-      console.log("Token 保存成功");
-    } catch (error) {
-      console.error("保存 Token 出錯:", error);
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "rlogin" }],
+          })
+        );
+      }
     }
-  };
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
 
   const handleRegister = async () => {
     setLoading(true);
 
-    const unsafeChars = /[<>#$%^&*()\[\]{};:'"|\`~]/g;
+    // 驗證使用者名稱
+    const usernameValidation = usernameSchema.safeParse(username);
 
-    if (unsafeChars.test(username) || unsafeChars.test(password)) {
-      Alert.alert("錯誤", "使用者名稱或密碼包含不安全的字元", [
+    if (!usernameValidation.success) {
+      Alert.alert("錯誤", usernameValidation.error.errors[0].message, [
         { onPress: () => setLoading(false) },
       ]);
       return;
     }
 
-    if (username === "" || password === "") {
-      Alert.alert("錯誤", "請輸入使用者名稱和密碼", [
+    // 驗證電子郵件
+    const emailValidation = emailSchema.safeParse(email);
+    if (!emailValidation.success) {
+      Alert.alert("錯誤", emailValidation.error.errors[0].message, [
+        { onPress: () => setLoading(false) },
+      ]);
+      return;
+    }
+
+    // 驗證密碼
+    const passwordValidation = passwordSchema.safeParse(password);
+
+    if (!passwordValidation.success) {
+      Alert.alert("錯誤", passwordValidation.error.errors[0].message, [
         { onPress: () => setLoading(false) },
       ]);
       return;
@@ -116,14 +180,11 @@ const RidderReg = () => {
 
       if (response) {
         console.log(response);
-        saveToken(response.data.accessToken);
-        dispatch(setUser({ username: response.data.userName, role: 2 }));
-        Alert.alert("成功", `註冊成功，使用者：${username}`, [
-          { onPress: () => setLoading(false) },
-        ]);
-        navigation.navigate("home");
+        setLockButton(true);
+        setLoading(false);
+        Alert.alert("成功", `註冊成功，使用者：${username}`);
       } else {
-        Alert.alert("錯誤", "註冊失敗。", [
+        Alert.alert("錯誤", "請求伺服器失敗", [
           { onPress: () => setLoading(false) },
         ]);
       }
@@ -135,16 +196,10 @@ const RidderReg = () => {
         ]);
       } else {
         console.log("An unexpected error occurred:", JSON.stringify(error));
-        Alert.alert("錯誤", "無法連接到伺服器。", [
+        Alert.alert("錯誤", "發生意外錯誤", [
           { onPress: () => setLoading(false) },
         ]);
       }
-    }
-  };
-
-  const dismissKeyboard = () => {
-    if (Platform.OS !== "web") {
-      Keyboard.dismiss();
     }
   };
 
@@ -211,6 +266,7 @@ const RidderReg = () => {
             value={email}
             onChangeText={setEmail}
             placeholderTextColor="#626262"
+            keyboardType="email-address"
           />
         </View>
 
@@ -250,7 +306,7 @@ const RidderReg = () => {
           <Pressable
             style={styles.registerButton}
             onPress={handleRegister}
-            disabled={loading} // 按鈕在loading時不可點擊
+            disabled={loading || lockButton}
           >
             <Text style={styles.registerButtonText}>
               {loading ? "註冊中..." : "註冊"}

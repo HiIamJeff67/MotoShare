@@ -1,11 +1,23 @@
-import { Text, View, ScrollView, Alert, Pressable } from 'react-native';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import {
+  Text,
+  View,
+  ScrollView,
+  Alert,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
-import * as SecureStore from 'expo-secure-store';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { ScaledSheet, scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import * as SecureStore from "expo-secure-store";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  ScaledSheet,
+  scale,
+  verticalScale,
+  moderateScale,
+} from "react-native-size-matters";
 
 // 定義 Creator 的資料結構
 interface CreatorInfoType {
@@ -37,17 +49,15 @@ interface OrderType {
 const OrderDetail = () => {
   const user = useSelector((state: RootState) => state.user);
   const [order, setOrder] = useState<OrderType>();
+  const [isLoading, setIsLoading] = useState(true);
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 1)
-  {
+  if (user.role == 1) {
     roleText = "車主";
-  }
-  else if (user.role == 2)
-  {
+  } else if (user.role == 2) {
     roleText = "乘客";
   }
 
@@ -66,7 +76,8 @@ const OrderDetail = () => {
 
   useEffect(() => {
     // 通過 orderId 取得訂單資料
-    let response, url = "";
+    let response,
+      url = "";
 
     if (user.role == 1) {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
@@ -76,83 +87,112 @@ const OrderDetail = () => {
 
     const SearchOrder = async () => {
       try {
-          // 獲取 Token
-          const token = await getToken();
+        // 獲取 Token
+        const token = await getToken();
 
-          if (!token) {
-            Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
-            return;
-          }
+        if (!token) {
+          Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+          return;
+        }
 
-          response = await axios.get(url, {
-            params: {
-              id: orderid,
-            },
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        response = await axios.get(url, {
+          params: {
+            id: orderid,
+          },
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-          setOrder(response.data);
-          //console.log(response.data);
+        setOrder(response.data);
+        //console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
 
     SearchOrder();
   }, []);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-          <View style={styles.card}>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.card}>
               <View style={styles.header}>
-                {order ? (
-                  <>
-                    <Text style={styles.orderNumber}>訂單編號: {order?.id}</Text>
-                  </>
-                  ) : (
-                    <Text style={styles.title}>正在加載訂單資料...</Text>
-                )}
+                    <Text style={styles.orderNumber}>
+                      訂單編號: {order?.id}
+                    </Text>
               </View>
-      
+
               <View style={styles.body}>
                 {order ? (
-                <>
-                  <Text style={styles.title}>{roleText}：{order.creator.userName}</Text>
-                  <Text style={styles.title}>起點：{order.startAddress}</Text>
-                  <Text style={styles.title}>終點：{order.endAddress}</Text>
-                  <Text style={styles.title}>開車時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>初始價格: {order.initPrice}</Text>
-                  {user.role == 1 ? (
-                    <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
-                  ) : null}
-                  <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  <Text style={styles.title}>備註: {order.description}</Text>
-                  <Pressable
-                    style={[styles.inviteButton]}
-                    onPress={() => navigation.navigate('invitemap', { orderid: orderid })}
-                  >
-                    <Text style={styles.inviteButtonText}>建立邀請</Text>
-                  </Pressable>
-                </>
+                  <>
+                    <Text style={styles.title}>
+                      {roleText}：{order.creator.userName}
+                    </Text>
+                    <Text style={styles.title}>起點：{order.startAddress}</Text>
+                    <Text style={styles.title}>終點：{order.endAddress}</Text>
+                    <Text style={styles.title}>
+                      開車時間:{" "}
+                      {new Date(order.startAfter).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                    <Text style={styles.title}>
+                      初始價格: {order.initPrice}
+                    </Text>
+                    {user.role == 1 ? (
+                      <Text style={styles.title}>
+                        路徑偏差距離: {order.tolerableRDV}
+                      </Text>
+                    ) : null}
+                    <Text style={styles.title}>
+                      更新時間:{" "}
+                      {new Date(order.updatedAt).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                    <Text style={styles.title}>備註: {order.description}</Text>
+                    <Pressable
+                      style={[styles.inviteButton]}
+                      onPress={() =>
+                        navigation.navigate("invitemap", { orderid: orderid })
+                      }
+                    >
+                      <Text style={styles.inviteButtonText}>建立邀請</Text>
+                    </Pressable>
+                  </>
                 ) : (
-                  <Text style={styles.title}>正在加載訂單資料...</Text>
+                  null
                 )}
               </View>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = ScaledSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingHorizontal: scale(20), // 設置水平間距
@@ -189,18 +229,18 @@ const styles = ScaledSheet.create({
     color: "#333",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchBox: {
     height: verticalScale(40),
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: moderateScale(50),
     borderWidth: scale(1),
-    borderColor: 'gray',
-    backgroundColor: 'white',
+    borderColor: "gray",
+    backgroundColor: "white",
     paddingHorizontal: scale(16),
   },
   searchInput: {
@@ -210,7 +250,7 @@ const styles = ScaledSheet.create({
   },
   addButtonContainer: {
     padding: moderateScale(12),
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
     borderRadius: moderateScale(50),
     marginLeft: scale(10),
   },

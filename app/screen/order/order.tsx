@@ -8,13 +8,20 @@ import {
   Platform,
   Keyboard,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
-import { useNavigation } from '@react-navigation/native';
-import { ScaledSheet, scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { useNavigation } from "@react-navigation/native";
+import {
+  ScaledSheet,
+  scale,
+  verticalScale,
+  moderateScale,
+} from "react-native-size-matters";
+import debounce from "lodash/debounce";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -30,15 +37,13 @@ const Order = () => {
   const user = useSelector((state: RootState) => state.user);
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [searchInput, setSearchInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 1)
-  {
+  if (user.role == 1) {
     roleText = "車主";
-  }
-  else if (user.role == 2)
-  {
+  } else if (user.role == 2) {
     roleText = "乘客";
   }
 
@@ -50,7 +55,8 @@ const Order = () => {
   };
 
   const SearchOrder = async () => {
-    let response, url = "";
+    let response,
+      url = "";
 
     if (user.role == 1) {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchPaginationSupplyOrders`;
@@ -75,70 +81,118 @@ const Order = () => {
       } else {
         console.log("An unexpected error occurred:", error);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleSearchInputChange = debounce(() => {
+    const regex = /^[a-zA-Z0-9_]+$/; // 使用者名稱只能包含英文字母、數字和底線
+
+    if (regex.test(searchInput)) {
+      SearchOrder();
+    }
+  }, 500);
 
   useEffect(() => {
     SearchOrder();
   }, []);
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <View style={{
-            flex: 1,
-            paddingHorizontal: scale(20), // 設置水平間距
-            paddingVertical: verticalScale(15), // 設置垂直間距
-        }}>
-          <View style={styles.searchContainer}>
-            <View style={styles.searchBox}>
-              <Feather name="search" size={moderateScale(24)} color="black" />
-              <TextInput
-                placeholder="使用者"
-                style={styles.searchInput}
-                placeholderTextColor="gray"
-                value={searchInput}
-                onChangeText={(text) => setSearchInput(text)}
-                onSubmitEditing={SearchOrder} // 按下 "Enter" 時觸發搜尋
-              />
-            </View>
-
-            <View style={styles.addButtonContainer}>
-              <Pressable onPress={() => {}}>
-                <Feather name="plus" size={moderateScale(24)} color="black" />
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={{ paddingTop: verticalScale(15) }} />
-
-          {orders.map((order) => (
-            <View key={order.id} style={styles.container}>
-              <Pressable
-                key={order.id}
-                onPress={() => navigation.navigate('orderdetail', { orderid: order.id })}
-              >
-                <View style={styles.card}>
-                  <View style={styles.header}>
-                    <Text style={styles.orderNumber}>訂單編號: {order.id}</Text>
-                  </View>
-                  <View style={styles.body}>
-                    <Text style={styles.title}>{roleText}：{order.creatorName}</Text>
-                    <Text style={styles.title}>起點：{order.startAddress}</Text>
-                    <Text style={styles.title}>終點：{order.endAddress}</Text>
-                    <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                  </View>
-                </View>
-              </Pressable>
-            </View>
-          ))}
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+      ) : (
+        <ScrollView>
+          <TouchableWithoutFeedback onPress={dismissKeyboard}>
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: scale(20), // 設置水平間距
+                paddingVertical: verticalScale(15), // 設置垂直間距
+              }}
+            >
+              <View style={styles.searchContainer}>
+                <View style={styles.searchBox}>
+                  <Feather
+                    name="search"
+                    size={moderateScale(24)}
+                    color="black"
+                  />
+                  <TextInput
+                    placeholder="使用者"
+                    style={styles.searchInput}
+                    placeholderTextColor="gray"
+                    value={searchInput}
+                    onChangeText={(text) => setSearchInput(text)}
+                    onSubmitEditing={handleSearchInputChange} // 按下 "Enter" 時觸發搜尋
+                  />
+                </View>
+
+                <View style={styles.addButtonContainer}>
+                  <Pressable onPress={() => {}}>
+                    <Feather
+                      name="plus"
+                      size={moderateScale(24)}
+                      color="black"
+                    />
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={{ paddingTop: verticalScale(15) }} />
+
+              {orders.map((order) => (
+                <View key={order.id} style={styles.container}>
+                  <Pressable
+                    key={order.id}
+                    onPress={() =>
+                      navigation.navigate("orderdetail", { orderid: order.id })
+                    }
+                  >
+                    <View style={styles.card}>
+                      <View style={styles.header}>
+                        <Text style={styles.orderNumber}>
+                          訂單編號: {order.id}
+                        </Text>
+                      </View>
+                      <View style={styles.body}>
+                        <Text style={styles.title}>
+                          {roleText}：{order.creatorName}
+                        </Text>
+                        <Text style={styles.title}>
+                          起點：{order.startAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          終點：{order.endAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          更新時間:{" "}
+                          {new Date(order.updatedAt).toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = ScaledSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingBottom: verticalScale(15),
@@ -173,17 +227,17 @@ const styles = ScaledSheet.create({
     color: "#333",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchBox: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: moderateScale(50),
     borderWidth: scale(1),
-    borderColor: 'gray',
-    backgroundColor: 'white',
+    borderColor: "gray",
+    backgroundColor: "white",
     paddingHorizontal: scale(16),
     height: verticalScale(40),
   },
@@ -194,7 +248,7 @@ const styles = ScaledSheet.create({
   },
   addButtonContainer: {
     padding: moderateScale(10),
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
     borderRadius: moderateScale(50),
     marginLeft: scale(10),
   },

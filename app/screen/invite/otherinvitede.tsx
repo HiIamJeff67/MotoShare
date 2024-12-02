@@ -5,6 +5,7 @@ import {
   ScrollView,
   Alert,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -13,12 +14,7 @@ import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import {
-  ScaledSheet,
-  scale,
-  verticalScale,
-  moderateScale,
-} from "react-native-size-matters";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -39,9 +35,12 @@ interface OrderType {
 
 const OtherInviteDetail = () => {
   const user = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [invite, setInvite] = useState<OrderType>();
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
+  const [lockButton, setLockButton] = useState(false);
   const navigation = useNavigation();
 
   const getToken = async () => {
@@ -56,6 +55,49 @@ const OtherInviteDetail = () => {
       return null;
     }
   };
+
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "home" }, { name: "myinvite" }],
+          })
+        );
+      }
+    }
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
 
   useEffect(() => {
     // 透過 orderId 取得訂單資料
@@ -96,6 +138,8 @@ const OtherInviteDetail = () => {
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -103,6 +147,8 @@ const OtherInviteDetail = () => {
   }, []);
 
   const InviteStatus = async (decide: number) => {
+    setLoading(true);
+
     try {
       let response,
         url = "",
@@ -127,11 +173,11 @@ const OtherInviteDetail = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
+          { onPress: () => setLoading(false) },
+        ]);
         return;
       }
-
-      console.log(token);
 
       response = await axios.post(
         url,
@@ -148,121 +194,136 @@ const OtherInviteDetail = () => {
         }
       );
 
-      //console.log(response.data);
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1, // 設為 1，因為我們要有兩個頁面：HomeScreen 和 InvScreen
-          routes: [{ name: "home" }, { name: "myinvite" }],
-        })
-      );
+      setLockButton(true);
+      setLoading(false);
       Alert.alert("成功", message);
+      //console.log(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
+          { onPress: () => setLoading(false) },
+        ]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤");
+        Alert.alert("錯誤", "伺服器錯誤", [
+          { onPress: () => setLoading(false) },
+        ]);
       }
     }
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <View style={styles.header}>
-            {invite ? (
-              <>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.card}>
+              <View style={styles.header}>
                 <Text style={styles.orderNumber}>邀請編號: {invite?.id}</Text>
-              </>
-            ) : (
-              <Text style={styles.title}>正在加載訂單資料...</Text>
-            )}
-          </View>
+              </View>
 
-          <View style={styles.body}>
-            {invite ? (
-              <>
-                <Text style={styles.maintitle}>別人推薦</Text>
-                <Text style={styles.title}>
-                  起點：{invite.suggestStartAddress}
-                </Text>
-                <Text style={styles.title}>
-                  終點：{invite.suggestEndAddress}
-                </Text>
-                <Text style={styles.title}>
-                  開車時間:{" "}
-                  {new Date(invite.suggestStartAfter).toLocaleString("en-GB", {
-                    timeZone: "Asia/Taipei",
-                  })}
-                </Text>
-                <Text style={styles.title}>價格: {invite.suggestPrice}</Text>
-                <Text style={styles.title}>
-                  更新時間:{" "}
-                  {new Date(invite.inviteUdpatedAt).toLocaleString("en-GB", {
-                    timeZone: "Asia/Taipei",
-                  })}
-                </Text>
-                <Text style={styles.title}>
-                  備註: {invite.inviteBriefDescription}
-                </Text>
-                <Pressable
-                  style={[
-                    styles.inviteButton
-                  ]}
-                  onPress={() => InviteStatus(1)}
-                >
-                  <Text style={styles.inviteButtonText}>接受邀請</Text>
-                </Pressable>
-                <View style={{ marginTop: 10 }} />
-                <Pressable
-                  style={[
-                    styles.inviteButton,
-                    {
-                      height: verticalScale(40),
-                      justifyContent: "center",
-                      alignItems: "center",
-                    },
-                  ]}
-                  onPress={() => InviteStatus(2)}
-                >
-                  <Text style={styles.inviteButtonText}>拒絕邀請</Text>
-                </Pressable>
-              </>
-            ) : (
-              <Text style={styles.title}>正在加載訂單資料...</Text>
-            )}
+              <View style={styles.body}>
+                {invite ? (
+                  <>
+                    <Text style={styles.maintitle}>別人推薦</Text>
+                    <Text style={styles.title}>
+                      起點：{invite.suggestStartAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      終點：{invite.suggestEndAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      開車時間:{" "}
+                      {new Date(invite.suggestStartAfter).toLocaleString(
+                        "en-GB",
+                        {
+                          timeZone: "Asia/Taipei",
+                        }
+                      )}
+                    </Text>
+                    <Text style={styles.title}>
+                      價格: {invite.suggestPrice}
+                    </Text>
+                    <Text style={styles.title}>
+                      更新時間:{" "}
+                      {new Date(invite.inviteUdpatedAt).toLocaleString(
+                        "en-GB",
+                        {
+                          timeZone: "Asia/Taipei",
+                        }
+                      )}
+                    </Text>
+                    <Text style={styles.title}>
+                      備註: {invite.inviteBriefDescription}
+                    </Text>
+                    <Pressable
+                      style={[styles.inviteButton]}
+                      onPress={() => InviteStatus(1)}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.inviteButtonText}>接受邀請</Text>
+                    </Pressable>
+                    <View style={{ marginTop: 10 }} />
+                    <Pressable
+                      style={[
+                        styles.inviteButton,
+                        {
+                          height: verticalScale(40),
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                      ]}
+                      onPress={() => InviteStatus(2)}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.inviteButtonText}>拒絕邀請</Text>
+                    </Pressable>
+                  </>
+                ) : null}
+              </View>
+            </View>
+            <View style={{ marginTop: 15 }} />
+            <View style={styles.card}>
+              <View style={styles.body}>
+                {invite ? (
+                  <>
+                    <Text style={styles.maintitle}>原本訂單</Text>
+                    <Text style={styles.title}>
+                      起點：{invite.startAddress}
+                    </Text>
+                    <Text style={styles.title}>終點：{invite.endAddress}</Text>
+                    <Text style={styles.title}>
+                      開車時間:{" "}
+                      {new Date(invite.startAfter).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                    <Text style={styles.title}>價格: {invite.initPrice}</Text>
+                    <Text style={styles.title}>備註: {invite.description}</Text>
+                  </>
+                ) : (
+                  null
+                )}
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={{ marginTop: 15 }} />
-        <View style={styles.card}>
-          <View style={styles.body}>
-            {invite ? (
-              <>
-                <Text style={styles.maintitle}>原本訂單</Text>
-                <Text style={styles.title}>起點：{invite.startAddress}</Text>
-                <Text style={styles.title}>終點：{invite.endAddress}</Text>
-                <Text style={styles.title}>
-                  開車時間:{" "}
-                  {new Date(invite.startAfter).toLocaleString("en-GB", {
-                    timeZone: "Asia/Taipei",
-                  })}
-                </Text>
-                <Text style={styles.title}>價格: {invite.initPrice}</Text>
-                <Text style={styles.title}>備註: {invite.description}</Text>
-              </>
-            ) : (
-              <Text style={styles.title}>正在加載訂單資料...</Text>
-            )}
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingHorizontal: scale(20), // 設置水平間距

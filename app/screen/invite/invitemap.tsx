@@ -39,8 +39,10 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { z } from "zod";
 
 const InviteMap = () => {
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [initialPrice, setinitialPrice] = useState("");
@@ -66,6 +68,7 @@ const InviteMap = () => {
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
+  const [lockButton, setLockButton] = useState(false);
 
   const getToken = async () => {
     try {
@@ -103,13 +106,119 @@ const InviteMap = () => {
     }
   };
 
+  const validateOrderData = () => {
+    const priceSchema = z
+      .string()
+      .regex(/^[0-9]*$/, "Price must be a valid number")
+      .min(1, "Initial price cannot be empty")
+      .max(4, "Price must be less than 3000")
+      .refine((val) => {
+        const price = parseInt(val, 10);
+        return price >= 5 && price <= 3000;
+      }, "Price must be between 5 and 3000");
+
+    const descriptionSchema = z
+      .string()
+      .regex(
+        /^[一-龥a-zA-Z0-9\s.,!?]*$/,
+        "Order description contains illegal characters"
+      )
+      .max(100, "Order description must be less than 100 characters");
+
+    const startAfterSchema = z
+      .date()
+      .refine((date) => date > new Date(), "Start date must be in the future");
+
+    const priceValidation = priceSchema.safeParse(initialPrice);
+    const descriptionValidation = descriptionSchema.safeParse(orderDescription);
+    const startAfterValidation = startAfterSchema.safeParse(selectedDate);
+
+    if (!priceValidation.success) {
+      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [
+        { onPress: () => setLoading(false) },
+      ]);
+      return false;
+    }
+
+    if (!descriptionValidation.success) {
+      Alert.alert(
+        "Validation Error",
+        descriptionValidation.error.errors[0].message,
+        [{ onPress: () => setLoading(false) }]
+      );
+      return false;
+    }
+
+    if (!startAfterValidation.success) {
+      Alert.alert(
+        "Validation Error",
+        startAfterValidation.error.errors[0].message,
+        [{ onPress: () => setLoading(false) }]
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "home" }, { name: "myinvite" }],
+          })
+        );
+      }
+    }
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
+
   const updateOrderData = async () => {
+    setLoading(true);
+
+    if (!validateOrderData()) {
+      return;
+    }
+
     try {
       // 獲取 Token
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
+          { onPress: () => setLoading(false) },
+        ]);
         return;
       }
 
@@ -152,21 +261,21 @@ const InviteMap = () => {
         },
       });
 
+      setLockButton(true);
       console.log("Update Response:", response.data);
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1, // 設為 1，因為我們要有兩個頁面：HomeScreen 和 InvScreen
-          routes: [{ name: "home" }, { name: "myinvite" }],
-        })
-      );
+      setLoading(false);
       Alert.alert("成功", "送出邀請成功");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
+          { onPress: () => setLoading(false) },
+        ]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤");
+        Alert.alert("錯誤", "伺服器錯誤", [
+          { onPress: () => setLoading(false) },
+        ]);;
       }
     }
   };
@@ -295,7 +404,7 @@ const InviteMap = () => {
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
-          keyboardBehavior= "extend" // 設置鍵盤行為
+          keyboardBehavior="extend" // 設置鍵盤行為
           enablePanDownToClose={false}
           index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
         >
@@ -369,6 +478,7 @@ const InviteMap = () => {
                       setDestination(null);
                       setShowDetailsPage(false);
                     }}
+                    disabled={loading || lockButton}
                   >
                     <Text style={styles.buttonText}>返回</Text>
                   </Pressable>
@@ -376,8 +486,9 @@ const InviteMap = () => {
                   <Pressable
                     style={[styles.button, { backgroundColor: "#228B22" }]}
                     onPress={() => updateOrderData()}
+                    disabled={loading || lockButton}
                   >
-                    <Text style={styles.buttonText}>邀請對方</Text>
+                    <Text style={styles.buttonText}>{loading ? "邀請中..." : "邀請對方"}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -393,7 +504,10 @@ const InviteMap = () => {
                     placeholder="搜尋起始位置"
                     textInputProps={{
                       placeholderTextColor: "#626262",
-                      onFocus: () => Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      onFocus: () =>
+                        Platform.OS === "ios"
+                          ? handleSnapPress(3)
+                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
                     }}
                     fetchDetails={true}
                     onPress={(data, details = null) =>
@@ -426,7 +540,10 @@ const InviteMap = () => {
                     placeholder="搜尋目的地"
                     textInputProps={{
                       placeholderTextColor: "#626262",
-                      onFocus: () => Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      onFocus: () =>
+                        Platform.OS === "ios"
+                          ? handleSnapPress(3)
+                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
                     }}
                     fetchDetails={true}
                     onPress={(data, details = null) =>

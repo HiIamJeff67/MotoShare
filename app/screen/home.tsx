@@ -5,6 +5,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
+  InteractionManager,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -13,12 +15,13 @@ import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import React, { useEffect, useState } from "react";
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state: RootState) => state.user);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-
   let roleText = "載入中...";
 
   if (user.role == 1) {
@@ -27,86 +30,118 @@ const Home = () => {
     roleText = "車主";
   }
 
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      // 當所有互動完成後更新狀態
+      setIsLoading(false);
+    });
+  }, []);
+
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingTop: verticalScale(insets.top),
-        paddingBottom: verticalScale(insets.bottom),
-        paddingHorizontal: scale(20), // 設置水平間距
-        paddingVertical: verticalScale(20), // 設置垂直間距
-      }}
-    >
-      <Text style={styles.welcomeText}>
-        歡迎{roleText}, {user.username}
-      </Text>
-
-      <View style={styles.inputWrapper}>
-        <Image
-          source={require("../../assets/images/search.png")}
-          style={styles.icon}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Where to go"
-          placeholderTextColor="#000000"
-        />
-      </View>
-
-      <Text style={styles.MainText}>建議</Text>
-      <View
-        style={{ marginTop: verticalScale(20) }}
-        className="flex flex-row justify-between items-center"
-      >
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("map")}
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            paddingTop: verticalScale(insets.top),
+            paddingBottom: verticalScale(insets.bottom),
+            paddingHorizontal: scale(20), // 設置水平間距
+            paddingVertical: verticalScale(20), // 設置垂直間距
+          }}
         >
-          <View className="items-center">
-            <FontAwesome6
-              name="motorcycle"
-              size={moderateScale(24)}
-              color="black"
+          <Text style={styles.welcomeText}>
+            歡迎{roleText}, {user.username}
+          </Text>
+
+          <View style={styles.inputWrapper}>
+            <Image
+              source={require("../../assets/images/search.png")}
+              style={styles.icon}
             />
-            <Text style={{ marginTop: verticalScale(5) }}>建立訂單</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Where to go"
+              placeholderTextColor="#000000"
+            />
           </View>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("order")}
-        >
-          <View className="items-center">
-            <FontAwesome6 name="list" size={moderateScale(24)} color="black" />
-            <Text style={{ marginTop: verticalScale(5) }}>查看訂單</Text>
-          </View>
-        </TouchableOpacity>
+          <Text style={styles.MainText}>建議</Text>
+          <View
+            style={{ marginTop: verticalScale(20) }}
+            className="flex flex-row justify-between items-center"
+          >
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => navigation.navigate("map")}
+            >
+              <View className="items-center">
+                <FontAwesome6
+                  name="motorcycle"
+                  size={moderateScale(24)}
+                  color="black"
+                />
+                <Text style={{ marginTop: verticalScale(5) }}>建立訂單</Text>
+              </View>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("myinvite")}
-        >
-          <View className="items-center">
-            <Ionicons name="people" size={moderateScale(24)} color="black" />
-            <Text style={{ marginTop: verticalScale(5) }}>查看邀請</Text>
-          </View>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => navigation.navigate("order")}
+            >
+              <View className="items-center">
+                <FontAwesome6
+                  name="list"
+                  size={moderateScale(24)}
+                  color="black"
+                />
+                <Text style={{ marginTop: verticalScale(5) }}>查看訂單</Text>
+              </View>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("myorder")}
-        >
-          <View className="items-center">
-            <FontAwesome6 name="edit" size={moderateScale(24)} color="black" />
-            <Text style={{ marginTop: verticalScale(5) }}>訂單管理</Text>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => navigation.navigate("myinvite")}
+            >
+              <View className="items-center">
+                <Ionicons
+                  name="people"
+                  size={moderateScale(24)}
+                  color="black"
+                />
+                <Text style={{ marginTop: verticalScale(5) }}>查看邀請</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => navigation.navigate("myorder")}
+            >
+              <View className="items-center">
+                <FontAwesome6
+                  name="edit"
+                  size={moderateScale(24)}
+                  color="black"
+                />
+                <Text style={{ marginTop: verticalScale(5) }}>訂單管理</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   textInput: {
     flex: 1, // 使輸入框填滿剩餘空間
     color: "#000", // 文字顏色

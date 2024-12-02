@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import {
   TextInput,
   Text,
@@ -22,19 +22,38 @@ import { setUser } from "../../(store)/userSlice";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { z } from "zod";
+import { set } from "lodash";
+
+// 驗證規則
+const usernameSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9_]+$/, "使用者名稱只能包含英文字母、數字和底線")
+  .min(4, "使用者名稱至少需要4個字元")
+  .max(20, "使用者名稱最多20個字元");
+
+const emailSchema = z.string().email("請輸入有效的電子郵件地址");
+
+const passwordSchema = z
+  .string()
+  .min(8, "密碼至少需要8個字元")
+  .refine((val) => !/\s/.test(val), "密碼不能包含空格");
 
 const RidderLogin = () => {
-  const [username, setUsername] = useState("");
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const translateY = useRef(new Animated.Value(0)).current;
+  const [lockButton, setLockButton] = useState(false);
 
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const keyboardShowListener = Keyboard.addListener(showEvent, (event) => {
       Animated.timing(translateY, {
@@ -73,31 +92,103 @@ const RidderLogin = () => {
     }
   };
 
-  const handleLogin = async () => {
-    setLoading(true);
-    const unsafeChars = /[<>#$%^&*()\[\]{};:'"|`~]/g;
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
 
-    if (unsafeChars.test(username) || unsafeChars.test(password)) {
-      Alert.alert("錯誤", "使用者名稱或密碼包含不安全的字元", [
-        { onPress: () => setLoading(false) },
-      ]);
-      return;
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "home" }],
+          })
+        );
+      }
     }
 
-    if (username === "" || password === "") {
-      Alert.alert("錯誤", "請輸入使用者名稱和密碼", [
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
+
+  const handleLogin = async () => {
+    setLoading(true);
+
+    // 根據 "@" 判斷是使用者名稱還是電子郵件
+    if (usernameOrEmail.includes("@")) {
+      // 檢查是否為有效的電子郵件
+      const emailValidation = emailSchema.safeParse(usernameOrEmail);
+      if (!emailValidation.success) {
+        Alert.alert("錯誤", emailValidation.error.errors[0].message, [
+          { onPress: () => setLoading(false) },
+        ]);
+        return;
+      }
+    } else {
+      // 檢查是否為有效的使用者名稱
+      const usernameValidation = usernameSchema.safeParse(usernameOrEmail);
+      if (!usernameValidation.success) {
+        Alert.alert("錯誤", usernameValidation.error.errors[0].message, [
+          { onPress: () => setLoading(false) },
+        ]);
+        return;
+      }
+    }
+
+    // 驗證密碼
+    const passwordValidation = passwordSchema.safeParse(password);
+    if (!passwordValidation.success) {
+      Alert.alert("錯誤", passwordValidation.error.errors[0].message, [
         { onPress: () => setLoading(false) },
       ]);
       return;
     }
 
     try {
+      let data;
+
+      // 判斷是否包含 "@"
+      if (usernameOrEmail.includes("@")) {
+        // 如果輸入是電子郵件
+        data = {
+          email: usernameOrEmail,
+          password: password,
+        };
+      } else {
+        // 如果輸入的是使用者名稱
+        data = {
+          userName: usernameOrEmail,
+          password: password,
+        };
+      }
+
       const response = await axios.post(
         `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidder`,
-        {
-          userName: username,
-          password: password,
-        },
+        data,
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
         }
@@ -105,13 +196,12 @@ const RidderLogin = () => {
 
       if (response && response.data) {
         saveToken(response.data.accessToken);
-        dispatch(setUser({ username: username, role: 2 }));
-        Alert.alert("成功", `登入成功，使用者：${username}`, [
-          { onPress: () => setLoading(false) },
-        ]);
-        navigation.navigate("home");
+        dispatch(setUser({ username: usernameOrEmail, role: 2 }));
+        setLockButton(true);
+        setLoading(false);
+        Alert.alert("成功", `登入成功，使用者：${usernameOrEmail}`);
       } else {
-        Alert.alert("錯誤", "登入失敗，請檢查您的使用者名稱和密碼。", [
+        Alert.alert("錯誤", "請求伺服器失敗", [
           { onPress: () => setLoading(false) },
         ]);
       }
@@ -123,7 +213,7 @@ const RidderLogin = () => {
         ]);
       } else {
         console.log("An unexpected error occurred:", JSON.stringify(error));
-        Alert.alert("錯誤", "無法連接到伺服器。", [
+        Alert.alert("錯誤", "發生意外錯誤", [
           { onPress: () => setLoading(false) },
         ]);
       }
@@ -173,9 +263,9 @@ const RidderLogin = () => {
           />
           <TextInput
             style={styles.textInput}
-            placeholder="使用者名稱"
-            value={username}
-            onChangeText={setUsername}
+            placeholder="使用者名稱或電子郵件"
+            value={usernameOrEmail}
+            onChangeText={setUsernameOrEmail}
             placeholderTextColor="#626262"
           />
         </View>
@@ -199,7 +289,7 @@ const RidderLogin = () => {
           <Pressable
             style={styles.loginButton}
             onPress={handleLogin}
-            disabled={loading}
+            disabled={loading || lockButton}
           >
             <Text style={styles.loginButtonText}>
               {loading ? "登入中..." : "登入"}

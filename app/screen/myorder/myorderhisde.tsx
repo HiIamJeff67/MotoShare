@@ -7,8 +7,8 @@ import {
   Pressable,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -16,12 +16,7 @@ import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import {
-  ScaledSheet,
-  scale,
-  verticalScale,
-  moderateScale,
-} from "react-native-size-matters";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -57,6 +52,9 @@ const MyOrderHistoryDetail = () => {
   const [inputValue, setInputValue] = useState("");
   const [inputText, setInputText] = useState("");
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [lockButton, setLockButton] = useState(false);
   let roleText = "載入中...";
 
   if (user.role == 2) {
@@ -78,6 +76,49 @@ const MyOrderHistoryDetail = () => {
       return null;
     }
   };
+
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "home" }, { name: "myorder" }],
+          })
+        );
+      }
+    }
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
 
   useEffect(() => {
     const SearchOrder = async () => {
@@ -118,6 +159,8 @@ const MyOrderHistoryDetail = () => {
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -125,6 +168,8 @@ const MyOrderHistoryDetail = () => {
   }, []);
 
   const SendRate = async () => {
+    setLoading(true);
+
     try {
       let response,
         url = "";
@@ -139,7 +184,9 @@ const MyOrderHistoryDetail = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
+          { onPress: () => setLoading(false) },
+        ]);
         return;
       }
 
@@ -160,154 +207,166 @@ const MyOrderHistoryDetail = () => {
       );
 
       console.log(response.data);
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1, // 設為 1，因為我們要有兩個頁面：HomeScreen 和 InvScreen
-          routes: [{ name: "home" }, { name: "myorder" }],
-        })
-      );
+      setLockButton(true);
+      setLoading(false);
       Alert.alert("成功", "評分成功");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
+          { onPress: () => setLoading(false) },
+        ]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤");
+        Alert.alert("錯誤", "伺服器錯誤", [
+          { onPress: () => setLoading(false) },
+        ]);
       }
     }
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <View style={styles.header}>
-            {order ? (
-              <>
-                <Text style={styles.orderNumber}>歷史編號: {order?.id}</Text>
-              </>
-            ) : (
-              <Text style={styles.title}>正在加載歷史資料...</Text>
-            )}
-          </View>
-
-          <View style={styles.body}>
-            {order ? (
-              <>
-                <Text style={styles.title}>
-                  {roleText}：
-                  {user.role == 1 ? order.ridderName : order.passengerName}
-                </Text>
-                <Text style={styles.title}>
-                  起點：{order.finalStartAddress}
-                </Text>
-                <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
-                <Text style={styles.title}>
-                  開始時間:{" "}
-                  {new Date(order.startAfter).toLocaleString("en-GB", {
-                    timeZone: "Asia/Taipei",
-                  })}
-                </Text>
-                <Text style={styles.title}>最終價格: {order.finalPrice}</Text>
-                <Text style={styles.title}>
-                  最後更新:{" "}
-                  {new Date(order.updatedAt).toLocaleString("en-GB", {
-                    timeZone: "Asia/Taipei",
-                  })}
-                </Text>
-                {(user.role == 1 && order.starRatingByPassenger == 0) ||
-                (user.role == 2 && order.starRatingByRidder == 0) ? (
-                  <Pressable
-                    style={[styles.rateButton]}
-                    onPress={() => setModalVisible(true)}
-                  >
-                    <Text style={styles.rateButtonText}>評分</Text>
-                  </Pressable>
-                ) : null}
-              </>
-            ) : (
-              <Text style={styles.title}>正在加載歷史資料...</Text>
-            )}
-          </View>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
         </View>
-        {order ? (
-          <>
-            <View style={{ marginTop: 15 }} />
-            {(user.role == 1 && order.starRatingByRidder > 0) ||
-            (user.role == 2 && order.starRatingByPassenger > 0) ? (
-              <View style={styles.card}>
-                <View style={styles.body}>
-                  <Text style={styles.title}>
-                    對方給你的評分：
-                    {user.role == 1
-                      ? order?.starRatingByRidder
-                      : order?.starRatingByPassenger}
-                  </Text>
-                  <Text style={styles.title}>
-                    對方給你的留言：
-                    {user.role == 1
-                      ? order?.commentByRidder
-                      : order?.commentByPassenger}
-                  </Text>
-                </View>
+      ) : (
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.card}>
+              <View style={styles.header}>
+                <Text style={styles.orderNumber}>歷史編號: {order?.id}</Text>
               </View>
-            ) : null}
-          </>
-        ) : null}
-        {/* 彈出窗口 */}
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>請輸入評分(1-5):</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="評分"
-                value={inputValue}
-                onChangeText={setInputValue}
-                placeholderTextColor="gray"
-              />
-              <Text style={styles.modalText}>請輸入留言:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="留言"
-                value={inputText}
-                onChangeText={setInputText}
-                placeholderTextColor="gray"
-              />
-              <View style={{ flexDirection: "row" }}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>返回</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
-                    SendRate();
-                  }}
-                >
-                  <Text style={styles.textStyle}>確認</Text>
-                </Pressable>
+
+              <View style={styles.body}>
+                {order ? (
+                  <>
+                    <Text style={styles.title}>
+                      {roleText}：
+                      {user.role == 1 ? order.ridderName : order.passengerName}
+                    </Text>
+                    <Text style={styles.title}>
+                      起點：{order.finalStartAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      終點：{order.finalEndAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      開始時間:{" "}
+                      {new Date(order.startAfter).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                    <Text style={styles.title}>
+                      最終價格: {order.finalPrice}
+                    </Text>
+                    <Text style={styles.title}>
+                      最後更新:{" "}
+                      {new Date(order.updatedAt).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                    {(user.role == 1 && order.starRatingByPassenger == 0) ||
+                    (user.role == 2 && order.starRatingByRidder == 0) ? (
+                      <Pressable
+                        style={[styles.rateButton]}
+                        onPress={() => setModalVisible(true)}
+                        disabled={loading || lockButton}
+                      >
+                        <Text style={styles.rateButtonText}>評分</Text>
+                      </Pressable>
+                    ) : null}
+                  </>
+                ) : null}
               </View>
             </View>
+            {order ? (
+              <>
+                <View style={{ marginTop: 15 }} />
+                {(user.role == 1 && order.starRatingByRidder > 0) ||
+                (user.role == 2 && order.starRatingByPassenger > 0) ? (
+                  <View style={styles.card}>
+                    <View style={styles.body}>
+                      <Text style={styles.title}>
+                        對方給你的評分：
+                        {user.role == 1
+                          ? order?.starRatingByRidder
+                          : order?.starRatingByPassenger}
+                      </Text>
+                      <Text style={styles.title}>
+                        對方給你的留言：
+                        {user.role == 1
+                          ? order?.commentByRidder
+                          : order?.commentByPassenger}
+                      </Text>
+                    </View>
+                  </View>
+                ) : null}
+              </>
+            ) : null}
+            {/* 彈出窗口 */}
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>請輸入評分(1-5):</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="評分"
+                    value={inputValue}
+                    onChangeText={setInputValue}
+                    placeholderTextColor="gray"
+                  />
+                  <Text style={styles.modalText}>請輸入留言:</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="留言"
+                    value={inputText}
+                    onChangeText={setInputText}
+                    placeholderTextColor="gray"
+                  />
+                  <View style={{ flexDirection: "row" }}>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => setModalVisible(!modalVisible)}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.textStyle}>返回</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => {
+                        setModalVisible(!modalVisible);
+                        SendRate();
+                      }}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.textStyle}>確認</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </Modal>
           </View>
-        </Modal>
-      </View>
-    </ScrollView>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingHorizontal: scale(20), // 設置水平間距

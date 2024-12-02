@@ -5,6 +5,7 @@ import {
   ScrollView,
   Alert,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,12 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import {
-  ScaledSheet,
-  scale,
-  verticalScale,
-  moderateScale,
-} from "react-native-size-matters";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -40,6 +36,7 @@ interface OrderType {
 const MyOrderHistory = () => {
   const user = useSelector((state: RootState) => state.user);
   const [order, setOrder] = useState<OrderType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
 
   const getToken = async () => {
@@ -95,6 +92,8 @@ const MyOrderHistory = () => {
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -102,50 +101,65 @@ const MyOrderHistory = () => {
   }, []);
 
   return (
-    <ScrollView>
-      <View
-        style={{
-          flex: 1,
-          paddingHorizontal: scale(20), // 設置水平間距
-          paddingVertical: verticalScale(15), // 設置垂直間距
-        }}
-      >
-        {order.map((order) => (
-          <View key={order.id} style={styles.container}>
-            <Pressable
-              key={order.id}
-              onPress={() =>
-                navigation.navigate("myorderhisde", { orderid: order.id })
-              }
-            >
-              <View style={styles.card}>
-                <View style={styles.header}>
-                  <Text style={styles.orderNumber}>歷史編號: {order?.id}</Text>
-                </View>
-                <View style={styles.body}>
-                  <Text style={styles.title}>
-                    起點：{order.finalStartAddress}
-                  </Text>
-                  <Text style={styles.title}>
-                    終點：{order.finalEndAddress}
-                  </Text>
-                  <Text style={styles.title}>
-                    更新時間:{" "}
-                    {new Date(order.updatedAt).toLocaleString("en-GB", {
-                      timeZone: "Asia/Taipei",
-                    })}
-                  </Text>
-                </View>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: scale(20), // 設置水平間距
+              paddingVertical: verticalScale(15), // 設置垂直間距
+            }}
+          >
+            {order.map((order) => (
+              <View key={order.id} style={styles.container}>
+                <Pressable
+                  key={order.id}
+                  onPress={() =>
+                    navigation.navigate("myorderhisde", { orderid: order.id })
+                  }
+                >
+                  <View style={styles.card}>
+                    <View style={styles.header}>
+                      <Text style={styles.orderNumber}>
+                        歷史編號: {order?.id}
+                      </Text>
+                    </View>
+                    <View style={styles.body}>
+                      <Text style={styles.title}>
+                        起點：{order.finalStartAddress}
+                      </Text>
+                      <Text style={styles.title}>
+                        終點：{order.finalEndAddress}
+                      </Text>
+                      <Text style={styles.title}>
+                        更新時間:{" "}
+                        {new Date(order.updatedAt).toLocaleString("en-GB", {
+                          timeZone: "Asia/Taipei",
+                        })}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
               </View>
-            </Pressable>
+            ))}
           </View>
-        ))}
-      </View>
-    </ScrollView>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingBottom: verticalScale(15),

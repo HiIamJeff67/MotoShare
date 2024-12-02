@@ -1,11 +1,19 @@
-import { Text, View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
-import * as SecureStore from 'expo-secure-store';
-import { useNavigation } from '@react-navigation/native';
+import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -28,15 +36,14 @@ interface OrderType {
 const MyOrder = () => {
   const user = useSelector((state: RootState) => state.user);
   const [order, setOrder] = useState<OrderType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 2) //home.tsx才正確
-  {
+  if (user.role == 2) {
+    //home.tsx才正確
     roleText = "乘客";
-  }
-  else if (user.role == 1)
-  {
+  } else if (user.role == 1) {
     roleText = "車主";
   }
 
@@ -55,121 +62,160 @@ const MyOrder = () => {
 
   useEffect(() => {
     // 透過 orderId 取得訂單資料
-    let response, url = "";
+    let response,
+      url = "";
 
     if (user.role == 1) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchPaginationOrders`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchMyPaginationOrders`;
     } else if (user.role == 2) {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchPaginationOrders`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchMyPaginationOrders`;
     }
 
     const SearchOrder = async () => {
       try {
-          // 獲取 Token
-          const token = await getToken();
+        // 獲取 Token
+        const token = await getToken();
 
-          if (!token) {
-            Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
-            return;
-          }
+        if (!token) {
+          Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+          return;
+        }
 
-          response = await axios.get(url, {
-            params: {
-              limit: 10,
-              offset: 0,
-            },
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        response = await axios.get(url, {
+          params: {
+            limit: 10,
+            offset: 0,
+          },
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-          setOrder(response.data);
-          //console.log(response.data);
+        setOrder(response.data);
+        //console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
 
     SearchOrder();
   }, []);
-  
+
   return (
-    <ScrollView>
-      <SafeAreaView>
-        <View className='pt-5'/>
-        {order.map((order) => (
-          (order.passengerStatus != "FinishedStatus" || order.ridderStatus != "FinishedStatus") ? (
-            <View key={order.id} style={styles.container}>
-              <Pressable
-              key={order.id}
-              onPress={() => navigation.navigate('myorderde', { orderid: order.id })}
-              >
-                <View style={styles.card}>
-                    <View style={styles.header}>
-                      <Text style={styles.orderNumber}>我的訂單編號: {order?.id}</Text>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: scale(20), // 設置水平間距
+              paddingVertical: verticalScale(15), // 設置垂直間距
+            }}
+          >
+            {order.map((order) =>
+              order.passengerStatus != "FinishedStatus" ||
+              order.ridderStatus != "FinishedStatus" ? (
+                <View key={order.id} style={styles.container}>
+                  <Pressable
+                    key={order.id}
+                    onPress={() =>
+                      navigation.navigate("myorderde", { orderid: order.id })
+                    }
+                  >
+                    <View style={styles.card}>
+                      <View style={styles.header}>
+                        <Text style={styles.orderNumber}>
+                          我的訂單編號: {order?.id}
+                        </Text>
+                      </View>
+                      <View style={styles.body}>
+                        <Text style={styles.title}>
+                          {roleText}：
+                          {user.role == 1
+                            ? order.ridderName
+                            : order.passengerName}
+                        </Text>
+                        <Text style={styles.title}>
+                          起點：{order.finalStartAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          終點：{order.finalEndAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          開車時間:{" "}
+                          {new Date(order.startAfter).toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })}
+                        </Text>
+                        <Text style={styles.title}>
+                          更新時間:{" "}
+                          {new Date(order.updatedAt).toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })}
+                        </Text>
+                      </View>
                     </View>
-                    <View style={styles.body}>
-                      <Text style={styles.title}>{roleText}：{user.role == 1 ? order.ridderName : order.passengerName}</Text>
-                      <Text style={styles.title}>起點：{order.finalStartAddress}</Text>
-                      <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
-                      <Text style={styles.title}>開車時間: {new Date(order.startAfter).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                      <Text style={styles.title}>更新時間: {new Date(order.updatedAt).toLocaleString('en-GB', { timeZone: "Asia/Taipei" })}</Text>
-                    </View>
+                  </Pressable>
                 </View>
-              </Pressable>
-            </View>
-            ) : null
-          ))}
-        </SafeAreaView>
-      </ScrollView>
+              ) : null
+            )}
+          </View>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-    },
-    card: {
-      backgroundColor: 'white',
-      borderRadius: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 5, // Android 的陰影
-    },
-    header: {
-      borderBottomWidth: 2,
-      borderBottomColor: '#ddd',
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-    },
-    orderNumber: {
-      color: '#333',
-      fontWeight: 'bold',
-      fontSize: 16,
-    },
-    body: {
-      padding: 16,
-    },
-    textBase: {
-      marginBottom: 10,
-      fontSize: 14,
-      color: '#666',
-    },
-    title: {
-      marginBottom: 10,
-      fontSize: 18,
-      fontWeight: '600',
-      color: '#333',
-    },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    paddingBottom: verticalScale(15),
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: moderateScale(10),
+    shadowColor: "#000",
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: moderateScale(4),
+    elevation: 5, // Android 的陰影
+  },
+  header: {
+    borderBottomWidth: scale(2),
+    borderBottomColor: "#ddd",
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(16),
+  },
+  orderNumber: {
+    color: "#333",
+    fontWeight: "bold",
+    fontSize: moderateScale(16),
+  },
+  body: {
+    padding: moderateScale(16),
+  },
+  title: {
+    marginBottom: verticalScale(5),
+    fontSize: moderateScale(15),
+    fontWeight: "600",
+    color: "#333",
+  },
 });
 
 export default MyOrder;

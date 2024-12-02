@@ -5,6 +5,7 @@ import {
   ScrollView,
   Alert,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,12 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import {
-  ScaledSheet,
-  scale,
-  verticalScale,
-  moderateScale,
-} from "react-native-size-matters";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -32,6 +28,7 @@ interface OrderType {
 
 const OtherOrder = () => {
   const user = useSelector((state: RootState) => state.user);
+  const [isLoading, setIsLoading] = useState(true);
   const [invites, setInvites] = useState<OrderType[]>([]);
   const navigation = useNavigation();
   let roleText = "載入中...";
@@ -95,6 +92,8 @@ const OtherOrder = () => {
         } else {
           console.log("An unexpected error occurred:", error);
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -102,58 +101,73 @@ const OtherOrder = () => {
   }, []);
 
   return (
-    <ScrollView>
-      <View
-        style={{
-          flex: 1,
-          paddingHorizontal: scale(20), // 設置水平間距
-          paddingVertical: verticalScale(15), // 設置垂直間距
-        }}
-      >
-        {invites.map((invite) =>
-          invite.status == "CHECKING" ? (
-            <View key={invite.id} style={styles.container}>
-              <Pressable
-                key={invite.id}
-                onPress={() =>
-                  navigation.navigate("otherinvitede", { orderid: invite.id })
-                }
-              >
-                <View style={styles.card}>
-                  <View style={styles.header}>
-                    <Text style={styles.orderNumber}>
-                      邀請編號: {invite.id}
-                    </Text>
-                  </View>
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: scale(20), // 設置水平間距
+              paddingVertical: verticalScale(15), // 設置垂直間距
+            }}
+          >
+            {invites.map((invite) =>
+              invite.status == "CHECKING" ? (
+                <View key={invite.id} style={styles.container}>
+                  <Pressable
+                    key={invite.id}
+                    onPress={() =>
+                      navigation.navigate("otherinvitede", {
+                        orderid: invite.id,
+                      })
+                    }
+                  >
+                    <View style={styles.card}>
+                      <View style={styles.header}>
+                        <Text style={styles.orderNumber}>
+                          邀請編號: {invite.id}
+                        </Text>
+                      </View>
 
-                  <View style={styles.body}>
-                    <Text style={styles.title}>
-                      邀請人：{invite.inviterName}
-                    </Text>
-                    <Text style={styles.title}>
-                      推薦起點：{invite.suggestStartAddress}
-                    </Text>
-                    <Text style={styles.title}>
-                      推薦終點：{invite.suggestEndAddress}
-                    </Text>
-                    <Text style={styles.title}>
-                      更新時間:{" "}
-                      {new Date(invite.updatedAt).toLocaleString("en-GB", {
-                        timeZone: "Asia/Taipei",
-                      })}
-                    </Text>
-                  </View>
+                      <View style={styles.body}>
+                        <Text style={styles.title}>
+                          邀請人：{invite.inviterName}
+                        </Text>
+                        <Text style={styles.title}>
+                          推薦起點：{invite.suggestStartAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          推薦終點：{invite.suggestEndAddress}
+                        </Text>
+                        <Text style={styles.title}>
+                          更新時間:{" "}
+                          {new Date(invite.updatedAt).toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  </Pressable>
                 </View>
-              </Pressable>
-            </View>
-          ) : null
-        )}
-      </View>
-    </ScrollView>
+              ) : null
+            )}
+          </View>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingBottom: verticalScale(15),
