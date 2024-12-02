@@ -13,14 +13,18 @@ import {
 } from './dto/get-purchaseOrder.dto';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
-import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
+import { ClientCreateOrderException, ClientCreatePassengerNotificationException, ClientCreatePurchaseOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
 
 @Injectable()
 export class PurchaseOrderService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(
+    private notification: PassengerNotificationService, 
+    @Inject(DRIZZLE) private db: DrizzleDB, 
+  ) {}
 
   /* ================================= Detect And Update Expired PurchaseOrders operation ================================= */
   private async updateExpiredPurchaseOrders() {
@@ -43,7 +47,7 @@ export class PurchaseOrderService {
 
   /* ================================= Create operations ================================= */
   async createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto) {
-    return await this.db.insert(PurchaseOrderTable).values({
+    const responseOfCreatingPurchaseOrders = await this.db.insert(PurchaseOrderTable).values({
       creatorId: creatorId,
       description: createPurchaseOrderDto.description,
       initPrice: createPurchaseOrderDto.initPrice,
@@ -65,6 +69,25 @@ export class PurchaseOrderService {
       id: PurchaseOrderTable.id,
       status: PurchaseOrderTable.status,
     });
+    if (!responseOfCreatingPurchaseOrders || responseOfCreatingPurchaseOrders.length === 0) {
+      throw ClientCreatePurchaseOrderException;
+    }
+
+    const responseOfCreatingNotification = await this.notification.createPassengerNotificationByUserId(
+      creatorId, 
+      "You just created a purchaseOrder", 
+      "temp description", 
+      "PurchaseOrder", 
+      responseOfCreatingPurchaseOrders[0].id, 
+    );
+    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+      throw ClientCreatePassengerNotificationException;
+    }
+
+    return {
+      ...responseOfCreatingNotification, 
+      ...responseOfCreatingPurchaseOrders, 
+    };
   }
   /* ================================= Create operations ================================= */
 

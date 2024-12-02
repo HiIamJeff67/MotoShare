@@ -22,8 +22,10 @@ const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema")
 const exceptions_1 = require("../exceptions");
 const ridderInvite_schema_1 = require("../drizzle/schema/ridderInvite.schema");
 const order_schema_1 = require("../drizzle/schema/order.schema");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
 let PurchaseOrderService = class PurchaseOrderService {
-    constructor(db) {
+    constructor(notification, db) {
+        this.notification = notification;
         this.db = db;
     }
     async updateExpiredPurchaseOrders() {
@@ -38,7 +40,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         return response.length;
     }
     async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
-        return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
+        const responseOfCreatingPurchaseOrders = await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
             creatorId: creatorId,
             description: createPurchaseOrderDto.description,
             initPrice: createPurchaseOrderDto.initPrice,
@@ -60,6 +62,17 @@ let PurchaseOrderService = class PurchaseOrderService {
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
+        if (!responseOfCreatingPurchaseOrders || responseOfCreatingPurchaseOrders.length === 0) {
+            throw exceptions_1.ClientCreatePurchaseOrderException;
+        }
+        const responseOfCreatingNotification = await this.notification.createPassengerNotificationByUserId(creatorId, "You just created a purchaseOrder", "temp description", "PurchaseOrder", responseOfCreatingPurchaseOrders[0].id);
+        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+            throw exceptions_1.ClientCreatePassengerNotificationException;
+        }
+        return {
+            ...responseOfCreatingNotification,
+            ...responseOfCreatingPurchaseOrders,
+        };
     }
     async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
         return await this.db.select({
@@ -459,7 +472,7 @@ let PurchaseOrderService = class PurchaseOrderService {
 exports.PurchaseOrderService = PurchaseOrderService;
 exports.PurchaseOrderService = PurchaseOrderService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService, Object])
 ], PurchaseOrderService);
 //# sourceMappingURL=purchaseOrder.service.js.map

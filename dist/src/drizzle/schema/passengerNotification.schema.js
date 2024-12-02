@@ -9,7 +9,7 @@ exports.PassengerNotificationTable = (0, pg_core_1.pgTable)("passengerNotificati
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     userId: (0, pg_core_1.uuid)("userId").references(() => passenger_schema_1.PassengerTable.id, {
         onDelete: 'cascade',
-    }),
+    }).notNull(),
     title: (0, pg_core_1.text)("title").notNull(),
     description: (0, pg_core_1.text)("description"),
     notificationType: (0, enums_1.notificationTypeEnum)("notificationType").notNull(),

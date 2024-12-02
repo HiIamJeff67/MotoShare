@@ -1,75 +1,67 @@
 import { 
-  WebSocketGateway, 
-  SubscribeMessage, 
-  MessageBody, 
-  WebSocketServer,
+	WebSocketGateway, 
+	SubscribeMessage, 
+	MessageBody, 
+	WebSocketServer,
 	OnGatewayConnection,
-	OnGatewayDisconnect, 
+	OnGatewayDisconnect,
+	WsResponse, 
 } from '@nestjs/websockets';
-import { NotificationService } from './passenerNotification.service';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
 import * as jwt from 'jsonwebtoken'
 import { Server, Socket } from "socket.io";
-import { Inject, Res } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { JwtPayload } from 'jsonwebtoken';
-import { PassengerTable } from '../drizzle/schema/passenger.schema';
+import { PassengerTable, RidderTable } from '../drizzle/schema/schema';
 import { eq } from 'drizzle-orm';
 import { ApiMissingUserRoleInHeaderWhileConnectingToSocketException, ClientInvalidTokenException, ClientPassengerNotFoundException, ClientRidderNotFoundException, ClientTokenExpiredException, ServerExtractJwtSecretEnvVariableException, ServerTranslateBearerTokenToPayloadException, ServerUserNotFoundInSocketMapException } from '../exceptions';
 import { UserRoleType } from '../types';
 import { SocketUserInterface, SocketMetaPayloadInterface } from '../interfaces/socket.interface';
-import { RidderTable } from '../drizzle/schema/ridder.schema';
-import { response, Response } from 'express';
 import { HttpStatusCode } from '../enums';
+import { NotificationInterface } from '../interfaces';
 
 @WebSocketGateway({ namespace: 'notifications' })
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(
-    private notificationService: NotificationService, 
-    private configService: ConfigService, 
-    @Inject(DRIZZLE) private db: DrizzleDB, 
-  ) {}
+	constructor(
+		private configService: ConfigService, 
+		@Inject(DRIZZLE) private db: DrizzleDB, 
+	) {}
 
-  @WebSocketServer()
-  server: Server
-  
-  socketMap = new Map<string, SocketMetaPayloadInterface>();
+	@WebSocketServer()
+	private server: Server
+	private socketMap = new Map<string, SocketMetaPayloadInterface>();
 
-  /* ================================= Validation operations ================================= */
-  private validateToken(token: string): JwtPayload {
-	  const secret = this.configService.get<string>("JWT_SECRET");
-	  if (!secret) throw ServerExtractJwtSecretEnvVariableException;
+	/* ================================= Validation operations ================================= */
+  	private validateToken(token: string): JwtPayload {
+		const secret = this.configService.get<string>("JWT_SECRET");
+		if (!secret) throw ServerExtractJwtSecretEnvVariableException;
 
-    try {
-      const response = jwt.verify(token, secret) as JwtPayload;
+		try {
+			const response = jwt.verify(token, secret) as JwtPayload;
 
-	  	return response;
-    } catch (error) {
-      throw new Error('Invalid or expired token');
-    }
-  }
+			return response;
+		} catch (error) {
+			throw ClientTokenExpiredException;
+		}
+  	}
 
-  private async getUserById(
+	private async getUserById(
 		userId: string, 
 		token: string, 
-		userRole: UserRoleType
+		userRole: UserRoleType, 
 	): Promise<SocketUserInterface> {
-    let user: any = undefined;
-
-		if (userRole === "Passenger") {
-			user = await this.db.select({
+		const user = (userRole === "Passenger") 
+			? await this.db.select({
 				id: PassengerTable.id, 
 				userName: PassengerTable.userName, 
 				email: PassengerTable.email, 
 				accessToken: PassengerTable.accessToken, 
 			}).from(PassengerTable)
 				.where(eq(PassengerTable.id, userId))
-				.limit(1);
-		} else if (userRole === "Ridder") {
-			user = await this.db.select({
+				.limit(1)
+			: await this.db.select({
 				id: RidderTable.id, 
 				userName: RidderTable.userName, 
 				email: RidderTable.email, 
@@ -77,23 +69,20 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 			}).from(RidderTable)
 				.where(eq(RidderTable.id, userId))
 				.limit(1);
+		if (!user || user.length === 0) {
+			throw ClientInvalidTokenException;
 		}
-    if (!user || user.length === 0) {
-      throw ClientInvalidTokenException;
-    }
 
-    const userData = user[0];
-    if (token !== userData.accessToken) {
-      throw ClientTokenExpiredException;
-    }
-    delete userData.accessToken;
+		if (user[0].accessToken !== token) {
+			throw ClientTokenExpiredException;
+		}
 
-    return {
-			...userData, 
+		return {
+			...user[0], 
 			role: userRole, 
 		};
-  }
-  /* ================================= Validation operations ================================= */
+	}
+	/* ================================= Validation operations ================================= */
 
 
 	/* ================================= Connection & Disconnection operations ================================= */
@@ -114,12 +103,15 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 				: ClientRidderNotFoundException
 			);
 
-			console.log({ ...user, socketId: socket.id });
+			console.log({ ...user, socketId: socket.id });	// only while developing
 			this.socketMap.set(user.id, {
 				...user, 
 				socketId: socket.id, 
 			});
-			console.log(`User ${user.id} connected with socket ID ${socket.id}`);
+
+			socket.join(`${socket.id}'s notification`);	// let the users join their notification room to listen notifications
+
+			console.log(`User ${user.id} connected with socket ID ${socket.id}`);	// only while developing
 			return {
 				status: HttpStatusCode.SwitchingProtocols,
 				upgrade: socket.handshake.headers.upgrade, 
@@ -133,9 +125,9 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 				message: error, 
 			};
 		}
-  }
+  	}
 
-  handleDisconnect(socket: Socket) {
+  	handleDisconnect(socket: Socket) {
 		try {
 			const [userId, userData] = Array.from(this.socketMap.entries()).find(
 				([, metaPayloads]) => metaPayloads.socketId === socket.id,
@@ -143,7 +135,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 			if (!userId || !userData) throw ServerUserNotFoundInSocketMapException;
 	
 			this.socketMap.delete(userId);
-			console.log(`User ${userId} disconnected with socket ID ${socket.id}`);
+			console.log(`User ${userId} disconnected with socket ID ${socket.id}`);	// only while developing
 			return {
 				status: HttpStatusCode.Ok, 
 				message: `Good bye! User ${userData.userName} disconnected with socket ID ${socket.id}`, 
@@ -155,11 +147,39 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 				message: error
 			};
 		}
-  }
+  	}
 	/* ================================= Connection & Disconnection operations ================================= */
 
 
 	/* ================================= Details Database operations ================================= */
-	
+	notifyPassenger(userId: string, notification: NotificationInterface) {
+		console.log(`Pushing notification to user ${userId}: ${notification}`);
+    	this.server.emit(`user_${userId}_notifications`, notification);
+		const socket = this.socketMap.get(userId);
+		if (socket && socket.role === "Passenger") {
+			console.log(`Pushing to room : ${socket.socketId}'s notification`)
+			this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+		}
+	}
+
+	notifyRidder(userId: string, notification: NotificationInterface) {
+		console.log(`Pushing notification to user ${userId}: ${notification}`);
+    	this.server.emit(`user_${userId}_notifications`, notification);
+		const socket = this.socketMap.get(userId);
+		if (socket && socket.role === "Ridder") {
+			console.log(`Pushing to room : ${socket.socketId}'s notification`)
+			this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+		}
+	}
 	/* ================================= Details Database operations ================================= */
+
+
+	/* ================================= Test operations ================================= */
+	@SubscribeMessage('test')
+	onTest(@MessageBody() data: any): WsResponse<any> {
+		const event = 'test';
+		this.server.emit('test', { event, data });
+		return { event, data };
+	}
+	/* ================================= Test operations ================================= */
 }

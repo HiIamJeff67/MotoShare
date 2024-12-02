@@ -6,3 +6,7 @@ export declare const MIN_COMMENT_LENGTH = 0;
 export declare const MAX_COMMENT_LENGTH = 150;
 export declare const MIN_SELF_INTRODUCTION_LENGTH = 0;
 export declare const MAX_SELF_INTRODUCTION_LENGTH = 100;
+export declare const MIN_NOTIFICATION_TITLE_LENGTH = 0;
+export declare const MAX_NOTIFICATION_TITLE_LENGTH = 30;
+export declare const MIN_NOTIFICATION_DESCRIPTION = 0;
+export declare const MAX_NOTIFICATION_DESCRIPTION = 150;

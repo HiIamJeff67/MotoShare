@@ -1,17 +1,15 @@
-import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { NotificationService } from './passenerNotification.service';
-import { Server, Socket } from "socket.io";
+import { OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
+import { Socket } from "socket.io";
 import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { SocketMetaPayloadInterface } from '../interfaces/socket.interface';
 import { HttpStatusCode } from '../enums';
+import { NotificationInterface } from '../interfaces';
 export declare class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    private notificationService;
     private configService;
     private db;
-    constructor(notificationService: NotificationService, configService: ConfigService, db: DrizzleDB);
-    server: Server;
-    socketMap: Map<string, SocketMetaPayloadInterface>;
+    constructor(configService: ConfigService, db: DrizzleDB);
+    private server;
+    private socketMap;
     private validateToken;
     private getUserById;
     handleConnection(socket: Socket): Promise<{
@@ -29,4 +27,7 @@ export declare class NotificationGateway implements OnGatewayConnection, OnGatew
         status: any;
         message: any;
     };
+    notifyPassenger(userId: string, notification: NotificationInterface): void;
+    notifyRidder(userId: string, notification: NotificationInterface): void;
+    onTest(data: any): WsResponse<any>;
 }

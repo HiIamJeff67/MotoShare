@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const purchaseOrder_service_1 = require("./purchaseOrder.service");
 const purchaseOrder_controller_1 = require("./purchaseOrder.controller");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let PurchaseOrderModule = class PurchaseOrderModule {
 };
 exports.PurchaseOrderModule = PurchaseOrderModule;
@@ -18,7 +19,7 @@ exports.PurchaseOrderModule = PurchaseOrderModule = __decorate([
     (0, common_1.Module)({
         controllers: [purchaseOrder_controller_1.PurchaseOrderController],
         providers: [purchaseOrder_service_1.PurchaseOrderService],
-        imports: [drizzle_module_1.DrizzleModule],
+        imports: [drizzle_module_1.DrizzleModule, notification_module_1.NotificationModule],
     })
 ], PurchaseOrderModule);
 //# sourceMappingURL=purchaseOrder.module.js.map

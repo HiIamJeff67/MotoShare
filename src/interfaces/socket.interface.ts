@@ -11,3 +11,4 @@ export interface SocketUserInterface {
 export interface SocketMetaPayloadInterface extends SocketUserInterface {
 	socketId: string
 }
+

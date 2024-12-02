@@ -25,7 +25,7 @@ export declare const PassengerNotificationTable: import("drizzle-orm/pg-core").P
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -134,5 +134,5 @@ export declare const PassengerNotificationTable: import("drizzle-orm/pg-core").P
     dialect: "pg";
 }>;
 export declare const PassengerNotificationRelation: import("drizzle-orm").Relations<"passengerNotification", {
-    passenger: import("drizzle-orm").One<"passenger", false>;
+    passenger: import("drizzle-orm").One<"passenger", true>;
 }>;

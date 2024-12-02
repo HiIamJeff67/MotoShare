@@ -219,6 +219,18 @@ export const ClientCreateRidderAuthException = new ForbiddenException({
     message: "Failed to create a ridderAuth", 
 });
 
+// E-C-217
+export const ClientCreatePassengerNotificationException = new ForbiddenException({
+    case: "E-C-217", 
+    message: "Failed to create a passengerNotification", 
+});
+
+// E-C-218
+export const ClientCreateRidderNotificationException = new ForbiddenException({
+    case: "E-C-218", 
+    message: "Failed to create ridderNotification", 
+});
+
 /* ============================== Error about create operation ============================== */
 
 

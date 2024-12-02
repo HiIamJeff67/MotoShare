@@ -13,10 +13,13 @@ export const DRIZZLE = Symbol("drizzle-connection");
             provide: DRIZZLE,
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => {
-                const databaseURL = configService.get<string>("DATABASE_URL");   // environment variable from .env
+                const databaseURL = configService.get<string>("DATABASE_URL") as string;   // environment variable from .env
                 if (!databaseURL) throw ServerNeonEnvVarNotFoundException;
                 const pool = new Pool({
-                    connectionString: databaseURL,
+                    connectionString: databaseURL, 
+                    // keepAlive: true, 
+                    // idleTimeoutMillis: configService.get<number>("IDLE_TIMEOUT_MILLS") as number * 1000, // unit: second
+                    // keepAliveInitialDelayMillis: configService.get<number>("KEEP_ALIVE_HEART_BEAT_FREQUENCY") as number * 1000, // unit: second
                     ssl: true,
                 });
                 return drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;

@@ -25,7 +25,7 @@ export declare const RidderNotificationTable: import("drizzle-orm/pg-core").PgTa
             columnType: "PgUUID";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -134,5 +134,5 @@ export declare const RidderNotificationTable: import("drizzle-orm/pg-core").PgTa
     dialect: "pg";
 }>;
 export declare const RidderNotificationRelation: import("drizzle-orm").Relations<"ridderNotification", {
-    ridder: import("drizzle-orm").One<"ridder", false>;
+    ridder: import("drizzle-orm").One<"ridder", true>;
 }>;

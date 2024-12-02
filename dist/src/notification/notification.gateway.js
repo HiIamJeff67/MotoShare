@@ -14,20 +14,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
-const passenerNotification_service_1 = require("./passenerNotification.service");
 const jwt = require("jsonwebtoken");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
-const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
+const schema_1 = require("../drizzle/schema/schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const exceptions_1 = require("../exceptions");
-const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const enums_1 = require("../enums");
 let NotificationGateway = class NotificationGateway {
-    constructor(notificationService, configService, db) {
-        this.notificationService = notificationService;
+    constructor(configService, db) {
         this.configService = configService;
         this.db = db;
         this.socketMap = new Map();
@@ -41,41 +38,35 @@ let NotificationGateway = class NotificationGateway {
             return response;
         }
         catch (error) {
-            throw new Error('Invalid or expired token');
+            throw exceptions_1.ClientTokenExpiredException;
         }
     }
     async getUserById(userId, token, userRole) {
-        let user = undefined;
-        if (userRole === "Passenger") {
-            user = await this.db.select({
-                id: passenger_schema_1.PassengerTable.id,
-                userName: passenger_schema_1.PassengerTable.userName,
-                email: passenger_schema_1.PassengerTable.email,
-                accessToken: passenger_schema_1.PassengerTable.accessToken,
-            }).from(passenger_schema_1.PassengerTable)
-                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, userId))
+        const user = (userRole === "Passenger")
+            ? await this.db.select({
+                id: schema_1.PassengerTable.id,
+                userName: schema_1.PassengerTable.userName,
+                email: schema_1.PassengerTable.email,
+                accessToken: schema_1.PassengerTable.accessToken,
+            }).from(schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(schema_1.PassengerTable.id, userId))
+                .limit(1)
+            : await this.db.select({
+                id: schema_1.RidderTable.id,
+                userName: schema_1.RidderTable.userName,
+                email: schema_1.RidderTable.email,
+                accessToken: schema_1.RidderTable.accessToken,
+            }).from(schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(schema_1.RidderTable.id, userId))
                 .limit(1);
-        }
-        else if (userRole === "Ridder") {
-            user = await this.db.select({
-                id: ridder_schema_1.RidderTable.id,
-                userName: ridder_schema_1.RidderTable.userName,
-                email: ridder_schema_1.RidderTable.email,
-                accessToken: ridder_schema_1.RidderTable.accessToken,
-            }).from(ridder_schema_1.RidderTable)
-                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, userId))
-                .limit(1);
-        }
         if (!user || user.length === 0) {
             throw exceptions_1.ClientInvalidTokenException;
         }
-        const userData = user[0];
-        if (token !== userData.accessToken) {
+        if (user[0].accessToken !== token) {
             throw exceptions_1.ClientTokenExpiredException;
         }
-        delete userData.accessToken;
         return {
-            ...userData,
+            ...user[0],
             role: userRole,
         };
     }
@@ -100,6 +91,7 @@ let NotificationGateway = class NotificationGateway {
                 ...user,
                 socketId: socket.id,
             });
+            socket.join(`${socket.id}'s notification`);
             console.log(`User ${user.id} connected with socket ID ${socket.id}`);
             return {
                 status: enums_1.HttpStatusCode.SwitchingProtocols,
@@ -136,16 +128,45 @@ let NotificationGateway = class NotificationGateway {
             };
         }
     }
+    notifyPassenger(userId, notification) {
+        console.log(`Pushing notification to user ${userId}: ${notification}`);
+        this.server.emit(`user_${userId}_notifications`, notification);
+        const socket = this.socketMap.get(userId);
+        if (socket && socket.role === "Passenger") {
+            console.log(`Pushing to room : ${socket.socketId}'s notification`);
+            this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+        }
+    }
+    notifyRidder(userId, notification) {
+        console.log(`Pushing notification to user ${userId}: ${notification}`);
+        this.server.emit(`user_${userId}_notifications`, notification);
+        const socket = this.socketMap.get(userId);
+        if (socket && socket.role === "Ridder") {
+            console.log(`Pushing to room : ${socket.socketId}'s notification`);
+            this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+        }
+    }
+    onTest(data) {
+        const event = 'test';
+        this.server.emit('test', { event, data });
+        return { event, data };
+    }
 };
 exports.NotificationGateway = NotificationGateway;
 __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_1.Server)
 ], NotificationGateway.prototype, "server", void 0);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('test'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Object)
+], NotificationGateway.prototype, "onTest", null);
 exports.NotificationGateway = NotificationGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({ namespace: 'notifications' }),
-    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [passenerNotification_service_1.NotificationService,
-        config_1.ConfigService, Object])
+    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService, Object])
 ], NotificationGateway);
-//# sourceMappingURL=passengerNotification.gateway.js.map
+//# sourceMappingURL=notification.gateway.js.map

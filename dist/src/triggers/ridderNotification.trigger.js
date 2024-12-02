@@ -15,14 +15,14 @@ async function setUpRidderNotificationTrigger() {
                 PERFORM pg_notify(
                     'ridder_notifications', 
                     json_build_object(
-                        'id', NEW.id,
-                        'userId', NEW.userId,
-                        'title', NEW.title,
-                        'desciption', NEW.description,
-                        'notificationType', NEW.notificationType,
-                        'linkId', NEW.linkId,
-                        'isRead', NEW.isRead,
-                        'createdAt', NEW.createdAt
+                        'id', NEW."id",
+                        'userId', NEW."userId",
+                        'title', NEW."title",
+                        'desciption', NEW."description",
+                        'notificationType', NEW."notificationType",
+                        'linkId', NEW."linkId",
+                        'isRead', NEW."isRead",
+                        'createdAt', NEW."createdAt"
                     )::text
                 );
                 RETURN NEW;

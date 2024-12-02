@@ -7,7 +7,7 @@ export const RidderNotificationTable = pgTable("ridderNotification", {
     id: uuid("id").primaryKey().defaultRandom(), 
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade', 
-    }), 
+    }).notNull(), 
     title: text("title").notNull(), 
     description: text("description"), 
     notificationType: notificationTypeEnum("notificationType").notNull(), 

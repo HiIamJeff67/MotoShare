@@ -9,15 +9,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationModule = void 0;
 const common_1 = require("@nestjs/common");
 const passenerNotification_service_1 = require("./passenerNotification.service");
-const passengerNotification_gateway_1 = require("./passengerNotification.gateway");
+const notification_gateway_1 = require("./notification.gateway");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const ridderNotification_service_1 = require("./ridderNotification.service");
 let NotificationModule = class NotificationModule {
 };
 exports.NotificationModule = NotificationModule;
 exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Module)({
-        providers: [passengerNotification_gateway_1.NotificationGateway, passenerNotification_service_1.NotificationService],
         imports: [drizzle_module_1.DrizzleModule],
+        providers: [
+            notification_gateway_1.NotificationGateway,
+            passenerNotification_service_1.PassengerNotificationService,
+            ridderNotification_service_1.RidderNotificationService
+        ],
+        exports: [passenerNotification_service_1.PassengerNotificationService, ridderNotification_service_1.RidderNotificationService],
     })
 ], NotificationModule);
-//# sourceMappingURL=passengerNotification.module.js.map
+//# sourceMappingURL=notification.module.js.map

@@ -1,4 +1,6 @@
 // the setup of ridder notification trigger in Neon database
+// Note that this file is only used for storing the record or structure of ridder notification trigger
+// and make sure to add "" if you hope a column name of some attribute name to be lower & upper case sensitive
 
 import "dotenv/config";
 
@@ -21,14 +23,14 @@ async function setUpRidderNotificationTrigger() {
                 PERFORM pg_notify(
                     'ridder_notifications', 
                     json_build_object(
-                        'id', NEW.id,
-                        'userId', NEW.userId,
-                        'title', NEW.title,
-                        'desciption', NEW.description,
-                        'notificationType', NEW.notificationType,
-                        'linkId', NEW.linkId,
-                        'isRead', NEW.isRead,
-                        'createdAt', NEW.createdAt
+                        'id', NEW."id",
+                        'userId', NEW."userId",
+                        'title', NEW."title",
+                        'desciption', NEW."description",
+                        'notificationType', NEW."notificationType",
+                        'linkId', NEW."linkId",
+                        'isRead', NEW."isRead",
+                        'createdAt', NEW."createdAt"
                     )::text
                 );
                 RETURN NEW;

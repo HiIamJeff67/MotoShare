@@ -21,7 +21,7 @@ import "dotenv/config";
 import { join } from 'path';
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter"
 import { CronModule } from './cron/cron.module';
-import { NotificationModule } from './passengerNotification/passengerNotification.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -56,7 +56,7 @@ import { NotificationModule } from './passengerNotification/passengerNotificatio
     RidderAuthModule,
     EmailModule,
     CronModule,
-    NotificationModule,
+    NotificationModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

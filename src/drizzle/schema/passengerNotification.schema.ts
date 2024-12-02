@@ -7,7 +7,7 @@ export const PassengerNotificationTable = pgTable("passengerNotification", {
     id: uuid("id").primaryKey().defaultRandom(), 
     userId: uuid("userId").references(() => PassengerTable.id, {
         onDelete: 'cascade', 
-    }), 
+    }).notNull(), 
     title: text("title").notNull(), 
     description: text("description"), 
     notificationType: notificationTypeEnum("notificationType").notNull(), 
