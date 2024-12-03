@@ -1,19 +1,21 @@
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  StyleSheet,
-  ScrollView,
-  Alert,
   Pressable,
   ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from "react-native";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { ScaledSheet } from "react-native-size-matters";
+import { FlashList } from "@shopify/flash-list";
+import debounce from "lodash/debounce";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -30,14 +32,11 @@ const OtherOrder = () => {
   const user = useSelector((state: RootState) => state.user);
   const [isLoading, setIsLoading] = useState(true);
   const [invites, setInvites] = useState<OrderType[]>([]);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [isMax, setIsMax] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  let roleText = "載入中...";
-
-  if (user.role == 1) {
-    roleText = "乘客";
-  } else if (user.role == 2) {
-    roleText = "車主";
-  }
 
   const getToken = async () => {
     try {
@@ -52,10 +51,9 @@ const OtherOrder = () => {
     }
   };
 
-  useEffect(() => {
-    // 透過 orderId 取得訂單資料
-    let response,
-      url = "";
+  const SearchOrder = async (newOffset = 0) => {
+    let response: { data: OrderType[] },
+      url: string = "";
 
     if (user.role == 1) {
       url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/passenger/searchMyPaginationRidderInvites`;
@@ -63,42 +61,66 @@ const OtherOrder = () => {
       url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/ridder/searchMyPaginationPasssengerInvites`;
     }
 
-    const SearchOrder = async () => {
-      try {
-        // 獲取 Token
-        const token = await getToken();
+    try {
+      setIsFetchingMore(true);
 
-        if (!token) {
-          Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
-          return;
-        }
-
-        response = await axios.get(url, {
-          params: {
-            limit: 10,
-            offset: 0,
-          },
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setInvites(response.data);
-        //console.log(response.data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response?.data);
-        } else {
-          console.log("An unexpected error occurred:", error);
-        }
-      } finally {
-        setIsLoading(false);
+      // 獲取 Token
+      const token = await getToken();
+      if (!token) {
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+        return;
       }
-    };
 
-    SearchOrder();
+      response = await axios.get(url, {
+        params: {
+          limit: 10,
+          offset: newOffset,
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setInvites((prevOrders) =>
+        newOffset === 0 ? response.data : [...prevOrders, ...response.data]
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        if (error.response?.data.case === "E-C-102") {
+          setIsMax(true);
+        }
+      } else {
+        console.log("An unexpected error occurred:", error);
+      }
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setOffset(0);
+      setIsMax(false); // 重置 isMax 狀態
+      SearchOrder(0); // 傳入 0，確保從頭開始加載
+      setRefreshing(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    setOffset(0);
+    setIsMax(false); // 重置 isMax 狀態
+    SearchOrder(0); // 傳入 0，確保從頭開始加載
   }, []);
+
+  const loadMoreOrders = debounce(() => {
+    const newOffset = offset + 10;
+    setOffset(newOffset); // 更新 offset 狀態
+    SearchOrder(newOffset); // 使用新的 offset 來進行下一次加載
+  }, 500);
 
   return (
     <View style={{ flex: 1 }}>
@@ -107,45 +129,39 @@ const OtherOrder = () => {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <ScrollView>
-          <View
-            style={{
-              flex: 1,
-              paddingHorizontal: scale(20), // 設置水平間距
-              paddingVertical: verticalScale(15), // 設置垂直間距
-            }}
-          >
-            {invites.map((invite) =>
-              invite.status == "CHECKING" ? (
-                <View key={invite.id} style={styles.container}>
+          <FlashList
+            data={invites}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) =>
+              item.status == "CHECKING" ? (
+                <View key={item.id} style={styles.container}>
                   <Pressable
-                    key={invite.id}
                     onPress={() =>
                       navigation.navigate("otherinvitede", {
-                        orderid: invite.id,
+                        orderid: item.id,
                       })
                     }
                   >
                     <View style={styles.card}>
                       <View style={styles.header}>
                         <Text style={styles.orderNumber}>
-                          邀請編號: {invite.id}
+                          邀請編號: {item.id}
                         </Text>
                       </View>
 
                       <View style={styles.body}>
                         <Text style={styles.title}>
-                          邀請人：{invite.inviterName}
+                          邀請人：{item.inviterName}
                         </Text>
                         <Text style={styles.title}>
-                          推薦起點：{invite.suggestStartAddress}
+                          推薦起點：{item.suggestStartAddress}
                         </Text>
                         <Text style={styles.title}>
-                          推薦終點：{invite.suggestEndAddress}
+                          推薦終點：{item.suggestEndAddress}
                         </Text>
                         <Text style={styles.title}>
                           更新時間:{" "}
-                          {new Date(invite.updatedAt).toLocaleString("en-GB", {
+                          {new Date(item.updatedAt).toLocaleString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })}
                         </Text>
@@ -154,15 +170,36 @@ const OtherOrder = () => {
                   </Pressable>
                 </View>
               ) : null
-            )}
-          </View>
-        </ScrollView>
+            }
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            estimatedItemSize={282}
+            onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
+            onEndReachedThreshold={0.2}
+            ListFooterComponent={
+              isFetchingMore && invites.length >= 10 ? (
+                <View
+                  style={{
+                    marginTop: verticalScale(10),
+                    marginBottom: verticalScale(25),
+                  }}
+                >
+                  <ActivityIndicator size="large" color="black" />
+                </View>
+              ) : null
+            }
+            contentContainerStyle={{
+              paddingHorizontal: scale(20),
+              paddingVertical: verticalScale(15),
+            }}
+          />
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -179,7 +216,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.2,
     shadowRadius: moderateScale(4),
-    elevation: 5, // Android 的陰影
+    elevation: 5,
   },
   header: {
     borderBottomWidth: scale(2),

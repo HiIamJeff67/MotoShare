@@ -1,19 +1,21 @@
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  StyleSheet,
-  ScrollView,
-  Alert,
   Pressable,
   ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from "react-native";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { ScaledSheet } from "react-native-size-matters";
+import { FlashList } from "@shopify/flash-list";
+import debounce from "lodash/debounce";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -37,11 +39,14 @@ const MyOrder = () => {
   const user = useSelector((state: RootState) => state.user);
   const [order, setOrder] = useState<OrderType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [isMax, setIsMax] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   let roleText = "載入中...";
 
   if (user.role == 2) {
-    //home.tsx才正確
     roleText = "乘客";
   } else if (user.role == 1) {
     roleText = "車主";
@@ -60,10 +65,9 @@ const MyOrder = () => {
     }
   };
 
-  useEffect(() => {
-    // 透過 orderId 取得訂單資料
-    let response,
-      url = "";
+  const SearchOrder = async (newOffset = 0) => {
+    let response: { data: OrderType[] },
+      url: string = "";
 
     if (user.role == 1) {
       url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchMyPaginationOrders`;
@@ -71,42 +75,67 @@ const MyOrder = () => {
       url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchMyPaginationOrders`;
     }
 
-    const SearchOrder = async () => {
-      try {
-        // 獲取 Token
-        const token = await getToken();
+    try {
+      setIsFetchingMore(true);
 
-        if (!token) {
-          Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
-          return;
-        }
+      // 獲取 Token
+      const token = await getToken();
 
-        response = await axios.get(url, {
-          params: {
-            limit: 10,
-            offset: 0,
-          },
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setOrder(response.data);
-        //console.log(response.data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response?.data);
-        } else {
-          console.log("An unexpected error occurred:", error);
-        }
-      } finally {
-        setIsLoading(false);
+      if (!token) {
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+        return;
       }
-    };
 
-    SearchOrder();
+      response = await axios.get(url, {
+        params: {
+          limit: 10,
+          offset: newOffset,
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setOrder((prevOrders) =>
+        newOffset === 0 ? response.data : [...prevOrders, ...response.data]
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        if (error.response?.data.case === "E-C-105") {
+          setIsMax(true);
+        }
+      } else {
+        console.log("An unexpected error occurred:", error);
+      }
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setOffset(0);
+      setIsMax(false); // 重置 isMax 狀態
+      SearchOrder(0); // 傳入 0，確保從頭開始加載
+      setRefreshing(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    setOffset(0);
+    setIsMax(false); // 重置 isMax 狀態
+    SearchOrder(0); // 傳入 0，確保從頭開始加載
   }, []);
+
+  const loadMoreOrders = debounce(() => {
+    const newOffset = offset + 10;
+    setOffset(newOffset); // 更新 offset 狀態
+    SearchOrder(newOffset); // 使用新的 offset 來進行下一次加載
+  }, 500);
 
   return (
     <View style={{ flex: 1 }}>
@@ -115,52 +144,46 @@ const MyOrder = () => {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <ScrollView>
-          <View
-            style={{
-              flex: 1,
-              paddingHorizontal: scale(20), // 設置水平間距
-              paddingVertical: verticalScale(15), // 設置垂直間距
-            }}
-          >
-            {order.map((order) =>
-              order.passengerStatus != "FinishedStatus" ||
-              order.ridderStatus != "FinishedStatus" ? (
-                <View key={order.id} style={styles.container}>
+          <FlashList
+            data={order}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) =>
+              item.passengerStatus != "FinishedStatus" ||
+              item.ridderStatus != "FinishedStatus" ? (
+                <View key={item.id} style={styles.container}>
                   <Pressable
-                    key={order.id}
                     onPress={() =>
-                      navigation.navigate("myorderde", { orderid: order.id })
+                      navigation.navigate("myorderde", { orderid: item.id })
                     }
                   >
                     <View style={styles.card}>
                       <View style={styles.header}>
                         <Text style={styles.orderNumber}>
-                          我的訂單編號: {order?.id}
+                          我的訂單編號: {item?.id}
                         </Text>
                       </View>
                       <View style={styles.body}>
                         <Text style={styles.title}>
                           {roleText}：
                           {user.role == 1
-                            ? order.ridderName
-                            : order.passengerName}
+                            ? item.ridderName
+                            : item.passengerName}
                         </Text>
                         <Text style={styles.title}>
-                          起點：{order.finalStartAddress}
+                          起點：{item.finalStartAddress}
                         </Text>
                         <Text style={styles.title}>
-                          終點：{order.finalEndAddress}
+                          終點：{item.finalEndAddress}
                         </Text>
                         <Text style={styles.title}>
                           開車時間:{" "}
-                          {new Date(order.startAfter).toLocaleString("en-GB", {
+                          {new Date(item.startAfter).toLocaleString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })}
                         </Text>
                         <Text style={styles.title}>
                           更新時間:{" "}
-                          {new Date(order.updatedAt).toLocaleString("en-GB", {
+                          {new Date(item.updatedAt).toLocaleString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })}
                         </Text>
@@ -169,15 +192,36 @@ const MyOrder = () => {
                   </Pressable>
                 </View>
               ) : null
-            )}
-          </View>
-        </ScrollView>
+            }
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            estimatedItemSize={282}
+            onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
+            onEndReachedThreshold={0.2}
+            ListFooterComponent={
+              isFetchingMore && order.length >= 10 ? (
+                <View
+                  style={{
+                    marginTop: verticalScale(10),
+                    marginBottom: verticalScale(25),
+                  }}
+                >
+                  <ActivityIndicator size="large" color="black" />
+                </View>
+              ) : null
+            }
+            contentContainerStyle={{
+              paddingHorizontal: scale(20),
+              paddingVertical: verticalScale(15),
+            }}
+          />
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -194,7 +238,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.2,
     shadowRadius: moderateScale(4),
-    elevation: 5, // Android 的陰影
+    elevation: 5,
   },
   header: {
     borderBottomWidth: scale(2),

@@ -56,7 +56,8 @@
     "redux": "^5.0.1",
     "ride-sharing-system": "file:",
     "tailwindcss": "^3.4.15",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@shopify/flash-list": "1.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

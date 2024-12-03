@@ -7,8 +7,8 @@ import {
   TextInput,
   Platform,
   Keyboard,
-  ScrollView,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
@@ -22,8 +22,8 @@ import {
   moderateScale,
 } from "react-native-size-matters";
 import debounce from "lodash/debounce";
+import { FlashList } from "@shopify/flash-list";
 
-// 定義每個訂單的資料結構
 interface OrderType {
   id: string;
   tolerableRDV: number;
@@ -38,6 +38,10 @@ const Order = () => {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [isMax, setIsMax] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   let roleText = "載入中...";
 
@@ -48,15 +52,24 @@ const Order = () => {
   }
 
   const dismissKeyboard = () => {
-    // 只在非 Web 平台上執行 Keyboard.dismiss()
     if (Platform.OS !== "web") {
       Keyboard.dismiss();
     }
   };
 
-  const SearchOrder = async () => {
-    let response,
-      url = "";
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setOffset(0);
+      setIsMax(false); // 重置 isMax 狀態
+      SearchOrder(0); // 傳入 0，確保從頭開始加載
+      setRefreshing(false);
+    }, 2000);
+  };
+
+  const SearchOrder = async (newOffset = 0) => {
+    let response: { data: OrderType[] },
+      url: string = "";
 
     if (user.role == 1) {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchPaginationSupplyOrders`;
@@ -65,38 +78,53 @@ const Order = () => {
     }
 
     try {
+      setIsFetchingMore(true);
+
       response = await axios.get(url, {
         params: {
           creatorName: searchInput,
           limit: 10,
-          offset: 0,
+          offset: newOffset,
         },
       });
 
-      setOrders(response.data);
-      //console.log(response.data);
+      setOrders((prevOrders) =>
+        newOffset === 0 ? response.data : [...prevOrders, ...response.data]
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
+
+        if (error.response?.data.case === "E-C-104") {
+          setIsMax(true);
+        }
       } else {
         console.log("An unexpected error occurred:", error);
       }
     } finally {
       setIsLoading(false);
+      setIsFetchingMore(false);
     }
   };
 
   const handleSearchInputChange = debounce(() => {
-    const regex = /^[a-zA-Z0-9_]+$/; // 使用者名稱只能包含英文字母、數字和底線
-
+    const regex = /^[a-zA-Z0-9_]+$/;
     if (regex.test(searchInput)) {
       SearchOrder();
     }
   }, 500);
 
   useEffect(() => {
-    SearchOrder();
+    setOffset(0);
+    setIsMax(false); // 重置 isMax 狀態
+    SearchOrder(0); // 傳入 0，確保從頭開始加載
   }, []);
+
+  const loadMoreOrders = debounce(() => {
+      const newOffset = offset + 10;
+      setOffset(newOffset); // 更新 offset 狀態
+      SearchOrder(newOffset); // 使用新的 offset 來進行下一次加載
+  }, 500);
 
   return (
     <View style={{ flex: 1 }}>
@@ -105,15 +133,49 @@ const Order = () => {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <ScrollView>
-          <TouchableWithoutFeedback onPress={dismissKeyboard}>
-            <View
-              style={{
-                flex: 1,
-                paddingHorizontal: scale(20), // 設置水平間距
-                paddingVertical: verticalScale(15), // 設置垂直間距
-              }}
-            >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <FlashList
+            data={orders}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View key={item.id} style={styles.container}>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("orderdetail", { orderid: item.id })
+                  }
+                >
+                  <View style={styles.card}>
+                    <View style={styles.header}>
+                      <Text style={styles.orderNumber}>
+                        訂單編號: {item.id}
+                      </Text>
+                    </View>
+                    <View style={styles.body}>
+                      <Text style={styles.title}>
+                        {roleText}：{item.creatorName}
+                      </Text>
+                      <Text style={styles.title}>
+                        起點：{item.startAddress}
+                      </Text>
+                      <Text style={styles.title}>終點：{item.endAddress}</Text>
+                      <Text style={styles.title}>
+                        更新時間:{" "}
+                        {new Date(item.updatedAt).toLocaleString("en-GB", {
+                          timeZone: "Asia/Taipei",
+                        })}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              </View>
+            )}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            estimatedItemSize={282}
+            onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
+            onEndReachedThreshold={0.2}
+            ListHeaderComponent={
               <View style={styles.searchContainer}>
                 <View style={styles.searchBox}>
                   <Feather
@@ -127,10 +189,9 @@ const Order = () => {
                     placeholderTextColor="gray"
                     value={searchInput}
                     onChangeText={(text) => setSearchInput(text)}
-                    onSubmitEditing={handleSearchInputChange} // 按下 "Enter" 時觸發搜尋
+                    onSubmitEditing={handleSearchInputChange}
                   />
                 </View>
-
                 <View style={styles.addButtonContainer}>
                   <Pressable onPress={() => {}}>
                     <Feather
@@ -141,47 +202,25 @@ const Order = () => {
                   </Pressable>
                 </View>
               </View>
-
-              <View style={{ paddingTop: verticalScale(15) }} />
-
-              {orders.map((order) => (
-                <View key={order.id} style={styles.container}>
-                  <Pressable
-                    key={order.id}
-                    onPress={() =>
-                      navigation.navigate("orderdetail", { orderid: order.id })
-                    }
-                  >
-                    <View style={styles.card}>
-                      <View style={styles.header}>
-                        <Text style={styles.orderNumber}>
-                          訂單編號: {order.id}
-                        </Text>
-                      </View>
-                      <View style={styles.body}>
-                        <Text style={styles.title}>
-                          {roleText}：{order.creatorName}
-                        </Text>
-                        <Text style={styles.title}>
-                          起點：{order.startAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          終點：{order.endAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          更新時間:{" "}
-                          {new Date(order.updatedAt).toLocaleString("en-GB", {
-                            timeZone: "Asia/Taipei",
-                          })}
-                        </Text>
-                      </View>
-                    </View>
-                  </Pressable>
+            }
+            ListFooterComponent={
+              isFetchingMore && orders.length >= 10 ? (
+                <View
+                  style={{
+                    marginTop: verticalScale(10),
+                    marginBottom: verticalScale(25),
+                  }}
+                >
+                  <ActivityIndicator size="large" color="black" />
                 </View>
-              ))}
-            </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
+              ) : null
+            }
+            contentContainerStyle={{
+              paddingHorizontal: scale(20),
+              paddingVertical: verticalScale(15),
+            }}
+          />
+        </TouchableWithoutFeedback>
       )}
     </View>
   );
@@ -204,7 +243,7 @@ const styles = ScaledSheet.create({
     shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.2,
     shadowRadius: moderateScale(4),
-    elevation: 5, // Android 的陰影
+    elevation: 5,
   },
   header: {
     borderBottomWidth: scale(2),
@@ -229,6 +268,7 @@ const styles = ScaledSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: verticalScale(15),
   },
   searchBox: {
     flexDirection: "row",

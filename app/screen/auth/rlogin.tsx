@@ -23,7 +23,6 @@ import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { z } from "zod";
-import { set } from "lodash";
 
 // 驗證規則
 const usernameSchema = z
