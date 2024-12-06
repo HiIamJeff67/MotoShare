@@ -5,7 +5,7 @@ import { Ridder } from "../auth/decorator";
 import { RidderType } from "../interfaces";
 import { Response } from "express";
 import { ApiMissingParameterException, ApiSearchingLimitLessThanZeroException, ApiSearchingLimitTooLargeException, ClientRidderNotificationNotFoundException, ClientUnknownException } from "../exceptions";
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "../enums";
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from "../constants";
 import { toNumber } from "../utils";
 
