@@ -393,6 +393,7 @@ export class SupplyOrderController {
       const res = await this.supplyOrderService.startSupplyOrderWithoutInvite(
         id, 
         passenger.id, 
+        passenger.userName, 
         acceptAutoAcceptSupplyOrder, 
       );
 
@@ -421,6 +422,44 @@ export class SupplyOrderController {
 
 
   /* ================================= Delete operations ================================= */
+  @UseGuards(JwtRidderGuard)
+  @Delete('cancelMySupplyOrderById')
+  async cancelMySupplyOrderById(
+    @Ridder() ridder: RidderType, 
+    @Query('id') id: string, 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.supplyOrderService.cancelSupplyOrderById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+      );
+
+      if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send({
+        canceled: new Date(), 
+        ...res[0], 
+      })
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
   @UseGuards(JwtRidderGuard)
   @Delete('deleteMySupplyOrderById')
   async deleteMySupplyOrderById(

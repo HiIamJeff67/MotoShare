@@ -87,9 +87,16 @@ let NotificationGateway = class NotificationGateway {
                     ? exceptions_1.ClientPassengerNotFoundException
                     : exceptions_1.ClientRidderNotFoundException);
             console.log({ ...user, socketId: socket.id });
+            if (this.socketMap.has(user.id)) {
+                const existingUser = this.socketMap.get(user.id);
+                if (existingUser) {
+                    this.socketMap.delete(user.id);
+                    existingUser.socket.disconnect(true);
+                }
+            }
             this.socketMap.set(user.id, {
                 ...user,
-                socketId: socket.id,
+                socket: socket,
             });
             socket.join(`${socket.id}'s notification`);
             console.log(`User ${user.id} connected with socket ID ${socket.id}`);
@@ -110,9 +117,10 @@ let NotificationGateway = class NotificationGateway {
     }
     handleDisconnect(socket) {
         try {
-            const [userId, userData] = Array.from(this.socketMap.entries()).find(([, metaPayloads]) => metaPayloads.socketId === socket.id) || [undefined, undefined];
+            const [userId, userData] = Array.from(this.socketMap.entries()).find(([, metaPayloads]) => metaPayloads.socket.id === socket.id) || [undefined, undefined];
             if (!userId || !userData)
                 throw exceptions_1.ServerUserNotFoundInSocketMapException;
+            socket.disconnect(true);
             this.socketMap.delete(userId);
             console.log(`User ${userId} disconnected with socket ID ${socket.id}`);
             return {
@@ -128,22 +136,23 @@ let NotificationGateway = class NotificationGateway {
             };
         }
     }
+    forceDisconnect(socket) {
+        if (socket) {
+            socket.disconnect(true);
+        }
+    }
     notifyPassenger(userId, notification) {
-        console.log(`Pushing notification to user ${userId}: ${notification}`);
-        this.server.emit(`user_${userId}_notifications`, notification);
-        const socket = this.socketMap.get(userId);
-        if (socket && socket.role === "Passenger") {
-            console.log(`Pushing to room : ${socket.socketId}'s notification`);
-            this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+        const socketUser = this.socketMap.get(userId);
+        if (socketUser && socketUser.role === "Passenger") {
+            console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
+            this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
         }
     }
     notifyRidder(userId, notification) {
-        console.log(`Pushing notification to user ${userId}: ${notification}`);
-        this.server.emit(`user_${userId}_notifications`, notification);
-        const socket = this.socketMap.get(userId);
-        if (socket && socket.role === "Ridder") {
-            console.log(`Pushing to room : ${socket.socketId}'s notification`);
-            this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+        const socketUser = this.socketMap.get(userId);
+        if (socketUser && socketUser.role === "Ridder") {
+            console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
+            this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
         }
     }
     onTest(data) {
@@ -157,6 +166,12 @@ __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_1.Server)
 ], NotificationGateway.prototype, "server", void 0);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('forceDisconnect'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:returntype", void 0)
+], NotificationGateway.prototype, "forceDisconnect", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('test'),
     __param(0, (0, websockets_1.MessageBody)()),

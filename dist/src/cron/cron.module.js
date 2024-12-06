@@ -12,6 +12,7 @@ const cron_service_1 = require("./cron.service");
 const cron_controller_1 = require("./cron.controller");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const config_1 = require("@nestjs/config");
+const notification_module_1 = require("../notification/notification.module");
 let CronModule = class CronModule {
 };
 exports.CronModule = CronModule;
@@ -19,7 +20,7 @@ exports.CronModule = CronModule = __decorate([
     (0, common_1.Module)({
         controllers: [cron_controller_1.CronController],
         providers: [cron_service_1.CronService],
-        imports: [drizzle_module_1.DrizzleModule, config_1.ConfigModule]
+        imports: [drizzle_module_1.DrizzleModule, config_1.ConfigModule, notification_module_1.NotificationModule]
     })
 ], CronModule);
 //# sourceMappingURL=cron.module.js.map

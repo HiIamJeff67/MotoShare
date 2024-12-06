@@ -49,9 +49,5 @@ export class CreateRidderInfoDto {
 
     @IsOptional()
     @IsString()
-    motocylePhotoUrl?: string
-
-    @IsOptional()
-    @IsString()
     motocycleType?: string
 }

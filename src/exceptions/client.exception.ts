@@ -1,4 +1,5 @@
 import { ConflictException, ForbiddenException, InternalServerErrorException, NotAcceptableException, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { FileSizeUnitType } from "../types";
 
 /* ============================== Error about authorization ============================== */
 
@@ -115,6 +116,18 @@ export const ClientSignInEmailNotFoundException = new NotFoundException({
 export const ClientHistoryNotFoundException = new NotFoundException({
     case: "E-C-109",
     message: "Failed to find any histories",
+});
+
+// E-C-110
+export const ClientPassengerNotificationNotFoundException = new NotFoundException({
+    case: "E-C-110", 
+    message: "Failed to find any passenger notifications", 
+});
+
+// E-C-111
+export const ClientRidderNotificationNotFoundException = new NotFoundException({
+    case: "E-C-111", 
+    message: "Failed to find any ridder notifications", 
 });
 
 /* ============================== Error about select operation ============================== */
@@ -259,6 +272,22 @@ export const ClientEndBeforeStartException = new ConflictException({
     case: "E-C-351",
     message: "The end time is earlier than the start time",
 });
+
+// E-C-352
+export const ClientUploadFileExceedException = (maxSize: number, unit: FileSizeUnitType) => {
+    return new NotAcceptableException({
+        case: "E-C-352", 
+        message: `The size of uploaded file should be within ${maxSize}${unit}`, 
+    });
+};
+
+// E-C-353
+export const ClientUploadFileMimeTypeException = (validMimeType: string[]) => {
+    return new NotAcceptableException({
+        case: "E-C-353", 
+        message: `The (mime)type of uploaded file should be ${validMimeType}`, 
+    });
+};
 
 /* ============================== Error about update operation ============================== */
 

@@ -3,10 +3,11 @@ import { CronService } from './cron.service';
 import { CronController } from './cron.controller';
 import { DrizzleModule } from '../drizzle/drizzle.module';
 import { ConfigModule } from '@nestjs/config';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   controllers: [CronController],
   providers: [CronService],
-  imports: [DrizzleModule, ConfigModule]
+  imports: [DrizzleModule, ConfigModule, NotificationModule]
 })
 export class CronModule {}

@@ -1,5 +1,13 @@
 import { NotificationType } from "../types/notification.type"
 
+export interface NotificationTemplateInterface {
+    userId: string
+    title: string
+    description: string | null
+    notificationType: NotificationType
+    linkId: string | null
+}
+
 export interface NotificationInterface {
     id: string
     userId: string

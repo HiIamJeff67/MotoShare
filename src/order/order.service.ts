@@ -8,20 +8,34 @@ import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
+import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
+import { HistoryTable } from '../drizzle/schema/history.schema';
+import { UserRoleType } from '../types';
 import { 
   ApiPrevOrderIdFormException, 
   ClientCreateHistoryException, 
+  ClientCreatePassengerNotificationException, 
+  ClientCreateRidderNotificationException, 
   ClientOrderNotFoundException, 
   ClientPurchaseOrderNotFoundException, 
   ClientSupplyOrderNotFoundException, 
   ServerNeonAutoUpdateExpiredOrderException, 
 } from '../exceptions';
-import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
-import { HistoryTable } from '../drizzle/schema/history.schema';
+import { 
+  NotificationTemplateOfCancelingOrder, 
+  NotificationTemplateOfChangingOrderStatus, 
+  NotificationTemplateOfCreatingHistory 
+} from '../notification/notificationTemplate';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 
 @Injectable()
 export class OrderService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
+    @Inject(DRIZZLE) private db: DrizzleDB, 
+  ) {}
 
   /* ================================= Detect And Update Expired Orders operation ================================= */
   private async updateExpiredOrdersToStartedStatus() {
@@ -284,8 +298,12 @@ export class OrderService {
   /* ================================= Update and Transact operations ================================= */
   // since this method only allow passenger to update its status from UNSTARTED to STARTED
   // so we only update to STARTED status when the current status is UNSTARTED
-  async toStartedPassengerStatusById(id: string, passengerId: string) {
-    return await this.db.update(OrderTable).set({
+  async toStartedPassengerStatusById(
+    id: string, 
+    passengerId: string, 
+    passengerName: string, 
+  ) {
+    const responseOfToStartedPassengerStatus = await this.db.update(OrderTable).set({
       passengerStatus: "STARTED",
       updatedAt: new Date(),
     }).where(and(
@@ -293,12 +311,39 @@ export class OrderService {
       eq(OrderTable.passengerId, passengerId), 
       eq(OrderTable.passengerStatus, "UNSTARTED"),
     )).returning({
+      id: OrderTable.id, 
+      passengerId: OrderTable.passengerId, 
+      ridderId: OrderTable.ridderId, 
       passengerStatus: OrderTable.passengerStatus,
     });
+    if (!responseOfToStartedPassengerStatus || responseOfToStartedPassengerStatus.length === 0) {
+      throw ClientOrderNotFoundException;
+    }
+
+    const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+      NotificationTemplateOfChangingOrderStatus(
+        passengerName, 
+        responseOfToStartedPassengerStatus[0].ridderId, 
+        responseOfToStartedPassengerStatus[0].id, 
+        "UNSTARTED", 
+        "STARTED", 
+      )
+    );
+    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+      throw ClientCreateRidderNotificationException;
+    }
+
+    return [{
+      passengerStatus: responseOfToStartedPassengerStatus[0].passengerStatus, 
+    }];
   }
 
-  async toStartedRidderStatusById(id: string, ridderId: string) {
-    return await this.db.update(OrderTable).set({
+  async toStartedRidderStatusById(
+    id: string, 
+    ridderId: string, 
+    ridderName: string, 
+  ) {
+    const responseOfToStartedRidderStatus = await this.db.update(OrderTable).set({
       ridderStatus: "STARTED",
       updatedAt: new Date(),
     }).where(and(
@@ -306,12 +351,39 @@ export class OrderService {
       eq(OrderTable.ridderId, ridderId),
       eq(OrderTable.ridderStatus, "UNSTARTED"),
     )).returning({
+      id: OrderTable.id, 
+      passengerId: OrderTable.passengerId, 
+      ridderId: OrderTable.ridderId, 
       ridderStatus: OrderTable.ridderStatus,
     });
+    if (!responseOfToStartedRidderStatus || responseOfToStartedRidderStatus.length === 0) {
+      throw ClientOrderNotFoundException;
+    }
+
+    const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+      NotificationTemplateOfChangingOrderStatus(
+        ridderName, 
+        responseOfToStartedRidderStatus[0].passengerId, 
+        responseOfToStartedRidderStatus[0].id, 
+        "UNSTARTED", 
+        "STARTED", 
+      )
+    );
+    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+      throw ClientCreatePassengerNotificationException;
+    }
+
+    return [{
+      ridderStatus: responseOfToStartedRidderStatus[0].ridderStatus, 
+    }];
   }
 
-  async toUnpaidPassengerStatusById(id: string, passengerId: string) {
-    return await this.db.update(OrderTable).set({
+  async toUnpaidPassengerStatusById(
+    id: string, 
+    passengerId: string, 
+    passengerName: string, 
+  ) {
+    const responseOfToUnpaidPassengerStatus = await this.db.update(OrderTable).set({
       passengerStatus: "UNPAID",
       updatedAt: new Date(),
     }).where(and(
@@ -319,12 +391,39 @@ export class OrderService {
       eq(OrderTable.passengerId, passengerId), 
       eq(OrderTable.passengerStatus, "STARTED"),
     )).returning({
+      id: OrderTable.id, 
+      passengerId: OrderTable.passengerId, 
+      ridderId: OrderTable.ridderId, 
       passengerStatus: OrderTable.passengerStatus,
     });
+    if (!responseOfToUnpaidPassengerStatus || responseOfToUnpaidPassengerStatus.length === 0) {
+      throw ClientOrderNotFoundException;
+    }
+
+    const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+      NotificationTemplateOfChangingOrderStatus(
+        passengerName, 
+        responseOfToUnpaidPassengerStatus[0].ridderId, 
+        responseOfToUnpaidPassengerStatus[0].id, 
+        "STARTED", 
+        "UNPAID", 
+      )
+    );
+    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+      throw ClientCreateRidderNotificationException;
+    }
+
+    return [{
+      passengerStatus: responseOfToUnpaidPassengerStatus[0].passengerStatus, 
+    }];
   }
 
-  async toUnpaidRidderStatusById(id: string, ridderId: string) {
-    return await this.db.update(OrderTable).set({
+  async toUnpaidRidderStatusById(
+    id: string, 
+    ridderId: string, 
+    ridderName: string, 
+  ) {
+    const responseOfToUnpaidRidderStatus = await this.db.update(OrderTable).set({
       ridderStatus: "UNPAID",
       updatedAt: new Date(),
     }).where(and(
@@ -332,11 +431,38 @@ export class OrderService {
       eq(OrderTable.ridderId, ridderId),
       eq(OrderTable.ridderStatus, "STARTED"),
     )).returning({
+      id: OrderTable.id, 
+      passengerId: OrderTable.passengerId, 
+      ridderId: OrderTable.ridderId, 
       ridderStatus: OrderTable.ridderStatus,
     });
+    if (!responseOfToUnpaidRidderStatus || responseOfToUnpaidRidderStatus.length === 0) {
+      throw ClientOrderNotFoundException;
+    }
+
+    const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+      NotificationTemplateOfChangingOrderStatus(
+        ridderName, 
+        responseOfToUnpaidRidderStatus[0].passengerId, 
+        responseOfToUnpaidRidderStatus[0].id, 
+        "STARTED", 
+        "UNPAID", 
+      )
+    );
+    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+      throw ClientCreatePassengerNotificationException;
+    }
+
+    return [{
+      ridderStatus: responseOfToUnpaidRidderStatus[0].ridderStatus, 
+    }];
   }
 
-  async toFinishedPassengerStatusById(id: string, passengerId: string) {
+  async toFinishedPassengerStatusById(
+    id: string, 
+    passengerId: string, 
+    passengerName: string, 
+  ) {
     return this.db.transaction(async (tx) => {
       const responseOfUpdatingOrder = await tx.update(OrderTable).set({
         passengerStatus: "FINISHED",
@@ -346,6 +472,9 @@ export class OrderService {
         eq(OrderTable.passengerId, passengerId),
         eq(OrderTable.passengerStatus, "UNPAID"),
       )).returning({
+        id: OrderTable.id, 
+        passengerId: OrderTable.passengerId, 
+        ridderId: OrderTable.ridderId, 
         prevOrderId: OrderTable.prevOrderId,
         passengerStatus: OrderTable.passengerStatus,
         ridderStatus: OrderTable.ridderStatus,
@@ -428,17 +557,47 @@ export class OrderService {
             if (!responseOfCreatingHistory || responseOfCreatingHistory.length === 0) {
               throw ClientCreateHistoryException;
             }
+
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+              NotificationTemplateOfCreatingHistory(
+                passengerName, 
+                responseOfUpdatingOrder[0].ridderId, 
+                responseOfCreatingHistory[0].historyId, 
+              )
+            );
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+              throw ClientCreateRidderNotificationException;
+            }
               
-        return [{
-          ...responseOfCreatingHistory[0],
-        }]
+            return [{
+              ...responseOfCreatingHistory[0],
+            }]
       }
 
-      return responseOfUpdatingOrder;
+      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+        NotificationTemplateOfChangingOrderStatus(
+          passengerName, 
+          responseOfUpdatingOrder[0].ridderId, 
+          responseOfUpdatingOrder[0].id, 
+          "UNPAID", 
+          "FINISHED", 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
+      }
+
+      return [{
+        passengerStatus: responseOfUpdatingOrder[0].passengerStatus, 
+      }];
     });
   }
 
-  async toFinishedRidderStatusById(id: string, ridderId: string) {
+  async toFinishedRidderStatusById(
+    id: string, 
+    ridderId: string, 
+    ridderName: string, 
+  ) {
     return this.db.transaction(async (tx) => {
       const responseOfUpdatingOrder = await tx.update(OrderTable).set({
         ridderStatus: "FINISHED",
@@ -448,6 +607,9 @@ export class OrderService {
         eq(OrderTable.ridderId, ridderId),
         eq(OrderTable.ridderStatus, "UNPAID"),
       )).returning({
+        id: OrderTable.id, 
+        passengerId: OrderTable.passengerId, 
+        ridderId: OrderTable.ridderId, 
         prevOrderId: OrderTable.prevOrderId,
         passengerStatus: OrderTable.passengerStatus,
         ridderStatus: OrderTable.ridderStatus,
@@ -530,19 +692,50 @@ export class OrderService {
           throw ClientCreateHistoryException;
         }
 
+        const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+          NotificationTemplateOfCreatingHistory(
+            ridderName, 
+            responseOfUpdatingOrder[0].passengerId, 
+            responseOfCreatingHistory[0].historyId, 
+          )
+        );
+        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+          throw ClientCreatePassengerNotificationException;
+        }
+
         return [{
           ...responseOfCreatingHistory[0],
         }]
       }
 
-      return responseOfUpdatingOrder;
+      const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+        NotificationTemplateOfChangingOrderStatus(
+          ridderName, 
+          responseOfUpdatingOrder[0].passengerId, 
+          responseOfUpdatingOrder[0].id, 
+          "UNPAID", 
+          "FINISHED", 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreatePassengerNotificationException;
+      }
+
+      return [{
+        ridderStatus: responseOfUpdatingOrder[0].ridderStatus, 
+      }];
     });
   }
   /* ================================= Update and Transact operations ================================= */
 
 
   /* ================================= Delete operations ================================= */
-  async cancelAndDeleteOrderById(id: string, userId: string) {
+  async cancelAndDeleteOrderById(
+    id: string, 
+    userId: string, 
+    userName: string, 
+    userRole: UserRoleType, 
+  ) {
     // one of the users(Passenger or Ridder) can cancel the current order, 
     // once they done this, the other user can still see the canceled order on history
     return await this.db.transaction(async (tx) => {
@@ -594,6 +787,40 @@ export class OrderService {
       });
       if (!responseOfCreatingHistory || responseOfCreatingHistory.length === 0) {
         throw ClientCreateHistoryException;
+      }
+
+      const [prevOrderType, prevOrderId] = responseOfDeletingOrder[0].prevOrderId.split(' ');
+      if (responseOfDeletingOrder[0].prevOrderId.split(' ').length !== 2 
+        || !prevOrderType || !prevOrderId) {
+          throw ApiPrevOrderIdFormException;
+      }
+      const responseOfRestoringPrevOrder = await tx.update(prevOrderType === "PurchaseOrder" ? PurchaseOrderTable : SupplyOrderTable).set({
+        status: "CANCEL", 
+      }).where((prevOrderType === "PurchaseOrder" 
+        ? eq(PurchaseOrderTable.id, prevOrderId) 
+        : eq(SupplyOrderTable.id, prevOrderId)
+      )).returning();
+      if (!responseOfRestoringPrevOrder || responseOfRestoringPrevOrder.length === 0) {
+        throw prevOrderType === "PurchaseOrder" ? ClientPurchaseOrderNotFoundException : ClientSupplyOrderNotFoundException;
+      }
+
+      const responseOfCreatingNotification = (userRole === "Passenger")
+        ? await this.passengerNotification.createPassengerNotificationByUserId(
+            NotificationTemplateOfCancelingOrder(
+              userName, 
+              responseOfDeletingOrder[0].passengerId, 
+              responseOfCreatingHistory[0].historyId, 
+            )
+          )
+        : await this.ridderNotification.createRidderNotificationByUserId(
+            NotificationTemplateOfCancelingOrder(
+              userName, 
+              responseOfDeletingOrder[0].ridderId, 
+              responseOfCreatingHistory[0].historyId, 
+            )
+          );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
       }
 
       return [{

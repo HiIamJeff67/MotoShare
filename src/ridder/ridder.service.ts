@@ -156,7 +156,6 @@ export class RidderService {
   /* ================================= Get operations ================================= */
 
 
-
   /* ================================= Update operations ================================= */
   async updateRidderById(
     id: string, 
@@ -185,7 +184,8 @@ export class RidderService {
   async updateRidderInfoByUserId(
     userId: string, 
     updateRidderInfoDto: UpdateRidderInfoDto,
-    uploadedFile: Express.Multer.File | undefined = undefined,
+    uploadedAvatorFile: Express.Multer.File | undefined = undefined,
+    uploadedMotocyclePhotoFile: Express.Multer.File | undefined = undefined, 
   ) {
     return await this.db.transaction(async (tx) => {
       const ridderInfo = await tx.select({
@@ -200,25 +200,31 @@ export class RidderService {
         phoneNumber: updateRidderInfoDto.phoneNumber,
         selfIntroduction: updateRidderInfoDto.selfIntroduction,
         motocycleLicense: updateRidderInfoDto.motocycleLicense,
-        motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
         motocycleType: updateRidderInfoDto.motocycleType,
-        ...(uploadedFile 
-          ? { avatorUrl: await this.storage.uploadFile(
+        ...(uploadedAvatorFile 
+          ? { avatorUrl: await this.storage.uploadAvatorFile(
                 ridderInfo[0].infoId, 
-                "AvatorBucket", 
-                "ridderAvators/", 
-                uploadedFile
+                "ridderAvators", 
+                uploadedAvatorFile
               ) 
             } 
           : {}
-        ),
+        ), 
+        ...(uploadedMotocyclePhotoFile
+          ? { motocyclePhotoUrl: await this.storage.uploadMotocyclePhotoFile(
+                ridderInfo[0].infoId, 
+                "ridderMotocyclePhotos", 
+                uploadedMotocyclePhotoFile
+              )
+            }
+          : {}
+        ), 
         updatedAt: new Date(), 
       }).where(eq(RidderInfoTable.userId, userId));
     });
   }
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
-
 
 
   /* ================================= Delete operations ================================= */
@@ -246,7 +252,6 @@ export class RidderService {
   }
   /* ================================= Delete operations ================================= */
 
-  
   
   /* ================================= Test operations ================================= */
   async testBcryptHashing(secretText: string, hash: string | undefined) {

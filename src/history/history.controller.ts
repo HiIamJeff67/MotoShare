@@ -177,7 +177,12 @@ export class HistoryController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.historyService.rateAndCommentHistoryForPassengerById(id, passenger.id, rateAndCommentHistoryDto);
+      const res = await this.historyService.rateAndCommentHistoryForPassengerById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+        rateAndCommentHistoryDto
+      );
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;
 
@@ -208,7 +213,12 @@ export class HistoryController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.historyService.rateAndCommentHistoryForRidderById(id, ridder.id, rateAndCommentHistoryDto);
+      const res = await this.historyService.rateAndCommentHistoryForRidderById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+        rateAndCommentHistoryDto
+      );
 
       if (!res || res.length === 0) throw ClientHistoryNotFoundException;
 

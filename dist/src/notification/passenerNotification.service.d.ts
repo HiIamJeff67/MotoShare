@@ -1,21 +1,23 @@
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { NotificationType } from '../types/notification.type';
 import { NotificationGateway } from './notification.gateway';
 import { ConfigService } from '@nestjs/config';
+import { NotificationTemplateInterface } from '../interfaces';
 export declare class PassengerNotificationService {
     private config;
     private gateway;
     private db;
     constructor(config: ConfigService, gateway: NotificationGateway, db: DrizzleDB);
-    createPassengerNotificationByUserId(userId: string, title: string, description: string | undefined, notificationType: NotificationType, linkId: string): Promise<{
-        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
-        id: string;
-        userId: string;
+    createPassengerNotificationByUserId(content: NotificationTemplateInterface): Promise<{
         title: string;
         description: string | null;
+        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
         linkId: string | null;
-        isRead: boolean;
-        createdAt: Date;
+    }[]>;
+    createMultiplePassengerNotificationByUserId(data: NotificationTemplateInterface[]): Promise<{
+        title: string;
+        description: string | null;
+        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
+        linkId: string | null;
     }[]>;
     getPassengerNotificationById(id: string, userId: string): Promise<{
         id: string;
@@ -35,7 +37,7 @@ export declare class PassengerNotificationService {
         isRead: boolean;
         createdAt: Date;
     }[]>;
-    updateToReadStatusPassengerNotification(id: string, userId: string): Promise<{
+    updatePassengerNotificationToReadStatus(id: string, userId: string): Promise<{
         id: string;
     }[]>;
     deletePassengerNotification(id: string, userId: string): Promise<{

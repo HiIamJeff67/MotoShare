@@ -26,19 +26,19 @@ let PassengerNotificationService = class PassengerNotificationService {
         this.gateway = gateway;
         this.db = db;
     }
-    async createPassengerNotificationByUserId(userId, title, description = "", notificationType, linkId) {
+    async createPassengerNotificationByUserId(content) {
         const responseOfCreatingPassengerNotification = await this.db.insert(schema_1.PassengerNotificationTable).values({
-            userId: userId,
-            title: title,
-            description: description,
-            notificationType: notificationType,
-            linkId: linkId,
+            userId: content.userId,
+            title: content.title,
+            description: content.description,
+            notificationType: content.notificationType,
+            linkId: content.linkId,
             isRead: false,
         }).returning();
         if (!responseOfCreatingPassengerNotification || responseOfCreatingPassengerNotification.length === 0) {
             throw exceptions_1.ClientCreatePassengerNotificationException;
         }
-        this.gateway.notifyPassenger(userId, {
+        this.gateway.notifyPassenger(content.userId, {
             id: responseOfCreatingPassengerNotification[0].id,
             userId: responseOfCreatingPassengerNotification[0].userId,
             title: responseOfCreatingPassengerNotification[0].title,
@@ -48,7 +48,31 @@ let PassengerNotificationService = class PassengerNotificationService {
             isRead: responseOfCreatingPassengerNotification[0].isRead,
             createdAt: responseOfCreatingPassengerNotification[0].createdAt,
         });
-        return responseOfCreatingPassengerNotification;
+        return [{
+                title: responseOfCreatingPassengerNotification[0].title,
+                description: responseOfCreatingPassengerNotification[0].description,
+                notificationType: responseOfCreatingPassengerNotification[0].notificationType,
+                linkId: responseOfCreatingPassengerNotification[0].linkId,
+            }];
+    }
+    async createMultiplePassengerNotificationByUserId(data) {
+        const responseOfCreatingPassengerNotification = await this.db.insert(schema_1.PassengerNotificationTable).values(data.map((content) => ({ ...content, isRead: false }))).returning();
+        if (!responseOfCreatingPassengerNotification || responseOfCreatingPassengerNotification.length !== data.length) {
+            throw exceptions_1.ClientCreatePassengerNotificationException;
+        }
+        responseOfCreatingPassengerNotification.map((content) => {
+            this.gateway.notifyRidder(content.userId, {
+                id: content.id,
+                userId: content.userId,
+                title: content.title,
+                description: content.description,
+                notificationType: content.notificationType,
+                linkId: content.linkId,
+                isRead: content.isRead,
+                createdAt: content.createdAt,
+            });
+        });
+        return responseOfCreatingPassengerNotification.map(({ title, description, notificationType, linkId }) => ({ title, description, notificationType, linkId }));
     }
     async getPassengerNotificationById(id, userId) {
         return await this.db.select({
@@ -78,10 +102,10 @@ let PassengerNotificationService = class PassengerNotificationService {
             .limit(limit)
             .offset(offset);
     }
-    async updateToReadStatusPassengerNotification(id, userId) {
+    async updatePassengerNotificationToReadStatus(id, userId) {
         return await this.db.update(schema_1.PassengerNotificationTable).set({
             isRead: true,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.id, id), (0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.userId, userId))).returning({
+        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.id, id), (0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.userId, userId), (0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.isRead, false))).returning({
             id: schema_1.PassengerNotificationTable.id,
         });
     }

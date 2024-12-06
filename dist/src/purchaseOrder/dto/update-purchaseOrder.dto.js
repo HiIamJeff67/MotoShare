@@ -19,7 +19,7 @@ class UpdatePurchaseOrderDto extends (0, mapped_types_1.PartialType)(create_purc
 exports.UpdatePurchaseOrderDto = UpdatePurchaseOrderDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(status_tpye_1.PostedStatusTypes, { message: "The status of PurchaseOrder must be either POSTED, EXPIRED, or CANCEL" }),
+    (0, class_validator_1.IsIn)(status_tpye_1.PostedStatusTypes, { message: "The new status of PurchaseOrder must be only POSTED" }),
     __metadata("design:type", String)
 ], UpdatePurchaseOrderDto.prototype, "status", void 0);
 //# sourceMappingURL=update-purchaseOrder.dto.js.map

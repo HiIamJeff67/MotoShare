@@ -22,7 +22,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "ts-node ./src/seeds/main.ts", 
+    "db:seed": "ts-node ./src/seeds/main.ts",
     "db:setup-trigger": "ts-node ./src/scripts/setup-trigger.ts"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "cloc": "^2.2.0-cloc",
     "drizzle-orm": "^0.34.1",
     "handlebars": "^4.7.8",
     "nodemailer": "^6.9.16",

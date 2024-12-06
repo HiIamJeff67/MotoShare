@@ -33,7 +33,7 @@ let RidderInviteController = class RidderInviteController {
             if (!orderId) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.ridderInviteService.createRidderInviteByOrderId(ridder.id, orderId, createRidderInviteDto);
+            const res = await this.ridderInviteService.createRidderInviteByOrderId(ridder.id, ridder.userName, orderId, createRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreateRidderInviteException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res[0]);
@@ -336,7 +336,7 @@ let RidderInviteController = class RidderInviteController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, updateRidderInviteDto);
+            const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, ridder.userName, updateRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
@@ -359,7 +359,7 @@ let RidderInviteController = class RidderInviteController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, decideRidderInviteDto);
+            const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, passenger.userName, decideRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);

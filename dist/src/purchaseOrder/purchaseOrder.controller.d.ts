@@ -18,6 +18,7 @@ export declare class PurchaseOrderController {
     searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, response: Response): Promise<void>;
     updateMyPurchaseOrderById(passenger: PassengerType, id: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto, response: Response): Promise<void>;
     startPurchaseOrderWithoutInvite(ridder: RidderType, id: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto, response: Response): Promise<void>;
+    cancelMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
         id: string;

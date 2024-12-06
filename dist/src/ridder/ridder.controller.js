@@ -142,9 +142,9 @@ let RidderController = class RidderController {
             });
         }
     }
-    async updateMyInfo(ridder, updateRidderInfoDto, file = undefined, response) {
+    async updateMyInfo(ridder, updateRidderInfoDto, files, response) {
         try {
-            const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, file);
+            const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, (files.avatorFile ? files.avatorFile[0] : undefined), (files.motocyclePhotoFile ? files.motocyclePhotoFile[0] : undefined));
             if (!res)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -154,7 +154,9 @@ let RidderController = class RidderController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -260,11 +262,14 @@ __decorate([
 ], RidderController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'avatorFile', maxCount: 1 },
+        { name: 'motocyclePhotoFile', maxCount: 1 },
+    ])),
     (0, common_1.Patch)('updateMyInfo'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.UploadedFiles)()),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_interface_1.RidderType,

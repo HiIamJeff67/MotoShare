@@ -9,7 +9,8 @@ import {
   UploadedFile,
   Post,
   NotAcceptableException,
-  Patch
+  Patch,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { PassengerService } from './passenger.service';
 import { Response } from 'express';
@@ -210,16 +211,20 @@ export class PassengerController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('avatorFile'))
   @Patch('updateMyInfo')
   async updateMyInfo(
     @Passenger() passenger: PassengerType,
     @Body() updatePassengerInfoDto: UpdatePassengerInfoDto,
-    @UploadedFile() file: Express.Multer.File | undefined = undefined,
+    @UploadedFile() avatorFile: Express.Multer.File | undefined = undefined,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto, file);
+      const res = await this.passengerService.updatePassengerInfoByUserId(
+        passenger.id, 
+        updatePassengerInfoDto, 
+        avatorFile
+      );
 
       if (!res) throw ClientPassengerNotFoundException;
 
@@ -228,7 +233,9 @@ export class PassengerController {
       });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof InternalServerErrorException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       

@@ -1,11 +1,15 @@
 import { CreateRidderInviteDto } from './dto/create-ridderInvite.dto';
 import { DecideRidderInviteDto, UpdateRidderInviteDto } from './dto/update-ridderInvite.dto';
 import { DrizzleDB } from '../drizzle/types/drizzle';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 export declare class RidderInviteService {
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     private updateExpiredRidderInvites;
-    createRidderInviteByOrderId(inviterId: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
+    createRidderInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
         createdAt: Date;
         orderId: string;
@@ -199,12 +203,11 @@ export declare class RidderInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         RDV: unknown;
     }[]>;
-    updateRidderInviteById(id: string, inviterId: string, updateRidderInviteDto: UpdateRidderInviteDto): Promise<{
+    updateRidderInviteById(id: string, inviterId: string, inviterName: string, updateRidderInviteDto: UpdateRidderInviteDto): Promise<{
         id: string;
-        updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    decideRidderInviteById(id: string, receiverId: string, decideRidderInviteDto: DecideRidderInviteDto): Promise<{
+    decideRidderInviteById(id: string, receiverId: string, receiverName: string, decideRidderInviteDto: DecideRidderInviteDto): Promise<{
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
@@ -222,7 +225,6 @@ export declare class RidderInviteService {
         endedAt: Date;
         orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
-        updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;
     deleteRidderInviteById(id: string, inviterId: string): Promise<{

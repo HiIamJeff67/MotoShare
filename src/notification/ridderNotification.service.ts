@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { NotificationType } from '../types/notification.type';
 import { and, desc, eq } from 'drizzle-orm';
 import { RidderTable, RidderInfoTable, RidderNotificationTable } from '../drizzle/schema/schema';
-import { Client } from 'pg';
 import { NotificationGateway } from './notification.gateway';
 import { ConfigService } from '@nestjs/config';
 import { ClientCreateRidderNotificationException } from '../exceptions';
-import { NotificationInterface } from '../interfaces';
+import { NotificationInterface, NotificationTemplateInterface } from '../interfaces';
 
 @Injectable()
 export class RidderNotificationService {
@@ -44,19 +42,13 @@ export class RidderNotificationService {
 
 
     /* ================================= Create operations ================================= */
-    async createRidderNotificationByUserId(
-        userId: string, 
-        title: string, 
-        description: string = "", 
-        notificationType: NotificationType, 
-        linkId: string, 
-    ) {
+    async createRidderNotificationByUserId(content: NotificationTemplateInterface) {
         const responseOfCreatingRidderNotification = await this.db.insert(RidderNotificationTable).values({
-            userId: userId, 
-            title: title, 
-            description: description, 
-            notificationType: notificationType, 
-            linkId: linkId, 
+            userId: content.userId, 
+            title: content.title, 
+            description: content.description, 
+            notificationType: content.notificationType, 
+            linkId: content.linkId, 
             isRead: false, 
         }).returning();
         if (!responseOfCreatingRidderNotification || responseOfCreatingRidderNotification.length === 0) {
@@ -64,7 +56,7 @@ export class RidderNotificationService {
         }
 
         // we apply trigger manually here
-        this.gateway.notifyRidder(userId, {
+        this.gateway.notifyRidder(content.userId, {
             id: responseOfCreatingRidderNotification[0].id, 
             userId: responseOfCreatingRidderNotification[0].userId, 
             title: responseOfCreatingRidderNotification[0].title, 
@@ -75,7 +67,38 @@ export class RidderNotificationService {
             createdAt: responseOfCreatingRidderNotification[0].createdAt, 
         } as NotificationInterface);
 
-        return responseOfCreatingRidderNotification;
+        return [{
+            title: responseOfCreatingRidderNotification[0].title, 
+            description: responseOfCreatingRidderNotification[0].description, 
+            notificationType: responseOfCreatingRidderNotification[0].notificationType, 
+            linkId: responseOfCreatingRidderNotification[0].linkId, 
+        }];
+    }
+
+    async createMultipleRidderNotificationsByUserId(data: NotificationTemplateInterface[]) {
+        const responseOfCreatingRidderNotification = await this.db.insert(RidderNotificationTable).values(
+            data.map((content: NotificationTemplateInterface) => ({ ...content, isRead: false }))
+        ).returning();
+        if (!responseOfCreatingRidderNotification || responseOfCreatingRidderNotification.length !== data.length) {
+            throw ClientCreateRidderNotificationException;
+        }
+
+        responseOfCreatingRidderNotification.map((content) => {
+            this.gateway.notifyRidder(content.userId, {
+                id: content.id, 
+                userId: content.userId, 
+                title: content.title, 
+                description: content.description, 
+                notificationType: content.notificationType, 
+                linkId: content.linkId, 
+                isRead: content.isRead, 
+                createdAt: content.createdAt, 
+            } as NotificationInterface);
+        });
+
+        return responseOfCreatingRidderNotification.map(
+            ({ title, description, notificationType, linkId }) => ({ title, description, notificationType, linkId })
+        );
     }
     /* ================================= Create operations ================================= */
 
@@ -125,7 +148,7 @@ export class RidderNotificationService {
 
 
     /* ================================= Update operations ================================= */
-    async updateToReadStatusRidderNotification(
+    async updateRidderNotificationToReadStatus(
         id: string, 
         userId: string, 
     ) {

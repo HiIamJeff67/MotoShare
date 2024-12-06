@@ -6,5 +6,6 @@ export declare class UpdateRidderInviteDto extends UpdateRidderInviteDto_base {
 }
 export declare class DecideRidderInviteDto {
     status: ReceiverStatusType;
+    rejectReason: string;
 }
 export {};

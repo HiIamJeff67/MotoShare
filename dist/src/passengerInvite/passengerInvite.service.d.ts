@@ -1,11 +1,15 @@
 import { CreatePassengerInviteDto } from './dto/create-passengerInvite.dto';
 import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update-passengerInvite.dto';
 import { DrizzleDB } from '../drizzle/types/drizzle';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
 export declare class PassengerInviteService {
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     private updateExpiredPassengerInvites;
-    createPassengerInviteByOrderId(inviterId: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
+    createPassengerInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
         id: string;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
@@ -199,11 +203,11 @@ export declare class PassengerInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         RDV: unknown;
     }[]>;
-    updatePassengerInviteById(id: string, inviterId: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
+    updatePassengerInviteById(id: string, inviterId: string, inviterName: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
-    decidePassengerInviteById(id: string, receiverId: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<{
+    decidePassengerInviteById(id: string, receiverId: string, receiverName: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<{
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         price: number;
@@ -221,7 +225,6 @@ export declare class PassengerInviteService {
         endedAt: Date;
         orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
-        updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;
     deletePassengerInviteById(id: string, inviterId: string): Promise<{

@@ -24,8 +24,13 @@ const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
 const order_schema_1 = require("../drizzle/schema/order.schema");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
 let PassengerInviteService = class PassengerInviteService {
-    constructor(db) {
+    constructor(passengerNotification, ridderNotification, db) {
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async updateExpiredPassengerInvites() {
@@ -33,34 +38,54 @@ let PassengerInviteService = class PassengerInviteService {
             status: "CANCEL",
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"), (0, drizzle_orm_1.lt)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date()))).returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
+            userId: passengerInvite_schema_1.PassengerInviteTable.userId,
         });
         if (!response) {
             throw exceptions_1.ServerNeonAutoUpdateExpiredPassengerInviteException;
         }
         return response.length;
     }
-    async createPassengerInviteByOrderId(inviterId, orderId, createPassengerInviteDto) {
-        return await this.db.insert(passengerInvite_schema_1.PassengerInviteTable).values({
-            userId: inviterId,
-            orderId: orderId,
-            briefDescription: createPassengerInviteDto.briefDescription,
-            suggestPrice: createPassengerInviteDto.suggestPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPassengerInviteDto.startCordLongitude}, ${createPassengerInviteDto.startCordLatitude}),
-        4326
-      )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
-        4326
-      )`,
-            startAddress: createPassengerInviteDto.startAddress,
-            endAddress: createPassengerInviteDto.endAddress,
-            suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
-            suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
-        }).returning({
-            id: passengerInvite_schema_1.PassengerInviteTable.id,
-            orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
-            status: passengerInvite_schema_1.PassengerInviteTable.status,
+    async createPassengerInviteByOrderId(inviterId, inviterName, orderId, createPassengerInviteDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingSupplyOrder = await tx.select({
+                ridderId: ridder_schema_1.RidderTable.id,
+                status: supplyOrder_schema_1.SupplyOrderTable.status,
+            }).from(supplyOrder_schema_1.SupplyOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, orderId), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"))).leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+            if (!responseOfSelectingSupplyOrder || responseOfSelectingSupplyOrder.length === 0
+                || responseOfSelectingSupplyOrder[0].status !== "POSTED") {
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            }
+            const responseOfCreatingPassengerInvite = await tx.insert(passengerInvite_schema_1.PassengerInviteTable).values({
+                userId: inviterId,
+                orderId: orderId,
+                briefDescription: createPassengerInviteDto.briefDescription,
+                suggestPrice: createPassengerInviteDto.suggestPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPassengerInviteDto.startCordLongitude}, ${createPassengerInviteDto.startCordLatitude}),
+          4326
+        )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
+          4326
+        )`,
+                startAddress: createPassengerInviteDto.startAddress,
+                endAddress: createPassengerInviteDto.endAddress,
+                suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
+                suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
+            }).returning({
+                id: passengerInvite_schema_1.PassengerInviteTable.id,
+                orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+                status: passengerInvite_schema_1.PassengerInviteTable.status,
+            });
+            if (!responseOfCreatingPassengerInvite || responseOfCreatingPassengerInvite.length === 0) {
+                throw exceptions_1.ClientCreatePassengerInviteException;
+            }
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfCreatingPassengerInvite)(inviterName, responseOfSelectingSupplyOrder[0].ridderId, responseOfCreatingPassengerInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+            return responseOfCreatingPassengerInvite;
         });
     }
     async getPassengerInviteById(id, userId) {
@@ -513,73 +538,86 @@ let PassengerInviteService = class PassengerInviteService {
             .offset(offset);
         return await query;
     }
-    async updatePassengerInviteById(id, inviterId, updatePassengerInviteDto) {
-        const newStartCord = (updatePassengerInviteDto.startCordLongitude !== undefined
-            && updatePassengerInviteDto.startCordLatitude !== undefined)
-            ? { x: updatePassengerInviteDto.startCordLongitude, y: updatePassengerInviteDto.startCordLatitude }
-            : undefined;
-        const newEndCord = (updatePassengerInviteDto.endCordLongitude !== undefined
-            && updatePassengerInviteDto.endCordLatitude !== undefined)
-            ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
-            : undefined;
-        if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
-            const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
-            const tempResponse = await this.db.select({
+    async updatePassengerInviteById(id, inviterId, inviterName, updatePassengerInviteDto) {
+        return this.db.transaction(async (tx) => {
+            const newStartCord = (updatePassengerInviteDto.startCordLongitude !== undefined
+                && updatePassengerInviteDto.startCordLatitude !== undefined)
+                ? { x: updatePassengerInviteDto.startCordLongitude, y: updatePassengerInviteDto.startCordLatitude }
+                : undefined;
+            const newEndCord = (updatePassengerInviteDto.endCordLongitude !== undefined
+                && updatePassengerInviteDto.endCordLatitude !== undefined)
+                ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
+                : undefined;
+            const passengerInvite = await tx.select({
+                ridderId: ridder_schema_1.RidderTable.id,
+                suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
                 suggestEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
             }).from(passengerInvite_schema_1.PassengerInviteTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")));
-            if (!tempResponse || tempResponse.length === 0)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"))).leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, supplyOrder_schema_1.SupplyOrderTable.id))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+            if (!passengerInvite || passengerInvite.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(tempResponse[0].suggestEndedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
-            const tempResponse = await this.db.select({
-                suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
-            }).from(passengerInvite_schema_1.PassengerInviteTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")));
-            if (!tempResponse || tempResponse.length === 0)
-                throw exceptions_1.ClientEndBeforeStartException;
-            const [startAfter, endedAt] = [new Date(tempResponse[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
-            briefDescription: updatePassengerInviteDto.briefDescription,
-            suggestPrice: updatePassengerInviteDto.suggestPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updatePassengerInviteDto.startAddress,
-            endAddress: updatePassengerInviteDto.endAddress,
-            ...(updatePassengerInviteDto.suggestStartAfter
-                ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
-                : {}),
-            ...(updatePassengerInviteDto.suggestEndedAt
-                ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
-                : {}),
-            updatedAt: new Date(),
-            status: updatePassengerInviteDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")))
-            .returning({
-            id: passengerInvite_schema_1.PassengerInviteTable.id,
-            status: passengerInvite_schema_1.PassengerInviteTable.status,
+            if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(passengerInvite[0].suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(passengerInvite[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            const responseOfUpdatingPassengerInvite = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                briefDescription: updatePassengerInviteDto.briefDescription,
+                suggestPrice: updatePassengerInviteDto.suggestPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updatePassengerInviteDto.startAddress,
+                endAddress: updatePassengerInviteDto.endAddress,
+                ...(updatePassengerInviteDto.suggestStartAfter
+                    ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
+                    : {}),
+                ...(updatePassengerInviteDto.suggestEndedAt
+                    ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
+                    : {}),
+                updatedAt: new Date(),
+                status: updatePassengerInviteDto.status,
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"))).returning({
+                id: passengerInvite_schema_1.PassengerInviteTable.id,
+                status: passengerInvite_schema_1.PassengerInviteTable.status,
+            });
+            if (!responseOfUpdatingPassengerInvite || responseOfUpdatingPassengerInvite.length === 0) {
+                throw exceptions_1.ClientInviteNotFoundException;
+            }
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((updatePassengerInviteDto.status && updatePassengerInviteDto.status === "CANCEL")
+                ? (0, notificationTemplate_1.NotificationTemplateOfCancelingPassengerInvite)(inviterName, passengerInvite[0].ridderId, responseOfUpdatingPassengerInvite[0].id)
+                : (0, notificationTemplate_1.NotificationTemplateOfUpdatingPassengerInvite)(inviterName, passengerInvite[0].ridderId, responseOfUpdatingPassengerInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+            return responseOfUpdatingPassengerInvite;
         });
     }
-    async decidePassengerInviteById(id, receiverId, decidePassengerInviteDto) {
+    async decidePassengerInviteById(id, receiverId, receiverName, decidePassengerInviteDto) {
         const passengerInvite = await this.db.query.PassengerInviteTable.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")),
             with: {
+                inviter: {
+                    columns: {
+                        id: true,
+                    }
+                },
                 order: {
                     columns: {
                         id: true,
                         creatorId: true,
-                    }
-                }
+                    },
+                },
             }
         });
         if (!passengerInvite || !passengerInvite.order)
@@ -604,14 +642,25 @@ let PassengerInviteService = class PassengerInviteService {
                     inviterDescription: passengerInvite_schema_1.PassengerInviteTable.briefDescription,
                     inviteStatus: passengerInvite_schema_1.PassengerInviteTable.status,
                 });
-                if (!responseOfDecidingPassengerInvite
-                    || responseOfDecidingPassengerInvite.length === 0) {
+                if (!responseOfDecidingPassengerInvite || responseOfDecidingPassengerInvite.length === 0) {
                     throw exceptions_1.ClientInviteNotFoundException;
                 }
-                await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                const responseOfRejectingOtherPassengerInvites = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
                     status: "REJECTED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, passengerInvite.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id)));
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, passengerInvite.order.id), (0, drizzle_orm_1.ne)(passengerInvite_schema_1.PassengerInviteTable.id, id))).returning({
+                    id: passengerInvite_schema_1.PassengerInviteTable.id,
+                    userId: passengerInvite_schema_1.PassengerInviteTable.userId,
+                });
+                if (responseOfRejectingOtherPassengerInvites && responseOfRejectingOtherPassengerInvites.length !== 0) {
+                    const responseOfCreatingNotificationToRejectOthers = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfRejectingOtherPassengerInvites.map((content) => {
+                        return (0, notificationTemplate_1.NotificationTemplateOfRejectingPassengerInvite)(receiverName, `${receiverName} has found a better invite to start his/her travel`, content.userId, content.id);
+                    }));
+                    if (!responseOfCreatingNotificationToRejectOthers
+                        || responseOfCreatingNotificationToRejectOthers.length !== responseOfRejectingOtherPassengerInvites.length) {
+                        throw exceptions_1.ClientCreatePassengerNotificationException;
+                    }
+                }
                 const responseOfDeletingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
                     status: "RESERVED",
                     updatedAt: new Date(),
@@ -621,8 +670,7 @@ let PassengerInviteService = class PassengerInviteService {
                     receiverDescription: supplyOrder_schema_1.SupplyOrderTable.description,
                     orderStatus: supplyOrder_schema_1.SupplyOrderTable.status,
                 });
-                if (!responseOfDeletingSupplyOrder
-                    || responseOfDeletingSupplyOrder.length === 0) {
+                if (!responseOfDeletingSupplyOrder || responseOfDeletingSupplyOrder.length === 0) {
                     throw exceptions_1.ClientSupplyOrderNotFoundException;
                 }
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
@@ -645,9 +693,12 @@ let PassengerInviteService = class PassengerInviteService {
                     endedAt: order_schema_1.OrderTable.endedAt,
                     status: order_schema_1.OrderTable.passengerStatus,
                 });
-                if (!responseOfCreatingOrder
-                    || responseOfCreatingOrder.length === 0) {
+                if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
+                }
+                const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfAcceptingPassengerInvite)(receiverName, passengerInvite.inviter.id, responseOfCreatingOrder[0].id));
+                if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                    throw exceptions_1.ClientCreatePassengerNotificationException;
                 }
                 return [{
                         orderId: responseOfCreatingOrder[0].id,
@@ -664,13 +715,26 @@ let PassengerInviteService = class PassengerInviteService {
             });
         }
         else if (decidePassengerInviteDto.status === "REJECTED") {
-            return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
+            const responseOfRejectingPassengerInvite = await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 status: decidePassengerInviteDto.status,
+                updatedAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.id, id))
                 .returning({
+                id: passengerInvite_schema_1.PassengerInviteTable.id,
+                passengerId: passengerInvite_schema_1.PassengerInviteTable.userId,
                 status: passengerInvite_schema_1.PassengerInviteTable.status,
                 updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
             });
+            if (!responseOfRejectingPassengerInvite || responseOfRejectingPassengerInvite.length === 0) {
+                throw exceptions_1.ClientInviteNotFoundException;
+            }
+            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfRejectingPassengerInvite)(receiverName, decidePassengerInviteDto.rejectReason, responseOfRejectingPassengerInvite[0].passengerId, responseOfRejectingPassengerInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+            return [{
+                    status: responseOfRejectingPassengerInvite[0].status,
+                }];
         }
     }
     async deletePassengerInviteById(id, inviterId) {
@@ -685,7 +749,8 @@ let PassengerInviteService = class PassengerInviteService {
 exports.PassengerInviteService = PassengerInviteService;
 exports.PassengerInviteService = PassengerInviteService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], PassengerInviteService);
 //# sourceMappingURL=passengerInvite.service.js.map

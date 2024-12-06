@@ -8,7 +8,7 @@ import { Controller,
   Patch
 } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseOrder.service';
-import { Response } from 'express';
+import { response, Response } from 'express';
 import { HttpStatusCode } from '../enums/HttpStatusCode.enum';
 import { 
   ApiMissingParameterException,
@@ -58,7 +58,8 @@ export class PurchaseOrderController {
       });
     } catch (error) {
       if (!(error instanceof ForbiddenException 
-        || error instanceof UnauthorizedException)) {
+        || error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
           error = ClientUnknownException;
       }
 
@@ -371,7 +372,8 @@ export class PurchaseOrderController {
     } catch (error) {
       if (!(error instanceof BadRequestException
         || error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
           error = ClientUnknownException;
       }
 
@@ -398,6 +400,7 @@ export class PurchaseOrderController {
       const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(
         id,
         ridder.id, 
+        ridder.userName, 
         acceptAutoAcceptPurchaseOrderDto, 
       );
 
@@ -427,6 +430,44 @@ export class PurchaseOrderController {
 
 
   /* ================================= Delete operations ================================= */
+  @UseGuards(JwtPassengerGuard)
+  @Delete('cancelMyPurchaseOrderById')
+  async cancelMyPurchaseOrderById(
+    @Passenger() passenger: PassengerType, 
+    @Query('id') id: string, 
+    @Res() response: Response, 
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.purchaseOrderService.cancelPurchaseOrderById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+      );
+
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send({
+        canceled: new Date(), 
+        ...res[0], 
+      })
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
   @UseGuards(JwtPassengerGuard)
   @Delete('deleteMyPurchaseOrderById')
   async deleteMyPurchaseOrderById(

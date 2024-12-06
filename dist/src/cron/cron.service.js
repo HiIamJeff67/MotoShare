@@ -25,50 +25,119 @@ const order_schema_1 = require("../drizzle/schema/order.schema");
 const exceptions_1 = require("../exceptions");
 const history_schema_1 = require("../drizzle/schema/history.schema");
 const timeCalculator_1 = require("../utils/timeCalculator");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
+const updateStartedOrders_template_1 = require("../notification/notificationTemplate/updateStartedOrders.template");
 let CronService = class CronService {
-    constructor(config, db) {
+    constructor(config, passengerNotification, ridderNotification, db) {
         this.config = config;
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async updateToExpiredPurchaseOrders() {
-        return await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+        const responseOfUpdatingExpiredPurchaseOrders = await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
             status: "EXPIRED",
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date()))).returning({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorId: purchaseOrder_schema_1.PurchaseOrderTable.creatorId,
         });
+        if (responseOfUpdatingExpiredPurchaseOrders && responseOfUpdatingExpiredPurchaseOrders.length !== 0) {
+            const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfUpdatingExpiredPurchaseOrders.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfUpdatingExpiredPurchaseOrders)(content.creatorId, content.id);
+            }));
+            if (!responseOfCreatingNotification
+                || responseOfCreatingNotification.length !== responseOfUpdatingExpiredPurchaseOrders.length) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+        }
+        return responseOfUpdatingExpiredPurchaseOrders.map(({ id }) => ({ id }));
     }
     async updateToExpiredSupplyOrders() {
-        return await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
+        const responseOfUpdatingExpiredSupplyOrders = await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
             status: "EXPIRED",
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date()))).returning({
             id: supplyOrder_schema_1.SupplyOrderTable.id,
+            creatorId: supplyOrder_schema_1.SupplyOrderTable.creatorId,
         });
+        if (responseOfUpdatingExpiredSupplyOrders && responseOfUpdatingExpiredSupplyOrders.length !== 0) {
+            const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfUpdatingExpiredSupplyOrders.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfUpdatingExpiredSupplyOrders)(content.creatorId, content.id);
+            }));
+            if (!responseOfCreatingNotification
+                || responseOfCreatingNotification.length !== responseOfUpdatingExpiredSupplyOrders.length) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+        }
+        return responseOfUpdatingExpiredSupplyOrders.map(({ id }) => ({ id }));
     }
     async updateToExpiredPassengerInvites() {
-        return await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
+        const responseOfUpdatingExpiredPassengerInvites = await this.db.update(passengerInvite_schema_1.PassengerInviteTable).set({
             status: "CANCEL",
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"), (0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date()))).returning({
             id: passengerInvite_schema_1.PassengerInviteTable.id,
+            userId: passengerInvite_schema_1.PassengerInviteTable.userId,
         });
+        if (responseOfUpdatingExpiredPassengerInvites && responseOfUpdatingExpiredPassengerInvites.length !== 0) {
+            const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfUpdatingExpiredPassengerInvites.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfUpdatingExpiredPassengerInvites)(content.userId, content.id);
+            }));
+            if (!responseOfCreatingNotification
+                || responseOfCreatingNotification.length !== responseOfUpdatingExpiredPassengerInvites.length) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+        }
+        return responseOfUpdatingExpiredPassengerInvites.map(({ id }) => ({ id }));
     }
     async updateToExpiredRidderInvites() {
-        return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
+        const responseOfUpdatingToExpiredRidderInvites = await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
             status: "CANCEL",
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"), (0, drizzle_orm_1.lte)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter, new Date()))).returning({
             id: ridderInvite_schema_1.RidderInviteTable.id,
+            userId: ridderInvite_schema_1.RidderInviteTable.userId,
         });
+        if (responseOfUpdatingToExpiredRidderInvites && responseOfUpdatingToExpiredRidderInvites.length !== 0) {
+            const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfUpdatingToExpiredRidderInvites.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfUpdatingExpiredRidderInvites)(content.userId, content.id);
+            }));
+            if (!responseOfCreatingNotification
+                || responseOfCreatingNotification.length !== responseOfUpdatingToExpiredRidderInvites.length) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+        }
+        return responseOfUpdatingToExpiredRidderInvites.map(({ id }) => ({ id }));
     }
     async updateToStartedOrders() {
-        return await this.db.update(order_schema_1.OrderTable).set({
+        const responseOfUpdatingStartedOrders = await this.db.update(order_schema_1.OrderTable).set({
             passengerStatus: "STARTED",
             ridderStatus: "STARTED",
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerStatus, "UNSTARTED"), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderStatus, "UNSTARTED"), (0, drizzle_orm_1.lte)(order_schema_1.OrderTable.startAfter, new Date()))).returning({
             id: order_schema_1.OrderTable.id,
+            passengerId: order_schema_1.OrderTable.passengerId,
+            ridderId: order_schema_1.OrderTable.ridderId,
         });
+        if (responseOfUpdatingStartedOrders && responseOfUpdatingStartedOrders.length !== 0) {
+            const responseOfCreatingPassengerNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfUpdatingStartedOrders.map((content) => {
+                return (0, updateStartedOrders_template_1.NotificationTemplateOfUpdatingStartedOrders)(content.passengerId, content.id);
+            }));
+            if (!responseOfCreatingPassengerNotification
+                || responseOfCreatingPassengerNotification.length !== responseOfUpdatingStartedOrders.length) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+            const responseOfCreatingRidderNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfUpdatingStartedOrders.map((content) => {
+                return (0, updateStartedOrders_template_1.NotificationTemplateOfUpdatingStartedOrders)(content.ridderId, content.id);
+            }));
+            if (!responseOfCreatingRidderNotification
+                || responseOfCreatingRidderNotification.length !== responseOfUpdatingStartedOrders.length) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+        }
+        return responseOfUpdatingStartedOrders.map(({ id }) => ({ id }));
     }
     async deleteExpiredPurchaseOrders() {
         return await this.db.delete(purchaseOrder_schema_1.PurchaseOrderTable)
@@ -144,7 +213,9 @@ let CronService = class CronService {
 exports.CronService = CronService;
 exports.CronService = CronService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [config_1.ConfigService, Object])
+    __param(3, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], CronService);
 //# sourceMappingURL=cron.service.js.map

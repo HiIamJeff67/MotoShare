@@ -6,5 +6,6 @@ export declare class UpdatePassengerInviteDto extends UpdatePassengerInviteDto_b
 }
 export declare class DecidePassengerInviteDto {
     status: ReceiverStatusType;
+    rejectReason: string;
 }
 export {};

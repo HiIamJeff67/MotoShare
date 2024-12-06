@@ -17,4 +17,5 @@ export declare class OrderController {
     toUnpaidRidderStatusById(ridder: RidderType, id: string, response: Response): Promise<void>;
     toFinishedRidderStatusById(ridder: RidderType, id: string, response: Response): Promise<void>;
     cancelAndDeleteOrderForPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
+    cancelAndDeleteOrderForRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
 }

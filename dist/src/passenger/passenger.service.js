@@ -153,7 +153,7 @@ let PassengerService = class PassengerService {
             eamil: passenger_schema_1.PassengerTable.email,
         });
     }
-    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto, uploadedFile = undefined) {
+    async updatePassengerInfoByUserId(userId, updatePassengerInfoDto, uploadedAvatorFile = undefined) {
         return await this.db.transaction(async (tx) => {
             const passengerInfo = await tx.select({
                 infoId: passengerInfo_schema_1.PassengerInfoTable.id,
@@ -166,8 +166,8 @@ let PassengerService = class PassengerService {
                 age: updatePassengerInfoDto.age,
                 phoneNumber: updatePassengerInfoDto.phoneNumber,
                 selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-                ...(uploadedFile
-                    ? { avatorUrl: await this.storage.uploadFile(passengerInfo[0].infoId, "AvatorBucket", "passengerAvators/", uploadedFile)
+                ...(uploadedAvatorFile
+                    ? { avatorUrl: await this.storage.uploadAvatorFile(passengerInfo[0].infoId, "passengerAvators", uploadedAvatorFile)
                     }
                     : {}),
                 updatedAt: new Date(),

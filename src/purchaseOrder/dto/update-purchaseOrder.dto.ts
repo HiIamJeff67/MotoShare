@@ -6,6 +6,6 @@ import { PostedStatusType, PostedStatusTypes } from '../../types/status.tpye';
 
 export class UpdatePurchaseOrderDto extends PartialType(CreatePurchaseOrderDto) {
     @IsOptional()
-    @IsIn(PostedStatusTypes, { message: "The status of PurchaseOrder must be either POSTED, EXPIRED, or CANCEL" })
+    @IsIn(PostedStatusTypes, { message: "The new status of PurchaseOrder must be only POSTED" })
     status?: PostedStatusType
 }

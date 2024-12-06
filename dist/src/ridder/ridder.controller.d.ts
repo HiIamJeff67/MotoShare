@@ -13,7 +13,10 @@ export declare class RidderController {
     getMyCollection(ridder: RidderType, response: Response): Promise<void>;
     searchPaginationRidders(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     updateMe(ridder: RidderType, updateRidderDto: UpdateRidderDto, response: Response): Promise<void>;
-    updateMyInfo(ridder: RidderType, updateRidderInfoDto: UpdateRidderInfoDto, file: Express.Multer.File | undefined, response: Response): Promise<void>;
+    updateMyInfo(ridder: RidderType, updateRidderInfoDto: UpdateRidderInfoDto, files: {
+        avatorFile?: Express.Multer.File[];
+        motocyclePhotoFile?: Express.Multer.File[];
+    }, response: Response): Promise<void>;
     deleteMe(ridder: RidderType, deleteRidderDto: DeleteRidderDto, response: Response): Promise<void>;
     getAllRidders(response: Response): Promise<void>;
 }

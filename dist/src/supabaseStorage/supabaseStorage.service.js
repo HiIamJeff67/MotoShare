@@ -21,52 +21,106 @@ const config_1 = require("@nestjs/config");
 const file_constant_1 = require("../constants/file.constant");
 const supabase_module_1 = require("../supabase/supabase.module");
 const utils_1 = require("../utils");
+const types_1 = require("../types");
 let SupabaseStorageService = class SupabaseStorageService {
     constructor(config, supabase) {
         this.config = config;
         this.supabase = supabase;
     }
-    async uploadFile(infoId, bucketName, filePath, uploadedFile) {
+    validateFileMimeType(mimeType, validMimeTypes) {
+        for (const option of validMimeTypes) {
+            if (mimeType == option)
+                return true;
+        }
+        return false;
+    }
+    async uploadAvatorFile(infoId, filePath, uploadedFile) {
         try {
-            if (!filePath || !bucketName || !uploadedFile)
+            if (!filePath || !uploadedFile)
                 throw exceptions_1.ServerSupabaseUploadFileParaNotFoundException;
+            if (uploadedFile.size > file_constant_1.MAX_AVATOR_FILE_SIZE)
+                throw (0, exceptions_1.ClientUploadFileExceedException)(file_constant_1.MAX_AVATOR_FILE_SIZE_PER_MEGABYTES, "MegaBytes");
+            if (!this.validateFileMimeType(uploadedFile.mimetype, types_1.AvatorFileTypes))
+                throw (0, exceptions_1.ClientUploadFileMimeTypeException)(types_1.AvatorFileTypes);
             const convertedFile = (0, utils_1.multerToFile)(uploadedFile);
-            const hashedFileName = await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND_UPLOADED_FILE_NAME") ?? 2));
-            const targetFolderPath = `passengerAvators/${infoId}/`;
-            const targetFilePath = `${targetFolderPath}${hashedFileName.replace('.', '').substring(0, file_constant_1.MAX_FILE_NAME_LENGTH)}`;
+            const hashedFileName = (await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND_UPLOADED_FILE_NAME") ?? 2)));
+            const targetFolderPath = `${filePath}/${infoId}/`;
+            const targetFilePath = `${targetFolderPath}${hashedFileName.replace('.', '').replaceAll('/', '_').substring(0, file_constant_1.MAX_FILE_NAME_LENGTH)}`;
             const { data: existingFiles, error: listError } = await this.supabase.storage
-                .from(bucketName)
+                .from("AvatorBucket")
                 .list(targetFolderPath);
             if (listError) {
-                throw exceptions_1.ServerSupabaseUploadFileException;
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)(listError.message);
             }
             if (existingFiles && existingFiles.length > 0) {
                 const filesToDelete = existingFiles.map(file => `${targetFolderPath}${file.name}`);
                 const { error: deleteError } = await this.supabase.storage
-                    .from(bucketName)
+                    .from("AvatorBucket")
                     .remove(filesToDelete);
                 if (deleteError) {
-                    throw exceptions_1.ServerSupabaseUploadFileException;
+                    throw (0, exceptions_1.ServerSupabaseUploadFileException)(deleteError.message);
                 }
             }
             const { error: uploadError } = await this.supabase.storage
-                .from(bucketName)
+                .from("AvatorBucket")
                 .upload(targetFilePath, convertedFile);
             if (uploadError) {
-                throw exceptions_1.ServerSupabaseUploadFileException;
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)(uploadError.message);
             }
             const { data: publicUrlData } = this.supabase.storage
-                .from(bucketName)
+                .from("AvatorBucket")
                 .getPublicUrl(targetFilePath);
             if (!publicUrlData || !publicUrlData.publicUrl) {
-                throw exceptions_1.ServerSupabaseUploadFileException;
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)("Cannot get public url");
             }
             return publicUrlData.publicUrl;
         }
         catch (error) {
-            if (!(error instanceof common_1.InternalServerErrorException)) {
-                error = exceptions_1.ServerUnknownException;
+            throw error;
+        }
+    }
+    async uploadMotocyclePhotoFile(infoId, filePath, uploadedFile) {
+        try {
+            if (!filePath || !uploadedFile)
+                throw exceptions_1.ServerSupabaseUploadFileParaNotFoundException;
+            if (uploadedFile.size > file_constant_1.MAX_MOTOCYCLE_PHOTO_FILE_SIZE)
+                throw (0, exceptions_1.ClientUploadFileExceedException)(file_constant_1.MAX_MOTOCYCLE_PHOTO_FILE_SIZE_PER_MEGABYTES, "MegaBytes");
+            if (!this.validateFileMimeType(uploadedFile.mimetype, types_1.MotocyclePhotoFileTypes))
+                throw (0, exceptions_1.ClientUploadFileMimeTypeException)(types_1.MotocyclePhotoFileTypes);
+            const convertedFile = (0, utils_1.multerToFile)(uploadedFile);
+            const hashedFileName = (await bcrypt.hash(convertedFile.name, Number(this.config.get("SALT_OR_ROUND_UPLOADED_FILE_NAME") ?? 2)));
+            const targetFolderPath = `${filePath}/${infoId}/`;
+            const targetFilePath = `${targetFolderPath}${hashedFileName.replace('.', '').replaceAll('/', '_').substring(0, file_constant_1.MAX_FILE_NAME_LENGTH)}`;
+            const { data: existingFiles, error: listError } = await this.supabase.storage
+                .from("MotocyclePhotoBucket")
+                .list(targetFolderPath);
+            if (listError) {
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)(listError.message);
             }
+            if (existingFiles && existingFiles.length > 0) {
+                const filesToDelete = existingFiles.map(file => `${targetFolderPath}${file.name}`);
+                const { error: deleteError } = await this.supabase.storage
+                    .from("MotocyclePhotoBucket")
+                    .remove(filesToDelete);
+                if (deleteError) {
+                    throw (0, exceptions_1.ServerSupabaseUploadFileException)(deleteError.message);
+                }
+            }
+            const { error: uploadError } = await this.supabase.storage
+                .from("MotocyclePhotoBucket")
+                .upload(targetFilePath, convertedFile);
+            if (uploadError) {
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)(uploadError.message);
+            }
+            const { data: publicUrlData } = this.supabase.storage
+                .from("MotocyclePhotoBucket")
+                .getPublicUrl(targetFilePath);
+            if (!publicUrlData || !publicUrlData.publicUrl) {
+                throw (0, exceptions_1.ServerSupabaseUploadFileException)("Cannot get public url");
+            }
+            return publicUrlData.publicUrl;
+        }
+        catch (error) {
             throw error;
         }
     }

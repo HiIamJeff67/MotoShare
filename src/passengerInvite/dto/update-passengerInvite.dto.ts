@@ -1,12 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePassengerInviteDto } from './create-passengerInvite.dto';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { 
     InviterStatusType, 
     InviterStatusTypes,
     ReceiverStatusType,
     ReceiverStatusTypes,
-} from '../../types/status.tpye'
+} from '../../types/status.tpye';
 
 export class UpdatePassengerInviteDto extends PartialType(CreatePassengerInviteDto) {
     @IsOptional()
@@ -18,4 +18,8 @@ export class DecidePassengerInviteDto {
     @IsOptional()
     @IsIn(ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" })
     status: ReceiverStatusType
+
+    @ValidateIf(o => (o.status === "REJECT"))
+    @IsString()
+    rejectReason: string
 }

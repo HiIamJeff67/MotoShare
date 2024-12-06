@@ -1,8 +1,12 @@
 import { RateAndCommentHistoryDto } from './dto/update-history.dto';
 import { DrizzleDB } from '../drizzle/types/drizzle';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 export declare class HistoryService {
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     getHistoryById(id: string, userId: string): Promise<{
         id: string;
         passengerName: string | null;
@@ -78,10 +82,12 @@ export declare class HistoryService {
         passengerPhoneNumber: string | null;
         status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
-    rateAndCommentHistoryForPassengerById(id: string, passengerId: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
+    rateAndCommentHistoryForPassengerById(id: string, passengerId: string, passengerName: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
+        id: string;
         status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
-    rateAndCommentHistoryForRidderById(id: string, ridderId: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
+    rateAndCommentHistoryForRidderById(id: string, ridderId: string, ridderName: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto): Promise<{
+        id: string;
         status: "FINISHED" | "EXPIRED" | "CANCEL";
     }[]>;
     delinkHistoryByPassengerId(id: string, passengerId: string): Promise<{

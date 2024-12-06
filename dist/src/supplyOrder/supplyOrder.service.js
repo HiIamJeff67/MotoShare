@@ -22,8 +22,13 @@ const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
 const passengerInvite_schema_1 = require("../drizzle/schema/passengerInvite.schema");
 const order_schema_1 = require("../drizzle/schema/order.schema");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
 let SupplyOrderService = class SupplyOrderService {
-    constructor(db) {
+    constructor(passengerNotification, ridderNotification, db) {
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async updateExpiredSupplyOrders() {
@@ -357,12 +362,32 @@ let SupplyOrderService = class SupplyOrderService {
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         });
     }
-    async startSupplyOrderWithoutInvite(id, userId, acceptAutoAcceptSupplyOrderDto) {
+    async startSupplyOrderWithoutInvite(id, userId, userName, acceptAutoAcceptSupplyOrderDto) {
         return await this.db.transaction(async (tx) => {
-            await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+            const supplyOrder = await tx.select({
+                ridderName: ridder_schema_1.RidderTable.userName,
+            }).from(supplyOrder_schema_1.SupplyOrderTable)
+                .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id));
+            if (!supplyOrder || supplyOrder.length === 0) {
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            }
+            const responseOfRejectingOtherPassengerInvites = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 status: "REJECTED",
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING")));
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"))).returning({
+                id: passengerInvite_schema_1.PassengerInviteTable.id,
+                userId: passengerInvite_schema_1.PassengerInviteTable.userId,
+            });
+            if (responseOfRejectingOtherPassengerInvites && responseOfRejectingOtherPassengerInvites.length !== 0) {
+                const responseOfCreatingNotificationToRejectOthers = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfRejectingOtherPassengerInvites.map((content) => {
+                    return (0, notificationTemplate_1.NotificationTemplateOfRejectingPassengerInvite)(supplyOrder[0].ridderName, `${supplyOrder[0].ridderName}'s supply order has started directly by some other passenger`, content.userId, content.id);
+                }));
+                if (!responseOfCreatingNotificationToRejectOthers
+                    || responseOfCreatingNotificationToRejectOthers.length !== responseOfRejectingOtherPassengerInvites.length) {
+                    throw exceptions_1.ClientCreatePassengerNotificationException;
+                }
+            }
             const responseOfDeletingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
                 status: "RESERVED",
                 updatedAt: new Date(),
@@ -371,8 +396,8 @@ let SupplyOrderService = class SupplyOrderService {
                 throw exceptions_1.ClientSupplyOrderNotFoundException;
             }
             const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
-                ridderId: userId,
-                passengerId: responseOfDeletingSupplyOrder[0].creatorId,
+                ridderId: responseOfDeletingSupplyOrder[0].creatorId,
+                passengerId: userId,
                 prevOrderId: "PurchaseOrder" + " " + responseOfDeletingSupplyOrder[0].id,
                 finalPrice: responseOfDeletingSupplyOrder[0].initPrice,
                 passengerDescription: responseOfDeletingSupplyOrder[0].description,
@@ -397,6 +422,10 @@ let SupplyOrderService = class SupplyOrderService {
             if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
                 throw exceptions_1.ClientCreateOrderException;
             }
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfDirectlyStartOrder)(userName, responseOfDeletingSupplyOrder[0].creatorId, responseOfCreatingOrder[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
             return [{
                     orderId: responseOfCreatingOrder[0].id,
                     price: responseOfCreatingOrder[0].finalPrice,
@@ -410,6 +439,35 @@ let SupplyOrderService = class SupplyOrderService {
                 }];
         });
     }
+    async cancelSupplyOrderById(id, creatorId, creatorName) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfCancelingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
+                status: "CANCEL",
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"))).returning({
+                id: supplyOrder_schema_1.SupplyOrderTable.id,
+                stauts: supplyOrder_schema_1.SupplyOrderTable.status,
+            });
+            if (!responseOfCancelingSupplyOrder || responseOfCancelingSupplyOrder.length === 0) {
+                throw exceptions_1.ClientSupplyOrderNotFoundException;
+            }
+            const responseOfCancelingPassengerInvite = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
+                status: "CANCEL",
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.orderId, id), (0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.status, "CHECKING"))).returning({
+                id: passengerInvite_schema_1.PassengerInviteTable.id,
+                passengerId: passengerInvite_schema_1.PassengerInviteTable.userId,
+            });
+            if (!responseOfCancelingPassengerInvite || responseOfCancelingPassengerInvite.length === 0) {
+                throw exceptions_1.ClientInviteNotFoundException;
+            }
+            const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(responseOfCancelingPassengerInvite.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfCancelingSupplyOrder)(creatorName, content.passengerId, responseOfCancelingSupplyOrder[0].id);
+            }));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+            return responseOfCancelingSupplyOrder;
+        });
+    }
     async deleteSupplyOrderById(id, creatorId) {
         return await this.db.delete(supplyOrder_schema_1.SupplyOrderTable)
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
@@ -421,7 +479,8 @@ let SupplyOrderService = class SupplyOrderService {
 exports.SupplyOrderService = SupplyOrderService;
 exports.SupplyOrderService = SupplyOrderService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], SupplyOrderService);
 //# sourceMappingURL=supplyOrder.service.js.map

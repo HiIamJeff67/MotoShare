@@ -12,18 +12,27 @@ const passenerNotification_service_1 = require("./passenerNotification.service")
 const notification_gateway_1 = require("./notification.gateway");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const ridderNotification_service_1 = require("./ridderNotification.service");
+const passengerNotification_controller_1 = require("./passengerNotification.controller");
+const ridderNotification_controller_1 = require("./ridderNotification.controller");
 let NotificationModule = class NotificationModule {
 };
 exports.NotificationModule = NotificationModule;
 exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Module)({
         imports: [drizzle_module_1.DrizzleModule],
+        controllers: [
+            passengerNotification_controller_1.PassengerNotificationController,
+            ridderNotification_controller_1.RidderNotificationController
+        ],
         providers: [
             notification_gateway_1.NotificationGateway,
             passenerNotification_service_1.PassengerNotificationService,
             ridderNotification_service_1.RidderNotificationService
         ],
-        exports: [passenerNotification_service_1.PassengerNotificationService, ridderNotification_service_1.RidderNotificationService],
+        exports: [
+            passenerNotification_service_1.PassengerNotificationService,
+            ridderNotification_service_1.RidderNotificationService
+        ],
     })
 ], NotificationModule);
 //# sourceMappingURL=notification.module.js.map

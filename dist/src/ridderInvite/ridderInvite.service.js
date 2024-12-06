@@ -22,10 +22,15 @@ const passenger_schema_1 = require("../drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
-const exceptions_1 = require("../exceptions");
 const order_schema_1 = require("../drizzle/schema/order.schema");
+const exceptions_1 = require("../exceptions");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
 let RidderInviteService = class RidderInviteService {
-    constructor(db) {
+    constructor(passengerNotification, ridderNotification, db) {
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async updateExpiredRidderInvites() {
@@ -39,29 +44,49 @@ let RidderInviteService = class RidderInviteService {
         }
         return response.length;
     }
-    async createRidderInviteByOrderId(inviterId, orderId, createRidderInviteDto) {
-        return await this.db.insert(ridderInvite_schema_1.RidderInviteTable).values({
-            userId: inviterId,
-            orderId: orderId,
-            briefDescription: createRidderInviteDto.briefDescription,
-            suggestPrice: createRidderInviteDto.suggestPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createRidderInviteDto.startCordLongitude}, ${createRidderInviteDto.startCordLatitude}),
-        4326
-      )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createRidderInviteDto.endCordLongitude}, ${createRidderInviteDto.endCordLatitude}),
-        4326
-      )`,
-            startAddress: createRidderInviteDto.startAddress,
-            endAddress: createRidderInviteDto.endAddress,
-            suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter),
-            suggestEndedAt: new Date(createRidderInviteDto.suggestEndedAt),
-        }).returning({
-            id: ridderInvite_schema_1.RidderInviteTable.id,
-            orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
-            createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
-            status: ridderInvite_schema_1.RidderInviteTable.status,
+    async createRidderInviteByOrderId(inviterId, inviterName, orderId, createRidderInviteDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPurchaseOrder = await tx.select({
+                passengerId: passenger_schema_1.PassengerTable.id,
+                status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, orderId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
+            if (!responseOfSelectingPurchaseOrder || responseOfSelectingPurchaseOrder.length === 0
+                || responseOfSelectingPurchaseOrder[0].status !== "POSTED") {
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            }
+            const responseOfCreatingRidderInvite = await tx.insert(ridderInvite_schema_1.RidderInviteTable).values({
+                userId: inviterId,
+                orderId: orderId,
+                briefDescription: createRidderInviteDto.briefDescription,
+                suggestPrice: createRidderInviteDto.suggestPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createRidderInviteDto.startCordLongitude}, ${createRidderInviteDto.startCordLatitude}),
+          4326
+        )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createRidderInviteDto.endCordLongitude}, ${createRidderInviteDto.endCordLatitude}),
+          4326
+        )`,
+                startAddress: createRidderInviteDto.startAddress,
+                endAddress: createRidderInviteDto.endAddress,
+                suggestStartAfter: new Date(createRidderInviteDto.suggestStartAfter),
+                suggestEndedAt: new Date(createRidderInviteDto.suggestEndedAt),
+            }).returning({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+                orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+                createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
+                status: ridderInvite_schema_1.RidderInviteTable.status,
+            });
+            if (!responseOfCreatingRidderInvite || responseOfCreatingRidderInvite.length === 0) {
+                throw exceptions_1.ClientCreateRidderInviteException;
+            }
+            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfCreatingRidderInvite)(inviterName, responseOfSelectingPurchaseOrder[0].passengerId, responseOfCreatingRidderInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+            return responseOfCreatingRidderInvite;
         });
     }
     async getRidderInviteById(id, userId) {
@@ -513,74 +538,86 @@ let RidderInviteService = class RidderInviteService {
             .offset(offset);
         return await query;
     }
-    async updateRidderInviteById(id, inviterId, updateRidderInviteDto) {
-        const newStartCord = (updateRidderInviteDto.startCordLongitude !== undefined
-            && updateRidderInviteDto.startCordLatitude !== undefined)
-            ? { x: updateRidderInviteDto.startCordLongitude, y: updateRidderInviteDto.startCordLatitude }
-            : undefined;
-        const newEndCord = (updateRidderInviteDto.endCordLongitude !== undefined
-            && updateRidderInviteDto.endCordLatitude !== undefined)
-            ? { x: updateRidderInviteDto.endCordLongitude, y: updateRidderInviteDto.endCordLatitude }
-            : undefined;
-        if (updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
-            const startAfter = new Date(updateRidderInviteDto.suggestStartAfter), endedAt = new Date(updateRidderInviteDto.suggestEndedAt);
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (updateRidderInviteDto.suggestStartAfter && !updateRidderInviteDto.suggestEndedAt) {
-            const tempResponse = await this.db.select({
+    async updateRidderInviteById(id, inviterId, inviterName, updateRidderInviteDto) {
+        return this.db.transaction(async (tx) => {
+            const newStartCord = (updateRidderInviteDto.startCordLongitude !== undefined
+                && updateRidderInviteDto.startCordLatitude !== undefined)
+                ? { x: updateRidderInviteDto.startCordLongitude, y: updateRidderInviteDto.startCordLatitude }
+                : undefined;
+            const newEndCord = (updateRidderInviteDto.endCordLongitude !== undefined
+                && updateRidderInviteDto.endCordLatitude !== undefined)
+                ? { x: updateRidderInviteDto.endCordLongitude, y: updateRidderInviteDto.endCordLatitude }
+                : undefined;
+            const ridderInvite = await tx.select({
+                passengerId: passenger_schema_1.PassengerTable.id,
+                suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
                 suggestEndedAt: ridderInvite_schema_1.RidderInviteTable.suggestEndedAt,
             }).from(ridderInvite_schema_1.RidderInviteTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")));
-            if (!tempResponse || tempResponse.length === 0)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"))).leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, purchaseOrder_schema_1.PurchaseOrderTable.id))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
+            if (!ridderInvite || ridderInvite.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(tempResponse[0].suggestEndedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (!updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
-            const tempResponse = await this.db.select({
-                suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
-            }).from(ridderInvite_schema_1.RidderInviteTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")));
-            if (!tempResponse || tempResponse.length === 0)
+            if (updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            else if (updateRidderInviteDto.suggestStartAfter && !updateRidderInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(ridderInvite[0].suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            else if (!updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
+                const [startAfter, endedAt] = [new Date(ridderInvite[0].suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+            }
+            const responseOfUpdatingRidderInvite = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                briefDescription: updateRidderInviteDto.briefDescription,
+                suggestPrice: updateRidderInviteDto.suggestPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updateRidderInviteDto.startAddress,
+                endAddress: updateRidderInviteDto.endAddress,
+                ...(updateRidderInviteDto.suggestStartAfter
+                    ? { suggestStartAfter: new Date(updateRidderInviteDto.suggestStartAfter) }
+                    : {}),
+                ...(updateRidderInviteDto.suggestEndedAt
+                    ? { suggestEndedAt: new Date(updateRidderInviteDto.suggestEndedAt) }
+                    : {}),
+                updatedAt: new Date(),
+                status: updateRidderInviteDto.status,
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"))).returning({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+                status: ridderInvite_schema_1.RidderInviteTable.status,
+            });
+            if (!responseOfUpdatingRidderInvite || responseOfUpdatingRidderInvite.length === 0) {
                 throw exceptions_1.ClientInviteNotFoundException;
-            const [startAfter, endedAt] = [new Date(tempResponse[0].suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
-            briefDescription: updateRidderInviteDto.briefDescription,
-            suggestPrice: updateRidderInviteDto.suggestPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updateRidderInviteDto.startAddress,
-            endAddress: updateRidderInviteDto.endAddress,
-            ...(updateRidderInviteDto.suggestStartAfter
-                ? { suggestStartAfter: new Date(updateRidderInviteDto.suggestStartAfter) }
-                : {}),
-            ...(updateRidderInviteDto.suggestEndedAt
-                ? { suggestEndedAt: new Date(updateRidderInviteDto.suggestEndedAt) }
-                : {}),
-            updatedAt: new Date(),
-            status: updateRidderInviteDto.status,
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")))
-            .returning({
-            id: ridderInvite_schema_1.RidderInviteTable.id,
-            updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
-            status: ridderInvite_schema_1.RidderInviteTable.status,
+            }
+            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((updateRidderInviteDto.status && updateRidderInviteDto.status === "CANCEL")
+                ? (0, notificationTemplate_1.NotificationTemplateOfCancelingRidderInvite)(inviterName, ridderInvite[0].passengerId, responseOfUpdatingRidderInvite[0].id)
+                : (0, notificationTemplate_1.NotificationTemplateOfUpdatingRidderInvite)(inviterName, ridderInvite[0].passengerId, responseOfUpdatingRidderInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+            return responseOfUpdatingRidderInvite;
         });
     }
-    async decideRidderInviteById(id, receiverId, decideRidderInviteDto) {
+    async decideRidderInviteById(id, receiverId, receiverName, decideRidderInviteDto) {
         const ridderInvite = await this.db.query.RidderInviteTable.findFirst({
             where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")),
             with: {
+                inviter: {
+                    columns: {
+                        id: true,
+                    }
+                },
                 order: {
                     columns: {
                         id: true,
                         creatorId: true,
-                    }
-                }
+                    },
+                },
             }
         });
         if (!ridderInvite || !ridderInvite.order)
@@ -605,14 +642,25 @@ let RidderInviteService = class RidderInviteService {
                     inviterDescription: ridderInvite_schema_1.RidderInviteTable.briefDescription,
                     inviteStatus: ridderInvite_schema_1.RidderInviteTable.status,
                 });
-                if (!responseOfDecidingRidderInvite
-                    || responseOfDecidingRidderInvite.length === 0) {
+                if (!responseOfDecidingRidderInvite || responseOfDecidingRidderInvite.length === 0) {
                     throw exceptions_1.ClientInviteNotFoundException;
                 }
-                await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                const responseOfRejectingOtherRidderInvites = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
                     status: "REJECTED",
                     updatedAt: new Date(),
-                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, ridderInvite.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id)));
+                }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, ridderInvite.order.id), (0, drizzle_orm_1.ne)(ridderInvite_schema_1.RidderInviteTable.id, id))).returning({
+                    id: ridderInvite_schema_1.RidderInviteTable.id,
+                    userId: ridderInvite_schema_1.RidderInviteTable.userId,
+                });
+                if (responseOfRejectingOtherRidderInvites && responseOfRejectingOtherRidderInvites.length !== 0) {
+                    const responseOfCreatingNotificationToRejectOthers = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfRejectingOtherRidderInvites.map((content) => {
+                        return (0, notificationTemplate_1.NotificationTemplateOfRejectingRiddererInvite)(receiverName, `${receiverName} has found a better invite to start his/her travel`, content.userId, content.id);
+                    }));
+                    if (!responseOfCreatingNotificationToRejectOthers
+                        || responseOfCreatingNotificationToRejectOthers.length !== responseOfRejectingOtherRidderInvites.length) {
+                        throw exceptions_1.ClientCreateRidderNotificationException;
+                    }
+                }
                 const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
                     status: "RESERVED",
                     updatedAt: new Date(),
@@ -622,8 +670,7 @@ let RidderInviteService = class RidderInviteService {
                     receiverDescription: purchaseOrder_schema_1.PurchaseOrderTable.description,
                     orderStatus: purchaseOrder_schema_1.PurchaseOrderTable.status,
                 });
-                if (!responseOfDeletingPurchaseOrder
-                    || responseOfDeletingPurchaseOrder.length === 0) {
+                if (!responseOfDeletingPurchaseOrder || responseOfDeletingPurchaseOrder.length === 0) {
                     throw exceptions_1.ClientPurchaseOrderNotFoundException;
                 }
                 const responseOfCreatingOrder = await tx.insert(order_schema_1.OrderTable).values({
@@ -646,9 +693,12 @@ let RidderInviteService = class RidderInviteService {
                     endedAt: order_schema_1.OrderTable.endedAt,
                     status: order_schema_1.OrderTable.passengerStatus,
                 });
-                if (!responseOfCreatingOrder
-                    || responseOfCreatingOrder.length === 0) {
+                if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
                     throw exceptions_1.ClientCreateOrderException;
+                }
+                const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfAcceptingRidderInvite)(receiverName, ridderInvite.inviter.id, responseOfCreatingOrder[0].id));
+                if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                    throw exceptions_1.ClientCreateRidderNotificationException;
                 }
                 return [{
                         orderId: responseOfCreatingOrder[0].id,
@@ -665,14 +715,26 @@ let RidderInviteService = class RidderInviteService {
             });
         }
         else if (decideRidderInviteDto.status === "REJECTED") {
-            return await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
+            const responseOfRejectingRidderInvite = await this.db.update(ridderInvite_schema_1.RidderInviteTable).set({
                 status: decideRidderInviteDto.status,
                 updatedAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.id, id))
                 .returning({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+                ridderId: ridderInvite_schema_1.RidderInviteTable.userId,
                 status: ridderInvite_schema_1.RidderInviteTable.status,
                 updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
             });
+            if (!responseOfRejectingRidderInvite || responseOfRejectingRidderInvite.length === 0) {
+                throw exceptions_1.ClientInviteNotFoundException;
+            }
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfRejectingRiddererInvite)(receiverName, decideRidderInviteDto.rejectReason, responseOfRejectingRidderInvite[0].ridderId, responseOfRejectingRidderInvite[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+            return [{
+                    status: responseOfRejectingRidderInvite[0].status,
+                }];
         }
     }
     async deleteRidderInviteById(id, inviterId) {
@@ -687,7 +749,8 @@ let RidderInviteService = class RidderInviteService {
 exports.RidderInviteService = RidderInviteService;
 exports.RidderInviteService = RidderInviteService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], RidderInviteService);
 //# sourceMappingURL=ridderInvite.service.js.map

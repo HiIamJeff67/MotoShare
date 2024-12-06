@@ -54,10 +54,13 @@ exports.ServerSupabaseUploadFileParaNotFoundException = new common_1.InternalSer
     case: "E-S-852",
     message: "Missing parameters while uploading file to Supabase server",
 });
-exports.ServerSupabaseUploadFileException = new common_1.InternalServerErrorException({
-    case: "E-S-853",
-    message: "Failed to upload file to Supabase storage",
-});
+const ServerSupabaseUploadFileException = (message) => {
+    return new common_1.InternalServerErrorException({
+        case: "E-S-853",
+        message: `Failed to upload file to Supabase storage${message ? `: ${message}` : ""}`,
+    });
+};
+exports.ServerSupabaseUploadFileException = ServerSupabaseUploadFileException;
 exports.ServerExtractJwtSecretEnvVariableException = new common_1.InternalServerErrorException({
     case: "E-S-900",
     message: "Failed to extract the required environment variable JWT_SECRET",

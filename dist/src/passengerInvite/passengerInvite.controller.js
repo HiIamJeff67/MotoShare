@@ -33,7 +33,7 @@ let PassengerInviteController = class PassengerInviteController {
             if (!orderId) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.passengerInviteService.createPassengerInviteByOrderId(passenger.id, orderId, createPassengerInviteDto);
+            const res = await this.passengerInviteService.createPassengerInviteByOrderId(passenger.id, passenger.userName, orderId, createPassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreatePassengerInviteException;
             response.status(enums_1.HttpStatusCode.Created).send({
@@ -339,7 +339,7 @@ let PassengerInviteController = class PassengerInviteController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, updatePassengerInviteDto);
+            const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, passenger.userName, updatePassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send({
@@ -364,7 +364,7 @@ let PassengerInviteController = class PassengerInviteController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, decidePassengerInviteDto);
+            const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, ridder.userName, decidePassengerInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send({
@@ -373,6 +373,7 @@ let PassengerInviteController = class PassengerInviteController {
             });
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {

@@ -18,5 +18,6 @@ export declare class SupplyOrderController {
     searchSimilarRouteSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto, response: Response): Promise<void>;
     updateMySupplyOrderById(ridder: RidderType, id: string, updateSupplyOrderDto: UpdateSupplyOrderDto, response: Response): Promise<void>;
     startSupplyOrderWithoutInvite(passenger: PassengerType, id: string, acceptAutoAcceptSupplyOrder: AcceptAutoAcceptSupplyOrderDto, response: Response): Promise<void>;
+    cancelMySupplyOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     deleteMySupplyOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
 }

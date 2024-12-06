@@ -264,7 +264,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toStartedPassengerStatusById(id, passenger.id);
+      const res = await this.orderService.toStartedPassengerStatusById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -297,7 +301,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toUnpaidPassengerStatusById(id, passenger.id);
+      const res = await this.orderService.toUnpaidPassengerStatusById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -330,7 +338,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toFinishedPassengerStatusById(id, passenger.id);
+      const res = await this.orderService.toFinishedPassengerStatusById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -368,7 +380,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toStartedRidderStatusById(id, ridder.id);
+      const res = await this.orderService.toStartedRidderStatusById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -401,7 +417,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toUnpaidRidderStatusById(id, ridder.id);
+      const res = await this.orderService.toUnpaidRidderStatusById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -434,7 +454,11 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.toFinishedRidderStatusById(id, ridder.id);
+      const res = await this.orderService.toFinishedRidderStatusById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
 
@@ -472,7 +496,51 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.orderService.cancelAndDeleteOrderById(id, passenger.id);
+      const res = await this.orderService.cancelAndDeleteOrderById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+        "Passenger", 
+      );
+
+      if (!res || res.length === 0) throw ClientOrderNotFoundException; 
+
+      response.status(HttpStatusCode.Ok).send({
+        prevOrderDeletedAt: new Date(),
+        ...res[0],
+      });
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException
+        || error instanceof NotFoundException
+        || error instanceof ForbiddenException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Delete('ridder/cancelAndDeleteOrderById')
+  async cancelAndDeleteOrderForRidderById(
+    @Ridder() ridder: RidderType,
+    @Query('id') id: string,
+    @Res() response: Response,
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.orderService.cancelAndDeleteOrderById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+        "Ridder", 
+      );
 
       if (!res || res.length === 0) throw ClientOrderNotFoundException; 
 

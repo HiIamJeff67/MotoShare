@@ -1,21 +1,23 @@
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { NotificationType } from '../types/notification.type';
 import { NotificationGateway } from './notification.gateway';
 import { ConfigService } from '@nestjs/config';
+import { NotificationTemplateInterface } from '../interfaces';
 export declare class RidderNotificationService {
     private config;
     private gateway;
     private db;
     constructor(config: ConfigService, gateway: NotificationGateway, db: DrizzleDB);
-    createRidderNotificationByUserId(userId: string, title: string, description: string | undefined, notificationType: NotificationType, linkId: string): Promise<{
-        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
-        id: string;
-        userId: string;
+    createRidderNotificationByUserId(content: NotificationTemplateInterface): Promise<{
         title: string;
         description: string | null;
+        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
         linkId: string | null;
-        isRead: boolean;
-        createdAt: Date;
+    }[]>;
+    createMultipleRidderNotificationsByUserId(data: NotificationTemplateInterface[]): Promise<{
+        title: string;
+        description: string | null;
+        notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
+        linkId: string | null;
     }[]>;
     getRidderNotificationById(id: string, userId: string): Promise<{
         id: string;
@@ -35,7 +37,7 @@ export declare class RidderNotificationService {
         isRead: boolean;
         createdAt: Date;
     }[]>;
-    updateToReadStatusRidderNotification(id: string, userId: string): Promise<{
+    updateRidderNotificationToReadStatus(id: string, userId: string): Promise<{
         id: string;
     }[]>;
     deleteRidderNotification(id: string, userId: string): Promise<{

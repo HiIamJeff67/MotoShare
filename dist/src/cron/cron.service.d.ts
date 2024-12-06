@@ -1,9 +1,13 @@
 import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../drizzle/types/drizzle';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 export declare class CronService {
     private config;
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(config: ConfigService, db: DrizzleDB);
+    constructor(config: ConfigService, passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     updateToExpiredPurchaseOrders(): Promise<{
         id: string;
     }[]>;

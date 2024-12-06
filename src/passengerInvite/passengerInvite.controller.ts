@@ -49,7 +49,12 @@ export class PassengerInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.passengerInviteService.createPassengerInviteByOrderId(passenger.id, orderId, createPassengerInviteDto);
+      const res = await this.passengerInviteService.createPassengerInviteByOrderId(
+        passenger.id, 
+        passenger.userName, 
+        orderId, 
+        createPassengerInviteDto
+      );
 
       if (!res || res.length === 0) throw ClientCreatePassengerInviteException;
 
@@ -557,7 +562,12 @@ export class PassengerInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.passengerInviteService.updatePassengerInviteById(id, passenger.id, updatePassengerInviteDto);
+      const res = await this.passengerInviteService.updatePassengerInviteById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+        updatePassengerInviteDto, 
+      );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
@@ -594,7 +604,12 @@ export class PassengerInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.passengerInviteService.decidePassengerInviteById(id, ridder.id, decidePassengerInviteDto);
+      const res = await this.passengerInviteService.decidePassengerInviteById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+        decidePassengerInviteDto
+      );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
@@ -603,6 +618,7 @@ export class PassengerInviteController {
         ...res[0],
       });
     } catch (error) {
+      console.log(error)
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {

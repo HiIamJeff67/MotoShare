@@ -21,11 +21,16 @@ const drizzle_orm_1 = require("drizzle-orm");
 const ridder_schema_1 = require("../drizzle/schema/ridder.schema");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
-const exceptions_1 = require("../exceptions");
 const passengerAuth_schema_1 = require("../drizzle/schema/passengerAuth.schema");
 const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
+const exceptions_1 = require("../exceptions");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
+const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
 let HistoryService = class HistoryService {
-    constructor(db) {
+    constructor(passengerNotification, ridderNotification, db) {
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async getHistoryById(id, userId) {
@@ -108,7 +113,7 @@ let HistoryService = class HistoryService {
             .limit(limit)
             .offset(offset);
     }
-    async rateAndCommentHistoryForPassengerById(id, passengerId, rateAndCommentHistoryDto) {
+    async rateAndCommentHistoryForPassengerById(id, passengerId, passengerName, rateAndCommentHistoryDto) {
         const passenger = await this.db.select({
             isEmailAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isEmailAuthenticated,
         }).from(passengerAuth_schema_1.PassengerAuthTable)
@@ -117,15 +122,32 @@ let HistoryService = class HistoryService {
             throw exceptions_1.ClientPassengerNotFoundException;
         if (!passenger[0].isEmailAuthenticated)
             throw exceptions_1.ClientWithoutAdvanceAuthorizedUserException;
-        return await this.db.update(history_schema_1.HistoryTable).set({
+        const responseOfUpdatingHistory = await this.db.update(history_schema_1.HistoryTable).set({
             starRatingByPassenger: rateAndCommentHistoryDto.starRating,
             commentByPassenger: rateAndCommentHistoryDto.comment,
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.id, id), (0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.passengerId, passengerId))).returning({
+            id: history_schema_1.HistoryTable.id,
+            ridderId: history_schema_1.HistoryTable.ridderId,
+            starRatingByPassenger: history_schema_1.HistoryTable.starRatingByPassenger,
+            commentByPassenger: history_schema_1.HistoryTable.commentByPassenger,
             status: history_schema_1.HistoryTable.status,
         });
+        if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+            throw exceptions_1.ClientHistoryNotFoundException;
+        }
+        if (responseOfUpdatingHistory[0].ridderId) {
+            const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfRatingAndCommentingHistory)(passengerName, responseOfUpdatingHistory[0].ridderId, responseOfUpdatingHistory[0].id, responseOfUpdatingHistory[0].starRatingByPassenger, responseOfUpdatingHistory[0].commentByPassenger ?? ""));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+        }
+        return [{
+                id: responseOfUpdatingHistory[0].id,
+                status: responseOfUpdatingHistory[0].status,
+            }];
     }
-    async rateAndCommentHistoryForRidderById(id, ridderId, rateAndCommentHistoryDto) {
+    async rateAndCommentHistoryForRidderById(id, ridderId, ridderName, rateAndCommentHistoryDto) {
         const ridder = await this.db.select({
             isEmailAuthenticated: ridderAuth_schema_1.RidderAuthTable.isEmailAuthenticated,
         }).from(ridderAuth_schema_1.RidderAuthTable)
@@ -134,13 +156,30 @@ let HistoryService = class HistoryService {
             throw exceptions_1.ClientRidderNotFoundException;
         if (!ridder[0].isEmailAuthenticated)
             throw exceptions_1.ClientWithoutAdvanceAuthorizedUserException;
-        return await this.db.update(history_schema_1.HistoryTable).set({
+        const responseOfUpdatingHistory = await this.db.update(history_schema_1.HistoryTable).set({
             starRatingByRidder: rateAndCommentHistoryDto.starRating,
             commentByRidder: rateAndCommentHistoryDto.comment,
             updatedAt: new Date(),
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.id, id), (0, drizzle_orm_1.eq)(history_schema_1.HistoryTable.ridderId, ridderId))).returning({
+            id: history_schema_1.HistoryTable.id,
+            passengerId: history_schema_1.HistoryTable.passengerId,
+            starRatingByRidder: history_schema_1.HistoryTable.starRatingByRidder,
+            commentByRidder: history_schema_1.HistoryTable.commentByRidder,
             status: history_schema_1.HistoryTable.status,
         });
+        if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+            throw exceptions_1.ClientHistoryNotFoundException;
+        }
+        if (responseOfUpdatingHistory[0].passengerId) {
+            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfRatingAndCommentingHistory)(ridderName, responseOfUpdatingHistory[0].passengerId, responseOfUpdatingHistory[0].id, responseOfUpdatingHistory[0].starRatingByRidder, responseOfUpdatingHistory[0].commentByRidder ?? ""));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
+        }
+        return [{
+                id: responseOfUpdatingHistory[0].id,
+                status: responseOfUpdatingHistory[0].status,
+            }];
     }
     async delinkHistoryByPassengerId(id, passengerId) {
         const responseOfUpdatingHistory = await this.db.update(history_schema_1.HistoryTable).set({
@@ -196,7 +235,8 @@ let HistoryService = class HistoryService {
 exports.HistoryService = HistoryService;
 exports.HistoryService = HistoryService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], HistoryService);
 //# sourceMappingURL=history.service.js.map

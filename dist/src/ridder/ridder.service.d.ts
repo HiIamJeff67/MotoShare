@@ -79,7 +79,7 @@ export declare class RidderService {
         userName: string;
         eamil: string;
     }[]>;
-    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
+    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedAvatorFile?: Express.Multer.File | undefined, uploadedMotocyclePhotoFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
     deleteRiddderById(id: string, deleteRidderDto: DeleteRidderDto): Promise<{
         id: string;
         userName: string;

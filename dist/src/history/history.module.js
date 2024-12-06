@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const history_service_1 = require("./history.service");
 const history_controller_1 = require("./history.controller");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let HistoryModule = class HistoryModule {
 };
 exports.HistoryModule = HistoryModule;
@@ -18,7 +19,7 @@ exports.HistoryModule = HistoryModule = __decorate([
     (0, common_1.Module)({
         controllers: [history_controller_1.HistoryController],
         providers: [history_service_1.HistoryService],
-        imports: [drizzle_module_1.DrizzleModule],
+        imports: [drizzle_module_1.DrizzleModule, notification_module_1.NotificationModule],
     })
 ], HistoryModule);
 //# sourceMappingURL=history.module.js.map

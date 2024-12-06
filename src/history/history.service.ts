@@ -8,18 +8,28 @@ import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
+import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
+import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
+import { StarRatingType } from '../types';
 import { 
+  ClientCreatePassengerNotificationException,
+  ClientCreateRidderNotificationException,
   ClientHistoryNotFoundException, 
   ClientPassengerNotFoundException, 
   ClientRidderNotFoundException, 
   ClientWithoutAdvanceAuthorizedUserException 
 } from '../exceptions';
-import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
-import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
+import { NotificationTemplateOfRatingAndCommentingHistory } from '../notification/notificationTemplate';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 
 @Injectable()
 export class HistoryService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
+    @Inject(DRIZZLE) private db: DrizzleDB, 
+  ) {}
 
   /* ================================= Get operations ================================= */
   async getHistoryById(id: string, userId: string) {
@@ -128,6 +138,7 @@ export class HistoryService {
   async rateAndCommentHistoryForPassengerById(
     id: string, 
     passengerId: string, 
+    passengerName: string, 
     rateAndCommentHistoryDto: RateAndCommentHistoryDto, 
   ) {
     const passenger = await this.db.select({
@@ -138,7 +149,7 @@ export class HistoryService {
     if (!passenger || passenger.length === 0) throw ClientPassengerNotFoundException;
     if (!passenger[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
 
-    return await this.db.update(HistoryTable).set({
+    const responseOfUpdatingHistory = await this.db.update(HistoryTable).set({
       starRatingByPassenger: rateAndCommentHistoryDto.starRating,
       commentByPassenger: rateAndCommentHistoryDto.comment,
       updatedAt: new Date(),
@@ -146,13 +157,41 @@ export class HistoryService {
       eq(HistoryTable.id, id),
       eq(HistoryTable.passengerId, passengerId),
     )).returning({
+      id: HistoryTable.id, 
+      ridderId: HistoryTable.ridderId, 
+      starRatingByPassenger: HistoryTable.starRatingByPassenger, 
+      commentByPassenger: HistoryTable.commentByPassenger, 
       status: HistoryTable.status,
     });
+    if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+      throw ClientHistoryNotFoundException;
+    }
+
+    if (responseOfUpdatingHistory[0].ridderId) {
+      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+        NotificationTemplateOfRatingAndCommentingHistory(
+          passengerName, 
+          responseOfUpdatingHistory[0].ridderId as string, 
+          responseOfUpdatingHistory[0].id as string, 
+          responseOfUpdatingHistory[0].starRatingByPassenger as StarRatingType, 
+          responseOfUpdatingHistory[0].commentByPassenger ?? "", 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
+      }
+    }
+
+    return [{
+      id: responseOfUpdatingHistory[0].id, 
+      status: responseOfUpdatingHistory[0].status, 
+    }];
   }
 
   async rateAndCommentHistoryForRidderById(
     id: string, 
     ridderId: string, 
+    ridderName: string, 
     rateAndCommentHistoryDto: RateAndCommentHistoryDto,
   ) {
     const ridder = await this.db.select({
@@ -163,7 +202,7 @@ export class HistoryService {
     if (!ridder || ridder.length === 0) throw ClientRidderNotFoundException;
     if (!ridder[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
 
-    return await this.db.update(HistoryTable).set({
+    const responseOfUpdatingHistory = await this.db.update(HistoryTable).set({
       starRatingByRidder: rateAndCommentHistoryDto.starRating,
       commentByRidder: rateAndCommentHistoryDto.comment,
       updatedAt: new Date(),
@@ -171,8 +210,35 @@ export class HistoryService {
       eq(HistoryTable.id, id),
       eq(HistoryTable.ridderId, ridderId),
     )).returning({
+      id: HistoryTable.id, 
+      passengerId: HistoryTable.passengerId, 
+      starRatingByRidder: HistoryTable.starRatingByRidder, 
+      commentByRidder: HistoryTable.commentByRidder, 
       status: HistoryTable.status,
     });
+    if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+      throw ClientHistoryNotFoundException;
+    }
+
+    if (responseOfUpdatingHistory[0].passengerId) {
+      const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+        NotificationTemplateOfRatingAndCommentingHistory(
+          ridderName, 
+          responseOfUpdatingHistory[0].passengerId as string, 
+          responseOfUpdatingHistory[0].id as string, 
+          responseOfUpdatingHistory[0].starRatingByRidder as StarRatingType, 
+          responseOfUpdatingHistory[0].commentByRidder ?? "", 
+        )
+      )
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreatePassengerNotificationException;
+      }
+    }
+
+    return [{
+      id: responseOfUpdatingHistory[0].id, 
+      status: responseOfUpdatingHistory[0].status, 
+    }];
   }
   /* ================================= Update operations ================================= */
 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientUnknownException = exports.ClientEndBeforeStartException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateRidderNotificationException = exports.ClientCreatePassengerNotificationException = exports.ClientCreateRidderAuthException = exports.ClientCreatePassengerAuthException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientWithoutAdvanceAuthorizedUserException = exports.ClientDeleteAccountPasswordNotMatchException = exports.ClientOldPasswordNotMatchException = exports.ClientAuthCodeExpiredException = exports.ClientAuthCodeNotPairException = exports.ClientUserHasNoAccessException = exports.ClientTokenExpiredException = exports.ClientInvalidTokenException = void 0;
+exports.ClientUnknownException = exports.ClientUploadFileMimeTypeException = exports.ClientUploadFileExceedException = exports.ClientEndBeforeStartException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreateRidderNotificationException = exports.ClientCreatePassengerNotificationException = exports.ClientCreateRidderAuthException = exports.ClientCreatePassengerAuthException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientRidderNotificationNotFoundException = exports.ClientPassengerNotificationNotFoundException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientWithoutAdvanceAuthorizedUserException = exports.ClientDeleteAccountPasswordNotMatchException = exports.ClientOldPasswordNotMatchException = exports.ClientAuthCodeExpiredException = exports.ClientAuthCodeNotPairException = exports.ClientUserHasNoAccessException = exports.ClientTokenExpiredException = exports.ClientInvalidTokenException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ClientInvalidTokenException = new common_1.UnauthorizedException({
     case: "E-C-001",
@@ -73,6 +73,14 @@ exports.ClientSignInEmailNotFoundException = new common_1.NotFoundException({
 exports.ClientHistoryNotFoundException = new common_1.NotFoundException({
     case: "E-C-109",
     message: "Failed to find any histories",
+});
+exports.ClientPassengerNotificationNotFoundException = new common_1.NotFoundException({
+    case: "E-C-110",
+    message: "Failed to find any passenger notifications",
+});
+exports.ClientRidderNotificationNotFoundException = new common_1.NotFoundException({
+    case: "E-C-111",
+    message: "Failed to find any ridder notifications",
 });
 exports.ClientSignInUserException = new common_1.ForbiddenException({
     case: "E-C-201",
@@ -164,6 +172,20 @@ exports.ClientEndBeforeStartException = new common_1.ConflictException({
     case: "E-C-351",
     message: "The end time is earlier than the start time",
 });
+const ClientUploadFileExceedException = (maxSize, unit) => {
+    return new common_1.NotAcceptableException({
+        case: "E-C-352",
+        message: `The size of uploaded file should be within ${maxSize}${unit}`,
+    });
+};
+exports.ClientUploadFileExceedException = ClientUploadFileExceedException;
+const ClientUploadFileMimeTypeException = (validMimeType) => {
+    return new common_1.NotAcceptableException({
+        case: "E-C-353",
+        message: `The (mime)type of uploaded file should be ${validMimeType}`,
+    });
+};
+exports.ClientUploadFileMimeTypeException = ClientUploadFileMimeTypeException;
 exports.ClientUnknownException = new common_1.InternalServerErrorException({
     case: "E-C-999",
     message: "Unknown error occurred",

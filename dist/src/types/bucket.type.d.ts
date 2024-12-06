@@ -1,2 +1,3 @@
-export type SupabaseBucketType = "AvatorBucket";
-export type FilePathType = "passengerAvators/" | "ridderAvators/";
+export type SupabaseBucketType = "AvatorBucket" | "MotocyclePhotoBucket";
+export type AvatorBucketFolderType = "passengerAvators" | "ridderAvators";
+export type MotocyclePhotoBucketFolderType = "ridderMotocyclePhotos";

@@ -42,7 +42,8 @@ let PurchaseOrderController = class PurchaseOrderController {
         }
         catch (error) {
             if (!(error instanceof common_1.ForbiddenException
-                || error instanceof common_1.UnauthorizedException)) {
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -225,7 +226,8 @@ let PurchaseOrderController = class PurchaseOrderController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -238,7 +240,7 @@ let PurchaseOrderController = class PurchaseOrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(id, ridder.id, acceptAutoAcceptPurchaseOrderDto);
+            const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(id, ridder.id, ridder.userName, acceptAutoAcceptPurchaseOrderDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreateOrderException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -248,6 +250,31 @@ let PurchaseOrderController = class PurchaseOrderController {
         }
         catch (error) {
             console.log(error);
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async cancelMyPurchaseOrderById(passenger, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.cancelPurchaseOrderById(id, passenger.id, passenger.userName);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                canceled: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException
@@ -441,6 +468,16 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.RidderType, String, accept_purchaseOrder_dto_1.AcceptAutoAcceptPurchaseOrderDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "startPurchaseOrderWithoutInvite", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Delete)('cancelMyPurchaseOrderById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "cancelMyPurchaseOrderById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Delete)('deleteMyPurchaseOrderById'),

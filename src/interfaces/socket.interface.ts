@@ -1,4 +1,5 @@
-import { UserRoleType } from "../types"
+import { UserRoleType } from "../types";
+import { Socket } from "socket.io";
 
 export interface SocketUserInterface {
     id: string
@@ -9,6 +10,6 @@ export interface SocketUserInterface {
 }
 
 export interface SocketMetaPayloadInterface extends SocketUserInterface {
-	socketId: string
+    socket: Socket
 }
 

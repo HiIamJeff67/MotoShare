@@ -1,7 +1,12 @@
 import { DrizzleDB } from '../drizzle/types/drizzle';
+import { UserRoleType } from '../types';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 export declare class OrderService {
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     private updateExpiredOrdersToStartedStatus;
     private getOrderStatusById;
     getOrderById(id: string, userId: string): Promise<{
@@ -129,35 +134,31 @@ export declare class OrderService {
         ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
         updatedAt: Date;
     }[]>;
-    toStartedPassengerStatusById(id: string, passengerId: string): Promise<{
+    toStartedPassengerStatusById(id: string, passengerId: string, passengerName: string): Promise<{
         passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
-    toStartedRidderStatusById(id: string, ridderId: string): Promise<{
+    toStartedRidderStatusById(id: string, ridderId: string, ridderName: string): Promise<{
         ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
-    toUnpaidPassengerStatusById(id: string, passengerId: string): Promise<{
+    toUnpaidPassengerStatusById(id: string, passengerId: string, passengerName: string): Promise<{
         passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
-    toUnpaidRidderStatusById(id: string, ridderId: string): Promise<{
+    toUnpaidRidderStatusById(id: string, ridderId: string, ridderName: string): Promise<{
         ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
-    toFinishedPassengerStatusById(id: string, passengerId: string): Promise<{
-        prevOrderId: string;
-        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
-        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
-    }[] | {
+    toFinishedPassengerStatusById(id: string, passengerId: string, passengerName: string): Promise<{
         historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
         historyId: string;
-    }[]>;
-    toFinishedRidderStatusById(id: string, ridderId: string): Promise<{
-        prevOrderId: string;
-        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
-        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+    }[]>;
+    toFinishedRidderStatusById(id: string, ridderId: string, ridderName: string): Promise<{
         historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
         historyId: string;
+    }[] | {
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[]>;
-    cancelAndDeleteOrderById(id: string, userId: string): Promise<{
+    cancelAndDeleteOrderById(id: string, userId: string, userName: string, userRole: UserRoleType): Promise<{
         [x: number]: {
             historyStatus: "FINISHED" | "EXPIRED" | "CANCEL";
             historyId: string;

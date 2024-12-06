@@ -79,10 +79,12 @@ export const ServerSupabaseUploadFileParaNotFoundException = new InternalServerE
 });
 
 // E-S-853
-export const ServerSupabaseUploadFileException = new InternalServerErrorException({
-    case: "E-S-853",
-    message: "Failed to upload file to Supabase storage",
-});
+export const ServerSupabaseUploadFileException = (message?: string) => { 
+    return new InternalServerErrorException({
+        case: "E-S-853",
+        message: `Failed to upload file to Supabase storage${message ? `: ${message}` : ""}`,
+    })
+};
 
 // E-S-900
 export const ServerExtractJwtSecretEnvVariableException = new InternalServerErrorException({

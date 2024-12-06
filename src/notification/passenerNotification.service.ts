@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { NotificationType } from '../types/notification.type';
 import { and, desc, eq } from 'drizzle-orm';
 import { PassengerTable, PassengerInfoTable, PassengerNotificationTable } from '../drizzle/schema/schema';
-import { Client } from 'pg';
 import { NotificationGateway } from './notification.gateway';
 import { ConfigService } from '@nestjs/config';
 import { ClientCreatePassengerNotificationException } from '../exceptions';
-import { NotificationInterface } from '../interfaces';
+import { NotificationInterface, NotificationTemplateInterface } from '../interfaces';
 
 @Injectable()
 export class PassengerNotificationService {
@@ -44,19 +42,13 @@ export class PassengerNotificationService {
 
 
     /* ================================= Create operations ================================= */
-    async createPassengerNotificationByUserId(
-        userId: string, 
-        title: string, 
-        description: string = "", 
-        notificationType: NotificationType, 
-        linkId: string, 
-    ) {
+    async createPassengerNotificationByUserId(content: NotificationTemplateInterface) {
         const responseOfCreatingPassengerNotification = await this.db.insert(PassengerNotificationTable).values({
-            userId: userId, 
-            title: title, 
-            description: description, 
-            notificationType: notificationType, 
-            linkId: linkId, 
+            userId: content.userId, 
+            title: content.title, 
+            description: content.description, 
+            notificationType: content.notificationType, 
+            linkId: content.linkId, 
             isRead: false, 
         }).returning();
         if (!responseOfCreatingPassengerNotification || responseOfCreatingPassengerNotification.length === 0) {
@@ -64,7 +56,7 @@ export class PassengerNotificationService {
         }
 
         // we apply trigger manually here
-        this.gateway.notifyPassenger(userId, {
+        this.gateway.notifyPassenger(content.userId, {
             id: responseOfCreatingPassengerNotification[0].id, 
             userId: responseOfCreatingPassengerNotification[0].userId, 
             title: responseOfCreatingPassengerNotification[0].title, 
@@ -75,7 +67,38 @@ export class PassengerNotificationService {
             createdAt: responseOfCreatingPassengerNotification[0].createdAt, 
         } as NotificationInterface);
 
-        return responseOfCreatingPassengerNotification;
+        return [{
+            title: responseOfCreatingPassengerNotification[0].title, 
+            description: responseOfCreatingPassengerNotification[0].description, 
+            notificationType: responseOfCreatingPassengerNotification[0].notificationType, 
+            linkId: responseOfCreatingPassengerNotification[0].linkId, 
+        }];
+    }
+
+    async createMultiplePassengerNotificationByUserId(data: NotificationTemplateInterface[]) {
+        const responseOfCreatingPassengerNotification = await this.db.insert(PassengerNotificationTable).values(
+            data.map((content: NotificationTemplateInterface) => ({ ...content, isRead: false }))
+        ).returning();
+        if (!responseOfCreatingPassengerNotification || responseOfCreatingPassengerNotification.length !== data.length) {
+            throw ClientCreatePassengerNotificationException;
+        }
+
+        responseOfCreatingPassengerNotification.map((content) => {
+            this.gateway.notifyRidder(content.userId, {
+                id: content.id, 
+                userId: content.userId, 
+                title: content.title, 
+                description: content.description, 
+                notificationType: content.notificationType, 
+                linkId: content.linkId, 
+                isRead: content.isRead, 
+                createdAt: content.createdAt, 
+            } as NotificationInterface);
+        });
+
+        return responseOfCreatingPassengerNotification.map(
+            ({ title, description, notificationType, linkId }) => ({ title, description, notificationType, linkId })
+        );
     }
     /* ================================= Create operations ================================= */
 
@@ -100,7 +123,7 @@ export class PassengerNotificationService {
           )).leftJoin(PassengerTable, eq(PassengerNotificationTable.userId, PassengerTable.id))
             .leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId));
     }
-    
+
     /* ================================= Search operations ================================= */
     async searchPaginationPassengerNotifications(
         userId: string, 
@@ -125,7 +148,7 @@ export class PassengerNotificationService {
 
 
     /* ================================= Update operations ================================= */
-    async updateToReadStatusPassengerNotification(
+    async updatePassengerNotificationToReadStatus(
         id: string, 
         userId: string, 
     ) {
@@ -134,7 +157,7 @@ export class PassengerNotificationService {
         }).where(and(
             eq(PassengerNotificationTable.id, id), 
             eq(PassengerNotificationTable.userId, userId), 
-            // eq(PassengerNotificationTable.isRead, false), 
+            eq(PassengerNotificationTable.isRead, false), 
         )).returning({
             id: PassengerNotificationTable.id, 
         });

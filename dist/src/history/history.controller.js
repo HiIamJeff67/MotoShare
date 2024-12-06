@@ -123,7 +123,7 @@ let HistoryController = class HistoryController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.historyService.rateAndCommentHistoryForPassengerById(id, passenger.id, rateAndCommentHistoryDto);
+            const res = await this.historyService.rateAndCommentHistoryForPassengerById(id, passenger.id, passenger.userName, rateAndCommentHistoryDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientHistoryNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
@@ -144,7 +144,7 @@ let HistoryController = class HistoryController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.historyService.rateAndCommentHistoryForRidderById(id, ridder.id, rateAndCommentHistoryDto);
+            const res = await this.historyService.rateAndCommentHistoryForRidderById(id, ridder.id, ridder.userName, rateAndCommentHistoryDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientHistoryNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);

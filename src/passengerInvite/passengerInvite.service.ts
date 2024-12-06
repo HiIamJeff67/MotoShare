@@ -11,12 +11,35 @@ import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ClientUserHasNoAccessException, ServerNeonAutoUpdateExpiredPassengerInviteException } from '../exceptions';
+import { 
+  ClientCreateOrderException, 
+  ClientCreatePassengerInviteException, 
+  ClientCreatePassengerNotificationException, 
+  ClientCreateRidderNotificationException, 
+  ClientEndBeforeStartException, 
+  ClientInviteNotFoundException, 
+  ClientSupplyOrderNotFoundException, 
+  ClientUserHasNoAccessException, 
+  ServerNeonAutoUpdateExpiredPassengerInviteException, 
+} from '../exceptions';
 import { OrderTable } from '../drizzle/schema/order.schema';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { 
+  NotificationTemplateOfAcceptingPassengerInvite, 
+  NotificationTemplateOfCancelingPassengerInvite, 
+  NotificationTemplateOfCreatingPassengerInvite, 
+  NotificationTemplateOfRejectingPassengerInvite, 
+  NotificationTemplateOfUpdatingPassengerInvite 
+} from '../notification/notificationTemplate';
 
 @Injectable()
 export class PassengerInviteService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
+    @Inject(DRIZZLE) private db: DrizzleDB
+  ) {}
 
   /* ================================= Detect And Update Expired PassengerInvites operations ================================= */
   private async updateExpiredPassengerInvites() {
@@ -27,10 +50,13 @@ export class PassengerInviteService {
       lt(PassengerInviteTable.suggestStartAfter, new Date()), 
     )).returning({
       id: PassengerInviteTable.id, 
+      userId: PassengerInviteTable.userId, 
     });
     if (!response) {
       throw ServerNeonAutoUpdateExpiredPassengerInviteException;
     }
+
+
 
     return response.length;
   }
@@ -40,30 +66,62 @@ export class PassengerInviteService {
   /* ================================= Create operations ================================= */
   async createPassengerInviteByOrderId(
     inviterId: string, 
+    inviterName: string, 
     orderId: string, 
     createPassengerInviteDto: CreatePassengerInviteDto,
   ) {
-    return await this.db.insert(PassengerInviteTable).values({
-      userId: inviterId,
-      orderId: orderId,
-      briefDescription: createPassengerInviteDto.briefDescription,
-      suggestPrice: createPassengerInviteDto.suggestPrice,
-      startCord: sql`ST_SetSRID(
-        ST_MakePoint(${createPassengerInviteDto.startCordLongitude}, ${createPassengerInviteDto.startCordLatitude}),
-        4326
-      )`, 
-      endCord: sql`ST_SetSRID(
-        ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
-        4326
-      )`, 
-      startAddress: createPassengerInviteDto.startAddress,
-      endAddress: createPassengerInviteDto.endAddress,
-      suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
-      suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
-    }).returning({
-      id: PassengerInviteTable.id,
-      orderId: PassengerInviteTable.orderId,
-      status: PassengerInviteTable.status,
+    return await this.db.transaction(async (tx) => {
+      const responseOfSelectingSupplyOrder = await tx.select({
+        ridderId: RidderTable.id, 
+        status: SupplyOrderTable.status, 
+      }).from(SupplyOrderTable)
+        .where(and(
+          eq(SupplyOrderTable.id, orderId), 
+          eq(SupplyOrderTable.status, "POSTED")
+        )).leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      if (!responseOfSelectingSupplyOrder || responseOfSelectingSupplyOrder.length === 0
+        || responseOfSelectingSupplyOrder[0].status !== "POSTED") {
+          throw ClientSupplyOrderNotFoundException;
+      }
+
+      const responseOfCreatingPassengerInvite = await tx.insert(PassengerInviteTable).values({
+        userId: inviterId,
+        orderId: orderId,
+        briefDescription: createPassengerInviteDto.briefDescription,
+        suggestPrice: createPassengerInviteDto.suggestPrice,
+        startCord: sql`ST_SetSRID(
+          ST_MakePoint(${createPassengerInviteDto.startCordLongitude}, ${createPassengerInviteDto.startCordLatitude}),
+          4326
+        )`, 
+        endCord: sql`ST_SetSRID(
+          ST_MakePoint(${createPassengerInviteDto.endCordLongitude}, ${createPassengerInviteDto.endCordLatitude}),
+          4326
+        )`, 
+        startAddress: createPassengerInviteDto.startAddress,
+        endAddress: createPassengerInviteDto.endAddress,
+        suggestStartAfter: new Date(createPassengerInviteDto.suggestStartAfter),
+        suggestEndedAt: new Date(createPassengerInviteDto.suggestEndedAt),
+      }).returning({
+        id: PassengerInviteTable.id,
+        orderId: PassengerInviteTable.orderId,
+        status: PassengerInviteTable.status,
+      });
+      if (!responseOfCreatingPassengerInvite || responseOfCreatingPassengerInvite.length === 0) {
+        throw ClientCreatePassengerInviteException;
+      }
+
+      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+        NotificationTemplateOfCreatingPassengerInvite(
+          inviterName, 
+          responseOfSelectingSupplyOrder[0].ridderId as string, 
+          responseOfCreatingPassengerInvite[0].id as string, 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
+      }
+
+      return responseOfCreatingPassengerInvite;
     });
   }
   /* ================================= Create operations ================================= */
@@ -640,78 +698,95 @@ export class PassengerInviteService {
   async updatePassengerInviteById(
     id: string,
     inviterId: string,  // for validating the current user is the owner to that invite
+    inviterName: string, 
     updatePassengerInviteDto: UpdatePassengerInviteDto,
   ) {
-    const newStartCord: point | undefined = 
-      (updatePassengerInviteDto.startCordLongitude !== undefined
-        && updatePassengerInviteDto.startCordLatitude !== undefined)
-      ? { x: updatePassengerInviteDto.startCordLongitude, y: updatePassengerInviteDto.startCordLatitude }
-      : undefined;
+    return this.db.transaction(async (tx) => {
+      const newStartCord: point | undefined = 
+        (updatePassengerInviteDto.startCordLongitude !== undefined
+          && updatePassengerInviteDto.startCordLatitude !== undefined)
+        ? { x: updatePassengerInviteDto.startCordLongitude, y: updatePassengerInviteDto.startCordLatitude }
+        : undefined;
     
-    const newEndCord: point | undefined = 
-      (updatePassengerInviteDto.endCordLongitude !== undefined
-        && updatePassengerInviteDto.endCordLatitude !== undefined)
-      ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
-      : undefined;
+      const newEndCord: point | undefined = 
+        (updatePassengerInviteDto.endCordLongitude !== undefined
+          && updatePassengerInviteDto.endCordLatitude !== undefined)
+        ? { x: updatePassengerInviteDto.endCordLongitude, y: updatePassengerInviteDto.endCordLatitude }
+        : undefined;
 
-    // check if endedAt is earlier than startAfter
-    if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
-      const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    } else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
-      const tempResponse = await this.db.select({
-        suggestEndedAt: PassengerInviteTable.suggestEndedAt,
+      // check if endedAt is earlier than startAfter
+      const passengerInvite = await tx.select({
+        ridderId: RidderTable.id, 
+        suggestStartAfter: PassengerInviteTable.suggestStartAfter, 
+        suggestEndedAt: PassengerInviteTable.suggestEndedAt, 
       }).from(PassengerInviteTable)
         .where(and(
           eq(PassengerInviteTable.id, id), 
           eq(PassengerInviteTable.userId, inviterId), 
           eq(PassengerInviteTable.status, "CHECKING"),
-        ));
-      if (!tempResponse || tempResponse.length === 0) throw ClientInviteNotFoundException;
+      )).leftJoin(SupplyOrderTable, eq(PassengerInviteTable.orderId, SupplyOrderTable.id))
+        .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      if (!passengerInvite || passengerInvite.length === 0) throw ClientInviteNotFoundException;
 
-      const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(tempResponse[0].suggestEndedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    } else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
-      const tempResponse = await this.db.select({
-        suggestStartAfter: PassengerInviteTable.suggestStartAfter,
-      }).from(PassengerInviteTable)
-        .where(and(
-          eq(PassengerInviteTable.id, id), 
-          eq(PassengerInviteTable.userId, inviterId), 
-          eq(PassengerInviteTable.status, "CHECKING"),
-        ));
-      if (!tempResponse || tempResponse.length === 0) throw ClientEndBeforeStartException;
+      if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+        const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+      } else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
+        const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(passengerInvite[0].suggestEndedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+      } else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
+        const [startAfter, endedAt] = [new Date(passengerInvite[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+      }
 
-      const [startAfter, endedAt] = [new Date(tempResponse[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    }
-
-    return await this.db.update(PassengerInviteTable).set({
-      briefDescription: updatePassengerInviteDto.briefDescription,
-      suggestPrice: updatePassengerInviteDto.suggestPrice,
-      startCord: newStartCord,
-      endCord: newEndCord,
-      startAddress: updatePassengerInviteDto.startAddress,
-      endAddress: updatePassengerInviteDto.endAddress,
-      ...(updatePassengerInviteDto.suggestStartAfter
-        ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
-        : {}
-      ),
-      ...(updatePassengerInviteDto.suggestEndedAt
-        ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
-        : {}
-      ),
-      updatedAt: new Date(),
-      status: updatePassengerInviteDto.status,  // either CHECKING or CANCEL
-    }).where(and(
-      eq(PassengerInviteTable.id, id), 
-      eq(PassengerInviteTable.userId, inviterId),
-      eq(PassengerInviteTable.status, "CHECKING"),
-    ))
-      .returning({
+      const responseOfUpdatingPassengerInvite = await tx.update(PassengerInviteTable).set({
+        briefDescription: updatePassengerInviteDto.briefDescription,
+        suggestPrice: updatePassengerInviteDto.suggestPrice,
+        startCord: newStartCord,
+        endCord: newEndCord,
+        startAddress: updatePassengerInviteDto.startAddress,
+        endAddress: updatePassengerInviteDto.endAddress,
+        ...(updatePassengerInviteDto.suggestStartAfter
+          ? { suggestStartAfter: new Date(updatePassengerInviteDto.suggestStartAfter) }
+          : {}
+        ),
+        ...(updatePassengerInviteDto.suggestEndedAt
+          ? { suggestEndedAt: new Date(updatePassengerInviteDto.suggestEndedAt) }
+          : {}
+        ),
+        updatedAt: new Date(),
+        status: updatePassengerInviteDto.status,  // either CHECKING or CANCEL
+      }).where(and(
+        eq(PassengerInviteTable.id, id), 
+        eq(PassengerInviteTable.userId, inviterId),
+        eq(PassengerInviteTable.status, "CHECKING"),
+      )).returning({
         id: PassengerInviteTable.id,
         status: PassengerInviteTable.status,
       });
+      if (!responseOfUpdatingPassengerInvite || responseOfUpdatingPassengerInvite.length === 0) {
+        throw ClientInviteNotFoundException;
+      }
+
+      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+        (updatePassengerInviteDto.status && updatePassengerInviteDto.status === "CANCEL")
+        ? NotificationTemplateOfCancelingPassengerInvite(
+            inviterName, 
+            passengerInvite[0].ridderId as string, 
+            responseOfUpdatingPassengerInvite[0].id as string, 
+          )
+        : NotificationTemplateOfUpdatingPassengerInvite(
+            inviterName, 
+            passengerInvite[0].ridderId as string, 
+            responseOfUpdatingPassengerInvite[0].id as string, 
+          )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
+      }
+
+      return responseOfUpdatingPassengerInvite;
+    });
   }
   /* ================= Update detail operations used by Passenger ================= */
 
@@ -720,6 +795,7 @@ export class PassengerInviteService {
   async decidePassengerInviteById(
     id: string,
     receiverId: string,
+    receiverName: string, 
     decidePassengerInviteDto: DecidePassengerInviteDto,
   ) {
     // Note that the inviter here is the passenger, and the receiver here is the ridder
@@ -731,12 +807,17 @@ export class PassengerInviteService {
         eq(PassengerInviteTable.status, "CHECKING"),
       ),
       with: {
+        inviter: {
+          columns: {
+            id: true, 
+          }
+        },
         order: {
           columns: {
             id: true,
             creatorId: true,
-          }
-        }
+          }, 
+        }, 
       }
     });
     if (!passengerInvite || !passengerInvite.order) throw ClientInviteNotFoundException;
@@ -760,19 +841,36 @@ export class PassengerInviteService {
             inviterDescription: PassengerInviteTable.briefDescription,
             inviteStatus: PassengerInviteTable.status,
         });
-        if (!responseOfDecidingPassengerInvite
-          || responseOfDecidingPassengerInvite.length === 0) {
-            throw ClientInviteNotFoundException;
+        if (!responseOfDecidingPassengerInvite || responseOfDecidingPassengerInvite.length === 0) {
+          throw ClientInviteNotFoundException;
         }
 
-        await tx.update(PassengerInviteTable).set({
+        const responseOfRejectingOtherPassengerInvites = await tx.update(PassengerInviteTable).set({
           status: "REJECTED",
           updatedAt: new Date(),
         }).where(and(
           eq(PassengerInviteTable.orderId, passengerInvite.order.id),
           ne(PassengerInviteTable.id, id),
-          // eq(PassengerInviteTable.status, "CHECKING"),  we have make sure this while we getthe passengerInvite above
-        ));
+        )).returning({
+          id: PassengerInviteTable.id, 
+          userId: PassengerInviteTable.userId, 
+        });
+        if (responseOfRejectingOtherPassengerInvites && responseOfRejectingOtherPassengerInvites.length !== 0) {
+          const responseOfCreatingNotificationToRejectOthers = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+            responseOfRejectingOtherPassengerInvites.map((content) => {
+              return NotificationTemplateOfRejectingPassengerInvite(
+                receiverName, 
+                `${receiverName} has found a better invite to start his/her travel`, 
+                content.userId, 
+                content.id, 
+              )
+            })
+          );
+          if (!responseOfCreatingNotificationToRejectOthers 
+              || responseOfCreatingNotificationToRejectOthers.length !== responseOfRejectingOtherPassengerInvites.length) {
+                throw ClientCreatePassengerNotificationException;
+          }
+        }
 
         const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({ // will delete this supplyOrder later
           status: "RESERVED",
@@ -786,9 +884,8 @@ export class PassengerInviteService {
             receiverDescription: SupplyOrderTable.description,
             orderStatus: SupplyOrderTable.status,
         });
-        if (!responseOfDeletingSupplyOrder
-            || responseOfDeletingSupplyOrder.length === 0) {
-              throw ClientSupplyOrderNotFoundException;
+        if (!responseOfDeletingSupplyOrder || responseOfDeletingSupplyOrder.length === 0) {
+          throw ClientSupplyOrderNotFoundException;
         }
 
         const responseOfCreatingOrder = await tx.insert(OrderTable).values({
@@ -811,9 +908,19 @@ export class PassengerInviteService {
           endedAt: OrderTable.endedAt,
           status: OrderTable.passengerStatus, // use either passengerStatus or ridderStatus is fine
         });
-        if (!responseOfCreatingOrder 
-            || responseOfCreatingOrder.length === 0) {
-              throw ClientCreateOrderException;
+        if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
+          throw ClientCreateOrderException;
+        }
+
+        const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+          NotificationTemplateOfAcceptingPassengerInvite(
+            receiverName, 
+            passengerInvite.inviter.id, 
+            responseOfCreatingOrder[0].id, 
+          )
+        );
+        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+          throw ClientCreatePassengerNotificationException;
         }
 
         return [{
@@ -830,13 +937,35 @@ export class PassengerInviteService {
         }];
       });
     } else if (decidePassengerInviteDto.status === "REJECTED") {
-      return await this.db.update(PassengerInviteTable).set({
+      const responseOfRejectingPassengerInvite = await this.db.update(PassengerInviteTable).set({
         status: decidePassengerInviteDto.status,  // must be REJECTED
+        updatedAt: new Date(), 
       }).where(eq(PassengerInviteTable.id, id))
         .returning({
+          id: PassengerInviteTable.id, 
+          passengerId: PassengerInviteTable.userId, 
           status: PassengerInviteTable.status,
           updatedAt: PassengerInviteTable.updatedAt,
         });
+      if (!responseOfRejectingPassengerInvite || responseOfRejectingPassengerInvite.length === 0) {
+        throw ClientInviteNotFoundException;
+      }
+
+      const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+        NotificationTemplateOfRejectingPassengerInvite(
+          receiverName, 
+          decidePassengerInviteDto.rejectReason, 
+          responseOfRejectingPassengerInvite[0].passengerId as string, 
+          responseOfRejectingPassengerInvite[0].id as string, 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreatePassengerNotificationException;
+      }
+      
+      return [{
+        status: responseOfRejectingPassengerInvite[0].status, 
+      }];
     }
   }
   /* ================= Accept or Reject operations used by Ridder ================= */

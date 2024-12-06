@@ -54,10 +54,5 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateRidderInfoDto.prototype, "motocylePhotoUrl", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
 ], CreateRidderInfoDto.prototype, "motocycleType", void 0);
 //# sourceMappingURL=create-info.dto.js.map

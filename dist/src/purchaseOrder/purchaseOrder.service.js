@@ -23,9 +23,12 @@ const exceptions_1 = require("../exceptions");
 const ridderInvite_schema_1 = require("../drizzle/schema/ridderInvite.schema");
 const order_schema_1 = require("../drizzle/schema/order.schema");
 const passenerNotification_service_1 = require("../notification/passenerNotification.service");
+const ridderNotification_service_1 = require("../notification/ridderNotification.service");
+const notificationTemplate_1 = require("../notification/notificationTemplate");
 let PurchaseOrderService = class PurchaseOrderService {
-    constructor(notification, db) {
-        this.notification = notification;
+    constructor(passengerNotification, ridderNotification, db) {
+        this.passengerNotification = passengerNotification;
+        this.ridderNotification = ridderNotification;
         this.db = db;
     }
     async updateExpiredPurchaseOrders() {
@@ -40,7 +43,7 @@ let PurchaseOrderService = class PurchaseOrderService {
         return response.length;
     }
     async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
-        const responseOfCreatingPurchaseOrders = await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
+        return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
             creatorId: creatorId,
             description: createPurchaseOrderDto.description,
             initPrice: createPurchaseOrderDto.initPrice,
@@ -62,17 +65,6 @@ let PurchaseOrderService = class PurchaseOrderService {
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
-        if (!responseOfCreatingPurchaseOrders || responseOfCreatingPurchaseOrders.length === 0) {
-            throw exceptions_1.ClientCreatePurchaseOrderException;
-        }
-        const responseOfCreatingNotification = await this.notification.createPassengerNotificationByUserId(creatorId, "You just created a purchaseOrder", "temp description", "PurchaseOrder", responseOfCreatingPurchaseOrders[0].id);
-        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
-            throw exceptions_1.ClientCreatePassengerNotificationException;
-        }
-        return {
-            ...responseOfCreatingNotification,
-            ...responseOfCreatingPurchaseOrders,
-        };
     }
     async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
         return await this.db.select({
@@ -96,7 +88,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async getPurchaseOrderById(id) {
         return await this.db.query.PurchaseOrderTable.findFirst({
-            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id)),
+            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id)),
             columns: {
                 id: true,
                 initPrice: true,
@@ -365,12 +357,32 @@ let PurchaseOrderService = class PurchaseOrderService {
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         });
     }
-    async startPurchaseOrderWithoutInvite(id, userId, acceptAutoAcceptPurchaseOrderDto) {
+    async startPurchaseOrderWithoutInvite(id, userId, userName, acceptAutoAcceptPurchaseOrderDto) {
         return await this.db.transaction(async (tx) => {
-            await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+            const purchaseOrder = await tx.select({
+                passengerName: passenger_schema_1.PassengerTable.userName,
+            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
+            if (!purchaseOrder || purchaseOrder.length === 0) {
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            }
+            const responseOfRejectingOtherRidderInvites = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
                 status: "REJECTED",
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING")));
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"))).returning({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+                userId: ridderInvite_schema_1.RidderInviteTable.userId,
+            });
+            if (responseOfRejectingOtherRidderInvites && responseOfRejectingOtherRidderInvites.length !== 0) {
+                const responseOfCreatingNotificationToRejectOters = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfRejectingOtherRidderInvites.map((content) => {
+                    return (0, notificationTemplate_1.NotificationTemplateOfRejectingRiddererInvite)(purchaseOrder[0].passengerName, `${purchaseOrder[0].passengerName}'s order purchase order has started directly by some other ridder`, content.userId, content.id);
+                }));
+                if (!responseOfCreatingNotificationToRejectOters
+                    || responseOfCreatingNotificationToRejectOters.length !== responseOfRejectingOtherRidderInvites.length) {
+                    throw exceptions_1.ClientCreateRidderNotificationException;
+                }
+            }
             const responseOfDeletingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
                 status: "RESERVED",
                 updatedAt: new Date(),
@@ -405,6 +417,10 @@ let PurchaseOrderService = class PurchaseOrderService {
             if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
                 throw exceptions_1.ClientCreateOrderException;
             }
+            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfDirectlyStartOrder)(userName, responseOfDeletingPurchaseOrder[0].creatorId, responseOfCreatingOrder[0].id));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreatePassengerNotificationException;
+            }
             return [{
                     orderId: responseOfCreatingOrder[0].id,
                     price: responseOfCreatingOrder[0].finalPrice,
@@ -416,6 +432,35 @@ let PurchaseOrderService = class PurchaseOrderService {
                     endedAt: responseOfCreatingOrder[0].endedAt,
                     orderStatus: responseOfCreatingOrder[0].status,
                 }];
+        });
+    }
+    async cancelPurchaseOrderById(id, creatorId, creatorName) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfCancelingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+                status: "CANCEL",
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"))).returning({
+                id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                stauts: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            });
+            if (!responseOfCancelingPurchaseOrder || responseOfCancelingPurchaseOrder.length === 0) {
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            }
+            const responseOfCancelingRidderInvite = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
+                status: "CANCEL",
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.orderId, id), (0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.status, "CHECKING"))).returning({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+                ridderId: ridderInvite_schema_1.RidderInviteTable.userId,
+            });
+            if (!responseOfCancelingRidderInvite || responseOfCancelingRidderInvite.length === 0) {
+                throw exceptions_1.ClientInviteNotFoundException;
+            }
+            const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(responseOfCancelingRidderInvite.map((content) => {
+                return (0, notificationTemplate_1.NotificationTemplateOfCancelingPurchaseOrder)(creatorName, content.ridderId, responseOfCancelingPurchaseOrder[0].id);
+            }));
+            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+                throw exceptions_1.ClientCreateRidderNotificationException;
+            }
+            return responseOfCancelingPurchaseOrder;
         });
     }
     async deletePurchaseOrderById(id, creatorId) {
@@ -472,7 +517,8 @@ let PurchaseOrderService = class PurchaseOrderService {
 exports.PurchaseOrderService = PurchaseOrderService;
 exports.PurchaseOrderService = PurchaseOrderService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService, Object])
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [passenerNotification_service_1.PassengerNotificationService,
+        ridderNotification_service_1.RidderNotificationService, Object])
 ], PurchaseOrderService);
 //# sourceMappingURL=purchaseOrder.service.js.map

@@ -12,14 +12,33 @@ import {
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { point } from '../interfaces/point.interface';
-import { ClientCreateOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientSupplyOrderNotFoundException, ServerNeonAutoUpdateExpiredSupplyOrderException } from '../exceptions';
+import { 
+  ClientCreateOrderException, 
+  ClientCreatePassengerNotificationException, 
+  ClientCreateRidderNotificationException, 
+  ClientEndBeforeStartException, 
+  ClientInviteNotFoundException, 
+  ClientSupplyOrderNotFoundException, 
+  ServerNeonAutoUpdateExpiredSupplyOrderException 
+} from '../exceptions';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
+import { 
+  NotificationTemplateOfCancelingSupplyOrder, 
+  NotificationTemplateOfRejectingPassengerInvite, 
+  NotificationTemplateOfDirectlyStartOrder 
+} from '../notification/notificationTemplate';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 
 @Injectable()
 export class SupplyOrderService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
+  constructor(
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
+    @Inject(DRIZZLE) private db: DrizzleDB
+  ) {}
 
   /* ================================= Detect And Update Expired SupplyOrders operation ================================= */
   private async updateExpiredSupplyOrders() {
@@ -488,16 +507,45 @@ export class SupplyOrderService {
   async startSupplyOrderWithoutInvite(
     id: string, 
     userId: string, 
+    userName: string, 
     acceptAutoAcceptSupplyOrderDto: AcceptAutoAcceptSupplyOrderDto, 
   ) {
     return await this.db.transaction(async (tx) => {
-      await tx.update(PassengerInviteTable).set({
+      const supplyOrder = await tx.select({
+        ridderName: RidderTable.userName, 
+      }).from(SupplyOrderTable)
+        .where(eq(SupplyOrderTable.id, id))
+        .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
+      if (!supplyOrder || supplyOrder.length === 0) {
+        throw ClientSupplyOrderNotFoundException;
+      }
+
+      const responseOfRejectingOtherPassengerInvites = await tx.update(PassengerInviteTable).set({
         status: "REJECTED",
         updatedAt: new Date(),
       }).where(and(
         eq(PassengerInviteTable.orderId, id),
         eq(PassengerInviteTable.status, "CHECKING"),
-      )); // could probably don't return any responses, since there's no any invites to that supplyOrder
+      )).returning({
+        id: PassengerInviteTable.id, 
+        userId: PassengerInviteTable.userId, 
+      });
+      if (responseOfRejectingOtherPassengerInvites && responseOfRejectingOtherPassengerInvites.length !== 0) {
+        const responseOfCreatingNotificationToRejectOthers = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+          responseOfRejectingOtherPassengerInvites.map((content) => {
+            return NotificationTemplateOfRejectingPassengerInvite(
+              supplyOrder[0].ridderName as string, 
+              `${supplyOrder[0].ridderName}'s supply order has started directly by some other passenger`, 
+              content.userId, 
+              content.id, 
+            )
+          })
+        );
+        if (!responseOfCreatingNotificationToRejectOthers 
+            || responseOfCreatingNotificationToRejectOthers.length !== responseOfRejectingOtherPassengerInvites.length) {
+              throw ClientCreatePassengerNotificationException;
+        }
+      }
 
       const responseOfDeletingSupplyOrder = await tx.update(SupplyOrderTable).set({ // will delete this supplyOrder later
         status: "RESERVED",
@@ -512,8 +560,8 @@ export class SupplyOrderService {
       }
 
       const responseOfCreatingOrder = await tx.insert(OrderTable).values({
-        ridderId: userId,
-        passengerId: responseOfDeletingSupplyOrder[0].creatorId,
+        ridderId: responseOfDeletingSupplyOrder[0].creatorId,
+        passengerId: userId,
         prevOrderId: "PurchaseOrder" + " " + responseOfDeletingSupplyOrder[0].id, 
         finalPrice: responseOfDeletingSupplyOrder[0].initPrice, // the receiver accept the suggest price
         passengerDescription: responseOfDeletingSupplyOrder[0].description,
@@ -524,7 +572,6 @@ export class SupplyOrderService {
         finalEndAddress: responseOfDeletingSupplyOrder[0].endAddress,
         startAfter: responseOfDeletingSupplyOrder[0].startAfter,  // the receiver accept the suggest start time
         endedAt: responseOfDeletingSupplyOrder[0].endedAt,
-        // endAt: , // will be covered the autocomplete function powered by google in the future
       }).returning({
         id: OrderTable.id,
         finalPrice: OrderTable.finalPrice,
@@ -538,6 +585,17 @@ export class SupplyOrderService {
       });
       if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
         throw ClientCreateOrderException;
+      }
+
+      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+        NotificationTemplateOfDirectlyStartOrder(
+          userName, 
+          responseOfDeletingSupplyOrder[0].creatorId, 
+          responseOfCreatingOrder[0].id, 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
       }
 
       return [{
@@ -559,6 +617,56 @@ export class SupplyOrderService {
 
 
   /* ================================= Delete operations ================================= */
+  async cancelSupplyOrderById(
+    id: string, 
+    creatorId: string, 
+    creatorName: string, 
+  ) {
+    return await this.db.transaction(async (tx) => {
+      const responseOfCancelingSupplyOrder = await tx.update(SupplyOrderTable).set({
+        status: "CANCEL", 
+      }).where(and(
+        eq(SupplyOrderTable.id, id), 
+        eq(SupplyOrderTable.creatorId, creatorId), 
+        eq(SupplyOrderTable.status, "POSTED"),
+      )).returning({
+        id: SupplyOrderTable.id, 
+        stauts: SupplyOrderTable.status, 
+      });
+      if (!responseOfCancelingSupplyOrder || responseOfCancelingSupplyOrder.length === 0) {
+        throw ClientSupplyOrderNotFoundException;
+      }
+  
+      const responseOfCancelingPassengerInvite = await tx.update(PassengerInviteTable).set({
+        status: "CANCEL", 
+      }).where(and(
+        eq(PassengerInviteTable.orderId, id), 
+        eq(PassengerInviteTable.status, "CHECKING"), 
+      )).returning({
+        id: PassengerInviteTable.id, 
+        passengerId: PassengerInviteTable.userId, 
+      });
+      if (!responseOfCancelingPassengerInvite || responseOfCancelingPassengerInvite.length === 0) {
+          throw ClientInviteNotFoundException;
+      }
+  
+      const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+        responseOfCancelingPassengerInvite.map((content) => {
+          return NotificationTemplateOfCancelingSupplyOrder(
+            creatorName, 
+            content.passengerId, 
+            responseOfCancelingSupplyOrder[0].id, 
+          );
+        })
+      )
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreatePassengerNotificationException;
+      }
+  
+      return responseOfCancelingSupplyOrder;
+    });
+  }
+
   async deleteSupplyOrderById(id: string, creatorId: string) {
     return await this.db.delete(SupplyOrderTable)
       .where(and(

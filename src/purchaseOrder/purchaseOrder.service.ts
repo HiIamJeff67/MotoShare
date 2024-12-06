@@ -4,25 +4,40 @@ import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
+import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 import { point } from '../../src/interfaces';
 
 import { PurchaseOrderTable } from '../../src/drizzle/schema/purchaseOrder.schema';
+import { PassengerTable } from '../drizzle/schema/passenger.schema';
+import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { 
   GetAdjacentPurchaseOrdersDto, 
   GetSimilarRoutePurchaseOrdersDto 
 } from './dto/get-purchaseOrder.dto';
-import { PassengerTable } from '../drizzle/schema/passenger.schema';
-import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
-import { ClientCreateOrderException, ClientCreatePassengerNotificationException, ClientCreatePurchaseOrderException, ClientEndBeforeStartException, ClientInviteNotFoundException, ClientPurchaseOrderNotFoundException, ServerNeonAutoUpdateExpiredPurchaseOrderException } from '../exceptions';
+import { 
+  ClientCreateOrderException, 
+  ClientCreatePassengerNotificationException, 
+  ClientCreateRidderNotificationException, 
+  ClientEndBeforeStartException, 
+  ClientInviteNotFoundException, 
+  ClientPurchaseOrderNotFoundException, 
+  ServerNeonAutoUpdateExpiredPurchaseOrderException 
+} from '../exceptions';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
-import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { 
+  NotificationTemplateOfCancelingPurchaseOrder, 
+  NotificationTemplateOfRejectingRiddererInvite, 
+  NotificationTemplateOfDirectlyStartOrder, 
+} from '../notification/notificationTemplate';
 
 @Injectable()
 export class PurchaseOrderService {
   constructor(
-    private notification: PassengerNotificationService, 
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
 
@@ -47,7 +62,7 @@ export class PurchaseOrderService {
 
   /* ================================= Create operations ================================= */
   async createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto) {
-    const responseOfCreatingPurchaseOrders = await this.db.insert(PurchaseOrderTable).values({
+    return await this.db.insert(PurchaseOrderTable).values({
       creatorId: creatorId,
       description: createPurchaseOrderDto.description,
       initPrice: createPurchaseOrderDto.initPrice,
@@ -69,25 +84,6 @@ export class PurchaseOrderService {
       id: PurchaseOrderTable.id,
       status: PurchaseOrderTable.status,
     });
-    if (!responseOfCreatingPurchaseOrders || responseOfCreatingPurchaseOrders.length === 0) {
-      throw ClientCreatePurchaseOrderException;
-    }
-
-    const responseOfCreatingNotification = await this.notification.createPassengerNotificationByUserId(
-      creatorId, 
-      "You just created a purchaseOrder", 
-      "temp description", 
-      "PurchaseOrder", 
-      responseOfCreatingPurchaseOrders[0].id, 
-    );
-    if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
-      throw ClientCreatePassengerNotificationException;
-    }
-
-    return {
-      ...responseOfCreatingNotification, 
-      ...responseOfCreatingPurchaseOrders, 
-    };
   }
   /* ================================= Create operations ================================= */
 
@@ -96,7 +92,7 @@ export class PurchaseOrderService {
   async searchPurchaseOrdersByCreatorId(
     creatorId: string, 
     limit: number, 
-    offset: number,
+    offset: number, 
     isAutoAccept: boolean, 
   ) {
     return await this.db.select({
@@ -127,7 +123,7 @@ export class PurchaseOrderService {
   async getPurchaseOrderById(id: string) {
     return await this.db.query.PurchaseOrderTable.findFirst({
       where: and(
-        eq(PurchaseOrderTable.status, "POSTED"),
+        ne(PurchaseOrderTable.status, "RESERVED"),
         eq(PurchaseOrderTable.id, id),
       ),
       columns: {
@@ -511,16 +507,45 @@ export class PurchaseOrderService {
   async startPurchaseOrderWithoutInvite(
     id: string, 
     userId: string, 
+    userName: string, 
     acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto,
   ) {
     return await this.db.transaction(async (tx) => {
-      await tx.update(RidderInviteTable).set({
+      const purchaseOrder = await tx.select({
+        passengerName: PassengerTable.userName, 
+      }).from(PurchaseOrderTable)
+        .where(eq(PurchaseOrderTable.id, id))
+        .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
+      if (!purchaseOrder || purchaseOrder.length === 0) {
+        throw ClientPurchaseOrderNotFoundException;
+      }
+
+      const responseOfRejectingOtherRidderInvites = await tx.update(RidderInviteTable).set({
         status: "REJECTED",
         updatedAt: new Date(),
       }).where(and(
         eq(RidderInviteTable.orderId, id),
         eq(RidderInviteTable.status, "CHECKING"), 
-      )); // could probably don't return any responses, since there's no any invites to that purchaseOrder
+      )).returning({
+        id: RidderInviteTable.id, 
+        userId: RidderInviteTable.userId, 
+      });
+      if (responseOfRejectingOtherRidderInvites && responseOfRejectingOtherRidderInvites.length !== 0) {
+        const responseOfCreatingNotificationToRejectOters = await this.ridderNotification.createMultipleRidderNotificationsByUserId(
+          responseOfRejectingOtherRidderInvites.map((content) => {
+            return NotificationTemplateOfRejectingRiddererInvite(
+              purchaseOrder[0].passengerName as string, 
+              `${purchaseOrder[0].passengerName}'s order purchase order has started directly by some other ridder`, 
+              content.userId, 
+              content.id, 
+            )
+          })
+        );
+        if (!responseOfCreatingNotificationToRejectOters
+            || responseOfCreatingNotificationToRejectOters.length !== responseOfRejectingOtherRidderInvites.length) {
+              throw ClientCreateRidderNotificationException;
+        }
+      }
 
       const responseOfDeletingPurchaseOrder = await tx.update(PurchaseOrderTable).set({
         status: "RESERVED",
@@ -547,7 +572,6 @@ export class PurchaseOrderService {
         finalEndAddress: responseOfDeletingPurchaseOrder[0].endAddress,
         startAfter: responseOfDeletingPurchaseOrder[0].startAfter,  // the receiver accept the suggest start time
         endedAt: responseOfDeletingPurchaseOrder[0].endedAt,
-        // endAt: , // will be covered the autocomplete function powered by google in the future
       }).returning({
         id: OrderTable.id,
         finalPrice: OrderTable.finalPrice,
@@ -561,6 +585,17 @@ export class PurchaseOrderService {
       });
       if (!responseOfCreatingOrder || responseOfCreatingOrder.length === 0) {
         throw ClientCreateOrderException;
+      }
+
+      const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
+        NotificationTemplateOfDirectlyStartOrder(
+          userName, 
+          responseOfDeletingPurchaseOrder[0].creatorId, 
+          responseOfCreatingOrder[0].id, 
+        )
+      );
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreatePassengerNotificationException;
       }
 
       return [{
@@ -582,6 +617,56 @@ export class PurchaseOrderService {
 
 
   /* ================================= Delete operations ================================= */
+  async cancelPurchaseOrderById(
+    id: string, 
+    creatorId: string, 
+    creatorName: string, 
+  ) {
+    return await this.db.transaction(async (tx) => {
+      const responseOfCancelingPurchaseOrder = await tx.update(PurchaseOrderTable).set({
+        status: "CANCEL", 
+      }).where(and(
+        eq(PurchaseOrderTable.id, id), 
+        eq(PurchaseOrderTable.creatorId, creatorId), 
+        eq(PurchaseOrderTable.status, "POSTED"),
+      )).returning({
+        id: PurchaseOrderTable.id, 
+        stauts: PurchaseOrderTable.status, 
+      });
+      if (!responseOfCancelingPurchaseOrder || responseOfCancelingPurchaseOrder.length === 0) {
+        throw ClientPurchaseOrderNotFoundException;
+      }
+  
+      const responseOfCancelingRidderInvite = await tx.update(RidderInviteTable).set({
+        status: "CANCEL", 
+      }).where(and(
+        eq(RidderInviteTable.orderId, id), 
+        eq(RidderInviteTable.status, "CHECKING"), 
+      )).returning({
+        id: RidderInviteTable.id, 
+        ridderId: RidderInviteTable.userId, 
+      });
+      if (!responseOfCancelingRidderInvite || responseOfCancelingRidderInvite.length === 0) {
+          throw ClientInviteNotFoundException;
+      }
+  
+      const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(
+        responseOfCancelingRidderInvite.map((content) => {
+          return NotificationTemplateOfCancelingPurchaseOrder(
+            creatorName, 
+            content.ridderId, 
+            responseOfCancelingPurchaseOrder[0].id, 
+          );
+        })
+      )
+      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+        throw ClientCreateRidderNotificationException;
+      }
+  
+      return responseOfCancelingPurchaseOrder;
+    });
+  }
+
   async deletePurchaseOrderById(id: string, creatorId: string) {
     return await this.db.delete(PurchaseOrderTable)
       .where(and(

@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const supplyOrder_service_1 = require("./supplyOrder.service");
 const supplyOrder_controller_1 = require("./supplyOrder.controller");
 const drizzle_module_1 = require("../../src/drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let SupplyOrderModule = class SupplyOrderModule {
 };
 exports.SupplyOrderModule = SupplyOrderModule;
@@ -18,7 +19,7 @@ exports.SupplyOrderModule = SupplyOrderModule = __decorate([
     (0, common_1.Module)({
         controllers: [supplyOrder_controller_1.SupplyOrderController],
         providers: [supplyOrder_service_1.SupplyOrderService],
-        imports: [drizzle_module_1.DrizzleModule],
+        imports: [drizzle_module_1.DrizzleModule, notification_module_1.NotificationModule],
     })
 ], SupplyOrderModule);
 //# sourceMappingURL=supplyOrder.module.js.map

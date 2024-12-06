@@ -178,7 +178,7 @@ export class PassengerService {
   async updatePassengerInfoByUserId(
     userId: string, 
     updatePassengerInfoDto: UpdatePassengerInfoDto,
-    uploadedFile: Express.Multer.File | undefined = undefined,
+    uploadedAvatorFile: Express.Multer.File | undefined = undefined,
   ) {
     return await this.db.transaction(async (tx) => {
       const passengerInfo = await tx.select({
@@ -192,12 +192,11 @@ export class PassengerService {
         age: updatePassengerInfoDto.age,
         phoneNumber: updatePassengerInfoDto.phoneNumber,
         selfIntroduction: updatePassengerInfoDto.selfIntroduction,
-        ...(uploadedFile
-          ? { avatorUrl: await this.storage.uploadFile(
+        ...(uploadedAvatorFile
+          ? { avatorUrl: await this.storage.uploadAvatorFile(
                 passengerInfo[0].infoId,
-                "AvatorBucket",
-                "passengerAvators/",
-                uploadedFile
+                "passengerAvators",
+                uploadedAvatorFile
               ) 
             }
           : {}

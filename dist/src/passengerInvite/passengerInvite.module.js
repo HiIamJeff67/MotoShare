@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const passengerInvite_service_1 = require("./passengerInvite.service");
 const passengerInvite_controller_1 = require("./passengerInvite.controller");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let PassengerInviteModule = class PassengerInviteModule {
 };
 exports.PassengerInviteModule = PassengerInviteModule;
@@ -18,7 +19,7 @@ exports.PassengerInviteModule = PassengerInviteModule = __decorate([
     (0, common_1.Module)({
         controllers: [passengerInvite_controller_1.PassengerInviteController],
         providers: [passengerInvite_service_1.PassengerInviteService],
-        imports: [drizzle_module_1.DrizzleModule],
+        imports: [drizzle_module_1.DrizzleModule, notification_module_1.NotificationModule],
     })
 ], PassengerInviteModule);
 //# sourceMappingURL=passengerInvite.module.js.map

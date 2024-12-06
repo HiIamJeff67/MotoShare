@@ -142,9 +142,9 @@ let PassengerController = class PassengerController {
             });
         }
     }
-    async updateMyInfo(passenger, updatePassengerInfoDto, file = undefined, response) {
+    async updateMyInfo(passenger, updatePassengerInfoDto, avatorFile = undefined, response) {
         try {
-            const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto, file);
+            const res = await this.passengerService.updatePassengerInfoByUserId(passenger.id, updatePassengerInfoDto, avatorFile);
             if (!res)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -153,7 +153,9 @@ let PassengerController = class PassengerController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.InternalServerErrorException
+                || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -266,7 +268,7 @@ __decorate([
 ], PassengerController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('avatorFile')),
     (0, common_1.Patch)('updateMyInfo'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Body)()),

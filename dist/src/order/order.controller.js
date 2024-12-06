@@ -169,7 +169,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toStartedPassengerStatusById(id, passenger.id);
+            const res = await this.orderService.toStartedPassengerStatusById(id, passenger.id, passenger.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -193,7 +193,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toUnpaidPassengerStatusById(id, passenger.id);
+            const res = await this.orderService.toUnpaidPassengerStatusById(id, passenger.id, passenger.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -217,7 +217,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toFinishedPassengerStatusById(id, passenger.id);
+            const res = await this.orderService.toFinishedPassengerStatusById(id, passenger.id, passenger.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -243,7 +243,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toStartedRidderStatusById(id, ridder.id);
+            const res = await this.orderService.toStartedRidderStatusById(id, ridder.id, ridder.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -267,7 +267,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toUnpaidRidderStatusById(id, ridder.id);
+            const res = await this.orderService.toUnpaidRidderStatusById(id, ridder.id, ridder.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -291,7 +291,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.toFinishedRidderStatusById(id, ridder.id);
+            const res = await this.orderService.toFinishedRidderStatusById(id, ridder.id, ridder.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -317,7 +317,32 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.cancelAndDeleteOrderById(id, passenger.id);
+            const res = await this.orderService.cancelAndDeleteOrderById(id, passenger.id, passenger.userName, "Passenger");
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                prevOrderDeletedAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async cancelAndDeleteOrderForRidderById(ridder, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.orderService.cancelAndDeleteOrderById(id, ridder.id, ridder.userName, "Ridder");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
@@ -477,6 +502,16 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "cancelAndDeleteOrderForPassengerById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Delete)('ridder/cancelAndDeleteOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "cancelAndDeleteOrderForRidderById", null);
 exports.OrderController = OrderController = __decorate([
     (0, common_1.Controller)('order'),
     __metadata("design:paramtypes", [order_service_1.OrderService])

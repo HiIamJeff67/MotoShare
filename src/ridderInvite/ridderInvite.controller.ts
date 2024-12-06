@@ -51,7 +51,12 @@ export class RidderInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.ridderInviteService.createRidderInviteByOrderId(ridder.id, orderId, createRidderInviteDto);
+      const res = await this.ridderInviteService.createRidderInviteByOrderId(
+        ridder.id, 
+        ridder.userName, 
+        orderId, 
+        createRidderInviteDto
+      );
 
       if (!res || res.length === 0) throw ClientCreateRidderInviteException;
 
@@ -556,7 +561,12 @@ export class RidderInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, updateRidderInviteDto);
+      const res = await this.ridderInviteService.updateRidderInviteById(
+        id, 
+        ridder.id, 
+        ridder.userName, 
+        updateRidderInviteDto
+      );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
@@ -591,7 +601,12 @@ export class RidderInviteController {
         throw ApiMissingParameterException;
       }
 
-      const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, decideRidderInviteDto);
+      const res = await this.ridderInviteService.decideRidderInviteById(
+        id, 
+        passenger.id, 
+        passenger.userName, 
+        decideRidderInviteDto
+      );
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 

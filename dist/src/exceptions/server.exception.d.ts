@@ -12,6 +12,6 @@ export declare const ServerNeonAutoUpdateExpiredOrderException: InternalServerEr
 export declare const ServerSupabaseConnectionException: InternalServerErrorException;
 export declare const ServerSupabaseEnvVarNotFoundException: InternalServerErrorException;
 export declare const ServerSupabaseUploadFileParaNotFoundException: InternalServerErrorException;
-export declare const ServerSupabaseUploadFileException: InternalServerErrorException;
+export declare const ServerSupabaseUploadFileException: (message?: string) => InternalServerErrorException;
 export declare const ServerExtractJwtSecretEnvVariableException: InternalServerErrorException;
 export declare const ServerUnknownException: InternalServerErrorException;

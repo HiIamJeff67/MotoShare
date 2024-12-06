@@ -1,5 +1,5 @@
 export type PostedStatusType = "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-export const PostedStatusTypes: PostedStatusType[] = ["POSTED", "CANCEL"];   // not allowing "EXPIRED" and "RESERVED" to be specified
+export const PostedStatusTypes: PostedStatusType[] = ["POSTED"];   // not allowing "EXPIRED" and "RESERVED" to be specified
 
 /* =========== For PassengerInviteTable and RidderInviteTable =========== */
 export type InviteStatusType = "ACCEPTED" | "REJECTED" | "CHECKING" | "CANCEL";

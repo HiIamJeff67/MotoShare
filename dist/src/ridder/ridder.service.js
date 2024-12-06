@@ -159,7 +159,7 @@ let RidderService = class RidderService {
             eamil: ridder_schema_1.RidderTable.email,
         });
     }
-    async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedFile = undefined) {
+    async updateRidderInfoByUserId(userId, updateRidderInfoDto, uploadedAvatorFile = undefined, uploadedMotocyclePhotoFile = undefined) {
         return await this.db.transaction(async (tx) => {
             const ridderInfo = await tx.select({
                 infoId: ridderInfo_schema_1.RidderInfoTable.id,
@@ -173,10 +173,13 @@ let RidderService = class RidderService {
                 phoneNumber: updateRidderInfoDto.phoneNumber,
                 selfIntroduction: updateRidderInfoDto.selfIntroduction,
                 motocycleLicense: updateRidderInfoDto.motocycleLicense,
-                motocyclePhotoUrl: updateRidderInfoDto.motocylePhotoUrl,
                 motocycleType: updateRidderInfoDto.motocycleType,
-                ...(uploadedFile
-                    ? { avatorUrl: await this.storage.uploadFile(ridderInfo[0].infoId, "AvatorBucket", "ridderAvators/", uploadedFile)
+                ...(uploadedAvatorFile
+                    ? { avatorUrl: await this.storage.uploadAvatorFile(ridderInfo[0].infoId, "ridderAvators", uploadedAvatorFile)
+                    }
+                    : {}),
+                ...(uploadedMotocyclePhotoFile
+                    ? { motocyclePhotoUrl: await this.storage.uploadMotocyclePhotoFile(ridderInfo[0].infoId, "ridderMotocyclePhotos", uploadedMotocyclePhotoFile)
                     }
                     : {}),
                 updatedAt: new Date(),

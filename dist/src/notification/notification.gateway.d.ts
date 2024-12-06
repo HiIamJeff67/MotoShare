@@ -27,6 +27,7 @@ export declare class NotificationGateway implements OnGatewayConnection, OnGatew
         status: any;
         message: any;
     };
+    forceDisconnect(socket: Socket): void;
     notifyPassenger(userId: string, notification: NotificationInterface): void;
     notifyRidder(userId: string, notification: NotificationInterface): void;
     onTest(data: any): WsResponse<any>;

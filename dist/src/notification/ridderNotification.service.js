@@ -26,19 +26,19 @@ let RidderNotificationService = class RidderNotificationService {
         this.gateway = gateway;
         this.db = db;
     }
-    async createRidderNotificationByUserId(userId, title, description = "", notificationType, linkId) {
+    async createRidderNotificationByUserId(content) {
         const responseOfCreatingRidderNotification = await this.db.insert(schema_1.RidderNotificationTable).values({
-            userId: userId,
-            title: title,
-            description: description,
-            notificationType: notificationType,
-            linkId: linkId,
+            userId: content.userId,
+            title: content.title,
+            description: content.description,
+            notificationType: content.notificationType,
+            linkId: content.linkId,
             isRead: false,
         }).returning();
         if (!responseOfCreatingRidderNotification || responseOfCreatingRidderNotification.length === 0) {
             throw exceptions_1.ClientCreateRidderNotificationException;
         }
-        this.gateway.notifyRidder(userId, {
+        this.gateway.notifyRidder(content.userId, {
             id: responseOfCreatingRidderNotification[0].id,
             userId: responseOfCreatingRidderNotification[0].userId,
             title: responseOfCreatingRidderNotification[0].title,
@@ -48,7 +48,31 @@ let RidderNotificationService = class RidderNotificationService {
             isRead: responseOfCreatingRidderNotification[0].isRead,
             createdAt: responseOfCreatingRidderNotification[0].createdAt,
         });
-        return responseOfCreatingRidderNotification;
+        return [{
+                title: responseOfCreatingRidderNotification[0].title,
+                description: responseOfCreatingRidderNotification[0].description,
+                notificationType: responseOfCreatingRidderNotification[0].notificationType,
+                linkId: responseOfCreatingRidderNotification[0].linkId,
+            }];
+    }
+    async createMultipleRidderNotificationsByUserId(data) {
+        const responseOfCreatingRidderNotification = await this.db.insert(schema_1.RidderNotificationTable).values(data.map((content) => ({ ...content, isRead: false }))).returning();
+        if (!responseOfCreatingRidderNotification || responseOfCreatingRidderNotification.length !== data.length) {
+            throw exceptions_1.ClientCreateRidderNotificationException;
+        }
+        responseOfCreatingRidderNotification.map((content) => {
+            this.gateway.notifyRidder(content.userId, {
+                id: content.id,
+                userId: content.userId,
+                title: content.title,
+                description: content.description,
+                notificationType: content.notificationType,
+                linkId: content.linkId,
+                isRead: content.isRead,
+                createdAt: content.createdAt,
+            });
+        });
+        return responseOfCreatingRidderNotification.map(({ title, description, notificationType, linkId }) => ({ title, description, notificationType, linkId }));
     }
     async getRidderNotificationById(id, userId) {
         return await this.db.select({
@@ -78,7 +102,7 @@ let RidderNotificationService = class RidderNotificationService {
             .limit(limit)
             .offset(offset);
     }
-    async updateToReadStatusRidderNotification(id, userId) {
+    async updateRidderNotificationToReadStatus(id, userId) {
         return await this.db.update(schema_1.RidderNotificationTable).set({
             isRead: true,
         }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.RidderNotificationTable.id, id), (0, drizzle_orm_1.eq)(schema_1.RidderNotificationTable.userId, userId))).returning({

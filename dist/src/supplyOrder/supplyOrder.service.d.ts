@@ -3,9 +3,13 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dto/get-supplyOrder.dto';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
 export declare class SupplyOrderService {
+    private passengerNotification;
+    private ridderNotification;
     private db;
-    constructor(db: DrizzleDB);
+    constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     private updateExpiredSupplyOrders;
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
         id: string;
@@ -188,7 +192,7 @@ export declare class SupplyOrderService {
         id: string;
         status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
     }[]>;
-    startSupplyOrderWithoutInvite(id: string, userId: string, acceptAutoAcceptSupplyOrderDto: AcceptAutoAcceptSupplyOrderDto): Promise<{
+    startSupplyOrderWithoutInvite(id: string, userId: string, userName: string, acceptAutoAcceptSupplyOrderDto: AcceptAutoAcceptSupplyOrderDto): Promise<{
         orderId: string;
         price: number;
         finalStartCord: {
@@ -204,6 +208,10 @@ export declare class SupplyOrderService {
         startAfter: Date;
         endedAt: Date;
         orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+    }[]>;
+    cancelSupplyOrderById(id: string, creatorId: string, creatorName: string): Promise<{
+        id: string;
+        stauts: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
     }[]>;
     deleteSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;

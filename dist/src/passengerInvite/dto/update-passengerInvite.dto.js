@@ -30,4 +30,9 @@ __decorate([
     (0, class_validator_1.IsIn)(status_tpye_1.ReceiverStatusTypes, { message: "The status of PassengerInvite must be either ACCEPTED, REJECTED, or CHECKING" }),
     __metadata("design:type", String)
 ], DecidePassengerInviteDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.ValidateIf)(o => (o.status === "REJECT")),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], DecidePassengerInviteDto.prototype, "rejectReason", void 0);
 //# sourceMappingURL=update-passengerInvite.dto.js.map

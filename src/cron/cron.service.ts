@@ -8,20 +8,36 @@ import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
 import { OrderTable } from '../drizzle/schema/order.schema';
-import { ClientCreateHistoryException, ClientOrderNotFoundException } from '../exceptions';
+import { 
+  ClientCreateHistoryException, 
+  ClientCreatePassengerNotificationException, 
+  ClientCreateRidderNotificationException, 
+  ClientOrderNotFoundException 
+} from '../exceptions';
 import { HistoryTable } from '../drizzle/schema/history.schema';
 import { addDays } from '../utils/timeCalculator';
+import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { 
+  NotificationTemplateOfUpdatingExpiredPassengerInvites, 
+  NotificationTemplateOfUpdatingExpiredPurchaseOrders, 
+  NotificationTemplateOfUpdatingExpiredRidderInvites, 
+  NotificationTemplateOfUpdatingExpiredSupplyOrders 
+} from '../notification/notificationTemplate';
+import { NotificationTemplateOfUpdatingStartedOrders } from '../notification/notificationTemplate/updateStartedOrders.template';
 
 @Injectable()
 export class CronService {
   constructor(
     private config: ConfigService, 
+    private passengerNotification: PassengerNotificationService, 
+    private ridderNotification: RidderNotificationService, 
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
 
   /* ================================= Automated Update operations ================================= */
   async updateToExpiredPurchaseOrders() {
-    return await this.db.update(PurchaseOrderTable).set({
+    const responseOfUpdatingExpiredPurchaseOrders = await this.db.update(PurchaseOrderTable).set({
       status: "EXPIRED", 
       updatedAt: new Date(), 
     }).where(and(
@@ -29,11 +45,28 @@ export class CronService {
       lte(PurchaseOrderTable.startAfter, new Date()), 
     )).returning({
       id: PurchaseOrderTable.id, 
+      creatorId: PurchaseOrderTable.creatorId, 
     });
+    if (responseOfUpdatingExpiredPurchaseOrders && responseOfUpdatingExpiredPurchaseOrders.length !== 0) {
+      const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+        responseOfUpdatingExpiredPurchaseOrders.map((content) => {
+          return NotificationTemplateOfUpdatingExpiredPurchaseOrders(
+            content.creatorId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingNotification 
+          || responseOfCreatingNotification.length !== responseOfUpdatingExpiredPurchaseOrders.length) {
+            throw ClientCreatePassengerNotificationException;
+      }
+    }
+
+    return responseOfUpdatingExpiredPurchaseOrders.map(({ id }) => ({ id }));
   }
 
   async updateToExpiredSupplyOrders() {
-    return await this.db.update(SupplyOrderTable).set({
+    const responseOfUpdatingExpiredSupplyOrders = await this.db.update(SupplyOrderTable).set({
       status: "EXPIRED", 
       updatedAt: new Date(), 
     }).where(and(
@@ -41,13 +74,30 @@ export class CronService {
       lte(SupplyOrderTable.startAfter, new Date()), 
     )).returning({
       id: SupplyOrderTable.id, 
+      creatorId: SupplyOrderTable.creatorId, 
     });
+    if (responseOfUpdatingExpiredSupplyOrders && responseOfUpdatingExpiredSupplyOrders.length !== 0) {
+      const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(
+        responseOfUpdatingExpiredSupplyOrders.map((content) => {
+          return NotificationTemplateOfUpdatingExpiredSupplyOrders(
+            content.creatorId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingNotification 
+          || responseOfCreatingNotification.length !== responseOfUpdatingExpiredSupplyOrders.length) {
+            throw ClientCreateRidderNotificationException;
+      }
+    }
+
+    return responseOfUpdatingExpiredSupplyOrders.map(({ id }) => ({ id }));
   }
 
   // but there's no "EXPIRED" status in invites, 
   // we just update them to "CANCEL"
   async updateToExpiredPassengerInvites() {
-    return await this.db.update(PassengerInviteTable).set({
+    const responseOfUpdatingExpiredPassengerInvites = await this.db.update(PassengerInviteTable).set({
       status: "CANCEL", 
       updatedAt: new Date(), 
     }).where(and(
@@ -55,11 +105,28 @@ export class CronService {
       lte(PassengerInviteTable.suggestStartAfter, new Date()), 
     )).returning({
       id: PassengerInviteTable.id, 
+      userId: PassengerInviteTable.userId, 
     });
+    if (responseOfUpdatingExpiredPassengerInvites && responseOfUpdatingExpiredPassengerInvites.length !== 0) {
+      const responseOfCreatingNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+        responseOfUpdatingExpiredPassengerInvites.map((content) => {
+          return NotificationTemplateOfUpdatingExpiredPassengerInvites(
+            content.userId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingNotification 
+          || responseOfCreatingNotification.length !== responseOfUpdatingExpiredPassengerInvites.length) {
+            throw ClientCreatePassengerNotificationException;
+      }
+    }
+
+    return responseOfUpdatingExpiredPassengerInvites.map(({ id }) => ({ id }));
   }
 
   async updateToExpiredRidderInvites() {
-    return await this.db.update(RidderInviteTable).set({
+    const responseOfUpdatingToExpiredRidderInvites = await this.db.update(RidderInviteTable).set({
       status: "CANCEL", 
       updatedAt: new Date(), 
     }).where(and(
@@ -67,11 +134,28 @@ export class CronService {
       lte(RidderInviteTable.suggestStartAfter, new Date()), 
     )).returning({
       id: RidderInviteTable.id, 
+      userId: RidderInviteTable.userId, 
     });
+    if (responseOfUpdatingToExpiredRidderInvites && responseOfUpdatingToExpiredRidderInvites.length !== 0) {
+      const responseOfCreatingNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(
+        responseOfUpdatingToExpiredRidderInvites.map((content) => {
+          return NotificationTemplateOfUpdatingExpiredRidderInvites(
+            content.userId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingNotification 
+          || responseOfCreatingNotification.length !== responseOfUpdatingToExpiredRidderInvites.length) {
+            throw ClientCreateRidderNotificationException;
+      }
+    }
+
+    return responseOfUpdatingToExpiredRidderInvites.map(({ id }) => ({ id }));
   }
 
   async updateToStartedOrders() {
-    return await this.db.update(OrderTable).set({
+    const responseOfUpdatingStartedOrders = await this.db.update(OrderTable).set({
       passengerStatus: "STARTED", 
       ridderStatus: "STARTED", 
     }).where(and(
@@ -80,7 +164,38 @@ export class CronService {
       lte(OrderTable.startAfter, new Date()), 
     )).returning({
       id: OrderTable.id, 
+      passengerId: OrderTable.passengerId, 
+      ridderId: OrderTable.ridderId, 
     });
+    if (responseOfUpdatingStartedOrders && responseOfUpdatingStartedOrders.length !== 0) {
+      const responseOfCreatingPassengerNotification = await this.passengerNotification.createMultiplePassengerNotificationByUserId(
+        responseOfUpdatingStartedOrders.map((content) => {
+          return NotificationTemplateOfUpdatingStartedOrders(
+            content.passengerId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingPassengerNotification 
+        || responseOfCreatingPassengerNotification.length !== responseOfUpdatingStartedOrders.length) {
+          throw ClientCreatePassengerNotificationException;
+      }
+
+      const responseOfCreatingRidderNotification = await this.ridderNotification.createMultipleRidderNotificationsByUserId(
+        responseOfUpdatingStartedOrders.map((content) => {
+          return NotificationTemplateOfUpdatingStartedOrders(
+            content.ridderId, 
+            content.id, 
+          );
+        })
+      );
+      if (!responseOfCreatingRidderNotification 
+        || responseOfCreatingRidderNotification.length !== responseOfUpdatingStartedOrders.length) {
+          throw ClientCreateRidderNotificationException;
+      }
+    }
+
+    return responseOfUpdatingStartedOrders.map(({ id }) => ({ id }));
   }
   /* ================================= Automated Update operations ================================= */
 

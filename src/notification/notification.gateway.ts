@@ -21,6 +21,7 @@ import { UserRoleType } from '../types';
 import { SocketUserInterface, SocketMetaPayloadInterface } from '../interfaces/socket.interface';
 import { HttpStatusCode } from '../enums';
 import { NotificationInterface } from '../interfaces';
+import { use } from 'passport';
 
 @WebSocketGateway({ namespace: 'notifications' })
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -104,9 +105,16 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 			);
 
 			console.log({ ...user, socketId: socket.id });	// only while developing
+			if (this.socketMap.has(user.id)) {
+				const existingUser = this.socketMap.get(user.id);
+				if (existingUser) {
+					this.socketMap.delete(user.id);
+					existingUser.socket.disconnect(true);
+				}
+			}
 			this.socketMap.set(user.id, {
 				...user, 
-				socketId: socket.id, 
+				socket: socket, 
 			});
 
 			socket.join(`${socket.id}'s notification`);	// let the users join their notification room to listen notifications
@@ -130,10 +138,11 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   	handleDisconnect(socket: Socket) {
 		try {
 			const [userId, userData] = Array.from(this.socketMap.entries()).find(
-				([, metaPayloads]) => metaPayloads.socketId === socket.id,
+				([, metaPayloads]) => metaPayloads.socket.id === socket.id,
 			) || [undefined, undefined];
 			if (!userId || !userData) throw ServerUserNotFoundInSocketMapException;
 	
+			socket.disconnect(true);
 			this.socketMap.delete(userId);
 			console.log(`User ${userId} disconnected with socket ID ${socket.id}`);	// only while developing
 			return {
@@ -148,27 +157,30 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 			};
 		}
   	}
+
+	@SubscribeMessage('forceDisconnect')
+	forceDisconnect(socket: Socket) {
+		if (socket) {
+			socket.disconnect(true);
+		}
+	}
 	/* ================================= Connection & Disconnection operations ================================= */
 
 
 	/* ================================= Details Database operations ================================= */
 	notifyPassenger(userId: string, notification: NotificationInterface) {
-		console.log(`Pushing notification to user ${userId}: ${notification}`);
-    	this.server.emit(`user_${userId}_notifications`, notification);
-		const socket = this.socketMap.get(userId);
-		if (socket && socket.role === "Passenger") {
-			console.log(`Pushing to room : ${socket.socketId}'s notification`)
-			this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+		const socketUser = this.socketMap.get(userId);
+		if (socketUser && socketUser.role === "Passenger") {
+			console.log(`Pushing to room : ${socketUser.socket.id}'s notification`)
+			this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
 		}
 	}
 
 	notifyRidder(userId: string, notification: NotificationInterface) {
-		console.log(`Pushing notification to user ${userId}: ${notification}`);
-    	this.server.emit(`user_${userId}_notifications`, notification);
-		const socket = this.socketMap.get(userId);
-		if (socket && socket.role === "Ridder") {
-			console.log(`Pushing to room : ${socket.socketId}'s notification`)
-			this.server.to(`${socket.socketId}'s notification`).emit(`notification`, notification);
+		const socketUser = this.socketMap.get(userId);
+		if (socketUser && socketUser.role === "Ridder") {
+			console.log(`Pushing to room : ${socketUser.socket.id}'s notification`)
+			this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
 		}
 	}
 	/* ================================= Details Database operations ================================= */

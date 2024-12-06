@@ -9,7 +9,9 @@ import {
   UploadedFile,
   Post,
   NotAcceptableException,
-  Patch
+  Patch,
+  UploadedFiles,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { RidderService } from './ridder.service';
 import { Response } from 'express';
@@ -29,10 +31,10 @@ import { Ridder } from '../auth/decorator';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { DeleteRidderDto } from './dto/delete-ridder.dto';
 import { toNumber } from '../utils/stringParser';
-import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { FileInterceptorMegaBytes, MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 
 @Controller('ridder')
 export class RidderController {
@@ -209,16 +211,25 @@ export class RidderController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'avatorFile', maxCount: 1 }, 
+    { name: 'motocyclePhotoFile', maxCount: 1 }, 
+  ]))
   @Patch('updateMyInfo')
   async updateMyInfo(
     @Ridder() ridder: RidderType,
     @Body() updateRidderInfoDto: UpdateRidderInfoDto,
-    @UploadedFile() file: Express.Multer.File | undefined = undefined,
+    @UploadedFiles() files: { avatorFile?: Express.Multer.File[], motocyclePhotoFile?: Express.Multer.File[] }, 
     @Res() response: Response,
   ) {
     try {
-      const res = await this.ridderService.updateRidderInfoByUserId(ridder.id, updateRidderInfoDto, file);
+
+      const res = await this.ridderService.updateRidderInfoByUserId(
+        ridder.id, 
+        updateRidderInfoDto, 
+        (files.avatorFile ? files.avatorFile[0] : undefined), 
+        (files.motocyclePhotoFile ? files.motocyclePhotoFile[0] : undefined), 
+      );
 
       if (!res) throw ClientRidderNotFoundException;
 
@@ -228,7 +239,9 @@ export class RidderController {
       });
     } catch (error) {
       if (!(error instanceof UnauthorizedException
-        || error instanceof NotFoundException)) {
+        || error instanceof NotFoundException
+        || error instanceof InternalServerErrorException
+        || error instanceof NotAcceptableException)) {
           error = ClientUnknownException;
       }
       
