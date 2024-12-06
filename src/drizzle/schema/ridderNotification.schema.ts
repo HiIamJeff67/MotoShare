@@ -11,7 +11,7 @@ export const RidderNotificationTable = pgTable("ridderNotification", {
     title: text("title").notNull(), 
     description: text("description"), 
     notificationType: notificationTypeEnum("notificationType").notNull(), 
-    linkId: text("linkId"), 
+    linkId: text("linkId").notNull(), 
     isRead: boolean("isRead").notNull().default(false), 
     createdAt: timestamp("createdAt").notNull().defaultNow(), 
 }, (table) => {

@@ -5,7 +5,7 @@ export interface NotificationTemplateInterface {
     title: string
     description: string | null
     notificationType: NotificationType
-    linkId: string | null
+    linkId: string
 }
 
 export interface NotificationInterface {
@@ -14,7 +14,7 @@ export interface NotificationInterface {
     title: string
     description: string | null
     notificationType: NotificationType
-    linkId: string | null
+    linkId: string
     isRead: boolean
     createdAt: Date
 }

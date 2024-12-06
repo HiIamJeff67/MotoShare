@@ -25,6 +25,8 @@ import {
   NotificationTemplateOfUpdatingExpiredSupplyOrders 
 } from '../notification/notificationTemplate';
 import { NotificationTemplateOfUpdatingStartedOrders } from '../notification/notificationTemplate/updateStartedOrders.template';
+import { PassengerNotificationTable } from '../drizzle/schema/passengerNotification.schema';
+import { RidderNotificationTable } from '../drizzle/schema/ridderNotification.schema';
 
 @Injectable()
 export class CronService {
@@ -244,27 +246,27 @@ export class CronService {
   async deleteExpiredOrders() {
     return await this.db.transaction(async (tx) => {
       const responseOfDeletingOrders = await tx.delete(OrderTable)
-      .where(and(
-        ne(OrderTable.passengerStatus, "FINISHED"), 
-        ne(OrderTable.ridderStatus, "FINISHED"), 
-        lte(OrderTable.endedAt, new Date()), 
-      )).returning({
-        passengerId: OrderTable.passengerId,
-          ridderId: OrderTable.ridderId,
-          prevOrderId: OrderTable.prevOrderId,
-          finalPrice: OrderTable.finalPrice,
-          passengerDescription: OrderTable.passengerDescription, 
-          ridderDescription: OrderTable.ridderDescription, 
-          finalStartCord: OrderTable.finalStartCord,
-          finalEndCord: OrderTable.finalEndCord,
-          finalStartAddress: OrderTable.finalStartAddress,
-          finalEndAddress: OrderTable.finalEndAddress,
-          startAfter: OrderTable.startAfter,
-          endedAt: OrderTable.endedAt,
-      });
-      if (!responseOfDeletingOrders || responseOfDeletingOrders.length === 0) {
-        throw ClientOrderNotFoundException;
-      }
+        .where(and(
+          ne(OrderTable.passengerStatus, "FINISHED"), 
+          ne(OrderTable.ridderStatus, "FINISHED"), 
+          lte(OrderTable.endedAt, new Date()), 
+        )).returning({
+          passengerId: OrderTable.passengerId,
+            ridderId: OrderTable.ridderId,
+            prevOrderId: OrderTable.prevOrderId,
+            finalPrice: OrderTable.finalPrice,
+            passengerDescription: OrderTable.passengerDescription, 
+            ridderDescription: OrderTable.ridderDescription, 
+            finalStartCord: OrderTable.finalStartCord,
+            finalEndCord: OrderTable.finalEndCord,
+            finalStartAddress: OrderTable.finalStartAddress,
+            finalEndAddress: OrderTable.finalEndAddress,
+            startAfter: OrderTable.startAfter,
+            endedAt: OrderTable.endedAt,
+        });
+        if (!responseOfDeletingOrders || responseOfDeletingOrders.length === 0) {
+          throw ClientOrderNotFoundException;
+        }
 
       const responseOfCreatingHistories = await tx.insert(HistoryTable).values({
         ridderId: responseOfDeletingOrders[0].ridderId,
@@ -292,6 +294,22 @@ export class CronService {
         ...responseOfCreatingHistories,
       }];
     });
+  }
+
+  async deleteExpiredPassengerNotifications() {
+    return await this.db.delete(PassengerNotificationTable)
+      .where(lte(PassengerNotificationTable.createdAt, addDays(-14)))
+      .returning({
+        id: PassengerNotificationTable.id, 
+      });
+  }
+
+  async deleteExpiredRidderNotifications() {
+    return await this.db.delete(RidderNotificationTable)
+      .where(lte(RidderNotificationTable.createdAt, addDays(-14)))
+      .returning({
+        id: RidderNotificationTable.id, 
+      });
   }
   /* ================================= Automated Delete operations ================================= */
 }

@@ -30,5 +30,7 @@ __exportStar(require("./passengerInvite.schema"), exports);
 __exportStar(require("./ridderInvite.schema"), exports);
 __exportStar(require("./order.schema"), exports);
 __exportStar(require("./history.schema"), exports);
+__exportStar(require("./passengerPreferences.schema"), exports);
+__exportStar(require("./ridderPreferences.schema"), exports);
 __exportStar(require("./enums"), exports);
 //# sourceMappingURL=schema.js.map

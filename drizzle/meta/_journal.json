@@ -183,6 +183,20 @@
       "when": 1733152455558,
       "tag": "0025_flowery_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1733473522506,
+      "tag": "0026_complete_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1733490245607,
+      "tag": "0027_cute_wallow",
+      "breakpoints": true
     }
   ]
 }

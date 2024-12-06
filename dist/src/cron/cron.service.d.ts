@@ -363,4 +363,10 @@ export declare class CronService {
             historyId: string;
         } | undefined;
     }[]>;
+    deleteExpiredPassengerNotifications(): Promise<{
+        id: string;
+    }[]>;
+    deleteExpiredRidderNotifications(): Promise<{
+        id: string;
+    }[]>;
 }

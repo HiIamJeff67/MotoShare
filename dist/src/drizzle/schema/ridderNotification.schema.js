@@ -13,7 +13,7 @@ exports.RidderNotificationTable = (0, pg_core_1.pgTable)("ridderNotification", {
     title: (0, pg_core_1.text)("title").notNull(),
     description: (0, pg_core_1.text)("description"),
     notificationType: (0, enums_1.notificationTypeEnum)("notificationType").notNull(),
-    linkId: (0, pg_core_1.text)("linkId"),
+    linkId: (0, pg_core_1.text)("linkId").notNull(),
     isRead: (0, pg_core_1.boolean)("isRead").notNull().default(false),
     createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
 }, (table) => {

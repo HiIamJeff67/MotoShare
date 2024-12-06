@@ -19,7 +19,7 @@ const guard_1 = require("../auth/guard");
 const decorator_1 = require("../auth/decorator");
 const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
-const axios_1 = require("axios");
+const enums_1 = require("../enums");
 const constants_1 = require("../constants");
 const utils_1 = require("../utils");
 let RidderNotificationController = class RidderNotificationController {
@@ -34,7 +34,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.getRidderNotificationById(id, ridder.id);
             if (!res || res.length === 0)
                 exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -58,7 +58,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.searchPaginationRidderNotifications(ridder.id, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -80,7 +80,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.updateRidderNotificationToReadStatus(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -101,7 +101,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.deleteRidderNotification(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException

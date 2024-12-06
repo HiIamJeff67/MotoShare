@@ -61,7 +61,10 @@ export class PurchaseOrderService {
 
 
   /* ================================= Create operations ================================= */
-  async createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto) {
+  async createPurchaseOrderByCreatorId(
+    creatorId: string, 
+    createPurchaseOrderDto: CreatePurchaseOrderDto
+  ) {
     return await this.db.insert(PurchaseOrderTable).values({
       creatorId: creatorId,
       description: createPurchaseOrderDto.description,

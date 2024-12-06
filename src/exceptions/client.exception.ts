@@ -121,13 +121,25 @@ export const ClientHistoryNotFoundException = new NotFoundException({
 // E-C-110
 export const ClientPassengerNotificationNotFoundException = new NotFoundException({
     case: "E-C-110", 
-    message: "Failed to find any passenger notifications", 
+    message: "Failed to find any passengerNotifications", 
 });
 
 // E-C-111
 export const ClientRidderNotificationNotFoundException = new NotFoundException({
     case: "E-C-111", 
-    message: "Failed to find any ridder notifications", 
+    message: "Failed to find any ridderNotifications", 
+});
+
+// E-C-112
+export const ClientPassengerPreferenceNotFoundException = new NotFoundException({
+    case: "E-C-112", 
+    message: "Failed to find any passengerPreferences", 
+});
+
+// E-C-113
+export const ClientRidderPreferenceNotFoundException = new NotFoundException({
+    case: "E-C-113", 
+    message: "Failed to find any ridderPreferences", 
 });
 
 /* ============================== Error about select operation ============================== */
@@ -241,7 +253,19 @@ export const ClientCreatePassengerNotificationException = new ForbiddenException
 // E-C-218
 export const ClientCreateRidderNotificationException = new ForbiddenException({
     case: "E-C-218", 
-    message: "Failed to create ridderNotification", 
+    message: "Failed to create a ridderNotification", 
+});
+
+// E-C-219
+export const ClientCreatePassengerPreferenceException = new ForbiddenException({
+    case: "E-C-219", 
+    message: "Failed to create a passengerPreference", 
+});
+
+// E-C-220
+export const ClientCreateRidderPreferenceException = new ForbiddenException({
+    case: "E-C-220", 
+    message: "Failed to create a ridderPreference", 
 });
 
 /* ============================== Error about create operation ============================== */

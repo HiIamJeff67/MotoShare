@@ -127,7 +127,7 @@ export class PassengerService {
     offset: number,
   ) {
     return await this.db.query.PassengerTable.findMany({
-      ...(userName && {where: like(PassengerTable.userName, userName + "%")}), // using entire prefix matching to search relative users
+      ...(userName && {where: like(PassengerTable.userName, userName + "%")}), // using prefix matching to search relative users
       columns: {
         userName: true,
         email: true,

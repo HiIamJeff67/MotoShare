@@ -29,6 +29,8 @@ const passenerNotification_service_1 = require("../notification/passenerNotifica
 const ridderNotification_service_1 = require("../notification/ridderNotification.service");
 const notificationTemplate_1 = require("../notification/notificationTemplate");
 const updateStartedOrders_template_1 = require("../notification/notificationTemplate/updateStartedOrders.template");
+const passengerNotification_schema_1 = require("../drizzle/schema/passengerNotification.schema");
+const ridderNotification_schema_1 = require("../drizzle/schema/ridderNotification.schema");
 let CronService = class CronService {
     constructor(config, passengerNotification, ridderNotification, db) {
         this.config = config;
@@ -207,6 +209,20 @@ let CronService = class CronService {
             return [{
                     ...responseOfCreatingHistories,
                 }];
+        });
+    }
+    async deleteExpiredPassengerNotifications() {
+        return await this.db.delete(passengerNotification_schema_1.PassengerNotificationTable)
+            .where((0, drizzle_orm_1.lte)(passengerNotification_schema_1.PassengerNotificationTable.createdAt, (0, timeCalculator_1.addDays)(-14)))
+            .returning({
+            id: passengerNotification_schema_1.PassengerNotificationTable.id,
+        });
+    }
+    async deleteExpiredRidderNotifications() {
+        return await this.db.delete(ridderNotification_schema_1.RidderNotificationTable)
+            .where((0, drizzle_orm_1.lte)(ridderNotification_schema_1.RidderNotificationTable.createdAt, (0, timeCalculator_1.addDays)(-14)))
+            .returning({
+            id: ridderNotification_schema_1.RidderNotificationTable.id,
         });
     }
 };

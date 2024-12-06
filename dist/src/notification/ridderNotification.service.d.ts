@@ -11,13 +11,13 @@ export declare class RidderNotificationService {
         title: string;
         description: string | null;
         notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
-        linkId: string | null;
+        linkId: string;
     }[]>;
     createMultipleRidderNotificationsByUserId(data: NotificationTemplateInterface[]): Promise<{
         title: string;
         description: string | null;
         notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
-        linkId: string | null;
+        linkId: string;
     }[]>;
     getRidderNotificationById(id: string, userId: string): Promise<{
         id: string;
@@ -26,7 +26,7 @@ export declare class RidderNotificationService {
         title: string;
         description: string | null;
         notificationType: "PurchaseOrder" | "SupplyOrder" | "PassengerInvite" | "RidderInvite" | "Order" | "History" | "Payment" | "System";
-        linkId: string | null;
+        linkId: string;
         isRead: boolean;
         createdAt: Date;
     }[]>;

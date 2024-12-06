@@ -89,7 +89,7 @@ export declare const PassengerNotificationTable: import("drizzle-orm/pg-core").P
             columnType: "PgText";
             data: string;
             driverParam: string;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;

@@ -22,6 +22,8 @@ import { join } from 'path';
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter"
 import { CronModule } from './cron/cron.module';
 import { NotificationModule } from './notification/notification.module';
+import { PassengerPreferencesModule } from './passengerPreferences/passengerPreferences.module';
+import { RidderPreferencesModule } from './ridderPreferences/ridderPreferences.module';
 
 @Module({
   imports: [
@@ -37,7 +39,7 @@ import { NotificationModule } from './notification/notification.module';
         }, 
       }, 
       template: {
-        dir: join(__dirname, 'emailTemplates'), 
+        dir: join(__dirname, 'email/emailTemplates'), 
         adapter: new HandlebarsAdapter()
       }
     }), 
@@ -56,7 +58,9 @@ import { NotificationModule } from './notification/notification.module';
     RidderAuthModule,
     EmailModule,
     CronModule,
-    NotificationModule, 
+    NotificationModule,
+    PassengerPreferencesModule,
+    RidderPreferencesModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

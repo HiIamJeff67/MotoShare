@@ -188,28 +188,34 @@ export class CronController {
   async deleteCronJobsWorkflow(@Res() response: Response) {
     try {
 
-      const responseOfDeleteExpiredPurchaseOrders = await this.cronService.deleteExpiredPurchaseOrders();
-      const responseOfDeleteExpiredSupplyOrders = await this.cronService.deleteExpiredSupplyOrders();
-      const responseOfDeleteExpiredPassengerInvites = await this.cronService.deleteExpiredPassengerInvites();
-      const responseOfDeleteExpiredRidderInvites = await this.cronService.deleteExpiredRidderInvites();
-      const responseOfDeleteExpiredOrders = await this.cronService.deleteExpiredOrders();
+      const responseOfDeletingExpiredPurchaseOrders = await this.cronService.deleteExpiredPurchaseOrders();
+      const responseOfDeletingExpiredSupplyOrders = await this.cronService.deleteExpiredSupplyOrders();
+      const responseOfDeletingExpiredPassengerInvites = await this.cronService.deleteExpiredPassengerInvites();
+      const responseOfDeletingExpiredRidderInvites = await this.cronService.deleteExpiredRidderInvites();
+      const responseOfDeletingExpiredOrders = await this.cronService.deleteExpiredOrders();
+      const responseOfDeletingExpiredPassengerNotifications = await this.cronService.deleteExpiredPassengerNotifications();
+      const responseOfDeletingExpiredRidderNotifications = await this.cronService.deleteExpiredRidderNotifications();
       
       response.status(HttpStatusCode.Ok).send({
         deletedAt: new Date(), 
         message: "All the specified Cron Jobs are done", 
         jobs: {
-          deleteExpiredPurchaseOrders: Boolean(responseOfDeleteExpiredPurchaseOrders), 
-          deleteExpiredSupplyOrders: Boolean(responseOfDeleteExpiredSupplyOrders), 
-          deleteExpiredPassengerInvites: Boolean(responseOfDeleteExpiredPassengerInvites), 
-          deleteExpiredRidderInvites: Boolean(responseOfDeleteExpiredRidderInvites), 
-          deleteExpiredOrders: Boolean(responseOfDeleteExpiredOrders), 
+          deleteExpiredPurchaseOrders: Boolean(responseOfDeletingExpiredPurchaseOrders), 
+          deleteExpiredSupplyOrders: Boolean(responseOfDeletingExpiredSupplyOrders), 
+          deleteExpiredPassengerInvites: Boolean(responseOfDeletingExpiredPassengerInvites), 
+          deleteExpiredRidderInvites: Boolean(responseOfDeletingExpiredRidderInvites), 
+          deleteExpiredOrders: Boolean(responseOfDeletingExpiredOrders), 
+          deleteExpiredPassengerNotifications: Boolean(responseOfDeletingExpiredPassengerNotifications), 
+          deleteExpiredRidderNotifications: Boolean(responseOfDeletingExpiredRidderNotifications), 
         }, 
         dataCount: {
-          numberOfExpiredPurchaseOrders: responseOfDeleteExpiredPurchaseOrders.length, 
-          numberOfExpiredSupplyOrders: responseOfDeleteExpiredSupplyOrders.length, 
-          numberOfExpiredPassengerInvites: responseOfDeleteExpiredPassengerInvites.length, 
-          numberOfExpiredRidderInvites: responseOfDeleteExpiredRidderInvites.length, 
-          numberOfStartedOrders: responseOfDeleteExpiredOrders.length, 
+          numberOfExpiredPurchaseOrders: responseOfDeletingExpiredPurchaseOrders.length, 
+          numberOfExpiredSupplyOrders: responseOfDeletingExpiredSupplyOrders.length, 
+          numberOfExpiredPassengerInvites: responseOfDeletingExpiredPassengerInvites.length, 
+          numberOfExpiredRidderInvites: responseOfDeletingExpiredRidderInvites.length, 
+          numberOfStartedOrders: responseOfDeletingExpiredOrders.length, 
+          numberOfExpiredPassengerNotifications: responseOfDeletingExpiredPassengerNotifications.length, 
+          numberOfExpiredRidderNotifications: responseOfDeletingExpiredRidderNotifications.length, 
         }, 
       })
     } catch (error) {

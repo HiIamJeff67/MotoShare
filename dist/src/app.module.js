@@ -31,6 +31,8 @@ const path_1 = require("path");
 const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
 const cron_module_1 = require("./cron/cron.module");
 const notification_module_1 = require("./notification/notification.module");
+const passengerPreferences_module_1 = require("./passengerPreferences/passengerPreferences.module");
+const ridderPreferences_module_1 = require("./ridderPreferences/ridderPreferences.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -49,7 +51,7 @@ exports.AppModule = AppModule = __decorate([
                     },
                 },
                 template: {
-                    dir: (0, path_1.join)(__dirname, 'emailTemplates'),
+                    dir: (0, path_1.join)(__dirname, 'email/emailTemplates'),
                     adapter: new handlebars_adapter_1.HandlebarsAdapter()
                 }
             }),
@@ -69,6 +71,8 @@ exports.AppModule = AppModule = __decorate([
             email_module_1.EmailModule,
             cron_module_1.CronModule,
             notification_module_1.NotificationModule,
+            passengerPreferences_module_1.PassengerPreferencesModule,
+            ridderPreferences_module_1.RidderPreferencesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
