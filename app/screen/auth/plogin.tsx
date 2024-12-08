@@ -22,14 +22,24 @@ import { setUser } from "../../(store)/userSlice";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {signIn} from './Gsignin';
 import { z } from "zod";
 
 // 驗證規則
+GoogleSignin.configure({
+  webClientId: '1025910817637-5ft7cl4a6tgjbcltusfqjsp31clnd61e.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+  offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+  forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
+  iosClientId: '1025910817637-akkk9ocfjqufrfpm0790qdf7aso8d7vd.apps.googleusercontent.com',
+});
+
 const usernameSchema = z
   .string()
-  .regex(/^[a-zA-Z0-9_]+$/, "使用者名稱只能包含英文字母、數字和底線")
-  .min(4, "使用者名稱至少需要4個字元")
-  .max(20, "使用者名稱最多20個字元");
+  .regex(/^[a-zA-Z0-9_]+$/, "1111111111")
+  .min(4, "213123")
+  .max(20, "12312");
 
 const emailSchema = z
   .string()
@@ -305,7 +315,7 @@ const PassengerLogin = () => {
           <Text style={styles.otherLoginText}>使用其他方式</Text>
         </View>
         <View style={styles.socialContainer}>
-          <TouchableWithoutFeedback onPress={() => handleSocialLogin("Google")}>
+          <TouchableWithoutFeedback onPress={() => signIn}>
             <Image
               source={require("../../../assets/images/google.png")}
               style={styles.socialIcon}
