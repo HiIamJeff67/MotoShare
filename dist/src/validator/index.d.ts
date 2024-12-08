@@ -7,3 +7,4 @@ export * from "./IsPhoneNumberString.validator";
 export * from "./IsStartBeforeEnd.validator";
 export * from "./costomTextLength.validator";
 export * from "./IsIntString.validator";
+export * from "./IsPeriodicDateString.validate";

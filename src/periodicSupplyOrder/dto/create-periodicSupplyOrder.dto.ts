@@ -1,6 +1,6 @@
 import { IsBooleanString, IsDateString, IsIn, IsLatitude, IsLongitude, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator"
 import { DaysOfWeekType, DaysOfWeekTypes } from "../../types"
-import { IsAfterNow, IsEndAfterStart, IsIntString, IsStartBeforeEnd, MaxNumberString, MinNumberString } from "../../validator"
+import { IsAfterNow, IsEndAfterStart, IsIntString, IsPeriodicDateString, IsStartBeforeEnd, MaxNumberString, MinNumberString } from "../../validator"
 import { MAX_INIT_PRICE, MAX_TOLERABLE_RDV, MIN_INIT_PRICE, MIN_TOLERABLE_RDV } from "../../constants"
 
 export class CreatePeriodicSupplyOrderDto {
@@ -42,12 +42,14 @@ export class CreatePeriodicSupplyOrderDto {
     @IsStartBeforeEnd('endedAt')
     @IsAfterNow()
     @IsDateString()
+    @IsPeriodicDateString()
     startAfter: string
 
     @IsNotEmpty()
     @IsEndAfterStart('startAfter')
     @IsAfterNow()
     @IsDateString()
+    @IsPeriodicDateString()
     endedAt: string
 
     @IsOptional()

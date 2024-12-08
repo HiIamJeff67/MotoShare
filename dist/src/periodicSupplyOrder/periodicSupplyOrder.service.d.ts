@@ -10,8 +10,6 @@ export declare class PeriodicSupplyOrderService {
     }[]>;
     getPeriodicSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -25,9 +23,11 @@ export declare class PeriodicSupplyOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
         tolerableRDV: number;
         autoAccept: boolean;
-        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+        createdAt: Date;
+        updatedAt: Date;
     } | undefined>;
     searchPaginationPeriodicSupplyOrders(creatorId: string, scheduledDay: DaysOfWeekType | undefined, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;

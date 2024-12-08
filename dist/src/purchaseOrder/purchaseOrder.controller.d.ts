@@ -22,9 +22,6 @@ export declare class PurchaseOrderController {
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        description: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         creatorId: string;
         initPrice: number;
         startCord: {
@@ -40,7 +37,10 @@ export declare class PurchaseOrderController {
         startAfter: Date;
         endedAt: Date;
         autoAccept: boolean;
-        status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         isUrgent: boolean;
     }[]>;
     testWithExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

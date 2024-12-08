@@ -58,10 +58,10 @@ let CronService = class CronService {
                         endCord: content.endCord,
                         startAddress: content.startAddress,
                         endAddress: content.endAddress,
-                        startAfter: new Date((0, timeCalculator_1.ISOStringToDateOnly)((0, timeCalculator_1.addDays)((0, timeCalculator_1.daysOfWeekToNumber)(content.scheduledDay)).toISOString()) +
-                            (0, timeCalculator_1.ISOStringToTimeOnlyString)(content.startAfter.toISOString())),
-                        endedAt: new Date((0, timeCalculator_1.ISOStringToDateOnly)((0, timeCalculator_1.addDays)((0, timeCalculator_1.daysOfWeekToNumber)(content.scheduledDay)).toISOString()) +
-                            (0, timeCalculator_1.ISOStringToTimeOnlyString)(content.endedAt.toISOString())),
+                        startAfter: new Date((0, timeCalculator_1.ISOStringToDateOnly)((0, timeCalculator_1.addDays)((0, timeCalculator_1.daysOfWeekToNumber)(content.scheduledDay)).toISOString()) + "T" +
+                            (0, timeCalculator_1.ISOStringToTimeOnlyString)(content.startAfter.toISOString()) + "Z"),
+                        endedAt: new Date((0, timeCalculator_1.ISOStringToDateOnly)((0, timeCalculator_1.addDays)((0, timeCalculator_1.daysOfWeekToNumber)(content.scheduledDay)).toISOString()) + "T" +
+                            (0, timeCalculator_1.ISOStringToTimeOnlyString)(content.endedAt.toISOString()) + "Z"),
                         isUrgent: content.isUrgent,
                         autoAccept: content.autoAccept,
                     };

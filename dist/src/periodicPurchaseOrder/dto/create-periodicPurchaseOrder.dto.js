@@ -64,6 +64,7 @@ __decorate([
     (0, validator_1.IsStartBeforeEnd)('endedAt'),
     (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
+    (0, validator_1.IsPeriodicDateString)(),
     __metadata("design:type", String)
 ], CreatePeriodicPurchaseOrderDto.prototype, "startAfter", void 0);
 __decorate([
@@ -71,6 +72,7 @@ __decorate([
     (0, validator_1.IsEndAfterStart)('startAfter'),
     (0, validator_1.IsAfterNow)(),
     (0, class_validator_1.IsDateString)(),
+    (0, validator_1.IsPeriodicDateString)(),
     __metadata("design:type", String)
 ], CreatePeriodicPurchaseOrderDto.prototype, "endedAt", void 0);
 __decorate([
