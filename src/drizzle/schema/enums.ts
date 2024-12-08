@@ -66,4 +66,15 @@ export const notificationTypeEnum = pgEnum("notificationType", [
     // "RidderRegularOrder", 
     "System"
 ]);
+
+// for PeriodicPurchaseOrderTable & PerioidcSupplyOrderTable
+export const daysOfWeekEnum = pgEnum("daysOfWeek", [
+    "Monday", 
+    "Tuesday", 
+    "Wednesday", 
+    "Thursday", 
+    "Friday", 
+    "Saturday", 
+    "Sunday"
+]);
 /* ================================= Type Enums ================================= */

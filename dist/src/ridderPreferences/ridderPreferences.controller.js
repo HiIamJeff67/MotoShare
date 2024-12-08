@@ -19,7 +19,7 @@ const guard_1 = require("../auth/guard");
 const decorator_1 = require("../auth/decorator");
 const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
-const axios_1 = require("axios");
+const enums_1 = require("../enums");
 const utils_1 = require("../utils");
 const constants_1 = require("../constants");
 let RidderPreferencesController = class RidderPreferencesController {
@@ -34,7 +34,7 @@ let RidderPreferencesController = class RidderPreferencesController {
             const res = await this.ridderPreferencesService.createRidderPreferenceByPreferenceUserName(ridder.id, preferenceUserName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientCreateRidderPreferenceException;
-            response.status(axios_1.HttpStatusCode.Ok).send({
+            response.status(enums_1.HttpStatusCode.Ok).send({
                 createdAt: new Date(),
             });
         }
@@ -61,7 +61,7 @@ let RidderPreferencesController = class RidderPreferencesController {
             const res = await this.ridderPreferencesService.searchPaginationRidderPreferences(ridder.id, preferenceUserName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderPreferenceNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
@@ -82,7 +82,7 @@ let RidderPreferencesController = class RidderPreferencesController {
             const res = await this.ridderPreferencesService.deleteRidderPreferenceByUserIdAndPreferenceUserId(ridder.id, preferenceUserName);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderPreferenceNotFoundException;
-            response.status(axios_1.HttpStatusCode.Ok).send({
+            response.status(enums_1.HttpStatusCode.Ok).send({
                 deletedAt: new Date(),
             });
         }

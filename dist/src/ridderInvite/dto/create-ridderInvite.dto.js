@@ -26,9 +26,9 @@ __decorate([
 ], CreateRidderInviteDto.prototype, "briefDescription", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, validator_1.IsIntString)(),
     (0, validator_1.MinNumberString)(price_constant_1.MIN_SUGGEST_PRICE),
     (0, validator_1.MaxNumberString)(price_constant_1.MAX_SUGGEST_PRICE),
-    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreateRidderInviteDto.prototype, "suggestPrice", void 0);
 __decorate([

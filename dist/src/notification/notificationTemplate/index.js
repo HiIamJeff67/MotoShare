@@ -35,4 +35,5 @@ __exportStar(require("./updateExpiredPassengerInvites.template"), exports);
 __exportStar(require("./updateExpiredRidderInvites.template"), exports);
 __exportStar(require("./updateExpiredPurchaseOrders.template"), exports);
 __exportStar(require("./updateExpiredSupplyOrders.template"), exports);
+__exportStar(require("./updateStartedOrders.template"), exports);
 //# sourceMappingURL=index.js.map

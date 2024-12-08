@@ -27,6 +27,7 @@ exports.PurchaseOrderTable = (0, pg_core_1.pgTable)("purchaseOrder", {
     return {
         creatorIdIndex: (0, pg_core_1.index)("purchaseOrder_creatorIdIndex").on(table.creatorId),
         startAfterIndex: (0, pg_core_1.index)("puchaseOrder_startAfterIndex").on(table.startAfter.asc()),
+        endedAtIndex: (0, pg_core_1.index)("purchaseOrder_endedAtIndex").on(table.endedAt.asc()),
         statusStartAfterIndex: (0, pg_core_1.index)("purchaseOrder_statusStartAfterIndex").on(table.status.asc(), table.startAfter.asc()),
         updatedAtIndex: (0, pg_core_1.index)("purchaseOrder_updatedAtIndex").on(table.updatedAt.desc()),
     };

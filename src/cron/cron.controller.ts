@@ -10,6 +10,62 @@ export class CronController {
   // note that all the Cron Jobs are using GET Method
   // make sure the init route in vercel.json is like: "path": "/api/cron", (with "/" in the head)
   // and also make sure that all the subroute should have "/" at their head as well
+  /* ================================= Automated Create operations ================================= */
+  private async createPurchaseOrdersByPeriodicPurchaseOrders(@Res() response: Response) {
+    try {
+      const res = await this.cronService.createPurchaseOrdersByPeriodicPurchaseOrders();
+
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(), 
+        numberOfPeriodicPurchaseOrders: res.length, 
+      });
+    } catch (error) {
+      response.status(error.status).send(error.response);
+    }
+  }
+
+  private async createSupplyOrdersByPeriodicSupplyOrders(@Res() response: Response) {
+    try {
+      const res = await this.cronService.createSupplyOrdersByPeriodicSupplyOrders();
+
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(), 
+        numberOfPeriodicSupplyOrders: res.length, 
+      });
+    } catch (error) {
+      response.status(error.status).send(error.response);
+    }
+  }
+
+  /* ================================= Automated Create Cron Job Workflow ================================= */
+  // @Get('createPeriodicCronJobsWorkflow')
+  private async createPeriodicCronJobsWorkflow(@Res() response: Response) {
+    try {
+
+      const responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders = await this.cronService.createPurchaseOrdersByPeriodicPurchaseOrders();
+      const responseOfCreatingSupplyOrdersByPeriodicSupplyOrders = await this.cronService.createSupplyOrdersByPeriodicSupplyOrders();
+      
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(), 
+        message: "All the specified Cron Jobs are done", 
+        jobs: {
+          createPurchaseOrdersByPeriodicPurchaseOrders: Boolean(responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders), 
+          createSupplyOrdersByPeriodicSupplyOrders: Boolean(responseOfCreatingSupplyOrdersByPeriodicSupplyOrders), 
+        }, 
+        dataCounts: {
+          numberOfPeriodicPurchaseOrders: responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders.length, 
+          numberOfPeriodicSupplyOrders: responseOfCreatingSupplyOrdersByPeriodicSupplyOrders.length, 
+        }, 
+      })
+    } catch (error) {
+      response.status(error.status).send(error.response);
+    }
+  }
+  /* ================================= Automated Create Cron Job Workflow ================================= */
+
+  /* ================================= Automated Create operations ================================= */
+
+
   /* ================================= Automated Update operations ================================= */
   private async updateToExpiredPurchaseOrders(@Res() response: Response) {
     try {
@@ -80,9 +136,9 @@ export class CronController {
   // since we are using free plan on vercel server, we can only use up to two Cron Jobs...
   // hence we collect all the operations to two main parts corresponding to two api routes, 
   // one for automated update operations, another for automated delete operations
-  @Get('/updateCronJobsWorkflow')
+  // @Get('/updateCronJobsWorkflow')
   // @CronAuth()
-  async updateCronJobsWorkflow(@Res() response: Response) {
+  private async updateCronJobsWorkflow(@Res() response: Response) {
     try {
 
       const responseOfUpdatingToExpiredPurchaseOrders = await this.cronService.updateToExpiredPurchaseOrders();
@@ -183,9 +239,9 @@ export class CronController {
   }
 
   /* ================================= Automated Delete Cron Job Workflow ================================= */
-  @Get('/deleteCronJobsWorkflow')
+  // @Get('/deleteCronJobsWorkflow')
   // @CronAuth()
-  async deleteCronJobsWorkflow(@Res() response: Response) {
+  private async deleteCronJobsWorkflow(@Res() response: Response) {
     try {
 
       const responseOfDeletingExpiredPurchaseOrders = await this.cronService.deleteExpiredPurchaseOrders();
@@ -225,6 +281,28 @@ export class CronController {
   /* ================================= Automated Delete Cron Job Workflow ================================= */
 
   /* ================================= Automated Delete operations ================================= */
+
+
+  /* ================================= Automated Cron Job Main Workflow operations ================================= */
+  @Get('mainCronJobWorkflowDaily')
+  async mainCronJobWorkflowDaily(@Res() response: Response) {
+    try {
+      await this.updateCronJobsWorkflow(response);
+      await this.deleteCronJobsWorkflow(response);
+    } catch (error) {
+      response.status(error.status).send(error.response);
+    }
+  }
+
+  @Get('mainCronJobWorkflowWeekly')
+  async mainCronJobWorkflowWeekly(@Res() response: Response) {
+    try {
+      await this.createPeriodicCronJobsWorkflow(response);
+    } catch (error) {
+      response.status(error.status).send(error.response);
+    }
+  }
+  /* ================================= Automated Cron Job Main Workflow operations ================================= */
 
 
   /* ================================= Test operations ================================= */

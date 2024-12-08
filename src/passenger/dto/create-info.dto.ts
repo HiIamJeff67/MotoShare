@@ -7,6 +7,7 @@ import {
     MinLength 
 } from "class-validator";
 import { 
+    IsIntString,
     MaxNumberString, 
     MinNumberString 
 } from "../../validator";
@@ -25,9 +26,9 @@ export class CreatePassengerInfoDto {
     isOnline?: boolean
 
     @IsOptional()
+    @IsIntString()
     @MinNumberString(MIN_AGE)
     @MaxNumberString(MAX_AGE)
-    @IsNumberString()
     age?: number
 
     @IsOptional()

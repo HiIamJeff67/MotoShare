@@ -32,5 +32,7 @@ __exportStar(require("./order.schema"), exports);
 __exportStar(require("./history.schema"), exports);
 __exportStar(require("./passengerPreferences.schema"), exports);
 __exportStar(require("./ridderPreferences.schema"), exports);
+__exportStar(require("./periodicPurchaseOrder.schema"), exports);
+__exportStar(require("./periodicSupplyOrder.schema"), exports);
 __exportStar(require("./enums"), exports);
 //# sourceMappingURL=schema.js.map

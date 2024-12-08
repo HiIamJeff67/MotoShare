@@ -22,4 +22,5 @@ __exportStar(require("./userRole.type"), exports);
 __exportStar(require("./notification.type"), exports);
 __exportStar(require("./size.type"), exports);
 __exportStar(require("./file.type"), exports);
+__exportStar(require("./time.type"), exports);
 //# sourceMappingURL=index.js.map

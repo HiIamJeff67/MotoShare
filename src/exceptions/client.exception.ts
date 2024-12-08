@@ -142,6 +142,18 @@ export const ClientRidderPreferenceNotFoundException = new NotFoundException({
     message: "Failed to find any ridderPreferences", 
 });
 
+// E-C-114
+export const ClientPeriodicPurchaseOrderNotFoundException = new NotFoundException({
+    case: "E-C-114", 
+    message: "Failed to find any periodicPurchaseOrders", 
+});
+
+// E-C-115
+export const ClientPeriodicSupplyOrderNotFoundException = new NotFoundException({
+    case: "E-C-115", 
+    message: "Failed to find any periodicSupplyOrders", 
+});
+
 /* ============================== Error about select operation ============================== */
 
 
@@ -266,6 +278,18 @@ export const ClientCreatePassengerPreferenceException = new ForbiddenException({
 export const ClientCreateRidderPreferenceException = new ForbiddenException({
     case: "E-C-220", 
     message: "Failed to create a ridderPreference", 
+});
+
+// E-C-221
+export const ClientCreatePeriodicPurchaseOrderException = new ForbiddenException({
+    case: "E-C-221", 
+    message: "Failed to create a periodicPurchaseOrder", 
+});
+
+// E-C-222
+export const ClientCreatePeriodicSupplyOrderException = new ForbiddenException({
+    case: "E-C-222", 
+    message: "Failed to create a periodSupplyOrder", 
 });
 
 /* ============================== Error about create operation ============================== */

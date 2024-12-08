@@ -1,10 +1,8 @@
 import { 
-    IsBooleanString,
     IsDateString, 
     IsLatitude, 
     IsLongitude, 
     IsNotEmpty, 
-    IsNumberString, 
     IsOptional, 
     IsString, 
     MaxLength, 
@@ -13,6 +11,7 @@ import {
 import { 
     IsAfterNow,
     IsEndAfterStart,
+    IsIntString,
     IsStartBeforeEnd,
     MaxNumberString, 
     MinNumberString 
@@ -28,9 +27,9 @@ export class CreatePassengerInviteDto {
     briefDescription?: string
 
     @IsNotEmpty()
+    @IsIntString()
     @MinNumberString(MIN_SUGGEST_PRICE)
     @MaxNumberString(MAX_SUGGEST_PRICE)
-    @IsNumberString()
     suggestPrice: number
 
     @IsNotEmpty()

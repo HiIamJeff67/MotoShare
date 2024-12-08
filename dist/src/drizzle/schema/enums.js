@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notificationTypeEnum = exports.starRatingEnum = exports.postedStatusEnum = exports.ridderOrderStatusEnum = exports.passengerOrderStatusEnum = exports.inviteStatusEnum = exports.historyStatusEnum = void 0;
+exports.daysOfWeekEnum = exports.notificationTypeEnum = exports.starRatingEnum = exports.postedStatusEnum = exports.ridderOrderStatusEnum = exports.passengerOrderStatusEnum = exports.inviteStatusEnum = exports.historyStatusEnum = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.historyStatusEnum = (0, pg_core_1.pgEnum)("historyStatus", [
     "FINISHED",
@@ -43,5 +43,14 @@ exports.notificationTypeEnum = (0, pg_core_1.pgEnum)("notificationType", [
     "History",
     "Payment",
     "System"
+]);
+exports.daysOfWeekEnum = (0, pg_core_1.pgEnum)("daysOfWeek", [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
 ]);
 //# sourceMappingURL=enums.js.map

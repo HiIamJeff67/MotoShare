@@ -26,9 +26,9 @@ __decorate([
 ], CreatePassengerInfoDto.prototype, "isOnline", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, validator_1.IsIntString)(),
     (0, validator_1.MinNumberString)(info_constant_1.MIN_AGE),
     (0, validator_1.MaxNumberString)(info_constant_1.MAX_AGE),
-    (0, class_validator_1.IsNumberString)(),
     __metadata("design:type", Number)
 ], CreatePassengerInfoDto.prototype, "age", void 0);
 __decorate([

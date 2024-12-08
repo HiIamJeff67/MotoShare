@@ -4,6 +4,7 @@ export declare const ApiMissingBodyOrWrongDtoException: BadRequestException;
 export declare const ApiSearchingLimitTooLargeException: (maxLimit: number) => NotAcceptableException;
 export declare const ApiSearchingLimitLessThanZeroException: (minLimit: number) => NotAcceptableException;
 export declare const ApiPrevOrderIdFormException: NotAcceptableException;
+export declare const ApiISOStringFormException: NotAcceptableException;
 export declare const ApiGeneratingBearerTokenException: InternalServerErrorException;
 export declare const ApiGenerateAuthCodeException: InternalServerErrorException;
 export declare const ApiSendEmailForValidationException: InternalServerErrorException;

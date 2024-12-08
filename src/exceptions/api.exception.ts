@@ -34,6 +34,11 @@ export const ApiPrevOrderIdFormException = new NotAcceptableException({
     message: "Wrong form of prevOrderId field on OrderTable detected, its length should be exactly 2",
 });
 
+// E-A-101
+export const ApiISOStringFormException = new NotAcceptableException({
+    case: "E-A-101", 
+    message: "Wrong form of ISO date string when converting it to time only string", 
+});
 
 
 // E-A-900

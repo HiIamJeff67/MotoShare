@@ -7,6 +7,7 @@ import {
     MinLength
 } from "class-validator";
 import { 
+    IsIntString,
     IsLooseTWLicenseString,
     MaxNumberString, 
     MinNumberString 
@@ -26,9 +27,9 @@ export class CreateRidderInfoDto {
     isOnline?: boolean
 
     @IsOptional()
+    @IsIntString()
     @MinNumberString(MIN_AGE)
     @MaxNumberString(MAX_AGE)
-    @IsNumberString()
     age?: number
 
     @IsOptional()

@@ -12,6 +12,7 @@ import {
 import { 
     IsAfterNow,
     IsEndAfterStart,
+    IsIntString,
     IsStartBeforeEnd,
     MaxNumberString, 
     MinNumberString 
@@ -27,9 +28,9 @@ export class CreateRidderInviteDto {
     briefDescription?: string
 
     @IsNotEmpty()
+    @IsIntString()
     @MinNumberString(MIN_SUGGEST_PRICE)
     @MaxNumberString(MAX_SUGGEST_PRICE)
-    @IsNumberString()
     suggestPrice: number
 
     @IsNotEmpty()

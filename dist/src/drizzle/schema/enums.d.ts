@@ -5,3 +5,4 @@ export declare const ridderOrderStatusEnum: import("drizzle-orm/pg-core").PgEnum
 export declare const postedStatusEnum: import("drizzle-orm/pg-core").PgEnum<["POSTED", "EXPIRED", "CANCEL", "RESERVED"]>;
 export declare const starRatingEnum: import("drizzle-orm/pg-core").PgEnum<["0", "1", "2", "3", "4", "5"]>;
 export declare const notificationTypeEnum: import("drizzle-orm/pg-core").PgEnum<["PurchaseOrder", "SupplyOrder", "PassengerInvite", "RidderInvite", "Order", "History", "Payment", "System"]>;
+export declare const daysOfWeekEnum: import("drizzle-orm/pg-core").PgEnum<["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]>;

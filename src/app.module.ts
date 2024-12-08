@@ -24,6 +24,8 @@ import { CronModule } from './cron/cron.module';
 import { NotificationModule } from './notification/notification.module';
 import { PassengerPreferencesModule } from './passengerPreferences/passengerPreferences.module';
 import { RidderPreferencesModule } from './ridderPreferences/ridderPreferences.module';
+import { PeriodicPurchaseOrderModule } from './periodicPurchaseOrder/periodicPurchaseOrder.module';
+import { PeriodicSupplyOrderModule } from './periodicSupplyOrder/periodicSupplyOrder.module';
 
 @Module({
   imports: [
@@ -60,7 +62,9 @@ import { RidderPreferencesModule } from './ridderPreferences/ridderPreferences.m
     CronModule,
     NotificationModule,
     PassengerPreferencesModule,
-    RidderPreferencesModule, 
+    RidderPreferencesModule,
+    PeriodicPurchaseOrderModule,
+    PeriodicSupplyOrderModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

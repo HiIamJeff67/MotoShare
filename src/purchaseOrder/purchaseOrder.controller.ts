@@ -191,7 +191,7 @@ export class PurchaseOrderController {
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",
     @Query('isAutoAccept') isAutoAccept: string = "false", 
-    @Res() response: Response,
+    @Res() response: Response, 
   ) {
     try {
       if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {

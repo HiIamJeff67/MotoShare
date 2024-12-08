@@ -1,5 +1,4 @@
 import { NotificationTemplateInterface } from "../../interfaces";
-import { UserRoleType } from "../../types";
 
 export const NotificationTemplateOfUpdatingStartedOrders = (
     userId: string, 

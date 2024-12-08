@@ -1,0 +1,2 @@
+ALTER TABLE "periodicPurchaseOrder" ADD COLUMN "autoAccept" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "periodicSupplyOrder" ADD COLUMN "autoAccept" boolean DEFAULT false NOT NULL;

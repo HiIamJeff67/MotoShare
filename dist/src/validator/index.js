@@ -22,4 +22,5 @@ __exportStar(require("./IsOnlyDate.validator"), exports);
 __exportStar(require("./IsPhoneNumberString.validator"), exports);
 __exportStar(require("./IsStartBeforeEnd.validator"), exports);
 __exportStar(require("./costomTextLength.validator"), exports);
+__exportStar(require("./IsIntString.validator"), exports);
 //# sourceMappingURL=index.js.map

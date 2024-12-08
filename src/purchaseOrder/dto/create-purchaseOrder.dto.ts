@@ -15,7 +15,8 @@ import {
     MinNumberString,
     IsStartBeforeEnd,
     IsEndAfterStart,
-    IsAfterNow
+    IsAfterNow,
+    IsIntString
 } from "../../validator";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_DESCRIPTION_LENGTH, MIN_DESCRIPTION_LENGTH } from "../../constants/context.constant";
@@ -31,9 +32,9 @@ export class CreatePurchaseOrderDto {
     description?: string
 
     @IsNotEmpty()
+    @IsIntString()
     @MaxNumberString(MAX_INIT_PRICE)
     @MinNumberString(MIN_INIT_PRICE)
-    @IsNumberString()
     initPrice: number
 
     @IsNotEmpty()

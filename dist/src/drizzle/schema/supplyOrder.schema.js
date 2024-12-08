@@ -27,6 +27,7 @@ exports.SupplyOrderTable = (0, pg_core_1.pgTable)("supplyOrder", {
     return {
         creatorIdIndex: (0, pg_core_1.index)("supplyOrder_creatorIdIndex").on(table.creatorId),
         startAfterIndex: (0, pg_core_1.index)("supplyOrder_startAfterIndex").on(table.startAfter.asc()),
+        endedAtIndex: (0, pg_core_1.index)("supplyOrder_endedAtIndex").on(table.endedAt.asc()),
         statusStartAfterIndex: (0, pg_core_1.index)("supplyOrder_statusStartAfterIndex").on(table.status.asc(), table.startAfter.asc()),
         updatedAtIndex: (0, pg_core_1.index)("supplyOrder_updatedAtIndex").on(table.updatedAt.desc()),
     };

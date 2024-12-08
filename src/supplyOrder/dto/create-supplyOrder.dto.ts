@@ -15,7 +15,8 @@ import {
     IsEndAfterStart,
     MaxNumberString, 
     MinNumberString, 
-    IsAfterNow
+    IsAfterNow,
+    IsIntString
 } from "../../validator";
 import { MAX_INIT_PRICE, MIN_INIT_PRICE } from "../../constants/price.constant";
 import { MAX_TOLERABLE_RDV, MIN_TOLERABLE_RDV } from "../../constants/algorithm.constant";
@@ -31,9 +32,9 @@ export class CreateSupplyOrderDto {
     description?: string
 
     @IsNotEmpty()
+    @IsIntString()
     @MinNumberString(MIN_INIT_PRICE)
     @MaxNumberString(MAX_INIT_PRICE)
-    @IsNumberString()
     initPrice: number
 
     @IsNotEmpty()

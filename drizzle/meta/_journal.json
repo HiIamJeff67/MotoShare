@@ -197,6 +197,34 @@
       "when": 1733490245607,
       "tag": "0027_cute_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1733557257632,
+      "tag": "0028_dashing_rockslide",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1733571928024,
+      "tag": "0029_optimal_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1733575519926,
+      "tag": "0030_bouncy_blindfold",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1733575562741,
+      "tag": "0031_shocking_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

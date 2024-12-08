@@ -8,6 +8,18 @@ export declare class CronService {
     private ridderNotification;
     private db;
     constructor(config: ConfigService, passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
+    createPurchaseOrdersByPeriodicPurchaseOrders(): Promise<{
+        periodicPurchaseOrderId: string;
+        purchaseOrderId: string;
+    }[] | {
+        id: string;
+    }[]>;
+    createSupplyOrdersByPeriodicSupplyOrders(): Promise<{
+        periodicSupplyOrderId: string;
+        supplyOrderId: string;
+    }[] | {
+        id: string;
+    }[]>;
     updateToExpiredPurchaseOrders(): Promise<{
         id: string;
     }[]>;

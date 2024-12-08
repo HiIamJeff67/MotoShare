@@ -19,3 +19,4 @@ export * from "./updateExpiredPassengerInvites.template";
 export * from "./updateExpiredRidderInvites.template";
 export * from "./updateExpiredPurchaseOrders.template";
 export * from "./updateExpiredSupplyOrders.template";
+export * from "./updateStartedOrders.template";

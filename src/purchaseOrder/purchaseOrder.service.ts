@@ -137,13 +137,13 @@ export class PurchaseOrderService {
         endCord: true,
         startAddress: true,
         endAddress: true,
-        createdAt: true,
-        endedAt: true,
-        updatedAt: true,
         startAfter: true,
+        endedAt: true,
         isUrgent: true,
-        autoAccept: true,
         status: true,
+        autoAccept: true,
+        createdAt: true,
+        updatedAt: true,
       },
       with: {
         creator: {

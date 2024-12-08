@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiISOStringFormException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     case: "E-A-001",
@@ -27,6 +27,10 @@ exports.ApiSearchingLimitLessThanZeroException = ApiSearchingLimitLessThanZeroEx
 exports.ApiPrevOrderIdFormException = new common_1.NotAcceptableException({
     case: "E-A-100",
     message: "Wrong form of prevOrderId field on OrderTable detected, its length should be exactly 2",
+});
+exports.ApiISOStringFormException = new common_1.NotAcceptableException({
+    case: "E-A-101",
+    message: "Wrong form of ISO date string when converting it to time only string",
 });
 exports.ApiGeneratingBearerTokenException = new common_1.InternalServerErrorException({
     case: "E-A-900",

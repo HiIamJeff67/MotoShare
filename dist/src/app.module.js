@@ -33,6 +33,8 @@ const cron_module_1 = require("./cron/cron.module");
 const notification_module_1 = require("./notification/notification.module");
 const passengerPreferences_module_1 = require("./passengerPreferences/passengerPreferences.module");
 const ridderPreferences_module_1 = require("./ridderPreferences/ridderPreferences.module");
+const periodicPurchaseOrder_module_1 = require("./periodicPurchaseOrder/periodicPurchaseOrder.module");
+const periodicSupplyOrder_module_1 = require("./periodicSupplyOrder/periodicSupplyOrder.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -73,6 +75,8 @@ exports.AppModule = AppModule = __decorate([
             notification_module_1.NotificationModule,
             passengerPreferences_module_1.PassengerPreferencesModule,
             ridderPreferences_module_1.RidderPreferencesModule,
+            periodicPurchaseOrder_module_1.PeriodicPurchaseOrderModule,
+            periodicSupplyOrder_module_1.PeriodicSupplyOrderModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

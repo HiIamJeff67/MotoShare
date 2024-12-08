@@ -32,6 +32,7 @@ export const SupplyOrderTable = pgTable("supplyOrder", {
     return {
         creatorIdIndex: index("supplyOrder_creatorIdIndex").on(table.creatorId), 
         startAfterIndex: index("supplyOrder_startAfterIndex").on(table.startAfter.asc()), 
+        endedAtIndex: index("supplyOrder_endedAtIndex").on(table.endedAt.asc()), 
         statusStartAfterIndex: index("supplyOrder_statusStartAfterIndex").on(table.status.asc(), table.startAfter.asc()),
         updatedAtIndex: index("supplyOrder_updatedAtIndex").on(table.updatedAt.desc()),
     }

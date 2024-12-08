@@ -6,3 +6,4 @@ export * from "./invite.interface";
 export * from "./email.interface";
 export * from "./socket.interface";
 export * from "./notification.interface";
+export * from "./periodicOrderJsonb.interface";

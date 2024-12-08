@@ -24,12 +24,12 @@
     ], 
     "crons": [
         {
-            "path": "/api/cron/updateCronJobsWorkflow", 
+            "path": "/api/cron/mainCronJobWorkflowDaily", 
             "schedule": "0 0 * * *"
         }, 
         {
-            "path": "/api/cron/deleteCronJobsWorkflow", 
-            "schedule": "0 3 * * *"
+            "path": "/api/cron/mainCronJobWorkflowWeekly", 
+            "schedule": "0 0 * * 0"
         }
     ]
 }

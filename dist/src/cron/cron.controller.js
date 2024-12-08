@@ -20,6 +20,51 @@ let CronController = class CronController {
     constructor(cronService) {
         this.cronService = cronService;
     }
+    async createPurchaseOrdersByPeriodicPurchaseOrders(response) {
+        try {
+            const res = await this.cronService.createPurchaseOrdersByPeriodicPurchaseOrders();
+            response.status(enums_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                numberOfPeriodicPurchaseOrders: res.length,
+            });
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
+    async createSupplyOrdersByPeriodicSupplyOrders(response) {
+        try {
+            const res = await this.cronService.createSupplyOrdersByPeriodicSupplyOrders();
+            response.status(enums_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                numberOfPeriodicSupplyOrders: res.length,
+            });
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
+    async createPeriodicCronJobsWorkflow(response) {
+        try {
+            const responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders = await this.cronService.createPurchaseOrdersByPeriodicPurchaseOrders();
+            const responseOfCreatingSupplyOrdersByPeriodicSupplyOrders = await this.cronService.createSupplyOrdersByPeriodicSupplyOrders();
+            response.status(enums_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                message: "All the specified Cron Jobs are done",
+                jobs: {
+                    createPurchaseOrdersByPeriodicPurchaseOrders: Boolean(responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders),
+                    createSupplyOrdersByPeriodicSupplyOrders: Boolean(responseOfCreatingSupplyOrdersByPeriodicSupplyOrders),
+                },
+                dataCounts: {
+                    numberOfPeriodicPurchaseOrders: responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders.length,
+                    numberOfPeriodicSupplyOrders: responseOfCreatingSupplyOrdersByPeriodicSupplyOrders.length,
+                },
+            });
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
     async updateToExpiredPurchaseOrders(response) {
         try {
             const res = await this.cronService.updateToExpiredPurchaseOrders();
@@ -204,11 +249,46 @@ let CronController = class CronController {
             response.status(error.status).send(error.response);
         }
     }
+    async mainCronJobWorkflowDaily(response) {
+        try {
+            await this.updateCronJobsWorkflow(response);
+            await this.deleteCronJobsWorkflow(response);
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
+    async mainCronJobWorkflowWeekly(response) {
+        try {
+            await this.createPeriodicCronJobsWorkflow(response);
+        }
+        catch (error) {
+            response.status(error.status).send(error.response);
+        }
+    }
     test(response) {
         response.status(200).send({ context: "Hello Vercel Cron" });
     }
 };
 exports.CronController = CronController;
+__decorate([
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "createPurchaseOrdersByPeriodicPurchaseOrders", null);
+__decorate([
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "createSupplyOrdersByPeriodicSupplyOrders", null);
+__decorate([
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "createPeriodicCronJobsWorkflow", null);
 __decorate([
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -240,7 +320,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "updateToStartedOrders", null);
 __decorate([
-    (0, common_1.Get)('/updateCronJobsWorkflow'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -277,12 +356,25 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteExpiredOrders", null);
 __decorate([
-    (0, common_1.Get)('/deleteCronJobsWorkflow'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CronController.prototype, "deleteCronJobsWorkflow", null);
+__decorate([
+    (0, common_1.Get)('mainCronJobWorkflowDaily'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "mainCronJobWorkflowDaily", null);
+__decorate([
+    (0, common_1.Get)('mainCronJobWorkflowWeekly'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CronController.prototype, "mainCronJobWorkflowWeekly", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Res)()),
