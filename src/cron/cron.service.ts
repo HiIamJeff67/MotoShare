@@ -72,11 +72,11 @@ export class CronService {
               startAddress: content.startAddress, 
               endAddress: content.endAddress, 
               startAfter: new Date(
-                ISOStringToDateOnly(addDays(daysOfWeekToNumber(content.scheduledDay)).toISOString()) + 
-                ISOStringToTimeOnlyString(content.startAfter.toISOString())), 
+                ISOStringToDateOnly(addDays(daysOfWeekToNumber(content.scheduledDay)).toISOString()) + "T" +
+                ISOStringToTimeOnlyString(content.startAfter.toISOString()) + "Z"), 
               endedAt: new Date(
-                ISOStringToDateOnly(addDays(daysOfWeekToNumber(content.scheduledDay)).toISOString()) + 
-                ISOStringToTimeOnlyString(content.endedAt.toISOString())), 
+                ISOStringToDateOnly(addDays(daysOfWeekToNumber(content.scheduledDay)).toISOString()) + "T" +
+                ISOStringToTimeOnlyString(content.endedAt.toISOString()) + "Z"), 
               isUrgent: content.isUrgent, 
               autoAccept: content.autoAccept, 
             };
