@@ -5,7 +5,7 @@ import { RidderType } from '../interfaces';
 import { Response } from 'express';
 import { DaysOfWeekType } from '../types';
 export declare class PeriodicSupplyOrderController {
-    private periodicSupplyOrderService;
+    private readonly periodicSupplyOrderService;
     constructor(periodicSupplyOrderService: PeriodicSupplyOrderService);
     createMyPeriodicSupplyOrder(ridder: RidderType, createPeriodicSupplyOrderDto: CreatePeriodicSupplyOrderDto, response: Response): Promise<void>;
     getMyPeriodicSupplyOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;

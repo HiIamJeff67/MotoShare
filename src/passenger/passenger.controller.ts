@@ -166,7 +166,7 @@ export class PassengerController {
     } catch (error) {
       if (!(error instanceof UnauthorizedException 
         || error instanceof NotFoundException)) {
-        error = ClientUnknownException;
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({

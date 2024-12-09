@@ -11,12 +11,12 @@ import { toNumber } from "../utils";
 
 @Controller('ridderNotification')
 export class RidderNotificationController {
-    constructor(private ridderNotificationService: RidderNotificationService) {}
+    constructor(private readonly ridderNotificationService: RidderNotificationService) {}
 
     /* ================================= Get operations ================================= */
     @UseGuards(JwtRidderGuard)
-    @Get('getMyNotifications')
-    async getMyNotifications(
+    @Get('getMyRidderNotificationById')
+    async getMyRidderNotificationById(
         @Ridder() ridder: RidderType, 
         @Query('id') id: string, 
         @Res() response: Response, 
@@ -31,9 +31,9 @@ export class RidderNotificationController {
                 ridder.id, 
             );
 
-            if (!res || res.length === 0) ClientRidderNotificationNotFoundException;
+            if (!res || res.length === 0) throw ClientRidderNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException 
                 || error instanceof UnauthorizedException 
@@ -111,7 +111,7 @@ export class RidderNotificationController {
 
             if (!res || res.length === 0) throw ClientRidderNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException
                 || error instanceof UnauthorizedException 
@@ -147,7 +147,7 @@ export class RidderNotificationController {
 
             if (!res || res.length === 0) throw ClientRidderNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException
                 || error instanceof UnauthorizedException 

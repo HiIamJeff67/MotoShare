@@ -17,31 +17,42 @@ const common_1 = require("@nestjs/common");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const periodicSupplyOrder_schema_1 = require("../drizzle/schema/periodicSupplyOrder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const exceptions_1 = require("../exceptions");
 let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
     constructor(db) {
         this.db = db;
     }
     async createPeriodicSupplyOrderByCreatorId(creatorId, createPeriodicSupplyOrderDto) {
-        return await this.db.insert(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).values({
-            creatorId: creatorId,
-            scheduledDay: createPeriodicSupplyOrderDto.scheduledDay,
-            initPrice: createPeriodicSupplyOrderDto.initPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-          ST_MakePoint(${createPeriodicSupplyOrderDto.startCordLongitude}, ${createPeriodicSupplyOrderDto.startCordLatitude}),
-          4326
-        )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-          ST_MakePoint(${createPeriodicSupplyOrderDto.endCordLongitude}, ${createPeriodicSupplyOrderDto.endCordLatitude}),
-          4326
-        )`,
-            startAddress: createPeriodicSupplyOrderDto.startAddress,
-            endAddress: createPeriodicSupplyOrderDto.endAddress,
-            startAfter: new Date(createPeriodicSupplyOrderDto.startAfter),
-            endedAt: new Date(createPeriodicSupplyOrderDto.endedAt),
-            tolerableRDV: createPeriodicSupplyOrderDto.tolerableRDV,
-            autoAccept: createPeriodicSupplyOrderDto.autoAccept,
-        }).returning({
-            id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
+                id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+            }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(createPeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(createPeriodicSupplyOrderDto.endedAt)))));
+            const responseOfCreatingPeriodicSupplyOrder = await tx.insert(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).values({
+                creatorId: creatorId,
+                scheduledDay: createPeriodicSupplyOrderDto.scheduledDay,
+                initPrice: createPeriodicSupplyOrderDto.initPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+            ST_MakePoint(${createPeriodicSupplyOrderDto.startCordLongitude}, ${createPeriodicSupplyOrderDto.startCordLatitude}),
+            4326
+          )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+            ST_MakePoint(${createPeriodicSupplyOrderDto.endCordLongitude}, ${createPeriodicSupplyOrderDto.endCordLatitude}),
+            4326
+          )`,
+                startAddress: createPeriodicSupplyOrderDto.startAddress,
+                endAddress: createPeriodicSupplyOrderDto.endAddress,
+                startAfter: new Date(createPeriodicSupplyOrderDto.startAfter),
+                endedAt: new Date(createPeriodicSupplyOrderDto.endedAt),
+                tolerableRDV: createPeriodicSupplyOrderDto.tolerableRDV,
+                autoAccept: createPeriodicSupplyOrderDto.autoAccept,
+            }).returning({
+                id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPeriodicSupplyOrders && responseOfSelectingConflictPeriodicSupplyOrders.length !== 0),
+                    ...responseOfCreatingPeriodicSupplyOrder[0],
+                }];
         });
     }
     async getPeriodicSupplyOrderById(id, creatorId) {
@@ -77,34 +88,80 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
             .offset(offset);
     }
     async updatePeriodicSupplyOrderById(id, creatorId, updatePeriodicSupplyOrderDto) {
-        const newStartCord = (updatePeriodicSupplyOrderDto.startCordLongitude !== undefined
-            && updatePeriodicSupplyOrderDto.startCordLatitude !== undefined)
-            ? { x: updatePeriodicSupplyOrderDto.startCordLongitude,
-                y: updatePeriodicSupplyOrderDto.startCordLatitude, }
-            : undefined;
-        const newEndCord = (updatePeriodicSupplyOrderDto.endCordLongitude !== undefined
-            && updatePeriodicSupplyOrderDto.endCordLatitude !== undefined)
-            ? { x: updatePeriodicSupplyOrderDto.endCordLongitude,
-                y: updatePeriodicSupplyOrderDto.endCordLatitude }
-            : undefined;
-        return await this.db.update(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).set({
-            scheduledDay: updatePeriodicSupplyOrderDto.scheduledDay,
-            initPrice: updatePeriodicSupplyOrderDto.initPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updatePeriodicSupplyOrderDto.startAddress,
-            endAddress: updatePeriodicSupplyOrderDto.endAddress,
-            ...(updatePeriodicSupplyOrderDto.startAfter
-                ? { startAfter: new Date(updatePeriodicSupplyOrderDto.startAfter) }
-                : {}),
-            ...(updatePeriodicSupplyOrderDto.endedAt
-                ? { endedAt: new Date(updatePeriodicSupplyOrderDto.endedAt) }
-                : {}),
-            tolerableRDV: updatePeriodicSupplyOrderDto.tolerableRDV,
-            autoAccept: updatePeriodicSupplyOrderDto.autoAccept,
-            updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId))).returning({
-            id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+        return await this.db.transaction(async (tx) => {
+            const newStartCord = (updatePeriodicSupplyOrderDto.startCordLongitude !== undefined
+                && updatePeriodicSupplyOrderDto.startCordLatitude !== undefined)
+                ? { x: updatePeriodicSupplyOrderDto.startCordLongitude,
+                    y: updatePeriodicSupplyOrderDto.startCordLatitude, }
+                : undefined;
+            const newEndCord = (updatePeriodicSupplyOrderDto.endCordLongitude !== undefined
+                && updatePeriodicSupplyOrderDto.endCordLatitude !== undefined)
+                ? { x: updatePeriodicSupplyOrderDto.endCordLongitude,
+                    y: updatePeriodicSupplyOrderDto.endCordLatitude }
+                : undefined;
+            let responseOfSelectingConflictPeriodicSupplyOrders = undefined;
+            if (updatePeriodicSupplyOrderDto.startAfter && updatePeriodicSupplyOrderDto.endedAt) {
+                const [startAfter, endedAt] = [new Date(updatePeriodicSupplyOrderDto.startAfter), new Date(updatePeriodicSupplyOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
+                    id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+                }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt)))));
+            }
+            else if (updatePeriodicSupplyOrderDto.startAfter && !updatePeriodicSupplyOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    endedAt: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt,
+                }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPeriodicSupplyOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(updatePeriodicSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
+                    id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+                }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter))));
+            }
+            else if (!updatePeriodicSupplyOrderDto.startAfter && updatePeriodicSupplyOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    startAfter: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter,
+                }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPeriodicSupplyOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePeriodicSupplyOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
+                    id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+                }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt))));
+            }
+            const responseOfUpdatingPeriodicSupplyOrder = await tx.update(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).set({
+                scheduledDay: updatePeriodicSupplyOrderDto.scheduledDay,
+                initPrice: updatePeriodicSupplyOrderDto.initPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updatePeriodicSupplyOrderDto.startAddress,
+                endAddress: updatePeriodicSupplyOrderDto.endAddress,
+                ...(updatePeriodicSupplyOrderDto.startAfter
+                    ? { startAfter: new Date(updatePeriodicSupplyOrderDto.startAfter) }
+                    : {}),
+                ...(updatePeriodicSupplyOrderDto.endedAt
+                    ? { endedAt: new Date(updatePeriodicSupplyOrderDto.endedAt) }
+                    : {}),
+                tolerableRDV: updatePeriodicSupplyOrderDto.tolerableRDV,
+                autoAccept: updatePeriodicSupplyOrderDto.autoAccept,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId))).returning({
+                id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPeriodicSupplyOrders && responseOfSelectingConflictPeriodicSupplyOrders.length !== 0),
+                    ...responseOfUpdatingPeriodicSupplyOrder[0],
+                }];
         });
     }
     async deletePeriodicSupplyOrderById(id, creatorId) {

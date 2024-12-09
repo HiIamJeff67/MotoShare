@@ -51,6 +51,27 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
+    async getPurchaseOrderById(ridder, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.getPurchaseOrderById(id);
+            if (!res)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async searchMyPurchaseOrders(passenger, limit = "10", offset = "0", isAutoAccept = "false", response) {
         try {
             if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
@@ -66,27 +87,6 @@ let PurchaseOrderController = class PurchaseOrderController {
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException)) {
-                error = exceptions_1.ClientUnknownException;
-            }
-            response.status(error.status).send({
-                ...error.response,
-            });
-        }
-    }
-    async getPurchaseOrderById(ridder, id, response) {
-        try {
-            if (!id) {
-                throw exceptions_1.ApiMissingParameterException;
-            }
-            const res = await this.purchaseOrderService.getPurchaseOrderById(id);
-            if (!res)
-                throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            if (!(error instanceof common_1.BadRequestException
-                || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
@@ -367,6 +367,16 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "createPurchaseOrder", null);
 __decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('getPurchaseOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
+__decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('searchMyPurchaseOrders'),
     __param(0, (0, decorator_1.Passenger)()),
@@ -378,16 +388,6 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchMyPurchaseOrders", null);
-__decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('getPurchaseOrderById'),
-    __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Query)('id')),
-    __param(2, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
-    __metadata("design:returntype", Promise)
-], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
 __decorate([
     (0, common_1.Get)('searchPaginationPurchaseOrders'),
     __param(0, (0, common_1.Query)('creatorName')),

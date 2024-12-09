@@ -4,7 +4,7 @@ import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerInviteTable } from '../drizzle/schema/passengerInvite.schema';
-import { and, asc, desc, eq, like, lt, ne, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, like, lt, lte, ne, not, or, sql } from 'drizzle-orm';
 import { SupplyOrderTable } from '../drizzle/schema/supplyOrder.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
@@ -56,8 +56,6 @@ export class PassengerInviteService {
       throw ServerNeonAutoUpdateExpiredPassengerInviteException;
     }
 
-
-
     return response.length;
   }
   /* ================================= Detect And Update Expired PassengerInvites operations ================================= */
@@ -71,6 +69,16 @@ export class PassengerInviteService {
     createPassengerInviteDto: CreatePassengerInviteDto,
   ) {
     return await this.db.transaction(async (tx) => {
+      const responseOfSelectingConfictPassengerInvites = await tx.select({
+        id: PassengerInviteTable.id, 
+      }).from(PassengerInviteTable)
+        .where(
+          and(
+            eq(PassengerInviteTable.userId, inviterId), 
+            not(lte(PassengerInviteTable.suggestEndedAt, new Date(createPassengerInviteDto.suggestStartAfter))), 
+            not(gte(PassengerInviteTable.suggestStartAfter, new Date(createPassengerInviteDto.suggestEndedAt))), 
+        ));
+
       const responseOfSelectingSupplyOrder = await tx.select({
         ridderId: RidderTable.id, 
         status: SupplyOrderTable.status, 
@@ -121,7 +129,10 @@ export class PassengerInviteService {
         throw ClientCreateRidderNotificationException;
       }
 
-      return responseOfCreatingPassengerInvite;
+      return [{
+        hasConflict: (responseOfSelectingConfictPassengerInvites && responseOfSelectingConfictPassengerInvites.length !== 0), 
+        ...responseOfCreatingPassengerInvite[0], 
+      }];
     });
   }
   /* ================================= Create operations ================================= */
@@ -728,15 +739,41 @@ export class PassengerInviteService {
         .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id));
       if (!passengerInvite || passengerInvite.length === 0) throw ClientInviteNotFoundException;
 
+      let responseOfSelectingConflictPassengerInvites: any = undefined;
       if (updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConflictPassengerInvites = await tx.select({
+          id: PassengerInviteTable.id, 
+        }).from(PassengerInviteTable)
+          .where(and(
+            eq(PassengerInviteTable.userId, inviterId), 
+            not(lte(PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter))), 
+            not(gte(PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt))), 
+          ));
       } else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(passengerInvite[0].suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConflictPassengerInvites = await tx.select({
+          id: PassengerInviteTable.id, 
+        }).from(PassengerInviteTable)
+          .where(and(
+            eq(PassengerInviteTable.userId, inviterId), 
+            not(lte(PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter)))
+          ));
       } else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(passengerInvite[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConflictPassengerInvites = await tx.select({
+          id: PassengerInviteTable.id, 
+        }).from(PassengerInviteTable)
+          .where(and(
+            eq(PassengerInviteTable.userId, inviterId), 
+            not(gte(PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt)))
+          ));
       }
 
       const responseOfUpdatingPassengerInvite = await tx.update(PassengerInviteTable).set({
@@ -785,7 +822,10 @@ export class PassengerInviteService {
         throw ClientCreateRidderNotificationException;
       }
 
-      return responseOfUpdatingPassengerInvite;
+      return [{
+        hasConflict: (responseOfSelectingConflictPassengerInvites && responseOfSelectingConflictPassengerInvites.length !== 0), 
+        ...responseOfUpdatingPassengerInvite[0], 
+      }];
     });
   }
   /* ================= Update detail operations used by Passenger ================= */

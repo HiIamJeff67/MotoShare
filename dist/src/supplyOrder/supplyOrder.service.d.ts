@@ -14,6 +14,7 @@ export declare class SupplyOrderService {
     createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        hasConflict: boolean;
     }[]>;
     searchSupplyOrdersByCreatorId(creatorId: string, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
@@ -38,6 +39,7 @@ export declare class SupplyOrderService {
     }[]>;
     getSupplyOrderById(id: string): Promise<{
         id: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -53,10 +55,9 @@ export declare class SupplyOrderService {
         endedAt: Date;
         tolerableRDV: number;
         autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         creator: {
             userName: string;
             info: {
@@ -191,6 +192,7 @@ export declare class SupplyOrderService {
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        hasConflict: any;
     }[]>;
     startSupplyOrderWithoutInvite(id: string, userId: string, userName: string, acceptAutoAcceptSupplyOrderDto: AcceptAutoAcceptSupplyOrderDto): Promise<{
         orderId: string;

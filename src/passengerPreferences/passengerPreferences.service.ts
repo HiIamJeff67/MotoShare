@@ -4,8 +4,9 @@ import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerPreferences } from '../drizzle/schema/passengerPreferences.schema';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
-import { and, eq, like } from 'drizzle-orm';
+import { and, desc, eq, like } from 'drizzle-orm';
 import { ClientRidderNotFoundException } from '../exceptions';
+import { RidderPreferences } from '../drizzle/schema/ridderPreferences.schema';
 
 @Injectable()
 export class PassengerPreferencesService {

@@ -26,7 +26,7 @@ let PassengerNotificationController = class PassengerNotificationController {
     constructor(passengerNotificationService) {
         this.passengerNotificationService = passengerNotificationService;
     }
-    async getMyNotifications(passenger, id, response) {
+    async getMyPassengerNotificationById(passenger, id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -34,7 +34,7 @@ let PassengerNotificationController = class PassengerNotificationController {
             const res = await this.passengerNotificationService.getPassengerNotificationById(id, passenger.id);
             if (!res || res.length === 0)
                 exceptions_1.ClientPassengerNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -80,7 +80,7 @@ let PassengerNotificationController = class PassengerNotificationController {
             const res = await this.passengerNotificationService.updatePassengerNotificationToReadStatus(id, passenger.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -101,7 +101,7 @@ let PassengerNotificationController = class PassengerNotificationController {
             const res = await this.passengerNotificationService.deletePassengerNotification(id, passenger.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -118,14 +118,14 @@ let PassengerNotificationController = class PassengerNotificationController {
 exports.PassengerNotificationController = PassengerNotificationController;
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('getMyNotifications'),
+    (0, common_1.Get)('getMyPassengerNotificationById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [interfaces_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
-], PassengerNotificationController.prototype, "getMyNotifications", null);
+], PassengerNotificationController.prototype, "getMyPassengerNotificationById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('searchMyPaginationPassengerNotifications'),
@@ -138,7 +138,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerNotificationController.prototype, "searchMyPaginationPassengerNotifications", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Patch)('updateMyPassengerNotificationToReadStatus'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),

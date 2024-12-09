@@ -43,27 +43,37 @@ let PurchaseOrderService = class PurchaseOrderService {
         return response.length;
     }
     async createPurchaseOrderByCreatorId(creatorId, createPurchaseOrderDto) {
-        return await this.db.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
-            creatorId: creatorId,
-            description: createPurchaseOrderDto.description,
-            initPrice: createPurchaseOrderDto.initPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPurchaseOrderDto.startCordLongitude}, ${createPurchaseOrderDto.startCordLatitude}),
-        4326
-      )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPurchaseOrderDto.endCordLongitude}, ${createPurchaseOrderDto.endCordLatitude}),
-        4326
-      )`,
-            startAddress: createPurchaseOrderDto.startAddress,
-            endAddress: createPurchaseOrderDto.endAddress,
-            startAfter: new Date(createPurchaseOrderDto.startAfter),
-            endedAt: new Date(createPurchaseOrderDto.endedAt),
-            isUrgent: createPurchaseOrderDto.isUrgent,
-            autoAccept: createPurchaseOrderDto.autoAccept,
-        }).returning({
-            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingConflictPurchaseOrders = await tx.select({
+                id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(createPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(createPurchaseOrderDto.endedAt)))));
+            const responseOfCreatingPurchaseOrder = await tx.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
+                creatorId: creatorId,
+                description: createPurchaseOrderDto.description,
+                initPrice: createPurchaseOrderDto.initPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPurchaseOrderDto.startCordLongitude}, ${createPurchaseOrderDto.startCordLatitude}),
+          4326
+        )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPurchaseOrderDto.endCordLongitude}, ${createPurchaseOrderDto.endCordLatitude}),
+          4326
+        )`,
+                startAddress: createPurchaseOrderDto.startAddress,
+                endAddress: createPurchaseOrderDto.endAddress,
+                startAfter: new Date(createPurchaseOrderDto.startAfter),
+                endedAt: new Date(createPurchaseOrderDto.endedAt),
+                isUrgent: createPurchaseOrderDto.isUrgent,
+                autoAccept: createPurchaseOrderDto.autoAccept,
+            }).returning({
+                id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPurchaseOrders && responseOfSelectingConflictPurchaseOrders.length !== 0),
+                    ...responseOfCreatingPurchaseOrder[0],
+                }];
         });
     }
     async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
@@ -298,63 +308,82 @@ let PurchaseOrderService = class PurchaseOrderService {
             .offset(offset);
     }
     async updatePurchaseOrderById(id, creatorId, updatePurchaseOrderDto) {
-        const newStartCord = (updatePurchaseOrderDto.startCordLongitude !== undefined
-            && updatePurchaseOrderDto.startCordLatitude !== undefined)
-            ? { x: updatePurchaseOrderDto.startCordLongitude, y: updatePurchaseOrderDto.startCordLatitude, }
-            : undefined;
-        const newEndCord = (updatePurchaseOrderDto.endCordLongitude !== undefined
-            && updatePurchaseOrderDto.endCordLatitude !== undefined)
-            ? { x: updatePurchaseOrderDto.endCordLongitude, y: updatePurchaseOrderDto.endCordLatitude }
-            : undefined;
-        if (updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
-            const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(updatePurchaseOrderDto.endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (updatePurchaseOrderDto.startAfter && !updatePurchaseOrderDto.endedAt) {
-            const tempResponse = await this.db.select({
-                endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
-            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
-            if (!tempResponse || tempResponse.length === 0)
-                throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (!updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
-            const tempResponse = await this.db.select({
-                startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
-            }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
-            if (!tempResponse || tempResponse.length === 0)
-                throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePurchaseOrderDto.endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        return await this.db.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
-            description: updatePurchaseOrderDto.description,
-            initPrice: updatePurchaseOrderDto.initPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updatePurchaseOrderDto.startAddress,
-            endAddress: updatePurchaseOrderDto.endAddress,
-            ...(updatePurchaseOrderDto.startAfter
-                ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
-                : {}),
-            ...(updatePurchaseOrderDto.endedAt
-                ? { endedAt: new Date(updatePurchaseOrderDto.endedAt) }
-                : {}),
-            isUrgent: updatePurchaseOrderDto.isUrgent,
-            autoAccept: updatePurchaseOrderDto.autoAccept,
-            status: updatePurchaseOrderDto.status,
-            updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (updatePurchaseOrderDto.startAfter || updatePurchaseOrderDto.endedAt
-            ? undefined
-            : (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
-            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        return await this.db.transaction(async (tx) => {
+            const newStartCord = (updatePurchaseOrderDto.startCordLongitude !== undefined
+                && updatePurchaseOrderDto.startCordLatitude !== undefined)
+                ? { x: updatePurchaseOrderDto.startCordLongitude, y: updatePurchaseOrderDto.startCordLatitude, }
+                : undefined;
+            const newEndCord = (updatePurchaseOrderDto.endCordLongitude !== undefined
+                && updatePurchaseOrderDto.endCordLatitude !== undefined)
+                ? { x: updatePurchaseOrderDto.endCordLongitude, y: updatePurchaseOrderDto.endCordLatitude }
+                : undefined;
+            let responseOfSelectingConflictPurchaseOrders = undefined;
+            if (updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+                const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPurchaseOrders = await tx.select({
+                    id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt)))));
+            }
+            else if (updatePurchaseOrderDto.startAfter && !updatePurchaseOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+                }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPurchaseOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(updatePurchaseOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPurchaseOrders = await tx.select({
+                    id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter))));
+            }
+            else if (!updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+                }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED")));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPurchaseOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePurchaseOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPurchaseOrders = await tx.select({
+                    id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt))));
+            }
+            const responseOfUpdatingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
+                description: updatePurchaseOrderDto.description,
+                initPrice: updatePurchaseOrderDto.initPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updatePurchaseOrderDto.startAddress,
+                endAddress: updatePurchaseOrderDto.endAddress,
+                ...(updatePurchaseOrderDto.startAfter
+                    ? { startAfter: new Date(updatePurchaseOrderDto.startAfter) }
+                    : {}),
+                ...(updatePurchaseOrderDto.endedAt
+                    ? { endedAt: new Date(updatePurchaseOrderDto.endedAt) }
+                    : {}),
+                isUrgent: updatePurchaseOrderDto.isUrgent,
+                autoAccept: updatePurchaseOrderDto.autoAccept,
+                status: updatePurchaseOrderDto.status,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (updatePurchaseOrderDto.startAfter || updatePurchaseOrderDto.endedAt
+                ? undefined
+                : (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId))).returning({
+                id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+                status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPurchaseOrders && responseOfSelectingConflictPurchaseOrders.length !== 0),
+                    ...responseOfUpdatingPurchaseOrder[0],
+                }];
         });
     }
     async startPurchaseOrderWithoutInvite(id, userId, userName, acceptAutoAcceptPurchaseOrderDto) {

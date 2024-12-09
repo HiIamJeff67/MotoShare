@@ -14,7 +14,7 @@ import { toBoolean, toNumber } from '../utils';
 
 @Controller('periodicSupplyOrder')
 export class PeriodicSupplyOrderController {
-  constructor(private periodicSupplyOrderService: PeriodicSupplyOrderService) {}
+  constructor(private readonly periodicSupplyOrderService: PeriodicSupplyOrderService) {}
 
   /* ================================= Create operations ================================= */
   @UseGuards(JwtRidderGuard)

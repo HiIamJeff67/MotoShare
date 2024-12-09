@@ -46,6 +46,10 @@ let RidderInviteService = class RidderInviteService {
     }
     async createRidderInviteByOrderId(inviterId, inviterName, orderId, createRidderInviteDto) {
         return await this.db.transaction(async (tx) => {
+            const responseOfSelectingConfictRidderInvites = await tx.select({
+                id: ridderInvite_schema_1.RidderInviteTable.id,
+            }).from(ridderInvite_schema_1.RidderInviteTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(ridderInvite_schema_1.RidderInviteTable.suggestEndedAt, new Date(createRidderInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter, new Date(createRidderInviteDto.suggestEndedAt)))));
             const responseOfSelectingPurchaseOrder = await tx.select({
                 passengerId: passenger_schema_1.PassengerTable.id,
                 status: purchaseOrder_schema_1.PurchaseOrderTable.status,
@@ -86,7 +90,10 @@ let RidderInviteService = class RidderInviteService {
             if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
                 throw exceptions_1.ClientCreatePassengerNotificationException;
             }
-            return responseOfCreatingRidderInvite;
+            return [{
+                    hasConflict: (responseOfSelectingConfictRidderInvites && responseOfSelectingConfictRidderInvites.length !== 0),
+                    ...responseOfCreatingRidderInvite[0],
+                }];
         });
     }
     async getRidderInviteById(id, userId) {
@@ -557,20 +564,33 @@ let RidderInviteService = class RidderInviteService {
                 .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id));
             if (!ridderInvite || ridderInvite.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
+            let responseOfSelectingConfictRidderInvites = undefined;
             if (updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
                 const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
                 if (startAfter >= endedAt)
                     throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConfictRidderInvites = await tx.select({
+                    id: ridderInvite_schema_1.RidderInviteTable.id,
+                }).from(ridderInvite_schema_1.RidderInviteTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(ridderInvite_schema_1.RidderInviteTable.suggestEndedAt, new Date(updateRidderInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter, new Date(updateRidderInviteDto.suggestEndedAt)))));
             }
             else if (updateRidderInviteDto.suggestStartAfter && !updateRidderInviteDto.suggestEndedAt) {
                 const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(ridderInvite[0].suggestEndedAt)];
                 if (startAfter >= endedAt)
                     throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConfictRidderInvites = await tx.select({
+                    id: ridderInvite_schema_1.RidderInviteTable.id,
+                }).from(ridderInvite_schema_1.RidderInviteTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(ridderInvite_schema_1.RidderInviteTable.suggestEndedAt, new Date(updateRidderInviteDto.suggestStartAfter))));
             }
             else if (!updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
                 const [startAfter, endedAt] = [new Date(ridderInvite[0].suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
                 if (startAfter >= endedAt)
                     throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConfictRidderInvites = await tx.select({
+                    id: ridderInvite_schema_1.RidderInviteTable.id,
+                }).from(ridderInvite_schema_1.RidderInviteTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(ridderInvite_schema_1.RidderInviteTable.suggestStartAfter, new Date(updateRidderInviteDto.suggestEndedAt))));
             }
             const responseOfUpdatingRidderInvite = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
                 briefDescription: updateRidderInviteDto.briefDescription,
@@ -600,7 +620,10 @@ let RidderInviteService = class RidderInviteService {
             if (!responseOfCreatingNotification || responseOfCreatingNotification.length) {
                 throw exceptions_1.ClientCreatePassengerNotificationException;
             }
-            return responseOfUpdatingRidderInvite;
+            return [{
+                    hasConflict: (responseOfSelectingConfictRidderInvites && responseOfSelectingConfictRidderInvites.length !== 0),
+                    ...responseOfUpdatingRidderInvite[0],
+                }];
         });
     }
     async decideRidderInviteById(id, receiverId, receiverName, decideRidderInviteDto) {

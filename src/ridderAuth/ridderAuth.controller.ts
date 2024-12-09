@@ -22,7 +22,7 @@ export class RidderAuthController {
       try {
           const res = await this.ridderAuthService.sendAuthenticationCodeById(
               ridder.id, 
-              "Vaildate Your Email"
+              "Vaildate Your Email", 
           );
           
           if (!res || res.length === 0) throw ClientRidderNotFoundException;
@@ -50,7 +50,7 @@ export class RidderAuthController {
       try {
           const res = await this.ridderAuthService.sendAuthenticationCodeById(
               ridder.id, 
-              "Reset Your Password"
+              "Reset Your Password", 
           );
           
           if (!res || res.length === 0) throw ClientRidderNotFoundException;

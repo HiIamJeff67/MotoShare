@@ -570,7 +570,10 @@ export class RidderInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(), 
+        ...res[0], 
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
@@ -610,7 +613,10 @@ export class RidderInviteController {
 
       if (!res || res.length === 0) throw ClientInviteNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res[0]);
+      response.status(HttpStatusCode.Ok).send({
+        updatedAt: new Date(), 
+        ...res[0],
+      });
     } catch (error) {
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 

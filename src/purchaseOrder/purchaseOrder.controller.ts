@@ -72,10 +72,38 @@ export class PurchaseOrderController {
 
 
   /* ================================= Get operations ================================= */
-  // @Get('getPurchaseOrderById')
-  // getPurchaseOrderById(@Query('id') id: string) {
-  //   return this.purchaseOrderService.getPurchaseOrderById(id);
-  // }
+  // use this route to get detail of a puchase order by the given purchaseOrderId
+  @UseGuards(JwtRidderGuard)
+  @Get('getPurchaseOrderById')
+  async getPurchaseOrderById(
+    @Ridder() ridder: RidderType, // only the authenticated ridder can see the details of purchaseOrders
+    @Query('id') id: string,
+    @Res() response: Response,
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+
+      const res = await this.purchaseOrderService.getPurchaseOrderById(id);
+
+      if (!res) throw ClientPurchaseOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  /* ================= Search operations ================= */
   @UseGuards(JwtPassengerGuard)
   @Get('searchMyPurchaseOrders') // get the purchaseOrder of the passenger
   async searchMyPurchaseOrders(
@@ -115,38 +143,6 @@ export class PurchaseOrderController {
     }
   }
 
-  // use this route to get detail of a puchase order by the given purchaseOrderId
-  @UseGuards(JwtRidderGuard)
-  @Get('getPurchaseOrderById')
-  async getPurchaseOrderById(
-    @Ridder() ridder: RidderType, // only the authenticated ridder can see the details of purchaseOrders
-    @Query('id') id: string,
-    @Res() response: Response,
-  ) {
-    try {
-      if (!id) {
-        throw ApiMissingParameterException;
-      }
-
-      const res = await this.purchaseOrderService.getPurchaseOrderById(id);
-
-      if (!res) throw ClientPurchaseOrderNotFoundException;
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      if (!(error instanceof BadRequestException
-        || error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
-          error = ClientUnknownException;
-      }
-
-      response.status(error.status).send({
-        ...error.response,
-      });
-    }
-  }
-
-  /* ================= Search operations ================= */
   @Get('searchPaginationPurchaseOrders')
   async searchPaginationPurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,

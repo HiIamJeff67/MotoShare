@@ -7,6 +7,7 @@ export declare class PeriodicSupplyOrderService {
     constructor(db: DrizzleDB);
     createPeriodicSupplyOrderByCreatorId(creatorId: string, createPeriodicSupplyOrderDto: CreatePeriodicSupplyOrderDto): Promise<{
         id: string;
+        hasConflict: boolean;
     }[]>;
     getPeriodicSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;
@@ -38,6 +39,7 @@ export declare class PeriodicSupplyOrderService {
     }[]>;
     updatePeriodicSupplyOrderById(id: string, creatorId: string, updatePeriodicSupplyOrderDto: UpdatePeriodicSupplyOrderDto): Promise<{
         id: string;
+        hasConflict: any;
     }[]>;
     deletePeriodicSupplyOrderById(id: string, creatorId: string): Promise<{
         id: string;

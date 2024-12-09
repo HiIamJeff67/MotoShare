@@ -26,15 +26,15 @@ let RidderNotificationController = class RidderNotificationController {
     constructor(ridderNotificationService) {
         this.ridderNotificationService = ridderNotificationService;
     }
-    async getMyNotifications(ridder, id, response) {
+    async getMyRidderNotificationById(ridder, id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.ridderNotificationService.getRidderNotificationById(id, ridder.id);
             if (!res || res.length === 0)
-                exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+                throw exceptions_1.ClientRidderNotificationNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -80,7 +80,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.updateRidderNotificationToReadStatus(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -101,7 +101,7 @@ let RidderNotificationController = class RidderNotificationController {
             const res = await this.ridderNotificationService.deleteRidderNotification(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotificationNotFoundException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -118,14 +118,14 @@ let RidderNotificationController = class RidderNotificationController {
 exports.RidderNotificationController = RidderNotificationController;
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('getMyNotifications'),
+    (0, common_1.Get)('getMyRidderNotificationById'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('id')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [interfaces_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
-], RidderNotificationController.prototype, "getMyNotifications", null);
+], RidderNotificationController.prototype, "getMyRidderNotificationById", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('searchMyPaginationRidderNotifications'),

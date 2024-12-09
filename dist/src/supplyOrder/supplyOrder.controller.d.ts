@@ -9,8 +9,8 @@ export declare class SupplyOrderController {
     private readonly supplyOrderService;
     constructor(supplyOrderService: SupplyOrderService);
     createSupplyOrder(ridder: RidderType, createSupplyOrderDto: CreateSupplyOrderDto, response: Response): Promise<void>;
-    searchMySupplyOrders(ridder: RidderType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     getSupplyOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
+    searchMySupplyOrders(ridder: RidderType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchPaginationSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchAboutToStartSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;

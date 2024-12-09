@@ -70,6 +70,37 @@ export class SupplyOrderController {
 
 
   /* ================================= Get operations ================================= */
+  @UseGuards(JwtPassengerGuard)
+  @Get('getSupplyOrderById')
+  async getSupplyOrderById(
+    @Passenger() passenger: PassengerType,  // only the authenticated passenger can see the details of supplyOrders
+    @Query('id') id: string,
+    @Res() response: Response,
+  ) {
+    try {
+      if (!id) {
+        throw ApiMissingParameterException;
+      }
+      
+      const res = await this.supplyOrderService.getSupplyOrderById(id);
+
+      if (!res) throw ClientSupplyOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof BadRequestException
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  /* ================= Search operations ================= */
   @UseGuards(JwtRidderGuard)
   @Get('searchMySupplyOrders')
   async searchMySupplyOrders(
@@ -109,37 +140,6 @@ export class SupplyOrderController {
     }
   }
 
-  @UseGuards(JwtPassengerGuard)
-  @Get('getSupplyOrderById')
-  async getSupplyOrderById(
-    @Passenger() passenger: PassengerType,  // only the authenticated passenger can see the details of supplyOrders
-    @Query('id') id: string,
-    @Res() response: Response,
-  ) {
-    try {
-      if (!id) {
-        throw ApiMissingParameterException;
-      }
-      
-      const res = await this.supplyOrderService.getSupplyOrderById(id);
-
-      if (!res) throw ClientSupplyOrderNotFoundException;
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      if (!(error instanceof BadRequestException
-        || error instanceof UnauthorizedException 
-        || error instanceof NotFoundException)) {
-          error = ClientUnknownException;
-      }
-
-      response.status(error.status).send({
-        ...error.response,
-      });
-    }
-  }
-
-  /* ================= Search operations ================= */
   @Get('searchPaginationSupplyOrders')
   async searchPaginationSupplyOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,

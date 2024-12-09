@@ -149,7 +149,6 @@ let RidderController = class RidderController {
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
                 updatedAt: new Date(),
-                ...res[0],
             });
         }
         catch (error) {

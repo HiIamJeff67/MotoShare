@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, asc, desc, eq, like, lt, ne, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, like, lt, lte, ne, not, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetSimilarRouteSupplyOrdersDto 
@@ -61,27 +61,43 @@ export class SupplyOrderService {
 
   /* ================================= Create operations ================================= */
   async createSupplyOrderByCreatorId(creatorId: string, createSupplyOrderDto: CreateSupplyOrderDto) {
-    return await this.db.insert(SupplyOrderTable).values({
-      creatorId: creatorId,
-      description: createSupplyOrderDto.description,
-      initPrice: createSupplyOrderDto.initPrice,
-      startCord: sql`ST_SetSRID(
-        ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
-        4326
-      )`,
-      endCord: sql`ST_SetSRID(
-        ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
-        4326
-      )`,
-      startAddress: createSupplyOrderDto.startAddress,
-      endAddress: createSupplyOrderDto.endAddress,
-      startAfter: new Date(createSupplyOrderDto.startAfter),
-      endedAt: new Date(createSupplyOrderDto.endedAt),
-      tolerableRDV: createSupplyOrderDto.tolerableRDV,
-      autoAccept: createSupplyOrderDto.autoAccept,
-    }) .returning({
-      id: SupplyOrderTable.id,
-      status: SupplyOrderTable.status,
+    return await this.db.transaction(async (tx) => {
+      const responseOfSelectingConflictSupplyOrders = await tx.select({
+        id: SupplyOrderTable.id, 
+      }).from(SupplyOrderTable)
+        .where(and(
+          eq(SupplyOrderTable.creatorId, creatorId), 
+          not(lte(SupplyOrderTable.endedAt, new Date(createSupplyOrderDto.startAfter))), 
+          not(gte(SupplyOrderTable.startAfter, new Date(createSupplyOrderDto.endedAt))), 
+        ));
+
+      const responseOfCreatingSupplyOrder = await tx.insert(SupplyOrderTable).values({
+        creatorId: creatorId,
+        description: createSupplyOrderDto.description,
+        initPrice: createSupplyOrderDto.initPrice,
+        startCord: sql`ST_SetSRID(
+          ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
+          4326
+        )`,
+        endCord: sql`ST_SetSRID(
+          ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
+          4326
+        )`,
+        startAddress: createSupplyOrderDto.startAddress,
+        endAddress: createSupplyOrderDto.endAddress,
+        startAfter: new Date(createSupplyOrderDto.startAfter),
+        endedAt: new Date(createSupplyOrderDto.endedAt),
+        tolerableRDV: createSupplyOrderDto.tolerableRDV,
+        autoAccept: createSupplyOrderDto.autoAccept,
+      }).returning({
+        id: SupplyOrderTable.id,
+        status: SupplyOrderTable.status,
+      });
+
+      return [{
+        hasConflict: (responseOfSelectingConflictSupplyOrders && responseOfSelectingConflictSupplyOrders.length !== 0), 
+        ...responseOfCreatingSupplyOrder[0], 
+      }];
     });
   }
   /* ================================= Create operations ================================= */
@@ -427,81 +443,114 @@ export class SupplyOrderService {
     creatorId: string,
     updateSupplyOrderDto: UpdateSupplyOrderDto
   ) {
-    const newStartCord: point | undefined = 
-      (updateSupplyOrderDto.startCordLongitude !== undefined 
-        && updateSupplyOrderDto.startCordLatitude !== undefined)
-      ? { x: updateSupplyOrderDto.startCordLongitude, y: updateSupplyOrderDto.startCordLatitude, }
-      : undefined;
-    
-    const newEndCord: point | undefined = 
-      (updateSupplyOrderDto.endCordLongitude !== undefined
-        && updateSupplyOrderDto.endCordLatitude !== undefined)
-      ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
-      : undefined;
+    return await this.db.transaction(async (tx) => {
+      const newStartCord: point | undefined = 
+        (updateSupplyOrderDto.startCordLongitude !== undefined 
+          && updateSupplyOrderDto.startCordLatitude !== undefined)
+        ? { x: updateSupplyOrderDto.startCordLongitude, y: updateSupplyOrderDto.startCordLatitude, }
+        : undefined;
+      
+      const newEndCord: point | undefined = 
+        (updateSupplyOrderDto.endCordLongitude !== undefined
+          && updateSupplyOrderDto.endCordLatitude !== undefined)
+        ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
+        : undefined;
+  
+      let responseOfSelectingConflictSupplyOrders: any = undefined;
+      if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+        const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
 
-    if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
-      const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    } else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
-      const tempResponse = await this.db.select({
-        endedAt: SupplyOrderTable.endedAt,
-      }).from(SupplyOrderTable)
-        .where(and(
-          ne(SupplyOrderTable.status, "RESERVED"),
-          eq(SupplyOrderTable.id, id), 
-          eq(SupplyOrderTable.creatorId, creatorId),
-        ));
-      if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+        responseOfSelectingConflictSupplyOrders = await tx.select({
+          id: SupplyOrderTable.id, 
+        }).from(SupplyOrderTable)
+          .where(and(
+            eq(SupplyOrderTable.creatorId, creatorId), 
+            not(lte(SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))), 
+            not(gte(SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt))), 
+          ));
+      } else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
+        const tempResponse = await tx.select({
+          endedAt: SupplyOrderTable.endedAt,
+        }).from(SupplyOrderTable)
+          .where(and(
+            ne(SupplyOrderTable.status, "RESERVED"),
+            eq(SupplyOrderTable.id, id), 
+            eq(SupplyOrderTable.creatorId, creatorId),
+          ));
+        if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+  
+        const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
 
-      const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    } else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
-      const tempResponse = await this.db.select({
-        startAfter: SupplyOrderTable.startAfter,
-      }).from(SupplyOrderTable)
-        .where(and(
-          ne(SupplyOrderTable.status, "RESERVED"),
-          eq(SupplyOrderTable.id, id), 
-          eq(SupplyOrderTable.creatorId, creatorId),
-        ));
-      if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+        responseOfSelectingConflictSupplyOrders = await tx.select({
+          id: SupplyOrderTable.id, 
+        }).from(SupplyOrderTable)
+          .where(and(
+            eq(SupplyOrderTable.creatorId, creatorId), 
+            not(lte(SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))), 
+          ));
+      } else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+        const tempResponse = await tx.select({
+          startAfter: SupplyOrderTable.startAfter,
+        }).from(SupplyOrderTable)
+          .where(and(
+            ne(SupplyOrderTable.status, "RESERVED"),
+            eq(SupplyOrderTable.id, id), 
+            eq(SupplyOrderTable.creatorId, creatorId),
+          ));
+        if (!tempResponse || tempResponse.length === 0) throw ClientSupplyOrderNotFoundException;
+  
+        const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
+        if (startAfter >= endedAt) throw ClientEndBeforeStartException;
 
-      const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
-      if (startAfter >= endedAt) throw ClientEndBeforeStartException;
-    }
-
-    return await this.db.update(SupplyOrderTable).set({
-      description: updateSupplyOrderDto.description,
-      initPrice: updateSupplyOrderDto.initPrice,
-      startCord: newStartCord,
-      endCord: newEndCord,
-      startAddress: updateSupplyOrderDto.startAddress,
-      endAddress: updateSupplyOrderDto.endAddress,
-      ...(updateSupplyOrderDto.startAfter
-        ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
-        : {}
-      ),
-      ...(updateSupplyOrderDto.endedAt
-        ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
-        : {}
-      ),
-      tolerableRDV: updateSupplyOrderDto.tolerableRDV,
-      autoAccept: updateSupplyOrderDto.autoAccept,
-      status: updateSupplyOrderDto.status,
-      updatedAt: new Date(),
-    }).where(and(
-      ne(SupplyOrderTable.status, "RESERVED"),
-      (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt 
-        ? undefined 
-        : ne(SupplyOrderTable.status, "EXPIRED")
-      ), // if the user don't update startAfter or endedAt in this time, 
-         // then we add the constrant of excluding the "EXPIRED" supplyOrder
-      eq(SupplyOrderTable.id, id), 
-      eq(SupplyOrderTable.creatorId, creatorId),
-    )).returning({
+        responseOfSelectingConflictSupplyOrders = await tx.select({
+          id: SupplyOrderTable.id, 
+        }).from(SupplyOrderTable)
+          .where(and(
+            eq(SupplyOrderTable.creatorId, creatorId), 
+            not(gte(SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt))), 
+          ));
+      }
+  
+      const resposeOfUpdatingSupplyOrder = await tx.update(SupplyOrderTable).set({
+        description: updateSupplyOrderDto.description,
+        initPrice: updateSupplyOrderDto.initPrice,
+        startCord: newStartCord,
+        endCord: newEndCord,
+        startAddress: updateSupplyOrderDto.startAddress,
+        endAddress: updateSupplyOrderDto.endAddress,
+        ...(updateSupplyOrderDto.startAfter
+          ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
+          : {}
+        ),
+        ...(updateSupplyOrderDto.endedAt
+          ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
+          : {}
+        ),
+        tolerableRDV: updateSupplyOrderDto.tolerableRDV,
+        autoAccept: updateSupplyOrderDto.autoAccept,
+        status: updateSupplyOrderDto.status,
+        updatedAt: new Date(),
+      }).where(and(
+        ne(SupplyOrderTable.status, "RESERVED"),
+        (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt 
+          ? undefined 
+          : ne(SupplyOrderTable.status, "EXPIRED")
+        ), // if the user don't update startAfter or endedAt in this time, 
+           // then we add the constrant of excluding the "EXPIRED" supplyOrder
+        eq(SupplyOrderTable.id, id), 
+        eq(SupplyOrderTable.creatorId, creatorId),
+      )).returning({
         id: SupplyOrderTable.id,
         status: SupplyOrderTable.status,
       });
+      
+      return [{
+        hasConflict: (responseOfSelectingConflictSupplyOrders && responseOfSelectingConflictSupplyOrders.length !== 0), 
+        ...resposeOfUpdatingSupplyOrder[0], 
+      }];
+    });
   }
   /* ================================= Start with AutoAccept SupplyOrders operations ================================= */
   async startSupplyOrderWithoutInvite(

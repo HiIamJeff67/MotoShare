@@ -22,7 +22,7 @@ export class PassengerAuthController {
         try {
             const res = await this.passengerAuthService.sendAuthenticationCodeById(
                 passenger.id, 
-                "Vailate Your Email"
+                "Vailate Your Email",
             );
             
             if (!res || res.length === 0) throw ClientPassengerNotFoundException;
@@ -50,7 +50,7 @@ export class PassengerAuthController {
         try {
             const res = await this.passengerAuthService.sendAuthenticationCodeById(
                 passenger.id, 
-                "Reset Your Password"
+                "Reset Your Password",
             );
             
             if (!res || res.length === 0) throw ClientPassengerNotFoundException;
@@ -78,7 +78,7 @@ export class PassengerAuthController {
         try {
             const res = await this.passengerAuthService.sendAuthenticationCodeById(
                 passenger.id, 
-                "Reset Your Email or Password"
+                "Reset Your Email or Password",
             );
             
             if (!res || res.length === 0) throw ClientPassengerNotFoundException;

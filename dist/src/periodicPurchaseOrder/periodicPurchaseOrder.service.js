@@ -17,31 +17,42 @@ const common_1 = require("@nestjs/common");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
 const periodicPurchaseOrder_schema_1 = require("../drizzle/schema/periodicPurchaseOrder.schema");
 const drizzle_orm_1 = require("drizzle-orm");
+const exceptions_1 = require("../exceptions");
 let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
     constructor(db) {
         this.db = db;
     }
     async createPeriodicPurchaseOrderByCreatorId(creatorId, createPeriodicPurchaseOrderDto) {
-        return await this.db.insert(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).values({
-            creatorId: creatorId,
-            scheduledDay: createPeriodicPurchaseOrderDto.scheduledDay,
-            initPrice: createPeriodicPurchaseOrderDto.initPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPeriodicPurchaseOrderDto.startCordLongitude}, ${createPeriodicPurchaseOrderDto.startCordLatitude}),
-        4326
-      )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createPeriodicPurchaseOrderDto.endCordLongitude}, ${createPeriodicPurchaseOrderDto.endCordLatitude}),
-        4326
-      )`,
-            startAddress: createPeriodicPurchaseOrderDto.startAddress,
-            endAddress: createPeriodicPurchaseOrderDto.endAddress,
-            startAfter: new Date(createPeriodicPurchaseOrderDto.startAfter),
-            endedAt: new Date(createPeriodicPurchaseOrderDto.endedAt),
-            isUrgent: createPeriodicPurchaseOrderDto.isUrgent,
-            autoAccept: createPeriodicPurchaseOrderDto.autoAccept,
-        }).returning({
-            id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
+                id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+            }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(createPeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(createPeriodicPurchaseOrderDto.endedAt)))));
+            const responseOfCreatingPeriodicPurchaseOrder = await tx.insert(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).values({
+                creatorId: creatorId,
+                scheduledDay: createPeriodicPurchaseOrderDto.scheduledDay,
+                initPrice: createPeriodicPurchaseOrderDto.initPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPeriodicPurchaseOrderDto.startCordLongitude}, ${createPeriodicPurchaseOrderDto.startCordLatitude}),
+          4326
+        )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createPeriodicPurchaseOrderDto.endCordLongitude}, ${createPeriodicPurchaseOrderDto.endCordLatitude}),
+          4326
+        )`,
+                startAddress: createPeriodicPurchaseOrderDto.startAddress,
+                endAddress: createPeriodicPurchaseOrderDto.endAddress,
+                startAfter: new Date(createPeriodicPurchaseOrderDto.startAfter),
+                endedAt: new Date(createPeriodicPurchaseOrderDto.endedAt),
+                isUrgent: createPeriodicPurchaseOrderDto.isUrgent,
+                autoAccept: createPeriodicPurchaseOrderDto.autoAccept,
+            }).returning({
+                id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPeriodicPurchaseOrders && responseOfSelectingConflictPeriodicPurchaseOrders.length !== 0),
+                    ...responseOfCreatingPeriodicPurchaseOrder[0],
+                }];
         });
     }
     async getPeriodicPurchaseOrderById(id, creatorId) {
@@ -77,34 +88,80 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
             .offset(offset);
     }
     async updatePeriodicPurchaseOrderById(id, creatorId, updatePeriodicPurchaseOrderDto) {
-        const newStartCord = (updatePeriodicPurchaseOrderDto.startCordLongitude !== undefined
-            && updatePeriodicPurchaseOrderDto.startCordLatitude !== undefined)
-            ? { x: updatePeriodicPurchaseOrderDto.startCordLongitude,
-                y: updatePeriodicPurchaseOrderDto.startCordLatitude, }
-            : undefined;
-        const newEndCord = (updatePeriodicPurchaseOrderDto.endCordLongitude !== undefined
-            && updatePeriodicPurchaseOrderDto.endCordLatitude !== undefined)
-            ? { x: updatePeriodicPurchaseOrderDto.endCordLongitude,
-                y: updatePeriodicPurchaseOrderDto.endCordLatitude }
-            : undefined;
-        return await this.db.update(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).set({
-            scheduledDay: updatePeriodicPurchaseOrderDto.scheduledDay,
-            initPrice: updatePeriodicPurchaseOrderDto.initPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updatePeriodicPurchaseOrderDto.startAddress,
-            endAddress: updatePeriodicPurchaseOrderDto.endAddress,
-            ...(updatePeriodicPurchaseOrderDto.startAfter
-                ? { startAfter: new Date(updatePeriodicPurchaseOrderDto.startAfter) }
-                : {}),
-            ...(updatePeriodicPurchaseOrderDto.endedAt
-                ? { endedAt: new Date(updatePeriodicPurchaseOrderDto.endedAt) }
-                : {}),
-            isUrgent: updatePeriodicPurchaseOrderDto.isUrgent,
-            autoAccept: updatePeriodicPurchaseOrderDto.autoAccept,
-            updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId))).returning({
-            id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+        return await this.db.transaction(async (tx) => {
+            const newStartCord = (updatePeriodicPurchaseOrderDto.startCordLongitude !== undefined
+                && updatePeriodicPurchaseOrderDto.startCordLatitude !== undefined)
+                ? { x: updatePeriodicPurchaseOrderDto.startCordLongitude,
+                    y: updatePeriodicPurchaseOrderDto.startCordLatitude, }
+                : undefined;
+            const newEndCord = (updatePeriodicPurchaseOrderDto.endCordLongitude !== undefined
+                && updatePeriodicPurchaseOrderDto.endCordLatitude !== undefined)
+                ? { x: updatePeriodicPurchaseOrderDto.endCordLongitude,
+                    y: updatePeriodicPurchaseOrderDto.endCordLatitude }
+                : undefined;
+            let responseOfSelectingConflictPeriodicPurchaseOrders = undefined;
+            if (updatePeriodicPurchaseOrderDto.startAfter && updatePeriodicPurchaseOrderDto.endedAt) {
+                const [startAfter, endedAt] = [new Date(updatePeriodicPurchaseOrderDto.startAfter), new Date(updatePeriodicPurchaseOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
+                    id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+                }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt)))));
+            }
+            else if (updatePeriodicPurchaseOrderDto.startAfter && !updatePeriodicPurchaseOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    endedAt: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt,
+                }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPeriodicPurchaseOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(updatePeriodicPurchaseOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
+                    id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+                }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter))));
+            }
+            else if (!updatePeriodicPurchaseOrderDto.startAfter && updatePeriodicPurchaseOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    startAfter: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter,
+                }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientPeriodicPurchaseOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updatePeriodicPurchaseOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
+                    id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+                }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt))));
+            }
+            const responseOfUpdatingPeriodicPurchaseOrder = await tx.update(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).set({
+                scheduledDay: updatePeriodicPurchaseOrderDto.scheduledDay,
+                initPrice: updatePeriodicPurchaseOrderDto.initPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updatePeriodicPurchaseOrderDto.startAddress,
+                endAddress: updatePeriodicPurchaseOrderDto.endAddress,
+                ...(updatePeriodicPurchaseOrderDto.startAfter
+                    ? { startAfter: new Date(updatePeriodicPurchaseOrderDto.startAfter) }
+                    : {}),
+                ...(updatePeriodicPurchaseOrderDto.endedAt
+                    ? { endedAt: new Date(updatePeriodicPurchaseOrderDto.endedAt) }
+                    : {}),
+                isUrgent: updatePeriodicPurchaseOrderDto.isUrgent,
+                autoAccept: updatePeriodicPurchaseOrderDto.autoAccept,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id, id), (0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId))).returning({
+                id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictPeriodicPurchaseOrders && responseOfSelectingConflictPeriodicPurchaseOrders.length !== 0),
+                    ...responseOfUpdatingPeriodicPurchaseOrder[0],
+                }];
         });
     }
     async deletePeriodicPurchaseOrderById(id, creatorId) {

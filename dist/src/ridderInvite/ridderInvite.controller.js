@@ -339,7 +339,10 @@ let RidderInviteController = class RidderInviteController {
             const res = await this.ridderInviteService.updateRidderInviteById(id, ridder.id, ridder.userName, updateRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
@@ -362,7 +365,10 @@ let RidderInviteController = class RidderInviteController {
             const res = await this.ridderInviteService.decideRidderInviteById(id, passenger.id, passenger.userName, decideRidderInviteDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.BadRequestException

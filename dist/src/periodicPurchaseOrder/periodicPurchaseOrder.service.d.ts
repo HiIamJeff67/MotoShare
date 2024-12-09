@@ -7,9 +7,11 @@ export declare class PeriodicPurchaseOrderService {
     constructor(db: DrizzleDB);
     createPeriodicPurchaseOrderByCreatorId(creatorId: string, createPeriodicPurchaseOrderDto: CreatePeriodicPurchaseOrderDto): Promise<{
         id: string;
+        hasConflict: boolean;
     }[]>;
     getPeriodicPurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;
+        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
         initPrice: number;
         startCord: {
             x: number;
@@ -23,11 +25,10 @@ export declare class PeriodicPurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+        isUrgent: boolean;
         autoAccept: boolean;
         createdAt: Date;
         updatedAt: Date;
-        isUrgent: boolean;
     } | undefined>;
     searchPaginationPeriodicPurchaseOrders(creatorId: string, scheduledDay: DaysOfWeekType | undefined, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
@@ -38,6 +39,7 @@ export declare class PeriodicPurchaseOrderService {
     }[]>;
     updatePeriodicPurchaseOrderById(id: string, creatorId: string, updatePeriodicPurchaseOrderDto: UpdatePeriodicPurchaseOrderDto): Promise<{
         id: string;
+        hasConflict: any;
     }[]>;
     deletePeriodicPurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;

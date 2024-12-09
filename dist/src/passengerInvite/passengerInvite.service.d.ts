@@ -13,6 +13,7 @@ export declare class PassengerInviteService {
         id: string;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        hasConflict: boolean;
     }[]>;
     getPassengerInviteById(id: string, userId: string): Promise<{
         id: string;
@@ -206,6 +207,7 @@ export declare class PassengerInviteService {
     updatePassengerInviteById(id: string, inviterId: string, inviterName: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        hasConflict: any;
     }[]>;
     decidePassengerInviteById(id: string, receiverId: string, receiverName: string, decidePassengerInviteDto: DecidePassengerInviteDto): Promise<{
         orderId: string;

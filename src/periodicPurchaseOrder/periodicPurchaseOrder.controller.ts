@@ -14,7 +14,7 @@ import { DaysOfWeekType } from '../types';
 
 @Controller('periodicPurchaseOrder')
 export class PeriodicPurchaseOrderController {
-  constructor(private periodicPurchaseOrderService: PeriodicPurchaseOrderService) {}
+  constructor(private readonly periodicPurchaseOrderService: PeriodicPurchaseOrderService) {}
 
   /* ================================= Create operations ================================= */
   @UseGuards(JwtPassengerGuard)
@@ -118,7 +118,7 @@ export class PeriodicPurchaseOrderController {
     } catch (error) {
       if (!(error instanceof NotFoundException
         || error instanceof NotAcceptableException)) {
-        error = ClientUnknownException;
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({

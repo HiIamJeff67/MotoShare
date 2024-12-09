@@ -11,9 +11,10 @@ export declare class RidderInviteService {
     private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
-        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        createdAt: Date;
+        hasConflict: boolean;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
         id: string;
@@ -206,6 +207,7 @@ export declare class RidderInviteService {
     updateRidderInviteById(id: string, inviterId: string, inviterName: string, updateRidderInviteDto: UpdateRidderInviteDto): Promise<{
         id: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        hasConflict: any;
     }[]>;
     decideRidderInviteById(id: string, receiverId: string, receiverName: string, decideRidderInviteDto: DecideRidderInviteDto): Promise<{
         orderId: string;

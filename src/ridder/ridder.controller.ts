@@ -235,7 +235,6 @@ export class RidderController {
 
       response.status(HttpStatusCode.Ok).send({
         updatedAt: new Date(),
-        ...res[0],
       });
     } catch (error) {
       if (!(error instanceof UnauthorizedException

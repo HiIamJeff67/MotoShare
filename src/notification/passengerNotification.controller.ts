@@ -11,12 +11,12 @@ import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from "../constants";
 
 @Controller('passengerNotification')
 export class PassengerNotificationController {
-    constructor(private passengerNotificationService: PassengerNotificationService) {}
+    constructor(private readonly passengerNotificationService: PassengerNotificationService) {}
 
     /* ================================= Get operations ================================= */
     @UseGuards(JwtPassengerGuard)
-    @Get('getMyNotifications')
-    async getMyNotifications(
+    @Get('getMyPassengerNotificationById')
+    async getMyPassengerNotificationById(
         @Passenger() passenger: PassengerType, 
         @Query('id') id: string, 
         @Res() response: Response, 
@@ -33,7 +33,7 @@ export class PassengerNotificationController {
 
             if (!res || res.length === 0) ClientPassengerNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException 
                 || error instanceof UnauthorizedException 
@@ -92,7 +92,7 @@ export class PassengerNotificationController {
 
 
     /* ================================= Update operations ================================= */
-    @UseGuards(JwtRidderGuard)
+    @UseGuards(JwtPassengerGuard)
     @Patch('updateMyPassengerNotificationToReadStatus')
     async updateMyPassengerNotificationToReadStatus(
         @Passenger() passenger: PassengerType, 
@@ -111,7 +111,7 @@ export class PassengerNotificationController {
 
             if (!res || res.length === 0) throw ClientPassengerNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException
                 || error instanceof UnauthorizedException 
@@ -147,7 +147,7 @@ export class PassengerNotificationController {
 
             if (!res || res.length === 0) throw ClientPassengerNotificationNotFoundException;
 
-            response.status(HttpStatusCode.Ok).send(res);
+            response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
             if (!(error instanceof BadRequestException
                 || error instanceof UnauthorizedException 

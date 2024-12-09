@@ -43,27 +43,37 @@ let SupplyOrderService = class SupplyOrderService {
         return response.length;
     }
     async createSupplyOrderByCreatorId(creatorId, createSupplyOrderDto) {
-        return await this.db.insert(supplyOrder_schema_1.SupplyOrderTable).values({
-            creatorId: creatorId,
-            description: createSupplyOrderDto.description,
-            initPrice: createSupplyOrderDto.initPrice,
-            startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
-        4326
-      )`,
-            endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
-        ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
-        4326
-      )`,
-            startAddress: createSupplyOrderDto.startAddress,
-            endAddress: createSupplyOrderDto.endAddress,
-            startAfter: new Date(createSupplyOrderDto.startAfter),
-            endedAt: new Date(createSupplyOrderDto.endedAt),
-            tolerableRDV: createSupplyOrderDto.tolerableRDV,
-            autoAccept: createSupplyOrderDto.autoAccept,
-        }).returning({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingConflictSupplyOrders = await tx.select({
+                id: supplyOrder_schema_1.SupplyOrderTable.id,
+            }).from(supplyOrder_schema_1.SupplyOrderTable)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(createSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(createSupplyOrderDto.endedAt)))));
+            const responseOfCreatingSupplyOrder = await tx.insert(supplyOrder_schema_1.SupplyOrderTable).values({
+                creatorId: creatorId,
+                description: createSupplyOrderDto.description,
+                initPrice: createSupplyOrderDto.initPrice,
+                startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createSupplyOrderDto.startCordLongitude}, ${createSupplyOrderDto.startCordLatitude}), 
+          4326
+        )`,
+                endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(
+          ST_MakePoint(${createSupplyOrderDto.endCordLongitude}, ${createSupplyOrderDto.endCordLatitude}), 
+          4326
+        )`,
+                startAddress: createSupplyOrderDto.startAddress,
+                endAddress: createSupplyOrderDto.endAddress,
+                startAfter: new Date(createSupplyOrderDto.startAfter),
+                endedAt: new Date(createSupplyOrderDto.endedAt),
+                tolerableRDV: createSupplyOrderDto.tolerableRDV,
+                autoAccept: createSupplyOrderDto.autoAccept,
+            }).returning({
+                id: supplyOrder_schema_1.SupplyOrderTable.id,
+                status: supplyOrder_schema_1.SupplyOrderTable.status,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictSupplyOrders && responseOfSelectingConflictSupplyOrders.length !== 0),
+                    ...responseOfCreatingSupplyOrder[0],
+                }];
         });
     }
     async searchSupplyOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
@@ -303,63 +313,82 @@ let SupplyOrderService = class SupplyOrderService {
             .offset(offset);
     }
     async updateSupplyOrderById(id, creatorId, updateSupplyOrderDto) {
-        const newStartCord = (updateSupplyOrderDto.startCordLongitude !== undefined
-            && updateSupplyOrderDto.startCordLatitude !== undefined)
-            ? { x: updateSupplyOrderDto.startCordLongitude, y: updateSupplyOrderDto.startCordLatitude, }
-            : undefined;
-        const newEndCord = (updateSupplyOrderDto.endCordLongitude !== undefined
-            && updateSupplyOrderDto.endCordLatitude !== undefined)
-            ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
-            : undefined;
-        if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
-            const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
-            const tempResponse = await this.db.select({
-                endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
-            }).from(supplyOrder_schema_1.SupplyOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
-            if (!tempResponse || tempResponse.length === 0)
-                throw exceptions_1.ClientSupplyOrderNotFoundException;
-            const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
-            const tempResponse = await this.db.select({
-                startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            }).from(supplyOrder_schema_1.SupplyOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
-            if (!tempResponse || tempResponse.length === 0)
-                throw exceptions_1.ClientSupplyOrderNotFoundException;
-            const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
-            if (startAfter >= endedAt)
-                throw exceptions_1.ClientEndBeforeStartException;
-        }
-        return await this.db.update(supplyOrder_schema_1.SupplyOrderTable).set({
-            description: updateSupplyOrderDto.description,
-            initPrice: updateSupplyOrderDto.initPrice,
-            startCord: newStartCord,
-            endCord: newEndCord,
-            startAddress: updateSupplyOrderDto.startAddress,
-            endAddress: updateSupplyOrderDto.endAddress,
-            ...(updateSupplyOrderDto.startAfter
-                ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
-                : {}),
-            ...(updateSupplyOrderDto.endedAt
-                ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
-                : {}),
-            tolerableRDV: updateSupplyOrderDto.tolerableRDV,
-            autoAccept: updateSupplyOrderDto.autoAccept,
-            status: updateSupplyOrderDto.status,
-            updatedAt: new Date(),
-        }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt
-            ? undefined
-            : (0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
+        return await this.db.transaction(async (tx) => {
+            const newStartCord = (updateSupplyOrderDto.startCordLongitude !== undefined
+                && updateSupplyOrderDto.startCordLatitude !== undefined)
+                ? { x: updateSupplyOrderDto.startCordLongitude, y: updateSupplyOrderDto.startCordLatitude, }
+                : undefined;
+            const newEndCord = (updateSupplyOrderDto.endCordLongitude !== undefined
+                && updateSupplyOrderDto.endCordLatitude !== undefined)
+                ? { x: updateSupplyOrderDto.endCordLongitude, y: updateSupplyOrderDto.endCordLatitude }
+                : undefined;
+            let responseOfSelectingConflictSupplyOrders = undefined;
+            if (updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+                const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(updateSupplyOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictSupplyOrders = await tx.select({
+                    id: supplyOrder_schema_1.SupplyOrderTable.id,
+                }).from(supplyOrder_schema_1.SupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt)))));
+            }
+            else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
+                }).from(supplyOrder_schema_1.SupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientSupplyOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(updateSupplyOrderDto.startAfter), new Date(tempResponse[0].endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictSupplyOrders = await tx.select({
+                    id: supplyOrder_schema_1.SupplyOrderTable.id,
+                }).from(supplyOrder_schema_1.SupplyOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))));
+            }
+            else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
+                const tempResponse = await tx.select({
+                    startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+                }).from(supplyOrder_schema_1.SupplyOrderTable)
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId)));
+                if (!tempResponse || tempResponse.length === 0)
+                    throw exceptions_1.ClientSupplyOrderNotFoundException;
+                const [startAfter, endedAt] = [new Date(tempResponse[0].startAfter), new Date(updateSupplyOrderDto.endedAt)];
+                if (startAfter >= endedAt)
+                    throw exceptions_1.ClientEndBeforeStartException;
+                responseOfSelectingConflictSupplyOrders = await tx.select({
+                    id: supplyOrder_schema_1.SupplyOrderTable.id,
+                }).from(supplyOrder_schema_1.SupplyOrderTable)
+                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt))));
+            }
+            const resposeOfUpdatingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
+                description: updateSupplyOrderDto.description,
+                initPrice: updateSupplyOrderDto.initPrice,
+                startCord: newStartCord,
+                endCord: newEndCord,
+                startAddress: updateSupplyOrderDto.startAddress,
+                endAddress: updateSupplyOrderDto.endAddress,
+                ...(updateSupplyOrderDto.startAfter
+                    ? { startAfter: new Date(updateSupplyOrderDto.startAfter) }
+                    : {}),
+                ...(updateSupplyOrderDto.endedAt
+                    ? { endedAt: new Date(updateSupplyOrderDto.endedAt) }
+                    : {}),
+                tolerableRDV: updateSupplyOrderDto.tolerableRDV,
+                autoAccept: updateSupplyOrderDto.autoAccept,
+                status: updateSupplyOrderDto.status,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (updateSupplyOrderDto.startAfter || updateSupplyOrderDto.endedAt
+                ? undefined
+                : (0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "EXPIRED")), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, id), (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId))).returning({
+                id: supplyOrder_schema_1.SupplyOrderTable.id,
+                status: supplyOrder_schema_1.SupplyOrderTable.status,
+            });
+            return [{
+                    hasConflict: (responseOfSelectingConflictSupplyOrders && responseOfSelectingConflictSupplyOrders.length !== 0),
+                    ...resposeOfUpdatingSupplyOrder[0],
+                }];
         });
     }
     async startSupplyOrderWithoutInvite(id, userId, userName, acceptAutoAcceptSupplyOrderDto) {

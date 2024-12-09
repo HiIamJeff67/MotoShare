@@ -9,8 +9,8 @@ export declare class PurchaseOrderController {
     private readonly purchaseOrderService;
     constructor(purchaseOrderService: PurchaseOrderService);
     createPurchaseOrder(passenger: PassengerType, createPurchaseOrderDto: CreatePurchaseOrderDto, response: Response): Promise<void>;
-    searchMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     getPurchaseOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
+    searchMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchPaginationPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
@@ -23,6 +23,7 @@ export declare class PurchaseOrderController {
     getAllPurchaseOrders(): Promise<{
         id: string;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -36,12 +37,11 @@ export declare class PurchaseOrderController {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        isUrgent: boolean;
         autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        isUrgent: boolean;
     }[]>;
     testWithExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     testWithoutExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

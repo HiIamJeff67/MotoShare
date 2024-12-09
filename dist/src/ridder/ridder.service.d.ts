@@ -14,11 +14,11 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            updatedAt: Date;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
         } | null;
@@ -27,12 +27,12 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            updatedAt: Date;
             motocycleLicense: string | null;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
@@ -45,6 +45,9 @@ export declare class RidderService {
             orderId: string;
             order: {
                 id: string;
+                description: string | null;
+                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -55,10 +58,7 @@ export declare class RidderService {
                     y: number;
                 };
                 startAfter: Date;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 isUrgent: boolean;
                 creator: {
                     userName: string;

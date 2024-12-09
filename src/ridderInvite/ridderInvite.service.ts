@@ -4,7 +4,7 @@ import { DecideRidderInviteDto, UpdateRidderInviteDto } from './dto/update-ridde
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { RidderInviteTable } from '../drizzle/schema/ridderInvite.schema';
-import { and, asc, desc, eq, like, lt, ne, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, like, lt, lte, ne, not, or, sql } from 'drizzle-orm';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
@@ -68,6 +68,15 @@ export class RidderInviteService {
     createRidderInviteDto: CreateRidderInviteDto, 
   ) {
     return await this.db.transaction(async (tx) => {
+      const responseOfSelectingConfictRidderInvites = await tx.select({
+        id: RidderInviteTable.id, 
+      }).from(RidderInviteTable)
+        .where(and(
+          eq(RidderInviteTable.userId, inviterId), 
+          not(lte(RidderInviteTable.suggestEndedAt, new Date(createRidderInviteDto.suggestStartAfter))), 
+          not(gte(RidderInviteTable.suggestStartAfter, new Date(createRidderInviteDto.suggestEndedAt))), 
+        ));
+
       const responseOfSelectingPurchaseOrder = await tx.select({
         passengerId: PassengerTable.id, 
         status: PurchaseOrderTable.status, 
@@ -117,7 +126,10 @@ export class RidderInviteService {
         throw ClientCreatePassengerNotificationException;
       }
 
-      return responseOfCreatingRidderInvite;
+      return [{
+        hasConflict: (responseOfSelectingConfictRidderInvites && responseOfSelectingConfictRidderInvites.length !== 0), 
+        ...responseOfCreatingRidderInvite[0], 
+      }];
     });
   }
   /* ================================= Create operations ================================= */
@@ -717,15 +729,41 @@ export class RidderInviteService {
           .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id));
       if (!ridderInvite || ridderInvite.length === 0) throw ClientInviteNotFoundException;
 
+      let responseOfSelectingConfictRidderInvites: any = undefined;
       if (updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConfictRidderInvites = await tx.select({
+          id: RidderInviteTable.id, 
+        }).from(RidderInviteTable)
+          .where(and(
+            eq(RidderInviteTable.userId, inviterId), 
+            not(lte(RidderInviteTable.suggestEndedAt, new Date(updateRidderInviteDto.suggestStartAfter))), 
+            not(gte(RidderInviteTable.suggestStartAfter, new Date(updateRidderInviteDto.suggestEndedAt))), 
+          ));
       } else if (updateRidderInviteDto.suggestStartAfter && !updateRidderInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(updateRidderInviteDto.suggestStartAfter), new Date(ridderInvite[0].suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConfictRidderInvites = await tx.select({
+          id: RidderInviteTable.id, 
+        }).from(RidderInviteTable)
+          .where(and(
+            eq(RidderInviteTable.userId, inviterId), 
+            not(lte(RidderInviteTable.suggestEndedAt, new Date(updateRidderInviteDto.suggestStartAfter)))
+          ));
       } else if (!updateRidderInviteDto.suggestStartAfter && updateRidderInviteDto.suggestEndedAt) {
         const [startAfter, endedAt] = [new Date(ridderInvite[0].suggestStartAfter), new Date(updateRidderInviteDto.suggestEndedAt)];
         if (startAfter >= endedAt) throw ClientEndBeforeStartException;
+
+        responseOfSelectingConfictRidderInvites = await tx.select({
+          id: RidderInviteTable.id, 
+        }).from(RidderInviteTable)
+          .where(and(
+            eq(RidderInviteTable.userId, inviterId), 
+            not(gte(RidderInviteTable.suggestStartAfter, new Date(updateRidderInviteDto.suggestEndedAt)))
+          ));
       }
 
       const responseOfUpdatingRidderInvite = await tx.update(RidderInviteTable).set({
@@ -774,7 +812,10 @@ export class RidderInviteService {
           throw ClientCreatePassengerNotificationException;
         }
 
-        return responseOfUpdatingRidderInvite;
+        return [{
+          hasConflict: (responseOfSelectingConfictRidderInvites && responseOfSelectingConfictRidderInvites.length !== 0), 
+          ...responseOfUpdatingRidderInvite[0], 
+        }];
     });
   }
   /* ================= Update detail operations used by Ridder ================= */

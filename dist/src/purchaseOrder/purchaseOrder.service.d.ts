@@ -14,6 +14,7 @@ export declare class PurchaseOrderService {
     createPurchaseOrderByCreatorId(creatorId: string, createPurchaseOrderDto: CreatePurchaseOrderDto): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        hasConflict: boolean;
     }[]>;
     searchPurchaseOrdersByCreatorId(creatorId: string, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;
@@ -38,6 +39,7 @@ export declare class PurchaseOrderService {
     }[]>;
     getPurchaseOrderById(id: string): Promise<{
         id: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -51,12 +53,11 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        isUrgent: boolean;
         autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        isUrgent: boolean;
         creator: {
             userName: string;
             info: {
@@ -186,6 +187,7 @@ export declare class PurchaseOrderService {
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
         id: string;
         status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+        hasConflict: any;
     }[]>;
     startPurchaseOrderWithoutInvite(id: string, userId: string, userName: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto): Promise<{
         orderId: string;
@@ -215,6 +217,7 @@ export declare class PurchaseOrderService {
     getAllPurchaseOrders(): Promise<{
         id: string;
         creatorId: string;
+        description: string | null;
         initPrice: number;
         startCord: {
             x: number;
@@ -228,12 +231,11 @@ export declare class PurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
+        isUrgent: boolean;
         autoAccept: boolean;
+        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        isUrgent: boolean;
     }[]>;
     searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined, limit: number, offset: number): Promise<{
         id: string;

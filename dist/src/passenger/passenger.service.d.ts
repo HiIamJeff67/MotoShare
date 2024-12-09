@@ -14,23 +14,23 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithInfoByUserId(userId: string): Promise<{
         userName: string;
         email: string;
         info: {
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithCollectionByUserId(userId: string): Promise<{
@@ -40,6 +40,9 @@ export declare class PassengerService {
             orderId: string;
             order: {
                 id: string;
+                description: string | null;
+                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -51,10 +54,7 @@ export declare class PassengerService {
                 };
                 startAfter: Date;
                 tolerableRDV: number;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 creator: {
                     userName: string;
                 };
