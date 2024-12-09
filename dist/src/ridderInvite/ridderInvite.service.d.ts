@@ -11,9 +11,9 @@ export declare class RidderInviteService {
     private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
+        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
-        createdAt: Date;
         hasConflict: boolean;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
@@ -73,6 +73,20 @@ export declare class RidderInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     searchAboutToStartRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        receiverName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggestEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
+    searchSimilarTimeRidderInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
         suggestStartAddress: string;
@@ -159,6 +173,20 @@ export declare class RidderInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
+    searchSimilarTimeRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        inviterName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggestEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
     searchCurAdjacentRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
@@ -225,7 +253,7 @@ export declare class RidderInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;

@@ -9,8 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetSimilarRoutePurchaseOrdersDto = exports.GetAdjacentPurchaseOrdersDto = void 0;
+exports.GetSimilarRoutePurchaseOrdersDto = exports.GetAdjacentPurchaseOrdersDto = exports.GetSimilarTimePurchaseOrderDto = void 0;
 const class_validator_1 = require("class-validator");
+const validator_1 = require("../../validator");
+class GetSimilarTimePurchaseOrderDto {
+}
+exports.GetSimilarTimePurchaseOrderDto = GetSimilarTimePurchaseOrderDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, validator_1.IsStartBeforeEnd)('endedAt'),
+    (0, validator_1.IsAfterNow)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], GetSimilarTimePurchaseOrderDto.prototype, "startAfter", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, validator_1.IsEndAfterStart)('startAfter'),
+    (0, validator_1.IsAfterNow)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], GetSimilarTimePurchaseOrderDto.prototype, "endedAt", void 0);
 class GetAdjacentPurchaseOrdersDto {
 }
 exports.GetAdjacentPurchaseOrdersDto = GetAdjacentPurchaseOrdersDto;

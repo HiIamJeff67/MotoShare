@@ -50,7 +50,7 @@ let PassengerInviteService = class PassengerInviteService {
             const responseOfSelectingConfictPassengerInvites = await tx.select({
                 id: passengerInvite_schema_1.PassengerInviteTable.id,
             }).from(passengerInvite_schema_1.PassengerInviteTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(createPassengerInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(createPassengerInviteDto.suggestEndedAt)))));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(createPassengerInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(createPassengerInviteDto.suggestEndedAt)))));
             const responseOfSelectingSupplyOrder = await tx.select({
                 ridderId: ridder_schema_1.RidderTable.id,
                 status: supplyOrder_schema_1.SupplyOrderTable.status,
@@ -195,6 +195,38 @@ let PassengerInviteService = class PassengerInviteService {
         query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.asc)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter))
             .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchSimilarTimePassengerInvitesByInviterId(inviterId, receiverName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
+        const query = this.db.select({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+            orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
+            receiverName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            status: passengerInvite_schema_1.PassengerInviteTable.status,
+        }).from(passengerInvite_schema_1.PassengerInviteTable);
+        if (receiverName) {
+            query.leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId))
+                .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter} - ${supplyOrder_schema_1.SupplyOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt} - ${supplyOrder_schema_1.SupplyOrderTable.endedAt}))) ASC`).limit(limit)
             .offset(offset);
         return await query;
     }
@@ -403,6 +435,37 @@ let PassengerInviteService = class PassengerInviteService {
             .offset(offset);
         return await query;
     }
+    async searchSimilarTimePassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
+        await this.updateExpiredPassengerInvites();
+        const query = this.db.select({
+            id: passengerInvite_schema_1.PassengerInviteTable.id,
+            orderId: passengerInvite_schema_1.PassengerInviteTable.orderId,
+            suggestStartAddress: passengerInvite_schema_1.PassengerInviteTable.startAddress,
+            suggestEndAddress: passengerInvite_schema_1.PassengerInviteTable.endAddress,
+            inviterName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            suggestPrice: passengerInvite_schema_1.PassengerInviteTable.suggestPrice,
+            suggestStartAfter: passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter,
+            suggesEndedAt: passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt,
+            createdAt: passengerInvite_schema_1.PassengerInviteTable.createdAt,
+            updatedAt: passengerInvite_schema_1.PassengerInviteTable.updatedAt,
+            status: passengerInvite_schema_1.PassengerInviteTable.status,
+        }).from(passengerInvite_schema_1.PassengerInviteTable)
+            .leftJoin(supplyOrder_schema_1.SupplyOrderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, passengerInvite_schema_1.PassengerInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInvite_schema_1.PassengerInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter} - ${supplyOrder_schema_1.SupplyOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt} - ${supplyOrder_schema_1.SupplyOrderTable.endedAt}))) ASC`).limit(limit)
+            .offset(offset);
+        return await query;
+    }
     async searchCurAdjacentPassengerInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
         await this.updateExpiredPassengerInvites();
         const query = this.db.select({
@@ -572,7 +635,7 @@ let PassengerInviteService = class PassengerInviteService {
                 responseOfSelectingConflictPassengerInvites = await tx.select({
                     id: passengerInvite_schema_1.PassengerInviteTable.id,
                 }).from(passengerInvite_schema_1.PassengerInviteTable)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt)))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt)))));
             }
             else if (updatePassengerInviteDto.suggestStartAfter && !updatePassengerInviteDto.suggestEndedAt) {
                 const [startAfter, endedAt] = [new Date(updatePassengerInviteDto.suggestStartAfter), new Date(passengerInvite[0].suggestEndedAt)];
@@ -581,7 +644,7 @@ let PassengerInviteService = class PassengerInviteService {
                 responseOfSelectingConflictPassengerInvites = await tx.select({
                     id: passengerInvite_schema_1.PassengerInviteTable.id,
                 }).from(passengerInvite_schema_1.PassengerInviteTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(passengerInvite_schema_1.PassengerInviteTable.suggestEndedAt, new Date(updatePassengerInviteDto.suggestStartAfter)))));
             }
             else if (!updatePassengerInviteDto.suggestStartAfter && updatePassengerInviteDto.suggestEndedAt) {
                 const [startAfter, endedAt] = [new Date(passengerInvite[0].suggestStartAfter), new Date(updatePassengerInviteDto.suggestEndedAt)];
@@ -590,7 +653,7 @@ let PassengerInviteService = class PassengerInviteService {
                 responseOfSelectingConflictPassengerInvites = await tx.select({
                     id: passengerInvite_schema_1.PassengerInviteTable.id,
                 }).from(passengerInvite_schema_1.PassengerInviteTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerInvite_schema_1.PassengerInviteTable.userId, inviterId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(passengerInvite_schema_1.PassengerInviteTable.suggestStartAfter, new Date(updatePassengerInviteDto.suggestEndedAt)))));
             }
             const responseOfUpdatingPassengerInvite = await tx.update(passengerInvite_schema_1.PassengerInviteTable).set({
                 briefDescription: updatePassengerInviteDto.briefDescription,

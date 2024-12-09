@@ -12,7 +12,8 @@ import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { 
   GetAdjacentPurchaseOrdersDto, 
-  GetSimilarRoutePurchaseOrdersDto 
+  GetSimilarRoutePurchaseOrdersDto, 
+  GetSimilarTimePurchaseOrderDto
 } from './dto/get-purchaseOrder.dto';
 import { 
   ClientCreateOrderException, 
@@ -109,36 +110,6 @@ export class PurchaseOrderService {
 
 
   /* ================================= Get operations ================================= */
-  async searchPurchaseOrdersByCreatorId(
-    creatorId: string, 
-    limit: number, 
-    offset: number, 
-    isAutoAccept: boolean, 
-  ) {
-    return await this.db.select({
-      id: PurchaseOrderTable.id,
-      initPrice: PurchaseOrderTable.initPrice,
-      startCord: PurchaseOrderTable.startCord,
-      endCord: PurchaseOrderTable.endCord,
-      startAddress: PurchaseOrderTable.startAddress,
-      endAddress: PurchaseOrderTable.endAddress,
-      startAfter: PurchaseOrderTable.startAfter,
-      endedAt: PurchaseOrderTable.endedAt,
-      createdAt: PurchaseOrderTable.createdAt,
-      updatedAt: PurchaseOrderTable.updatedAt,
-      isUrgent: PurchaseOrderTable.isUrgent,
-      autoAccept: PurchaseOrderTable.autoAccept,
-      status: PurchaseOrderTable.status,
-    }).from(PurchaseOrderTable)
-      .where(and(
-        eq(PurchaseOrderTable.creatorId, creatorId), 
-        ne(PurchaseOrderTable.status, "RESERVED"), 
-        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-      )).orderBy(desc(PurchaseOrderTable.updatedAt))
-        .limit(limit)
-        .offset(offset);
-  }
-
   // for specifying the details of the other purchaseOrders
   async getPurchaseOrderById(id: string) {
     return await this.db.query.PurchaseOrderTable.findFirst({
@@ -198,6 +169,36 @@ export class PurchaseOrderService {
   }
 
   /* ================= Search operations ================= */
+  async searchPurchaseOrdersByCreatorId(
+    creatorId: string, 
+    limit: number, 
+    offset: number, 
+    isAutoAccept: boolean, 
+  ) {
+    return await this.db.select({
+      id: PurchaseOrderTable.id,
+      initPrice: PurchaseOrderTable.initPrice,
+      startCord: PurchaseOrderTable.startCord,
+      endCord: PurchaseOrderTable.endCord,
+      startAddress: PurchaseOrderTable.startAddress,
+      endAddress: PurchaseOrderTable.endAddress,
+      startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      createdAt: PurchaseOrderTable.createdAt,
+      updatedAt: PurchaseOrderTable.updatedAt,
+      isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
+      status: PurchaseOrderTable.status,
+    }).from(PurchaseOrderTable)
+      .where(and(
+        eq(PurchaseOrderTable.creatorId, creatorId), 
+        ne(PurchaseOrderTable.status, "RESERVED"), 
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+      )).orderBy(desc(PurchaseOrderTable.updatedAt))
+        .limit(limit)
+        .offset(offset);
+  }
+  
   async searchPaginationPurchaseOrders(
     creatorName: string | undefined = undefined,
     limit: number, 
@@ -268,6 +269,45 @@ export class PurchaseOrderService {
         .orderBy(asc(PurchaseOrderTable.startAfter))
         .limit(limit)
         .offset(offset);
+  }
+
+  async searchSimliarTimePurchaseOrders(
+    creatorName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+    isAutoAccept: boolean, 
+    getSimilarTimePurchaseOrderDto: GetSimilarTimePurchaseOrderDto, 
+  ) {
+    await this.updateExpiredPurchaseOrders();
+
+    return await this.db.select({
+      id: PurchaseOrderTable.id,
+      creatorName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      initPrice: PurchaseOrderTable.initPrice,
+      startCord: PurchaseOrderTable.startCord,
+      endCord: PurchaseOrderTable.endCord,
+      startAddress: PurchaseOrderTable.startAddress,
+      endAddress: PurchaseOrderTable.endAddress,
+      createdAt: PurchaseOrderTable.createdAt,
+      updatedAt: PurchaseOrderTable.updatedAt,
+      startAfter: PurchaseOrderTable.startAfter,
+      endedAt: PurchaseOrderTable.endedAt,
+      isUrgent: PurchaseOrderTable.isUrgent,
+      autoAccept: PurchaseOrderTable.autoAccept,
+      status: PurchaseOrderTable.status,
+    }).from(PurchaseOrderTable)
+      .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+      .where(and(
+        eq(PurchaseOrderTable.status, "POSTED"), 
+        (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+      )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(
+          sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.startAfter} - ${getSimilarTimePurchaseOrderDto.startAfter}))) +
+              ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.endedAt} - ${getSimilarTimePurchaseOrderDto.endedAt}))) ASC`
+        ).limit(limit)
+         .offset(offset);
   }
 
   async searchCurAdjacentPurchaseOrders(

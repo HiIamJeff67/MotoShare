@@ -273,6 +273,49 @@ export class PassengerInviteService {
     
     return await query;
   }
+
+  async searchSimilarTimePassengerInvitesByInviterId(
+    inviterId: string,
+    receiverName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      receiverName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      status: PassengerInviteTable.status,
+    }).from(PassengerInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName + "%")));
+    } else {
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
+    }
+    
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+         .orderBy(
+            sql`ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestStartAfter} - ${SupplyOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestEndedAt} - ${SupplyOrderTable.endedAt}))) ASC`
+         ).limit(limit)
+          .offset(offset);
+
+    return await query;
+  }
   
   async searchCurAdjacentPassengerInvitesByInviterId(
     inviterId: string,
@@ -527,6 +570,48 @@ export class PassengerInviteService {
           .limit(limit)
           .offset(offset);
     
+    return await query;
+  }
+
+  async searchSimilarTimePassengerInvitesByReceiverId(
+    receiverId: string,
+    inviterName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      inviterName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      status: PassengerInviteTable.status,
+    }).from(PassengerInviteTable)
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(
+            sql`ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestStartAfter} - ${SupplyOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestEndedAt} - ${SupplyOrderTable.endedAt}))) ASC`
+          ).limit(limit)
+           .offset(offset);
+
     return await query;
   }
 

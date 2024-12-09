@@ -73,7 +73,7 @@ export class CreatePurchaseOrderDto {
     @IsStartBeforeEnd('endedAt')
     @IsAfterNow()
     @IsDateString()
-    startAfter: string   // but at most case, should be specify
+    startAfter: string
 
     @IsNotEmpty()
     @IsEndAfterStart('startAfter')

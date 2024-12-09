@@ -47,7 +47,7 @@ let SupplyOrderService = class SupplyOrderService {
             const responseOfSelectingConflictSupplyOrders = await tx.select({
                 id: supplyOrder_schema_1.SupplyOrderTable.id,
             }).from(supplyOrder_schema_1.SupplyOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(createSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(createSupplyOrderDto.endedAt)))));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(createSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(createSupplyOrderDto.endedAt)))));
             const responseOfCreatingSupplyOrder = await tx.insert(supplyOrder_schema_1.SupplyOrderTable).values({
                 creatorId: creatorId,
                 description: createSupplyOrderDto.description,
@@ -75,27 +75,6 @@ let SupplyOrderService = class SupplyOrderService {
                     ...responseOfCreatingSupplyOrder[0],
                 }];
         });
-    }
-    async searchSupplyOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
-        return await this.db.select({
-            id: supplyOrder_schema_1.SupplyOrderTable.id,
-            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
-            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
-            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
-            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
-            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
-            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
-            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
-            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
-            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
-            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
-            autoAccept: supplyOrder_schema_1.SupplyOrderTable.autoAccept,
-            status: supplyOrder_schema_1.SupplyOrderTable.status,
-        }).from(supplyOrder_schema_1.SupplyOrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined)))
-            .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
-            .limit(limit)
-            .offset(offset);
     }
     async getSupplyOrderById(id) {
         return await this.db.query.SupplyOrderTable.findFirst({
@@ -134,6 +113,26 @@ let SupplyOrderService = class SupplyOrderService {
                 }
             }
         });
+    }
+    async searchSupplyOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
+        return await this.db.select({
+            id: supplyOrder_schema_1.SupplyOrderTable.id,
+            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
+            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
+            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
+            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
+            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
+            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            autoAccept: supplyOrder_schema_1.SupplyOrderTable.autoAccept,
+            status: supplyOrder_schema_1.SupplyOrderTable.status,
+        }).from(supplyOrder_schema_1.SupplyOrderTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(supplyOrder_schema_1.SupplyOrderTable.status, "RESERVED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined))).orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
     }
     async searchPaginationSupplyOrders(creatorName = undefined, limit, offset, isAutoAccept) {
         await this.updateExpiredSupplyOrders();
@@ -183,6 +182,32 @@ let SupplyOrderService = class SupplyOrderService {
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.asc)(supplyOrder_schema_1.SupplyOrderTable.startAfter))
             .limit(limit)
+            .offset(offset);
+    }
+    async searchSimilarTimeSupplyOrders(creatorName = undefined, limit, offset, isAutoAccept, getSimilarTimeSupplyOrderDto) {
+        await this.updateExpiredSupplyOrders();
+        return await this.db.select({
+            id: supplyOrder_schema_1.SupplyOrderTable.id,
+            creatorName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            initPrice: supplyOrder_schema_1.SupplyOrderTable.initPrice,
+            startCord: supplyOrder_schema_1.SupplyOrderTable.startCord,
+            endCord: supplyOrder_schema_1.SupplyOrderTable.endCord,
+            startAddress: supplyOrder_schema_1.SupplyOrderTable.startAddress,
+            endAddress: supplyOrder_schema_1.SupplyOrderTable.endAddress,
+            createdAt: supplyOrder_schema_1.SupplyOrderTable.createdAt,
+            updatedAt: supplyOrder_schema_1.SupplyOrderTable.updatedAt,
+            startAfter: supplyOrder_schema_1.SupplyOrderTable.startAfter,
+            endedAt: supplyOrder_schema_1.SupplyOrderTable.endedAt,
+            tolerableRDV: supplyOrder_schema_1.SupplyOrderTable.tolerableRDV,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+            autoAccept: supplyOrder_schema_1.SupplyOrderTable.autoAccept,
+            status: supplyOrder_schema_1.SupplyOrderTable.status,
+        }).from(supplyOrder_schema_1.SupplyOrderTable)
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${supplyOrder_schema_1.SupplyOrderTable.startAfter} - ${getSimilarTimeSupplyOrderDto.startAfter}))) + 
+              ABS(EXTRACT(EPOCH FROM (${supplyOrder_schema_1.SupplyOrderTable.endedAt} - ${getSimilarTimeSupplyOrderDto.endedAt})))`).limit(limit)
             .offset(offset);
     }
     async searchCurAdjacentSupplyOrders(creatorName = undefined, limit, offset, isAutoAccept, getAdjacentSupplyOrdersDto) {
@@ -330,7 +355,7 @@ let SupplyOrderService = class SupplyOrderService {
                 responseOfSelectingConflictSupplyOrders = await tx.select({
                     id: supplyOrder_schema_1.SupplyOrderTable.id,
                 }).from(supplyOrder_schema_1.SupplyOrderTable)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt)))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt)))));
             }
             else if (updateSupplyOrderDto.startAfter && !updateSupplyOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -345,7 +370,7 @@ let SupplyOrderService = class SupplyOrderService {
                 responseOfSelectingConflictSupplyOrders = await tx.select({
                     id: supplyOrder_schema_1.SupplyOrderTable.id,
                 }).from(supplyOrder_schema_1.SupplyOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(supplyOrder_schema_1.SupplyOrderTable.endedAt, new Date(updateSupplyOrderDto.startAfter)))));
             }
             else if (!updateSupplyOrderDto.startAfter && updateSupplyOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -360,7 +385,7 @@ let SupplyOrderService = class SupplyOrderService {
                 responseOfSelectingConflictSupplyOrders = await tx.select({
                     id: supplyOrder_schema_1.SupplyOrderTable.id,
                 }).from(supplyOrder_schema_1.SupplyOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(supplyOrder_schema_1.SupplyOrderTable.startAfter, new Date(updateSupplyOrderDto.endedAt)))));
             }
             const resposeOfUpdatingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
                 description: updateSupplyOrderDto.description,

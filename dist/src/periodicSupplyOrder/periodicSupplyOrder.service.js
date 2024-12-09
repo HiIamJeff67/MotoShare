@@ -27,7 +27,7 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
             const responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
                 id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
             }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(createPeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(createPeriodicSupplyOrderDto.endedAt)))));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(createPeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(createPeriodicSupplyOrderDto.endedAt)))));
             const responseOfCreatingPeriodicSupplyOrder = await tx.insert(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).values({
                 creatorId: creatorId,
                 scheduledDay: createPeriodicSupplyOrderDto.scheduledDay,
@@ -107,7 +107,7 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
                 responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
                     id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
                 }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt)))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt)))));
             }
             else if (updatePeriodicSupplyOrderDto.startAfter && !updatePeriodicSupplyOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -122,7 +122,7 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
                 responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
                     id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
                 }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt, new Date(updatePeriodicSupplyOrderDto.startAfter)))));
             }
             else if (!updatePeriodicSupplyOrderDto.startAfter && updatePeriodicSupplyOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -137,7 +137,7 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
                 responseOfSelectingConflictPeriodicSupplyOrders = await tx.select({
                     id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
                 }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter, new Date(updatePeriodicSupplyOrderDto.endedAt)))));
             }
             const responseOfUpdatingPeriodicSupplyOrder = await tx.update(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).set({
                 scheduledDay: updatePeriodicSupplyOrderDto.scheduledDay,

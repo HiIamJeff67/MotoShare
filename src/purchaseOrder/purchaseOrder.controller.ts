@@ -28,7 +28,8 @@ import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { 
   GetAdjacentPurchaseOrdersDto, 
-  GetSimilarRoutePurchaseOrdersDto 
+  GetSimilarRoutePurchaseOrdersDto, 
+  GetSimilarTimePurchaseOrderDto
 } from './dto/get-purchaseOrder.dto';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
@@ -208,6 +209,47 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @Get('searchSimliarTimePurchaseOrders')
+  async searchSimliarTimePurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
+    @Body() getSimilarTimePurchaseOrderDto: GetSimilarTimePurchaseOrderDto, 
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+
+      const res = await this.purchaseOrderService.searchSimliarTimePurchaseOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+        getSimilarTimePurchaseOrderDto, 
+      );
+
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      console.log(error);
       if (!(error instanceof NotFoundException
         || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;

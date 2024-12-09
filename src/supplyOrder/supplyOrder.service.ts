@@ -7,7 +7,8 @@ import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
 import { and, asc, desc, eq, gte, like, lt, lte, ne, not, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
-  GetSimilarRouteSupplyOrdersDto 
+  GetSimilarRouteSupplyOrdersDto, 
+  GetSimilarTimeSupplyOrderDto
 } from './dto/get-supplyOrder.dto';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
@@ -104,37 +105,6 @@ export class SupplyOrderService {
 
 
   /* ================================= Get operations ================================= */
-  async searchSupplyOrdersByCreatorId(
-    creatorId: string, 
-    limit: number, 
-    offset: number,
-    isAutoAccept: boolean, 
-  ) {
-    return await this.db.select({
-      id: SupplyOrderTable.id,
-      initPrice: SupplyOrderTable.initPrice,
-      startCord: SupplyOrderTable.startCord,
-      endCord: SupplyOrderTable.endCord,
-      startAddress: SupplyOrderTable.startAddress,
-      endAddress: SupplyOrderTable.endAddress,
-      startAfter: SupplyOrderTable.startAfter,
-      endedAt: SupplyOrderTable.endedAt,
-      createdAt: SupplyOrderTable.createdAt,
-      updatedAt: SupplyOrderTable.updatedAt,
-      tolerableRDV: SupplyOrderTable.tolerableRDV,
-      autoAccept: SupplyOrderTable.autoAccept,
-      status: SupplyOrderTable.status,
-    }).from(SupplyOrderTable)
-      .where(and(
-        eq(SupplyOrderTable.creatorId, creatorId), 
-        ne(SupplyOrderTable.status, "RESERVED"), 
-        (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-      ))
-      .orderBy(desc(SupplyOrderTable.updatedAt))
-      .limit(limit)
-      .offset(offset);
-  }
-
   // for specifying the details of that other SupplyOrders
   async getSupplyOrderById(id: string) {
     return await this.db.query.SupplyOrderTable.findFirst({
@@ -196,6 +166,36 @@ export class SupplyOrderService {
   }
 
   /* ================= Search operations ================= */
+  async searchSupplyOrdersByCreatorId(
+    creatorId: string, 
+    limit: number, 
+    offset: number,
+    isAutoAccept: boolean, 
+  ) {
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
+      startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      autoAccept: SupplyOrderTable.autoAccept,
+      status: SupplyOrderTable.status,
+    }).from(SupplyOrderTable)
+      .where(and(
+        eq(SupplyOrderTable.creatorId, creatorId), 
+        ne(SupplyOrderTable.status, "RESERVED"), 
+        (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
+      )).orderBy(desc(SupplyOrderTable.updatedAt))
+        .limit(limit)
+        .offset(offset);
+  }
+
   async searchPaginationSupplyOrders(
     creatorName: string | undefined = undefined,
     limit: number, 
@@ -266,6 +266,46 @@ export class SupplyOrderService {
         .orderBy(asc(SupplyOrderTable.startAfter))
         .limit(limit)
         .offset(offset);
+  }
+
+  async searchSimilarTimeSupplyOrders(
+    creatorName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+    isAutoAccept: boolean, 
+    getSimilarTimeSupplyOrderDto: GetSimilarTimeSupplyOrderDto, 
+  ) {
+    await this.updateExpiredSupplyOrders();
+
+    return await this.db.select({
+      id: SupplyOrderTable.id,
+      creatorName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      initPrice: SupplyOrderTable.initPrice,
+      startCord: SupplyOrderTable.startCord,
+      endCord: SupplyOrderTable.endCord,
+      startAddress: SupplyOrderTable.startAddress,
+      endAddress: SupplyOrderTable.endAddress,
+      createdAt: SupplyOrderTable.createdAt,
+      updatedAt: SupplyOrderTable.updatedAt,
+      startAfter: SupplyOrderTable.startAfter,
+      endedAt: SupplyOrderTable.endedAt,
+      tolerableRDV: SupplyOrderTable.tolerableRDV,
+      motocycleType: RidderInfoTable.motocycleType,
+      autoAccept: SupplyOrderTable.autoAccept,
+      status: SupplyOrderTable.status,
+    }).from(SupplyOrderTable)
+      .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+      .where(and(
+        eq(SupplyOrderTable.status, "POSTED"),
+        (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
+        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+      )).leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
+        .orderBy(
+          sql`ABS(EXTRACT(EPOCH FROM (${SupplyOrderTable.startAfter} - ${getSimilarTimeSupplyOrderDto.startAfter}))) + 
+              ABS(EXTRACT(EPOCH FROM (${SupplyOrderTable.endedAt} - ${getSimilarTimeSupplyOrderDto.endedAt})))`
+        ).limit(limit)
+         .offset(offset);
   }
   
   async searchCurAdjacentSupplyOrders(

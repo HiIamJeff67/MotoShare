@@ -266,6 +266,49 @@ export class RidderInviteService {
     return await query;
   }
 
+  async searchSimilarTimeRidderInvitesByInviterId(
+    inviterId: string,
+    receiverName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredRidderInvites();
+
+    const query = this.db.select({
+      id: RidderInviteTable.id,
+      orderId: RidderInviteTable.orderId,
+      suggestStartAddress: RidderInviteTable.startAddress,
+      suggestEndAddress: RidderInviteTable.endAddress,
+      receiverName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: RidderInviteTable.suggestPrice,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
+      createdAt: RidderInviteTable.createdAt,
+      updatedAt: RidderInviteTable.updatedAt,
+      status: RidderInviteTable.status,
+    }).from(RidderInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId))
+           .where(and(eq(RidderInviteTable.userId, inviterId), like(PassengerTable.userName, receiverName + "%")));
+    } else {
+      query.where(eq(RidderInviteTable.userId, inviterId))
+           .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PurchaseOrderTable.creatorId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(
+            sql`ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestStartAfter} - ${PurchaseOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestEndedAt} - ${PurchaseOrderTable.endedAt}))) ASC`
+          ).limit(limit)
+           .offset(offset);
+
+    return await query;
+  }
+
   async searchCurAdjacentRidderInvitesByInviterId(
     inviterId: string,
     receiverName: string | undefined = undefined,
@@ -518,6 +561,48 @@ export class RidderInviteService {
           .limit(limit)
           .offset(offset);
     
+    return await query;
+  }
+
+  async searchSimilarTimeRidderInvitesByReceiverId(
+    receiverId: string,
+    inviterName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+  ) {
+    await this.updateExpiredRidderInvites();
+
+    const query = this.db.select({
+      id: RidderInviteTable.id,
+      orderId: RidderInviteTable.orderId,
+      suggestStartAddress: RidderInviteTable.startAddress,
+      suggestEndAddress: RidderInviteTable.endAddress,
+      inviterName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      suggestPrice: RidderInviteTable.suggestPrice,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggestEndedAt: RidderInviteTable.suggestEndedAt,
+      createdAt: RidderInviteTable.createdAt,
+      updatedAt: RidderInviteTable.updatedAt,
+      status: RidderInviteTable.status, 
+    }).from(RidderInviteTable)
+      .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId))
+           .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(RidderTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(PurchaseOrderTable.creatorId, receiverId))
+           .leftJoin(RidderTable, eq(RidderTable.id, RidderInviteTable.userId));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(
+            sql`ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestStartAfter} - ${PurchaseOrderTable.startAfter}))) +
+                ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestEndedAt} - ${PurchaseOrderTable.endedAt}))) ASC`
+          ).limit(limit)
+           .offset(offset);
+
     return await query;
   }
 

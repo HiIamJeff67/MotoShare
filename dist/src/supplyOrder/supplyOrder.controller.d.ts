@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
-import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto } from './dto/get-supplyOrder.dto';
+import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto, GetSimilarTimeSupplyOrderDto } from './dto/get-supplyOrder.dto';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
 export declare class SupplyOrderController {
     private readonly supplyOrderService;
@@ -13,6 +13,7 @@ export declare class SupplyOrderController {
     searchMySupplyOrders(ridder: RidderType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchPaginationSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchAboutToStartSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
+    seachSimilarTimeSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarTimeSupplyOrderDto: GetSimilarTimeSupplyOrderDto, response: Response): Promise<void>;
     searchCurAdjacentSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
     searchDestAdjacentSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentSupplyOrdersDto: GetAdjacentSupplyOrdersDto, response: Response): Promise<void>;
     searchSimilarRouteSupplyOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarRouteSupplyOrdersDto: GetSimilarRouteSupplyOrdersDto, response: Response): Promise<void>;

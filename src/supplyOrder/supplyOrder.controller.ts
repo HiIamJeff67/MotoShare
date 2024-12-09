@@ -27,7 +27,8 @@ import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { 
   GetAdjacentSupplyOrdersDto, 
-  GetSimilarRouteSupplyOrdersDto 
+  GetSimilarRouteSupplyOrdersDto, 
+  GetSimilarTimeSupplyOrderDto
 } from './dto/get-supplyOrder.dto';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
@@ -205,6 +206,47 @@ export class SupplyOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @Get('searchSimilarTimeSupplyOrders')
+  async seachSimilarTimeSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined, 
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
+    @Body() getSimilarTimeSupplyOrderDto: GetSimilarTimeSupplyOrderDto, 
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+
+      const res = await this.supplyOrderService.searchSimilarTimeSupplyOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+        getSimilarTimeSupplyOrderDto, 
+      );
+
+      if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      console.log(error);
       if (!(error instanceof NotFoundException
         || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;

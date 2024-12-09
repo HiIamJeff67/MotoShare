@@ -220,6 +220,46 @@ export class PassengerInviteController {
   }
 
   @UseGuards(JwtPassengerGuard)
+  @Get('/passenger/searchMySimliarTimePassengerInvites')
+  async searchSimliarTimePassengerInvitesByInviterId(
+    @Passenger() passenger: PassengerType,
+    @Query('receiverName') receiverName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+
+      const res = await this.passengerInviteService.searchSimilarTimePassengerInvitesByInviterId(
+        passenger.id, 
+        receiverName, 
+        toNumber(limit, true), 
+        toNumber(offset, true),
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtPassengerGuard)
   @Get('passenger/searchMyCurAdjacentPassengerInvites')
   async searchCurAdjacentPassengerInvitesByInviterId(
     @Passenger() passenger: PassengerType,
@@ -400,6 +440,46 @@ export class PassengerInviteController {
       }
 
       const res = await this.passengerInviteService.searchAboutToStartPassengerInvitesByReceiverId(
+        ridder.id, 
+        inviterName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Get('ridder/searchMySimilarTimePassengerInvites')
+  async searchSimilarTimePassengerInvitesByReceiverId(
+    @Ridder() ridder: RidderType,
+    @Query('inviterName') inviterName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+
+      const res = await this.passengerInviteService.searchSimilarTimePassengerInvitesByReceiverId(
         ridder.id, 
         inviterName, 
         toNumber(limit, true), 

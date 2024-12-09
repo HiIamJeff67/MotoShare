@@ -88,6 +88,20 @@ export declare class PassengerInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
+    searchSimilarTimePassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        receiverName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggesEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
     searchCurAdjacentPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
@@ -146,6 +160,20 @@ export declare class PassengerInviteService {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[]>;
     searchAboutToStartPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
+        id: string;
+        orderId: string;
+        suggestStartAddress: string;
+        suggestEndAddress: string;
+        inviterName: never;
+        avatorUrl: never;
+        suggestPrice: number;
+        suggestStartAfter: Date;
+        suggesEndedAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+    }[]>;
+    searchSimilarTimePassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
         suggestStartAddress: string;
@@ -225,7 +253,7 @@ export declare class PassengerInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;

@@ -139,6 +139,30 @@ let RidderInviteController = class RidderInviteController {
             });
         }
     }
+    async searchSimilarTimeRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchSimilarTimeRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async searchCurAdjacentRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", response) {
         try {
             if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
@@ -244,6 +268,30 @@ let RidderInviteController = class RidderInviteController {
                 throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
             }
             const res = await this.ridderInviteService.searchAboutToStartRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchSimilarTimeRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
+        try {
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.ridderInviteService.searchSimilarTimeRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true));
             if (!res || res.length === 0)
                 throw exceptions_1.ClientInviteNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -464,6 +512,18 @@ __decorate([
 ], RidderInviteController.prototype, "searchAboutToStartRidderInvitesByInviterId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMySimilarTimeRidderInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchSimilarTimeRidderInvitesByInviterId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Get)('ridder/searchMyCurAdjacentRidderInvites'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Query)('receiverName')),
@@ -522,6 +582,18 @@ __decorate([
     __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchAboutToStartRidderInvitesByReceiverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMySimilarTimeRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchSimilarTimeRidderInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('passenger/searchMyCurAdjacentRidderInvites'),

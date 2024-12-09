@@ -27,7 +27,7 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
             const responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
                 id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
             }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(createPeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(createPeriodicPurchaseOrderDto.endedAt)))));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(createPeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(createPeriodicPurchaseOrderDto.endedAt)))));
             const responseOfCreatingPeriodicPurchaseOrder = await tx.insert(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).values({
                 creatorId: creatorId,
                 scheduledDay: createPeriodicPurchaseOrderDto.scheduledDay,
@@ -107,7 +107,7 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
                 responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
                     id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
                 }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt)))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt)))));
             }
             else if (updatePeriodicPurchaseOrderDto.startAfter && !updatePeriodicPurchaseOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -122,7 +122,7 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
                 responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
                     id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
                 }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.endedAt, new Date(updatePeriodicPurchaseOrderDto.startAfter)))));
             }
             else if (!updatePeriodicPurchaseOrderDto.startAfter && updatePeriodicPurchaseOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -137,7 +137,7 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
                 responseOfSelectingConflictPeriodicPurchaseOrders = await tx.select({
                     id: periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.id,
                 }).from(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable.startAfter, new Date(updatePeriodicPurchaseOrderDto.endedAt)))));
             }
             const responseOfUpdatingPeriodicPurchaseOrder = await tx.update(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).set({
                 scheduledDay: updatePeriodicPurchaseOrderDto.scheduledDay,

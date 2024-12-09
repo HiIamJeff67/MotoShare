@@ -1,4 +1,19 @@
-import { IsLatitude, IsLongitude, IsNotEmpty } from "class-validator";
+import { IsDateString, IsLatitude, IsLongitude, IsNotEmpty } from "class-validator";
+import { IsAfterNow, IsEndAfterStart, IsStartBeforeEnd } from "../../validator";
+
+export class GetSimilarTimeSupplyOrderDto {
+    @IsNotEmpty()
+    @IsStartBeforeEnd('endedAt')
+    @IsAfterNow()
+    @IsDateString()
+    startAfter: string
+
+    @IsNotEmpty()
+    @IsEndAfterStart('startAfter')
+    @IsAfterNow()
+    @IsDateString()
+    endedAt: string
+}
 
 export class GetAdjacentSupplyOrdersDto {
     @IsNotEmpty()

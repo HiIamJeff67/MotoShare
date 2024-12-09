@@ -1,3 +1,7 @@
+export declare class GetSimilarTimeSupplyOrderDto {
+    startAfter: string;
+    endedAt: string;
+}
 export declare class GetAdjacentSupplyOrdersDto {
     cordLongitude: number;
     cordLatitude: number;

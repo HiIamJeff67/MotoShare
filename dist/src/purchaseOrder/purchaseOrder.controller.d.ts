@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
-import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto } from './dto/get-purchaseOrder.dto';
+import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto, GetSimilarTimePurchaseOrderDto } from './dto/get-purchaseOrder.dto';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
 export declare class PurchaseOrderController {
     private readonly purchaseOrderService;
@@ -13,6 +13,7 @@ export declare class PurchaseOrderController {
     searchMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchPaginationPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
+    searchSimliarTimePurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarTimePurchaseOrderDto: GetSimilarTimePurchaseOrderDto, response: Response): Promise<void>;
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
     searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
     searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, response: Response): Promise<void>;
@@ -22,8 +23,10 @@ export declare class PurchaseOrderController {
     deleteMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     getAllPurchaseOrders(): Promise<{
         id: string;
-        creatorId: string;
         description: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        creatorId: string;
         initPrice: number;
         startCord: {
             x: number;
@@ -37,11 +40,9 @@ export declare class PurchaseOrderController {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        isUrgent: boolean;
         autoAccept: boolean;
-        status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
-        createdAt: Date;
-        updatedAt: Date;
+        status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
+        isUrgent: boolean;
     }[]>;
     testWithExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     testWithoutExpired(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

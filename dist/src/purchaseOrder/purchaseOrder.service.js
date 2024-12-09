@@ -47,7 +47,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             const responseOfSelectingConflictPurchaseOrders = await tx.select({
                 id: purchaseOrder_schema_1.PurchaseOrderTable.id,
             }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(createPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(createPurchaseOrderDto.endedAt)))));
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(createPurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(createPurchaseOrderDto.endedAt)))));
             const responseOfCreatingPurchaseOrder = await tx.insert(purchaseOrder_schema_1.PurchaseOrderTable).values({
                 creatorId: creatorId,
                 description: createPurchaseOrderDto.description,
@@ -75,26 +75,6 @@ let PurchaseOrderService = class PurchaseOrderService {
                     ...responseOfCreatingPurchaseOrder[0],
                 }];
         });
-    }
-    async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
-        return await this.db.select({
-            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
-            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
-            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
-            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
-            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
-            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
-            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
-            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
-            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
-            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
-            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
-            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
-        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined))).orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
-            .limit(limit)
-            .offset(offset);
     }
     async getPurchaseOrderById(id) {
         return await this.db.query.PurchaseOrderTable.findFirst({
@@ -131,6 +111,26 @@ let PurchaseOrderService = class PurchaseOrderService {
                 }
             }
         });
+    }
+    async searchPurchaseOrdersByCreatorId(creatorId, limit, offset, isAutoAccept) {
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.ne)(purchaseOrder_schema_1.PurchaseOrderTable.status, "RESERVED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined))).orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
+            .limit(limit)
+            .offset(offset);
     }
     async searchPaginationPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept) {
         await this.updateExpiredPurchaseOrders();
@@ -180,6 +180,31 @@ let PurchaseOrderService = class PurchaseOrderService {
             .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.asc)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter))
             .limit(limit)
+            .offset(offset);
+    }
+    async searchSimliarTimePurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getSimilarTimePurchaseOrderDto) {
+        await this.updateExpiredPurchaseOrders();
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.startAfter} - ${getSimilarTimePurchaseOrderDto.startAfter}))) +
+              ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.endedAt} - ${getSimilarTimePurchaseOrderDto.endedAt}))) ASC`).limit(limit)
             .offset(offset);
     }
     async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getAdjacentPurchaseOrdersDto) {
@@ -325,7 +350,7 @@ let PurchaseOrderService = class PurchaseOrderService {
                 responseOfSelectingConflictPurchaseOrders = await tx.select({
                     id: purchaseOrder_schema_1.PurchaseOrderTable.id,
                 }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt)))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter))), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt)))));
             }
             else if (updatePurchaseOrderDto.startAfter && !updatePurchaseOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -340,7 +365,7 @@ let PurchaseOrderService = class PurchaseOrderService {
                 responseOfSelectingConflictPurchaseOrders = await tx.select({
                     id: purchaseOrder_schema_1.PurchaseOrderTable.id,
                 }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.lte)(purchaseOrder_schema_1.PurchaseOrderTable.endedAt, new Date(updatePurchaseOrderDto.startAfter)))));
             }
             else if (!updatePurchaseOrderDto.startAfter && updatePurchaseOrderDto.endedAt) {
                 const tempResponse = await tx.select({
@@ -355,7 +380,7 @@ let PurchaseOrderService = class PurchaseOrderService {
                 responseOfSelectingConflictPurchaseOrders = await tx.select({
                     id: purchaseOrder_schema_1.PurchaseOrderTable.id,
                 }).from(purchaseOrder_schema_1.PurchaseOrderTable)
-                    .where((0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt))));
+                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, creatorId), (0, drizzle_orm_1.not)((0, drizzle_orm_1.gte)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter, new Date(updatePurchaseOrderDto.endedAt)))));
             }
             const responseOfUpdatingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
                 description: updatePurchaseOrderDto.description,

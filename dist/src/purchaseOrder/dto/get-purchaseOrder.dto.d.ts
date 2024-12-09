@@ -1,3 +1,7 @@
+export declare class GetSimilarTimePurchaseOrderDto {
+    startAfter: string;
+    endedAt: string;
+}
 export declare class GetAdjacentPurchaseOrdersDto {
     cordLongitude: number;
     cordLatitude: number;

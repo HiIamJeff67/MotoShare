@@ -11,11 +11,13 @@ export declare class PassengerInviteController {
     getPassengerInviteForRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
     searchPaginationPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchSimliarTimePassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchSimilarRoutePassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchPaginationPasssengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchSimilarTimePassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchMySimilarRoutePassengerInvitesByReceverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
