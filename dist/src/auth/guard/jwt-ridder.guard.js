@@ -6,6 +6,15 @@ class JwtRidderGuard extends (0, passport_1.AuthGuard)('jwt-ridder') {
     constructor() {
         super();
     }
+    async canActivate(context) {
+        try {
+            await super.canActivate(context);
+            return true;
+        }
+        catch (error) {
+            return false;
+        }
+    }
 }
 exports.JwtRidderGuard = JwtRidderGuard;
 //# sourceMappingURL=jwt-ridder.guard.js.map

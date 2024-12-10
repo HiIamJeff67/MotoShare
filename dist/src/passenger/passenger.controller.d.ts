@@ -8,7 +8,7 @@ export declare class PassengerController {
     private readonly passengerService;
     constructor(passengerService: PassengerService);
     getMe(passenger: PassengerType, response: Response): void;
-    getPassengerWithInfoByUserName(passenger: PassengerType, userName: string, response: Response): Promise<void>;
+    getPassengerWithInfoByUserName(userName: string, response: Response): Promise<void>;
     getMyInfo(passenger: PassengerType, response: Response): Promise<void>;
     getMyCollection(passenger: PassengerType, response: Response): Promise<void>;
     searchPaginationPassengers(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

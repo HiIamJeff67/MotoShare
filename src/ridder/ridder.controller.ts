@@ -25,9 +25,9 @@ import {
   ApiSearchingLimitLessThanZeroException
 } from '../exceptions';
 
-import { JwtRidderGuard } from '../auth/guard';
-import { RidderType } from '../interfaces/auth.interface';
-import { Ridder } from '../auth/decorator';
+import { AnyGuard, JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
+import { PassengerType, RidderType } from '../interfaces/auth.interface';
+import { Passenger, Ridder } from '../auth/decorator';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
@@ -60,10 +60,11 @@ export class RidderController {
     }
   }
 
-  @UseGuards(JwtRidderGuard)
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('getRidderWithInfoByUserName')
   async getRidderWithInfoByUserName(
-    @Ridder() ridder: RidderType,
+    // @Passenger() passenger: PassengerType, 
+    // @Ridder() ridder: RidderType,
     @Query('userName') userName: string,
     @Res() response: Response,
   ) {
@@ -139,8 +140,11 @@ export class RidderController {
   }
 
   /* ================= Search operations ================= */
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('searchPaginationRidders')
   async searchPaginationRidders(
+    // @Passenger() passenger: PassengerType, 
+    // @Ridder() ridder: RidderType, 
     @Query('userName') userName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",

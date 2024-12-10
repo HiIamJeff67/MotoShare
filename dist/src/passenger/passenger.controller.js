@@ -26,6 +26,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const delete_passenger_dto_1 = require("./dto/delete-passenger.dto");
 const stringParser_1 = require("../utils/stringParser");
 const constants_1 = require("../constants");
+const guard_1 = require("../auth/guard");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -43,7 +44,7 @@ let PassengerController = class PassengerController {
             });
         }
     }
-    async getPassengerWithInfoByUserName(passenger, userName, response) {
+    async getPassengerWithInfoByUserName(userName, response) {
         try {
             if (!userName) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -218,13 +219,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PassengerController.prototype, "getMe", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtRidderGuard, jwt_passenger_guard_1.JwtPassengerGuard])),
     (0, common_1.Get)('getPassengerWithInfoByUserName'),
-    __param(0, (0, decorator_1.Passenger)()),
-    __param(1, (0, common_1.Query)('userName')),
-    __param(2, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('userName')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "getPassengerWithInfoByUserName", null);
 __decorate([
@@ -246,6 +246,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "getMyCollection", null);
 __decorate([
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([jwt_passenger_guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
     (0, common_1.Get)('searchPaginationPassengers'),
     __param(0, (0, common_1.Query)('userName')),
     __param(1, (0, common_1.Query)('limit')),

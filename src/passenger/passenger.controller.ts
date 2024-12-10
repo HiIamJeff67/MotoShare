@@ -25,8 +25,8 @@ import {
 } from '../exceptions';
 
 import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
-import { PassengerType } from '../../src/interfaces/auth.interface';
-import { Passenger } from '../auth/decorator';
+import { PassengerType, RidderType } from '../../src/interfaces/auth.interface';
+import { Passenger, Ridder } from '../auth/decorator';
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
@@ -34,6 +34,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { DeletePassengerDto } from './dto/delete-passenger.dto';
 import { toNumber } from '../utils/stringParser';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { AnyGuard, JwtRidderGuard } from '../auth/guard';
 
 @Controller('passenger')
 export class PassengerController {
@@ -60,10 +61,11 @@ export class PassengerController {
     }
   }
 
-  @UseGuards(JwtPassengerGuard)
+  @UseGuards(new AnyGuard([JwtRidderGuard, JwtPassengerGuard]))
   @Get('getPassengerWithInfoByUserName')
   async getPassengerWithInfoByUserName(
-    @Passenger() passenger: PassengerType,  // still require to provide the bearer token
+    // @Passenger() passenger: PassengerType,
+    // @Ridder() ridder: RidderType, 
     @Query('userName') userName: string,
     @Res() response: Response,
   ) {
@@ -139,8 +141,11 @@ export class PassengerController {
   }
 
   /* ================= Search operations ================= */
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('searchPaginationPassengers')
   async searchPaginationPassengers(
+    // @Passenger() passenger: PassengerType, 
+    // @Ridder() ridder: RidderType, 
     @Query('userName') userName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
     @Query('offset') offset: string = "0",

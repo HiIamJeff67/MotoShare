@@ -8,7 +8,7 @@ export declare class RidderController {
     private readonly ridderService;
     constructor(ridderService: RidderService);
     getMe(ridder: RidderType, response: Response): Promise<void>;
-    getRidderWithInfoByUserName(ridder: RidderType, userName: string, response: Response): Promise<void>;
+    getRidderWithInfoByUserName(userName: string, response: Response): Promise<void>;
     getMyInfo(ridder: RidderType, response: Response): Promise<void>;
     getMyCollection(ridder: RidderType, response: Response): Promise<void>;
     searchPaginationRidders(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
