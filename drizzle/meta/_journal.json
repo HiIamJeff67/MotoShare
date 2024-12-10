@@ -225,6 +225,13 @@
       "when": 1733575562741,
       "tag": "0031_shocking_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1733840122675,
+      "tag": "0032_motionless_madame_web",
+      "breakpoints": true
     }
   ]
 }

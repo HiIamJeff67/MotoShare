@@ -82,6 +82,38 @@ export declare const PassengerInfoTable: import("drizzle-orm/pg-core").PgTableWi
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        emergencyUserRole: import("drizzle-orm/pg-core").PgColumn<{
+            name: "emergencyUserRole";
+            tableName: "passengerInfo";
+            dataType: "string";
+            columnType: "PgEnumColumn";
+            data: "Passenger" | "Ridder" | "Admin" | "Guest";
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["Passenger", "Ridder", "Admin", "Guest"];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        emergencyPhoneNumber: import("drizzle-orm/pg-core").PgColumn<{
+            name: "emergencyPhoneNumber";
+            tableName: "passengerInfo";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         selfIntroduction: import("drizzle-orm/pg-core").PgColumn<{
             name: "selfIntroduction";
             tableName: "passengerInfo";

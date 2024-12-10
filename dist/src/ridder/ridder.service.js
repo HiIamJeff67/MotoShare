@@ -22,6 +22,7 @@ const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema");
 const exceptions_1 = require("../exceptions");
 const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
+const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 let RidderService = class RidderService {
     constructor(storage, config, db) {
         this.storage = storage;
@@ -56,6 +57,30 @@ let RidderService = class RidderService {
                         motocycleType: true,
                         motocyclePhotoUrl: true,
                         updatedAt: true,
+                    }
+                },
+            }
+        });
+    }
+    async getRidderWithInfoByPhoneNumber(phoneNumber) {
+        return await this.db.query.RidderInfoTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.phoneNumber, phoneNumber),
+            columns: {
+                isOnline: true,
+                age: true,
+                phoneNumber: true,
+                selfIntroduction: true,
+                avatorUrl: true,
+                motocycleLicense: true,
+                motocycleType: true,
+                motocyclePhotoUrl: true,
+                updatedAt: true,
+            },
+            with: {
+                user: {
+                    columns: {
+                        userName: true,
+                        email: true,
                     }
                 },
             }
@@ -167,10 +192,32 @@ let RidderService = class RidderService {
                 .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
             if (!ridderInfo || ridderInfo.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
+            let emergencyUserRole = undefined;
+            if (updateRidderInfoDto.emergencyPhoneNumber) {
+                emergencyUserRole = "Guest";
+                const passenger = await tx.select({
+                    id: passengerInfo_schema_1.PassengerInfoTable.id,
+                }).from(passengerInfo_schema_1.PassengerInfoTable)
+                    .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.emergencyPhoneNumber, updateRidderInfoDto.emergencyPhoneNumber));
+                if (passenger && passenger.length !== 0) {
+                    emergencyUserRole = "Passenger";
+                }
+                else {
+                    const ridder = await tx.select({
+                        id: ridderInfo_schema_1.RidderInfoTable.id,
+                    }).from(ridderInfo_schema_1.RidderInfoTable)
+                        .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.emergencyPhoneNumber, updateRidderInfoDto.emergencyPhoneNumber));
+                    if (ridder && ridder.length !== 0) {
+                        emergencyUserRole = "Ridder";
+                    }
+                }
+            }
             return await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
                 isOnline: updateRidderInfoDto.isOnline,
                 age: updateRidderInfoDto.age,
                 phoneNumber: updateRidderInfoDto.phoneNumber,
+                ...(emergencyUserRole !== undefined && { emergencyUserRole: emergencyUserRole }),
+                emergencyPhoneNumber: updateRidderInfoDto.emergencyPhoneNumber,
                 selfIntroduction: updateRidderInfoDto.selfIntroduction,
                 motocycleLicense: updateRidderInfoDto.motocycleLicense,
                 motocycleType: updateRidderInfoDto.motocycleType,

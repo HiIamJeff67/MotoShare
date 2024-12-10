@@ -21,7 +21,8 @@ import {
   ClientPassengerNotFoundException, 
   ClientCollectionNotFoundException, 
   ApiSearchingLimitTooLargeException,
-  ApiSearchingLimitLessThanZeroException
+  ApiSearchingLimitLessThanZeroException,
+  ServerAllowedPhoneNumberException
 } from '../exceptions';
 
 import { JwtPassengerGuard } from '../../src/auth/guard/jwt-passenger.guard';
@@ -35,6 +36,7 @@ import { DeletePassengerDto } from './dto/delete-passenger.dto';
 import { toNumber } from '../utils/stringParser';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { AnyGuard, JwtRidderGuard } from '../auth/guard';
+import { AllowedPhoneNumberTypes, PhoneNumberRegex } from '../types';
 
 @Controller('passenger')
 export class PassengerController {
@@ -75,6 +77,41 @@ export class PassengerController {
       }
 
       const res = await this.passengerService.getPassengerWithInfoByUserName(userName);
+
+      if (!res) throw ClientPassengerNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof BadRequestException 
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
+  @Get('getPassengerWithInfoByPhoneNumber')
+  async getPassengerWithInfoByPhoneNumber(
+    // @Passenger() passenger: PassengerType,
+    // @Ridder() ridder: RidderType, 
+    @Query('phoneNumber') phoneNumber: string,
+    @Res() response: Response,
+  ) {
+    try {
+      if (!phoneNumber) {
+        throw ApiMissingParameterException;
+      }
+      for (const allowedPhoneNumber of AllowedPhoneNumberTypes) {
+        if (PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber)) break;
+        throw ServerAllowedPhoneNumberException;
+      }
+
+      const res = await this.passengerService.getPassengerWithInfoByPhoneNumber(phoneNumber);
 
       if (!res) throw ClientPassengerNotFoundException;
 

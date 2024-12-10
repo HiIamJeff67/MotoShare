@@ -43,6 +43,14 @@ export const postedStatusEnum = pgEnum("postStatus", [
 
 
 /* ================================= Type Enums ================================= */
+// currently for PassengerInfoTable and RidderInfoTable
+export const userRoleEnum = pgEnum("userRole", [
+    "Passenger", 
+    "Ridder", 
+    "Admin", 
+    "Guest", 
+]);
+
 // for HistoryTable
 export const starRatingEnum = pgEnum("starRating", [
     "0", 

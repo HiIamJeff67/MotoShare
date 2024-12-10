@@ -22,7 +22,8 @@ import {
   ClientCollectionNotFoundException, 
   ClientRidderNotFoundException,
   ApiSearchingLimitTooLargeException,
-  ApiSearchingLimitLessThanZeroException
+  ApiSearchingLimitLessThanZeroException,
+  ServerAllowedPhoneNumberException
 } from '../exceptions';
 
 import { AnyGuard, JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
@@ -35,6 +36,7 @@ import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express
 import { DeleteRidderDto } from './dto/delete-ridder.dto';
 import { toNumber } from '../utils/stringParser';
 import { FileInterceptorMegaBytes, MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
+import { AllowedPhoneNumberTypes, PhoneNumberRegex } from '../types';
 
 @Controller('ridder')
 export class RidderController {
@@ -63,6 +65,41 @@ export class RidderController {
   @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('getRidderWithInfoByUserName')
   async getRidderWithInfoByUserName(
+    // @Passenger() passenger: PassengerType, 
+    // @Ridder() ridder: RidderType,
+    @Query('phoneNumber') phoneNumber: string,
+    @Res() response: Response,
+  ) {
+    try {
+      if (!phoneNumber) {
+        throw ApiMissingParameterException;
+      }
+      for (const allowedPhoneNumber of AllowedPhoneNumberTypes) {
+        if (PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber)) break;
+        throw ServerAllowedPhoneNumberException;
+      }
+
+      const res = await this.ridderService.getRidderWithInfoByPhoneNumber(phoneNumber);
+
+      if (!res) throw ClientRidderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      if (!(error instanceof BadRequestException 
+        || error instanceof UnauthorizedException 
+        || error instanceof NotFoundException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
+  @Get('getRidderWithInfoByPhoneNumber')
+  async getRidderWithInfoByPhoneNumber(
     // @Passenger() passenger: PassengerType, 
     // @Ridder() ridder: RidderType,
     @Query('userName') userName: string,

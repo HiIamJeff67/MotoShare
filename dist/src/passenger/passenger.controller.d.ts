@@ -9,6 +9,7 @@ export declare class PassengerController {
     constructor(passengerService: PassengerService);
     getMe(passenger: PassengerType, response: Response): void;
     getPassengerWithInfoByUserName(userName: string, response: Response): Promise<void>;
+    getPassengerWithInfoByPhoneNumber(phoneNumber: string, response: Response): Promise<void>;
     getMyInfo(passenger: PassengerType, response: Response): Promise<void>;
     getMyCollection(passenger: PassengerType, response: Response): Promise<void>;
     searchPaginationPassengers(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;

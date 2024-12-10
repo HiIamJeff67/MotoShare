@@ -2,6 +2,7 @@ import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex } from "d
 import { relations } from "drizzle-orm";
 
 import { RidderTable } from "./schema";
+import { userRoleEnum } from "./enums";
 
 export const RidderInfoTable = pgTable("ridderInfo", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -11,6 +12,8 @@ export const RidderInfoTable = pgTable("ridderInfo", {
     isOnline: boolean("isOnline").notNull().default(true),
     age: integer("age"),
     phoneNumber: text("phoneNumber").unique(),
+    emergencyUserRole: userRoleEnum(), 
+    emergencyPhoneNumber: text("emergencyPhoneNumber"), 
     selfIntroduction: text("selfIntroduction"),
     avatorUrl: text("avatorUrl"),
     motocycleLicense: text("motocycleLicense").unique(),
@@ -20,6 +23,7 @@ export const RidderInfoTable = pgTable("ridderInfo", {
 }, (table) => {
     return {
         userIdIndex: uniqueIndex("ridderInfo_userIdIndex").on(table.userId), 
+        phoneNumberIndex: uniqueIndex("ridderInfo_phoneNumberIndex").on(table.phoneNumber), 
     };
 });
 

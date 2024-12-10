@@ -39,6 +39,13 @@ __decorate([
 ], CreateRidderInfoDto.prototype, "phoneNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, IsPhoneNumberString_validator_1.IsPhoneNumberString)("+886", types_1.AllowedPhoneNumberTypes),
+    (0, validator_1.IsNotEqualTo)("phoneNumber"),
+    (0, class_validator_1.IsNumberString)(),
+    __metadata("design:type", String)
+], CreateRidderInfoDto.prototype, "emergencyPhoneNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.MinLength)(context_constant_1.MIN_SELF_INTRODUCTION_LENGTH),
     (0, class_validator_1.MaxLength)(context_constant_1.MAX_SELF_INTRODUCTION_LENGTH),
     (0, class_validator_1.IsString)(),

@@ -22,6 +22,7 @@ const passenger_schema_1 = require("../../src/drizzle/schema/passenger.schema");
 const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.schema");
 const exceptions_1 = require("../exceptions");
 const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
+const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 let PassengerService = class PassengerService {
     constructor(config, storage, db) {
         this.config = config;
@@ -54,6 +55,27 @@ let PassengerService = class PassengerService {
                         selfIntroduction: true,
                         avatorUrl: true,
                         updatedAt: true,
+                    }
+                },
+            }
+        });
+    }
+    async getPassengerWithInfoByPhoneNumber(phoneNumber) {
+        return await this.db.query.PassengerInfoTable.findFirst({
+            where: (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.phoneNumber, phoneNumber),
+            columns: {
+                isOnline: true,
+                age: true,
+                phoneNumber: true,
+                selfIntroduction: true,
+                avatorUrl: true,
+                updatedAt: true,
+            },
+            with: {
+                user: {
+                    columns: {
+                        userName: true,
+                        email: true,
                     }
                 },
             }
@@ -161,10 +183,32 @@ let PassengerService = class PassengerService {
                 .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
             if (!passengerInfo || passengerInfo.length === 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
+            let emergencyUserRole = undefined;
+            if (updatePassengerInfoDto.emergencyPhoneNumber) {
+                emergencyUserRole = "Guest";
+                const passenger = await tx.select({
+                    id: passengerInfo_schema_1.PassengerInfoTable.id,
+                }).from(passengerInfo_schema_1.PassengerInfoTable)
+                    .where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.emergencyPhoneNumber, updatePassengerInfoDto.emergencyPhoneNumber));
+                if (passenger && passenger.length !== 0) {
+                    emergencyUserRole = "Passenger";
+                }
+                else {
+                    const ridder = await tx.select({
+                        id: ridderInfo_schema_1.RidderInfoTable.id,
+                    }).from(ridderInfo_schema_1.RidderInfoTable)
+                        .where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.emergencyPhoneNumber, updatePassengerInfoDto.emergencyPhoneNumber));
+                    if (ridder && ridder.length !== 0) {
+                        emergencyUserRole = "Ridder";
+                    }
+                }
+            }
             return await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
                 isOnline: updatePassengerInfoDto.isOnline,
                 age: updatePassengerInfoDto.age,
                 phoneNumber: updatePassengerInfoDto.phoneNumber,
+                ...(emergencyUserRole !== undefined && { emergencyUserRole: emergencyUserRole }),
+                emergencyPhoneNumber: updatePassengerInfoDto.emergencyPhoneNumber,
                 selfIntroduction: updatePassengerInfoDto.selfIntroduction,
                 ...(uploadedAvatorFile
                     ? { avatorUrl: await this.storage.uploadAvatorFile(passengerInfo[0].infoId, "passengerAvators", uploadedAvatorFile)

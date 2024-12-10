@@ -23,6 +23,21 @@ export declare class RidderService {
             motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
+    getRidderWithInfoByPhoneNumber(phoneNumber: string): Promise<{
+        isOnline: boolean;
+        age: number | null;
+        phoneNumber: string | null;
+        selfIntroduction: string | null;
+        avatorUrl: string | null;
+        updatedAt: Date;
+        motocycleLicense: string | null;
+        motocycleType: string | null;
+        motocyclePhotoUrl: string | null;
+        user: {
+            userName: string;
+            email: string;
+        };
+    } | undefined>;
     getRidderWithInfoByUserId(userId: string): Promise<{
         userName: string;
         email: string;

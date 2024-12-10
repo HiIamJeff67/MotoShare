@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { PassengerTable } from "./passenger.schema";
 import { relations } from "drizzle-orm";
 
@@ -11,6 +11,11 @@ export const PassengerAuthTable = pgTable("passengerAuth", {
     isPhoneAuthenticated: boolean("isPhoneAuthenticated").notNull().default(false), 
     authCode: text("authCode").notNull(), 
     authCodeExpiredAt: timestamp("authCodeExpiredAt").notNull(), 
+}, (table) => {
+    return {
+        userIdIndex: uniqueIndex("passengerAuth_userIdIndex").on(table.userId), 
+        authCodeIndex: index("passengerAuth_authCodeIndex").on(table.authCode), 
+    };
 });
 
 export const PassengerAuthRelation = relations(PassengerAuthTable, ({ one }) => ({

@@ -10,12 +10,15 @@ import { RidderInfoTable } from '../../src/drizzle/schema/ridderInfo.schema';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
-import { ClientDeleteAccountPasswordNotMatchException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientRidderNotFoundException } from '../exceptions';
-import { SUPABASE } from '../supabase/supabase.module';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { multerToFile } from '../utils';
+import { 
+  ClientDeleteAccountPasswordNotMatchException, 
+  ClientNoChangeOnUserNameException, 
+  ClientRidderNotFoundException 
+} from '../exceptions';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 import { DeleteRidderDto } from './dto/delete-ridder.dto';
+import { UserRoleType } from '../types';
+import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 
 @Injectable()
 export class RidderService {
@@ -58,6 +61,31 @@ export class RidderService {
             motocycleType: true,
             motocyclePhotoUrl: true,
             updatedAt: true,
+          }
+        },
+      }
+    });
+  }
+
+  async getRidderWithInfoByPhoneNumber(phoneNumber: string) {
+    return await this.db.query.RidderInfoTable.findFirst({
+      where: eq(RidderInfoTable.phoneNumber, phoneNumber),
+      columns: {
+        isOnline: true,
+        age: true,
+        phoneNumber: true,
+        selfIntroduction: true,
+        avatorUrl: true,
+        motocycleLicense: true,
+        motocycleType: true,
+        motocyclePhotoUrl: true,
+        updatedAt: true,
+      },
+      with: {
+        user: {
+          columns: {
+            userName: true, 
+            email: true, 
           }
         },
       }
@@ -193,11 +221,36 @@ export class RidderService {
       }).from(RidderInfoTable)
         .where(eq(RidderInfoTable.userId, userId));
       if (!ridderInfo || ridderInfo.length === 0) throw ClientRidderNotFoundException;
+
+      let emergencyUserRole: UserRoleType | undefined = undefined;
+      if (updateRidderInfoDto.emergencyPhoneNumber) {
+        emergencyUserRole = "Guest";
+
+        const passenger = await tx.select({
+          id: PassengerInfoTable.id, 
+        }).from(PassengerInfoTable)
+          .where(eq(PassengerInfoTable.emergencyPhoneNumber, updateRidderInfoDto.emergencyPhoneNumber));
+        
+        if (passenger && passenger.length !== 0) {
+          emergencyUserRole = "Passenger";
+        } else {
+          const ridder = await tx.select({
+            id: RidderInfoTable.id, 
+          }).from(RidderInfoTable)
+            .where(eq(RidderInfoTable.emergencyPhoneNumber, updateRidderInfoDto.emergencyPhoneNumber));
+          
+          if (ridder && ridder.length !== 0) {
+            emergencyUserRole = "Ridder";
+          }
+        }
+      }
   
       return await tx.update(RidderInfoTable).set({
         isOnline: updateRidderInfoDto.isOnline,
         age: updateRidderInfoDto.age,
         phoneNumber: updateRidderInfoDto.phoneNumber,
+        ...(emergencyUserRole !== undefined && { emergencyUserRole: emergencyUserRole }), 
+        emergencyPhoneNumber: updateRidderInfoDto.emergencyPhoneNumber, 
         selfIntroduction: updateRidderInfoDto.selfIntroduction,
         motocycleLicense: updateRidderInfoDto.motocycleLicense,
         motocycleType: updateRidderInfoDto.motocycleType,

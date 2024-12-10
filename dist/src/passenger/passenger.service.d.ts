@@ -21,6 +21,18 @@ export declare class PassengerService {
             updatedAt: Date;
         } | null;
     } | undefined>;
+    getPassengerWithInfoByPhoneNumber(phoneNumber: string): Promise<{
+        isOnline: boolean;
+        age: number | null;
+        phoneNumber: string | null;
+        selfIntroduction: string | null;
+        avatorUrl: string | null;
+        updatedAt: Date;
+        user: {
+            userName: string;
+            email: string;
+        };
+    } | undefined>;
     getPassengerWithInfoByUserId(userId: string): Promise<{
         userName: string;
         email: string;

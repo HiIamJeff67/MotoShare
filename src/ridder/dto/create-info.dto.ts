@@ -9,6 +9,7 @@ import {
 import { 
     IsIntString,
     IsLooseTWLicenseString,
+    IsNotEqualTo,
     MaxNumberString, 
     MinNumberString 
 } from "../../validator";
@@ -36,6 +37,12 @@ export class CreateRidderInfoDto {
     @IsPhoneNumberString("+886", AllowedPhoneNumberTypes)
     @IsNumberString()
     phoneNumber?: string
+
+    @IsOptional()
+    @IsPhoneNumberString("+886", AllowedPhoneNumberTypes)
+    @IsNotEqualTo("phoneNumber")
+    @IsNumberString()
+    emergencyPhoneNumber?: string
 
     @IsOptional()
     @MinLength(MIN_SELF_INTRODUCTION_LENGTH)

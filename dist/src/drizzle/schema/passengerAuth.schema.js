@@ -13,6 +13,11 @@ exports.PassengerAuthTable = (0, pg_core_1.pgTable)("passengerAuth", {
     isPhoneAuthenticated: (0, pg_core_1.boolean)("isPhoneAuthenticated").notNull().default(false),
     authCode: (0, pg_core_1.text)("authCode").notNull(),
     authCodeExpiredAt: (0, pg_core_1.timestamp)("authCodeExpiredAt").notNull(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.uniqueIndex)("passengerAuth_userIdIndex").on(table.userId),
+        authCodeIndex: (0, pg_core_1.index)("passengerAuth_authCodeIndex").on(table.authCode),
+    };
 });
 exports.PassengerAuthRelation = (0, drizzle_orm_1.relations)(exports.PassengerAuthTable, ({ one }) => ({
     user: one(passenger_schema_1.PassengerTable, {

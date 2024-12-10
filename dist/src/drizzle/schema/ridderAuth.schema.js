@@ -13,6 +13,11 @@ exports.RidderAuthTable = (0, pg_core_1.pgTable)("ridderAuth", {
     isPhoneAuthenticated: (0, pg_core_1.boolean)("isPhoneAuthenticated").notNull().default(false),
     authCode: (0, pg_core_1.text)("authCode").notNull(),
     authCodeExpiredAt: (0, pg_core_1.timestamp)("authCodeExpiredAt").notNull(),
+}, (table) => {
+    return {
+        userIdIndex: (0, pg_core_1.uniqueIndex)("ridderAuth_userIdIndex").on(table.userId),
+        authCodeIndex: (0, pg_core_1.index)("ridderAuth_authCodeIndex").on(table.authCode),
+    };
 });
 exports.RidderAuthRelation = (0, drizzle_orm_1.relations)(exports.RidderAuthTable, ({ one }) => ({
     user: one(ridder_schema_1.RidderTable, {

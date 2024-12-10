@@ -27,6 +27,7 @@ const delete_passenger_dto_1 = require("./dto/delete-passenger.dto");
 const stringParser_1 = require("../utils/stringParser");
 const constants_1 = require("../constants");
 const guard_1 = require("../auth/guard");
+const types_1 = require("../types");
 let PassengerController = class PassengerController {
     constructor(passengerService) {
         this.passengerService = passengerService;
@@ -50,6 +51,32 @@ let PassengerController = class PassengerController {
                 throw exceptions_1.ApiMissingParameterException;
             }
             const res = await this.passengerService.getPassengerWithInfoByUserName(userName);
+            if (!res)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async getPassengerWithInfoByPhoneNumber(phoneNumber, response) {
+        try {
+            if (!phoneNumber) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            for (const allowedPhoneNumber of types_1.AllowedPhoneNumberTypes) {
+                if (types_1.PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber))
+                    break;
+                throw exceptions_1.ServerAllowedPhoneNumberException;
+            }
+            const res = await this.passengerService.getPassengerWithInfoByPhoneNumber(phoneNumber);
             if (!res)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -227,6 +254,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "getPassengerWithInfoByUserName", null);
+__decorate([
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([jwt_passenger_guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
+    (0, common_1.Get)('getPassengerWithInfoByPhoneNumber'),
+    __param(0, (0, common_1.Query)('phoneNumber')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "getPassengerWithInfoByPhoneNumber", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
     (0, common_1.Get)('getMyInfo'),

@@ -10,9 +10,15 @@ import { PassengerInfoTable } from '../../src/drizzle/schema/passengerInfo.schem
 
 import { UpdatePassengerInfoDto } from './dto/update-info.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
-import { ClientDeleteAccountPasswordNotMatchException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientNoChangeOnUserNameException, ClientPassengerNotFoundException } from '../exceptions';
+import { 
+  ClientDeleteAccountPasswordNotMatchException, 
+  ClientNoChangeOnUserNameException, 
+  ClientPassengerNotFoundException 
+} from '../exceptions';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 import { DeletePassengerDto } from './dto/delete-passenger.dto';
+import { UserRoleType } from '../types';
+import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 
 @Injectable()
 export class PassengerService {
@@ -56,6 +62,28 @@ export class PassengerService {
             selfIntroduction: true,
             avatorUrl: true,
             updatedAt: true,
+          }
+        },
+      }
+    });
+  }
+
+  async getPassengerWithInfoByPhoneNumber(phoneNumber: string) {
+    return await this.db.query.PassengerInfoTable.findFirst({
+      where: eq(PassengerInfoTable.phoneNumber, phoneNumber),
+      columns: {
+        isOnline: true,
+        age: true,
+        phoneNumber: true,
+        selfIntroduction: true,
+        avatorUrl: true,
+        updatedAt: true,
+      },
+      with: {
+        user: {
+          columns: {
+            userName: true, 
+            email: true, 
           }
         },
       }
@@ -186,11 +214,36 @@ export class PassengerService {
       }).from(PassengerInfoTable)
         .where(eq(PassengerInfoTable.userId, userId));
       if (!passengerInfo || passengerInfo.length === 0) throw ClientPassengerNotFoundException;
+
+      let emergencyUserRole: UserRoleType | undefined = undefined;
+      if (updatePassengerInfoDto.emergencyPhoneNumber) {
+        emergencyUserRole = "Guest";
+
+        const passenger = await tx.select({
+          id: PassengerInfoTable.id, 
+        }).from(PassengerInfoTable)
+          .where(eq(PassengerInfoTable.emergencyPhoneNumber, updatePassengerInfoDto.emergencyPhoneNumber));
+        
+        if (passenger && passenger.length !== 0) {
+          emergencyUserRole = "Passenger";
+        } else {
+          const ridder = await tx.select({
+            id: RidderInfoTable.id, 
+          }).from(RidderInfoTable)
+            .where(eq(RidderInfoTable.emergencyPhoneNumber, updatePassengerInfoDto.emergencyPhoneNumber));
+          
+          if (ridder && ridder.length !== 0) {
+            emergencyUserRole = "Ridder";
+          }
+        }
+      }
   
       return await tx.update(PassengerInfoTable).set({
         isOnline: updatePassengerInfoDto.isOnline,
         age: updatePassengerInfoDto.age,
         phoneNumber: updatePassengerInfoDto.phoneNumber,
+        ...(emergencyUserRole !== undefined && { emergencyUserRole: emergencyUserRole }), 
+        emergencyPhoneNumber: updatePassengerInfoDto.emergencyPhoneNumber, 
         selfIntroduction: updatePassengerInfoDto.selfIntroduction,
         ...(uploadedAvatorFile
           ? { avatorUrl: await this.storage.uploadAvatorFile(
