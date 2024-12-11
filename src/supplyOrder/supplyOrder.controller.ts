@@ -217,7 +217,7 @@ export class SupplyOrderController {
     }
   }
 
-  @Get('searchSimilarTimeSupplyOrders')
+  @Post('searchSimilarTimeSupplyOrders')
   async seachSimilarTimeSupplyOrders(
     @Query('creatorName') creatorName: string | undefined = undefined, 
     @Query('limit') limit: string = "10",
@@ -258,7 +258,7 @@ export class SupplyOrderController {
     }
   }
 
-  @Get('searchCurAdjacentSupplyOrders')
+  @Post('searchCurAdjacentSupplyOrders')
   async searchCurAdjacentSupplyOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -298,7 +298,7 @@ export class SupplyOrderController {
     }
   }
 
-  @Get('searchDestAdjacentSupplyOrders')
+  @Post('searchDestAdjacentSupplyOrders')
   async searchDestAdjacentSupplyOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -338,7 +338,7 @@ export class SupplyOrderController {
     }
   }
 
-  @Get('searchSimilarRouteSupplyOrders')
+  @Post('searchSimilarRouteSupplyOrders')
   async searchSimilarRouteSupplyOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",

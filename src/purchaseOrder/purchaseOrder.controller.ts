@@ -220,7 +220,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Get('searchSimliarTimePurchaseOrders')
+  @Post('searchSimliarTimePurchaseOrders')
   async searchSimliarTimePurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined, 
     @Query('limit') limit: string = "10",
@@ -261,7 +261,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Get('searchCurAdjacentPurchaseOrders')
+  @Post('searchCurAdjacentPurchaseOrders')
   async searchCurAdjacentPurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -301,7 +301,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Get('searchDestAdjacentPurchaseOrders')
+  @Post('searchDestAdjacentPurchaseOrders')
   async searchDestAdjacentPurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -341,7 +341,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Get('searchSimilarRoutePurchaseOrders')
+  @Post('searchSimilarRoutePurchaseOrders')
   async searchSimilarRoutePurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
