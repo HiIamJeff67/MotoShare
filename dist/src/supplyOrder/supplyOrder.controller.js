@@ -389,7 +389,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchAboutToStartSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('searchSimilarTimeSupplyOrders'),
+    (0, common_1.Post)('searchSimilarTimeSupplyOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
@@ -401,7 +401,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "seachSimilarTimeSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('searchCurAdjacentSupplyOrders'),
+    (0, common_1.Post)('searchCurAdjacentSupplyOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
@@ -413,7 +413,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchCurAdjacentSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('searchDestAdjacentSupplyOrders'),
+    (0, common_1.Post)('searchDestAdjacentSupplyOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
@@ -425,7 +425,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "searchDestAdjacentSupplyOrders", null);
 __decorate([
-    (0, common_1.Get)('searchSimilarRouteSupplyOrders'),
+    (0, common_1.Post)('searchSimilarRouteSupplyOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),

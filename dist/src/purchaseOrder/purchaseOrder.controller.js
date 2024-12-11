@@ -179,6 +179,7 @@ let PurchaseOrderController = class PurchaseOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
@@ -435,7 +436,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchAboutToStartPurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('searchSimliarTimePurchaseOrders'),
+    (0, common_1.Post)('searchSimliarTimePurchaseOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
@@ -459,7 +460,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchCurAdjacentPurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('searchDestAdjacentPurchaseOrders'),
+    (0, common_1.Post)('searchDestAdjacentPurchaseOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),
@@ -471,7 +472,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchDestAdjacentPurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('searchSimilarRoutePurchaseOrders'),
+    (0, common_1.Post)('searchSimilarRoutePurchaseOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),

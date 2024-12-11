@@ -261,7 +261,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Post('searchCurAdjacentPurchaseOrders')
+  @Get('searchCurAdjacentPurchaseOrders')
   async searchCurAdjacentPurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
@@ -290,6 +290,7 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
+      console.log(error)
       if (!(error instanceof NotFoundException
         || error instanceof NotAcceptableException)) {
         error = ClientUnknownException;
