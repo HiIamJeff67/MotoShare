@@ -448,7 +448,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchSimliarTimePurchaseOrders", null);
 __decorate([
-    (0, common_1.Get)('searchCurAdjacentPurchaseOrders'),
+    (0, common_1.Post)('searchCurAdjacentPurchaseOrders'),
     __param(0, (0, common_1.Query)('creatorName')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('offset')),

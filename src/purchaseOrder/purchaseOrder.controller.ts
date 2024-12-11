@@ -261,7 +261,7 @@ export class PurchaseOrderController {
     }
   }
 
-  @Get('searchCurAdjacentPurchaseOrders')
+  @Post('searchCurAdjacentPurchaseOrders')
   async searchCurAdjacentPurchaseOrders(
     @Query('creatorName') creatorName: string | undefined = undefined,
     @Query('limit') limit: string = "10",
