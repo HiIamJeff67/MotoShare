@@ -38,7 +38,7 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
   
-      const res = await this.orderService.getOrderById(id, passenger.id);
+      const res = await this.orderService.getOrderForPassengerById(id, passenger.id);
   
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
   
@@ -68,7 +68,7 @@ export class OrderController {
         throw ApiMissingParameterException;
       }
   
-      const res = await this.orderService.getOrderById(id, ridder.id);
+      const res = await this.orderService.getOrderForRidderById(id, ridder.id);
   
       if (!res || res.length === 0) throw ClientOrderNotFoundException;
   

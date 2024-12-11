@@ -21,7 +21,6 @@ import { UserRoleType } from '../types';
 import { SocketUserInterface, SocketMetaPayloadInterface } from '../interfaces/socket.interface';
 import { HttpStatusCode } from '../enums';
 import { NotificationInterface } from '../interfaces';
-import { use } from 'passport';
 
 @WebSocketGateway({ namespace: 'notifications' })
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {

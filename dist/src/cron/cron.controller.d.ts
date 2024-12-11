@@ -1,8 +1,10 @@
 import { CronService } from './cron.service';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 export declare class CronController {
+    private readonly configService;
     private readonly cronService;
-    constructor(cronService: CronService);
+    constructor(configService: ConfigService, cronService: CronService);
     private createPurchaseOrdersByPeriodicPurchaseOrders;
     private createSupplyOrdersByPeriodicSupplyOrders;
     private createPeriodicCronJobsWorkflow;

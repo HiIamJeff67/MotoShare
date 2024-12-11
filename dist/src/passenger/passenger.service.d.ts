@@ -24,7 +24,6 @@ export declare class PassengerService {
     getPassengerWithInfoByPhoneNumber(phoneNumber: string): Promise<{
         isOnline: boolean;
         age: number | null;
-        phoneNumber: string | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
         updatedAt: Date;
@@ -40,6 +39,8 @@ export declare class PassengerService {
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
+            emergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+            emergencyPhoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             updatedAt: Date;

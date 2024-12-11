@@ -74,7 +74,7 @@ export class PassengerService {
       columns: {
         isOnline: true,
         age: true,
-        phoneNumber: true,
+        // phoneNumber: true,
         selfIntroduction: true,
         avatorUrl: true,
         updatedAt: true,
@@ -92,20 +92,22 @@ export class PassengerService {
 
   async getPassengerWithInfoByUserId(userId: string) {
     return await this.db.query.PassengerTable.findFirst({
-      where: eq(PassengerTable.id, userId),
+      where: eq(PassengerTable.id, userId), 
       columns: {
-        userName: true,
-        email: true,
+        userName: true, 
+        email: true, 
       },
       with: {
         info: {
           columns: {
-            isOnline: true,
-            age: true,
-            phoneNumber: true,
-            selfIntroduction: true,
-            avatorUrl: true,
-            updatedAt: true,
+            isOnline: true, 
+            age: true, 
+            phoneNumber: true, 
+            emergencyUserRole: true, 
+            emergencyPhoneNumber: true, 
+            selfIntroduction: true, 
+            avatorUrl: true, 
+            updatedAt: true, 
           }
         },
       }

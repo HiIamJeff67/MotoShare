@@ -26,7 +26,6 @@ export declare class RidderService {
     getRidderWithInfoByPhoneNumber(phoneNumber: string): Promise<{
         isOnline: boolean;
         age: number | null;
-        phoneNumber: string | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
         updatedAt: Date;
@@ -45,6 +44,8 @@ export declare class RidderService {
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
+            emergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+            emergencyPhoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             updatedAt: Date;

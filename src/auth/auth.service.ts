@@ -154,8 +154,8 @@ export class AuthService {
                     email: PassengerTable.email,
                     hash: PassengerTable.password,
                 }).from(PassengerTable)
-                .where(eq(PassengerTable.userName, signInDto.userName))
-                .limit(1);
+                  .where(eq(PassengerTable.userName, signInDto.userName))
+                  .limit(1);
 
                 if (!userResponse || userResponse.length === 0) {
                     throw ClientSignInUserNameNotFoundException;
@@ -167,8 +167,8 @@ export class AuthService {
                     email: PassengerTable.email,
                     hash: PassengerTable.password,
                 }).from(PassengerTable)
-                .where(eq(PassengerTable.email, signInDto.email))
-                .limit(1);
+                  .where(eq(PassengerTable.email, signInDto.email))
+                  .limit(1);
 
                 if (!userResponse || userResponse.length === 0) {
                     throw ClientSignInEmailNotFoundException;
@@ -213,8 +213,8 @@ export class AuthService {
                     email: RidderTable.email,
                     hash: RidderTable.password,
                 }).from(RidderTable)
-                .where(eq(RidderTable.userName, signInDto.userName))
-                .limit(1);
+                  .where(eq(RidderTable.userName, signInDto.userName))
+                  .limit(1);
 
                 if (!userResponse || userResponse.length === 0) {
                     throw ClientSignInUserNameNotFoundException;
@@ -226,8 +226,8 @@ export class AuthService {
                     email: RidderTable.email,
                     hash: RidderTable.password,
                 }).from(RidderTable)
-                .where(eq(RidderTable.email, signInDto.email))
-                .limit(1);
+                  .where(eq(RidderTable.email, signInDto.email))
+                  .limit(1);
 
                 if (!userResponse || userResponse.length === 0) {
                     throw ClientSignInEmailNotFoundException;

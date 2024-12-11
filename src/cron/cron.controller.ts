@@ -1,11 +1,16 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { CronService } from './cron.service';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums';
+import { ServerExtractAdminAccountEnvVariableException } from '../exceptions';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('api/cron')
 export class CronController {
-  constructor(private readonly cronService: CronService) {}
+  constructor(
+    private readonly configService: ConfigService, 
+    private readonly cronService: CronService
+  ) {}
 
   // note that all the Cron Jobs are using GET Method
   // make sure the init route in vercel.json is like: "path": "/api/cron", (with "/" in the head)
@@ -39,14 +44,14 @@ export class CronController {
 
   /* ================================= Automated Create Cron Job Workflow ================================= */
   // @Get('createPeriodicCronJobsWorkflow')
-  private async createPeriodicCronJobsWorkflow(@Res() response: Response) {
+  private async createPeriodicCronJobsWorkflow() {
     try {
 
       const responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders = await this.cronService.createPurchaseOrdersByPeriodicPurchaseOrders();
       const responseOfCreatingSupplyOrdersByPeriodicSupplyOrders = await this.cronService.createSupplyOrdersByPeriodicSupplyOrders();
       
-      response.status(HttpStatusCode.Ok).send({
-        updatedAt: new Date(), 
+      return {
+        createdAt: new Date(), 
         message: "All the specified Cron Jobs are done", 
         jobs: {
           createPurchaseOrdersByPeriodicPurchaseOrders: Boolean(responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders), 
@@ -56,9 +61,9 @@ export class CronController {
           numberOfPeriodicPurchaseOrders: responseOfCreatingPurchaseOrdersByPeriodicPurchaseOrders.length, 
           numberOfPeriodicSupplyOrders: responseOfCreatingSupplyOrdersByPeriodicSupplyOrders.length, 
         }, 
-      })
+      };
     } catch (error) {
-      response.status(error.status).send(error.response);
+      throw error;
     }
   }
   /* ================================= Automated Create Cron Job Workflow ================================= */
@@ -137,9 +142,11 @@ export class CronController {
   // hence we collect all the operations to two main parts corresponding to two api routes, 
   // one for automated update operations, another for automated delete operations
   // @Get('/updateCronJobsWorkflow')
-  // @CronAuth()
-  private async updateCronJobsWorkflow(@Res() response: Response) {
+  private async updateCronJobsWorkflow() {
     try {
+      const verifyPassenger = await this.cronService.signInPassengerAdmin();
+      const verifyRidder = await this.cronService.signInRidderAdmin();
+      if (!verifyPassenger.isAdmin || !verifyRidder.isAdmin) throw ServerExtractAdminAccountEnvVariableException();
 
       const responseOfUpdatingToExpiredPurchaseOrders = await this.cronService.updateToExpiredPurchaseOrders();
       const responseOfUpdatingToExpiredSupplyOrders = await this.cronService.updateToExpiredSupplyOrders();
@@ -147,26 +154,26 @@ export class CronController {
       const responseOfUpdatingToExpiredRidderInvites = await this.cronService.updateToExpiredRidderInvites();
       const responseOfUpdatingToStatedOrders = await this.cronService.updateToStartedOrders();
       
-      response.status(HttpStatusCode.Ok).send({
+      return {
         updatedAt: new Date(), 
         message: "All the specified Cron Jobs are done", 
-        jobs: {
+        updatingJobs: {
           updateToExpiredPurchaseOrders: Boolean(responseOfUpdatingToExpiredPurchaseOrders), 
           updateToExpiredSupplyOrders: Boolean(responseOfUpdatingToExpiredSupplyOrders), 
           updateToExpiredPassengerInvites: Boolean(responseOfUpdatingToExpiredPassengerInvites), 
           updateToExpiredRidderInvites: Boolean(responseOfUpdatingToExpiredRidderInvites), 
           updateToStartedOrders: Boolean(responseOfUpdatingToStatedOrders), 
         }, 
-        dataCounts: {
+        updatedDataCounts: {
           numberOfExpiredPurchaseOrders: responseOfUpdatingToExpiredPurchaseOrders.length, 
           numberOfExpiredSupplyOrders: responseOfUpdatingToExpiredSupplyOrders.length, 
           numberOfExpiredPassengerInvites: responseOfUpdatingToExpiredPassengerInvites.length, 
           numberOfExpiredRidderInvites: responseOfUpdatingToExpiredRidderInvites.length, 
           numberOfStartedOrders: responseOfUpdatingToStatedOrders.length, 
         }, 
-      })
+      };
     } catch (error) {
-      response.status(error.status).send(error.response);
+      throw error;
     }
   }
   /* ================================= Automated Update Cron Job Workflow ================================= */
@@ -183,7 +190,7 @@ export class CronController {
         numberOfDeletedPurchaseOrders: res.length, 
       })
     } catch (error) {
-      response.status(error.status).send(error.response);
+      response.status(error.status).send(error);
     }
   }
 
@@ -240,9 +247,11 @@ export class CronController {
 
   /* ================================= Automated Delete Cron Job Workflow ================================= */
   // @Get('/deleteCronJobsWorkflow')
-  // @CronAuth()
-  private async deleteCronJobsWorkflow(@Res() response: Response) {
+  private async deleteCronJobsWorkflow() {
     try {
+      const verifyPassenger = await this.cronService.signInPassengerAdmin();
+      const verifyRidder = await this.cronService.signInRidderAdmin();
+      if (!verifyPassenger.isAdmin || !verifyRidder.isAdmin) throw ServerExtractAdminAccountEnvVariableException();
 
       const responseOfDeletingExpiredPurchaseOrders = await this.cronService.deleteExpiredPurchaseOrders();
       const responseOfDeletingExpiredSupplyOrders = await this.cronService.deleteExpiredSupplyOrders();
@@ -252,10 +261,10 @@ export class CronController {
       const responseOfDeletingExpiredPassengerNotifications = await this.cronService.deleteExpiredPassengerNotifications();
       const responseOfDeletingExpiredRidderNotifications = await this.cronService.deleteExpiredRidderNotifications();
       
-      response.status(HttpStatusCode.Ok).send({
+      return {
         deletedAt: new Date(), 
         message: "All the specified Cron Jobs are done", 
-        jobs: {
+        deletingJobs: {
           deleteExpiredPurchaseOrders: Boolean(responseOfDeletingExpiredPurchaseOrders), 
           deleteExpiredSupplyOrders: Boolean(responseOfDeletingExpiredSupplyOrders), 
           deleteExpiredPassengerInvites: Boolean(responseOfDeletingExpiredPassengerInvites), 
@@ -264,7 +273,7 @@ export class CronController {
           deleteExpiredPassengerNotifications: Boolean(responseOfDeletingExpiredPassengerNotifications), 
           deleteExpiredRidderNotifications: Boolean(responseOfDeletingExpiredRidderNotifications), 
         }, 
-        dataCount: {
+        deletedDataCounts: {
           numberOfExpiredPurchaseOrders: responseOfDeletingExpiredPurchaseOrders.length, 
           numberOfExpiredSupplyOrders: responseOfDeletingExpiredSupplyOrders.length, 
           numberOfExpiredPassengerInvites: responseOfDeletingExpiredPassengerInvites.length, 
@@ -273,9 +282,9 @@ export class CronController {
           numberOfExpiredPassengerNotifications: responseOfDeletingExpiredPassengerNotifications.length, 
           numberOfExpiredRidderNotifications: responseOfDeletingExpiredRidderNotifications.length, 
         }, 
-      })
+      };
     } catch (error) {
-      response.status(error.status).send(error.response);
+      throw error;
     }
   }
   /* ================================= Automated Delete Cron Job Workflow ================================= */
@@ -287,26 +296,35 @@ export class CronController {
   @Get('mainCronJobWorkflowDaily')
   async mainCronJobWorkflowDaily(@Res() response: Response) {
     try {
-      await this.updateCronJobsWorkflow(response);
-      await this.deleteCronJobsWorkflow(response);
+      const responseOfUpdatingCronJobsWorkflow = await this.updateCronJobsWorkflow();
+      const responseOfDeletingCronJobsWorkflow = await this.deleteCronJobsWorkflow();
+
+      response.status(HttpStatusCode.Ok).send({
+        ...responseOfUpdatingCronJobsWorkflow, 
+        ...responseOfDeletingCronJobsWorkflow, 
+      })
     } catch (error) {
-      response.status(error.status).send(error.response);
+      response.status(HttpStatusCode.InternalServerError).send(error);
     }
   }
 
   @Get('mainCronJobWorkflowWeekly')
   async mainCronJobWorkflowWeekly(@Res() response: Response) {
     try {
-      await this.createPeriodicCronJobsWorkflow(response);
+      const responseOfCreatingPeriodciCronJobsWorkflow = await this.createPeriodicCronJobsWorkflow();
+
+      response.status(HttpStatusCode.Ok).send({
+        ...responseOfCreatingPeriodciCronJobsWorkflow, 
+      });
     } catch (error) {
-      response.status(error.status).send(error.response);
+      response.status(HttpStatusCode.InternalServerError).send(error);
     }
   }
   /* ================================= Automated Cron Job Main Workflow operations ================================= */
 
 
   /* ================================= Test operations ================================= */
-  @Get()
+  @Get('test')
   test(@Res() response: Response) {
     response.status(200).send({context: "Hello Vercel Cron"})
   }

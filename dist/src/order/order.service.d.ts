@@ -9,7 +9,7 @@ export declare class OrderService {
     constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
     private updateExpiredOrdersToStartedStatus;
     private getOrderStatusById;
-    getOrderById(id: string, userId: string): Promise<{
+    getOrderForPassengerById(id: string, userId: string): Promise<{
         id: string;
         passengerName: string | null;
         ridderName: string | null;
@@ -34,6 +34,45 @@ export declare class OrderService {
         ridderAvatorUrl: string | null;
         passengerPhoneNumber: string | null;
         ridderPhoneNumber: string | null;
+        passengerEmergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        passengerEmergencyPhoneNumber: string | null;
+        ridderEmergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        ridderEmergencyPhoneNumber: string | null;
+        motocycleType: string | null;
+        motocycleLicense: string | null;
+        motocyclePhotoUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }[]>;
+    getOrderForRidderById(id: string, userId: string): Promise<{
+        id: string;
+        passengerName: string | null;
+        ridderName: string | null;
+        finalPrice: number;
+        passengerDescription: string | null;
+        ridderDescription: string | null;
+        finalStartCord: {
+            x: number;
+            y: number;
+        };
+        finalEndCord: {
+            x: number;
+            y: number;
+        };
+        finalStartAddress: string;
+        finalEndAddress: string;
+        startAfter: Date;
+        endedAt: Date;
+        passengerStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        ridderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        passengerAvatorUrl: string | null;
+        ridderAvatorUrl: string | null;
+        passengerPhoneNumber: string | null;
+        ridderPhoneNumber: string | null;
+        passengerEmergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        passengerEmergencyPhoneNumber: string | null;
+        ridderEmergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        ridderEmergencyPhoneNumber: string | null;
         motocycleType: string | null;
         motocycleLicense: string | null;
         motocyclePhotoUrl: string | null;

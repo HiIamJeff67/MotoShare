@@ -66,7 +66,6 @@ let PassengerService = class PassengerService {
             columns: {
                 isOnline: true,
                 age: true,
-                phoneNumber: true,
                 selfIntroduction: true,
                 avatorUrl: true,
                 updatedAt: true,
@@ -94,6 +93,8 @@ let PassengerService = class PassengerService {
                         isOnline: true,
                         age: true,
                         phoneNumber: true,
+                        emergencyUserRole: true,
+                        emergencyPhoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
                         updatedAt: true,

@@ -69,7 +69,7 @@ export class OrderService {
       .where(eq(OrderTable.id, id));
   }
 
-  async getOrderById(id: string, userId: string) {
+  async getOrderForPassengerById(id: string, userId: string) {
     return await this.db.select({
       id: OrderTable.id,
       passengerName: PassengerTable.userName,
@@ -89,6 +89,10 @@ export class OrderService {
       ridderAvatorUrl: RidderInfoTable.avatorUrl,
       passengerPhoneNumber: PassengerInfoTable.phoneNumber,
       ridderPhoneNumber: RidderInfoTable.phoneNumber,
+      passengerEmergencyUserRole: PassengerInfoTable.emergencyUserRole, 
+      passengerEmergencyPhoneNumber: PassengerInfoTable.emergencyPhoneNumber, 
+      ridderEmergencyUserRole: RidderInfoTable.emergencyUserRole, 
+      ridderEmergencyPhoneNumber: RidderInfoTable.emergencyPhoneNumber, 
       motocycleType: RidderInfoTable.motocycleType,
       motocycleLicense: RidderInfoTable.motocycleLicense,
       motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
@@ -97,10 +101,47 @@ export class OrderService {
     }).from(OrderTable)
       .where(and(
         eq(OrderTable.id, id),
-        or(
-          eq(OrderTable.passengerId, userId),
-          eq(OrderTable.ridderId, userId),
-        )
+        eq(OrderTable.passengerId, userId),
+      ))
+      .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
+      .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
+      .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, OrderTable.passengerId))
+      .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, OrderTable.ridderId));
+  }
+
+  async getOrderForRidderById(id: string, userId: string) {
+    return await this.db.select({
+      id: OrderTable.id,
+      passengerName: PassengerTable.userName,
+      ridderName: RidderTable.userName,
+      finalPrice: OrderTable.finalPrice,
+      passengerDescription: OrderTable.passengerDescription, 
+      ridderDescription: OrderTable.ridderDescription, 
+      finalStartCord: OrderTable.finalStartCord,
+      finalEndCord: OrderTable.finalEndCord,
+      finalStartAddress: OrderTable.finalStartAddress,
+      finalEndAddress: OrderTable.finalEndAddress,
+      startAfter: OrderTable.startAfter,
+      endedAt: OrderTable.endedAt,
+      passengerStatus: OrderTable.passengerStatus,
+      ridderStatus: OrderTable.ridderStatus,
+      passengerAvatorUrl: PassengerInfoTable.avatorUrl,
+      ridderAvatorUrl: RidderInfoTable.avatorUrl,
+      passengerPhoneNumber: PassengerInfoTable.phoneNumber,
+      ridderPhoneNumber: RidderInfoTable.phoneNumber,
+      passengerEmergencyUserRole: PassengerInfoTable.emergencyUserRole, 
+      passengerEmergencyPhoneNumber: PassengerInfoTable.emergencyPhoneNumber, 
+      ridderEmergencyUserRole: RidderInfoTable.emergencyUserRole, 
+      ridderEmergencyPhoneNumber: RidderInfoTable.emergencyPhoneNumber, 
+      motocycleType: RidderInfoTable.motocycleType,
+      motocycleLicense: RidderInfoTable.motocycleLicense,
+      motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl,
+      createdAt: OrderTable.createdAt,
+      updatedAt: OrderTable.updatedAt,
+    }).from(OrderTable)
+      .where(and(
+        eq(OrderTable.id, id),
+        eq(OrderTable.passengerId, userId),
       ))
       .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
       .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
@@ -185,8 +226,8 @@ export class OrderService {
     if (ridderName) {
       query.leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
            .where(and(
-            eq(OrderTable.passengerId, passengerId),
-            eq(RidderTable.userName, ridderName),
+              eq(OrderTable.passengerId, passengerId),
+              eq(RidderTable.userName, ridderName),
            ));
     } else {
       query.where(eq(OrderTable.passengerId, passengerId))
@@ -230,8 +271,8 @@ export class OrderService {
     if (passengerName) {
       query.leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
            .where(and(
-            eq(OrderTable.ridderId, ridderId),
-            eq(PassengerTable.userName, passengerName),
+              eq(OrderTable.ridderId, ridderId),
+              eq(PassengerTable.userName, passengerName),
            ));
     } else {
       query.where(eq(OrderTable.ridderId, ridderId))

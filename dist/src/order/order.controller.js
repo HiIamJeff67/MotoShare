@@ -31,7 +31,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.getOrderById(id, passenger.id);
+            const res = await this.orderService.getOrderForPassengerById(id, passenger.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
@@ -52,7 +52,7 @@ let OrderController = class OrderController {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.orderService.getOrderById(id, ridder.id);
+            const res = await this.orderService.getOrderForRidderById(id, ridder.id);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientOrderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);

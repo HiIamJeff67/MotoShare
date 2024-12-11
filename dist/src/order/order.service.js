@@ -53,7 +53,7 @@ let OrderService = class OrderService {
         }).from(order_schema_1.OrderTable)
             .where((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id));
     }
-    async getOrderById(id, userId) {
+    async getOrderForPassengerById(id, userId) {
         return await this.db.select({
             id: order_schema_1.OrderTable.id,
             passengerName: passenger_schema_1.PassengerTable.userName,
@@ -73,13 +73,53 @@ let OrderService = class OrderService {
             ridderAvatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             passengerPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.phoneNumber,
             ridderPhoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+            passengerEmergencyUserRole: passengerInfo_schema_1.PassengerInfoTable.emergencyUserRole,
+            passengerEmergencyPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.emergencyPhoneNumber,
+            ridderEmergencyUserRole: ridderInfo_schema_1.RidderInfoTable.emergencyUserRole,
+            ridderEmergencyPhoneNumber: ridderInfo_schema_1.RidderInfoTable.emergencyPhoneNumber,
             motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
             motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
             motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
             createdAt: order_schema_1.OrderTable.createdAt,
             updatedAt: order_schema_1.OrderTable.updatedAt,
         }).from(order_schema_1.OrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, userId), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderId, userId))))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, userId)))
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))
+            .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId))
+            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, order_schema_1.OrderTable.passengerId))
+            .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, order_schema_1.OrderTable.ridderId));
+    }
+    async getOrderForRidderById(id, userId) {
+        return await this.db.select({
+            id: order_schema_1.OrderTable.id,
+            passengerName: passenger_schema_1.PassengerTable.userName,
+            ridderName: ridder_schema_1.RidderTable.userName,
+            finalPrice: order_schema_1.OrderTable.finalPrice,
+            passengerDescription: order_schema_1.OrderTable.passengerDescription,
+            ridderDescription: order_schema_1.OrderTable.ridderDescription,
+            finalStartCord: order_schema_1.OrderTable.finalStartCord,
+            finalEndCord: order_schema_1.OrderTable.finalEndCord,
+            finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
+            finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
+            startAfter: order_schema_1.OrderTable.startAfter,
+            endedAt: order_schema_1.OrderTable.endedAt,
+            passengerStatus: order_schema_1.OrderTable.passengerStatus,
+            ridderStatus: order_schema_1.OrderTable.ridderStatus,
+            passengerAvatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            ridderAvatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            passengerPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.phoneNumber,
+            ridderPhoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+            passengerEmergencyUserRole: passengerInfo_schema_1.PassengerInfoTable.emergencyUserRole,
+            passengerEmergencyPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.emergencyPhoneNumber,
+            ridderEmergencyUserRole: ridderInfo_schema_1.RidderInfoTable.emergencyUserRole,
+            ridderEmergencyPhoneNumber: ridderInfo_schema_1.RidderInfoTable.emergencyPhoneNumber,
+            motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+            motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
+            motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
+            createdAt: order_schema_1.OrderTable.createdAt,
+            updatedAt: order_schema_1.OrderTable.updatedAt,
+        }).from(order_schema_1.OrderTable)
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, userId)))
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId))
             .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, order_schema_1.OrderTable.passengerId))

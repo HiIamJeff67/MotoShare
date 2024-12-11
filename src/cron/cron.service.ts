@@ -1,3 +1,4 @@
+import * as bcrypt from "bcrypt";
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../drizzle/drizzle.module';
@@ -12,7 +13,9 @@ import {
   PassengerNotificationTable, 
   RidderNotificationTable, 
   PeriodicPurchaseOrderTable,
-  PeriodicSupplyOrderTable, 
+  PeriodicSupplyOrderTable,
+  PassengerTable,
+  RidderTable, 
 } from '../drizzle/schema/schema';
 import { 
   ClientCreateHistoryException, 
@@ -20,7 +23,8 @@ import {
   ClientCreatePurchaseOrderException, 
   ClientCreateRidderNotificationException, 
   ClientCreateSupplyOrderException, 
-  ClientOrderNotFoundException 
+  ClientOrderNotFoundException, 
+  ServerExtractAdminAccountEnvVariableException
 } from '../exceptions';
 import { HistoryTable } from '../drizzle/schema/history.schema';
 import { addDays, daysOfWeekToNumber, ISOStringToDateOnly, ISOStringToTimeOnlyString } from '../utils/timeCalculator';
@@ -42,6 +46,68 @@ export class CronService {
     private ridderNotification: RidderNotificationService, 
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
+
+  /* ================================= Cron Auth operations ================================= */
+  // instead of passing sensitive data to the below function, we using environment variables to verify the admin
+  async signInPassengerAdmin() {
+    const adminUserName = this.config.get<string>("PASSENGER_ADMIN_USERNAME");
+    if (!adminUserName) throw ServerExtractAdminAccountEnvVariableException("passengerAdmin's userName");
+    const adminEmail = this.config.get<string>("PASSENGER_ADMIN_EMAIL");
+    if (!adminEmail) throw ServerExtractAdminAccountEnvVariableException("passengerAdmin's email");
+    const adminPassword = this.config.get<string>("PASSENGER_ADMIN_PASSWORD");
+    if (!adminPassword) throw ServerExtractAdminAccountEnvVariableException("passengerAdmin's password");
+    
+    const response: any = await this.db.select({
+      id: PassengerTable.id, 
+      hash: PassengerTable.password, 
+    }).from(PassengerTable)
+      .where(and(
+        eq(PassengerTable.userName, adminUserName),
+        eq(PassengerTable.email, adminEmail), 
+      ))
+      .limit(1);
+    if (!response || response.length === 0) throw ServerExtractAdminAccountEnvVariableException("passengerAdmin's userName or email");
+    const user = response[0];
+    const pwMatches = await bcrypt.compare(adminPassword, user.hash);
+    delete user.hash;
+    
+    if (!pwMatches) throw ServerExtractAdminAccountEnvVariableException("passengerAdmin's password");
+
+    return {
+      isAdmin: true, 
+    }
+  }
+
+  async signInRidderAdmin() {
+    const adminUserName = this.config.get<string>("RIDDER_ADMIN_USERNAME");
+    if (!adminUserName) throw ServerExtractAdminAccountEnvVariableException("ridderAdmin's userName");
+    const adminEmail = this.config.get<string>("RIDDER_ADMIN_EMAIL");
+    if (!adminEmail) throw ServerExtractAdminAccountEnvVariableException("ridderAdmin's email");
+    const adminPassword = this.config.get<string>("RIDDER_ADMIN_PASSWORD");
+    if (!adminPassword) throw ServerExtractAdminAccountEnvVariableException("ridderAdmin's password");
+    
+    const response: any = await this.db.select({
+      id: RidderTable.id, 
+      hash: RidderTable.password, 
+    }).from(RidderTable)
+      .where(and(
+        eq(RidderTable.userName, adminUserName),
+        eq(RidderTable.email, adminEmail), 
+      ))
+      .limit(1);
+    if (!response || response.length === 0) throw ServerExtractAdminAccountEnvVariableException("ridderAdmin's userName or email");
+    const user = response[0];
+    const pwMatches = await bcrypt.compare(adminPassword, user.hash);
+    delete user.hash;
+    
+    if (!pwMatches) throw ServerExtractAdminAccountEnvVariableException("ridderAdmin's password");
+
+    return {
+      isAdmin: true, 
+    }
+  }
+  // /* ================================= Cron Auth operations ================================= */
+
 
   /* ================================= Automated Create operations ================================= */
   async createPurchaseOrdersByPeriodicPurchaseOrders() {
@@ -387,34 +453,37 @@ export class CronService {
             startAfter: OrderTable.startAfter,
             endedAt: OrderTable.endedAt,
         });
-        if (!responseOfDeletingOrders || responseOfDeletingOrders.length === 0) {
-          throw ClientOrderNotFoundException;
+      if (responseOfDeletingOrders && responseOfDeletingOrders.length !== 0) {
+        const responseOfCreatingHistories = await tx.insert(HistoryTable).values({
+          ridderId: responseOfDeletingOrders[0].ridderId,
+          passengerId: responseOfDeletingOrders[0].passengerId,
+          prevOrderId: responseOfDeletingOrders[0].prevOrderId,
+          finalPrice: responseOfDeletingOrders[0].finalPrice,
+          passengerDescription: responseOfDeletingOrders[0].passengerDescription, 
+          ridderDescription: responseOfDeletingOrders[0].ridderDescription, 
+          finalStartCord: responseOfDeletingOrders[0].finalStartCord,
+          finalEndCord: responseOfDeletingOrders[0].finalEndCord,
+          finalStartAddress: responseOfDeletingOrders[0].finalStartAddress,
+          finalEndAddress: responseOfDeletingOrders[0].finalEndAddress,
+          startAfter: responseOfDeletingOrders[0].startAfter,
+          endedAt: responseOfDeletingOrders[0].endedAt,
+          status: "EXPIRED",
+        }).returning({
+          historyId: HistoryTable.id,
+          historyStatus: HistoryTable.status,
+        });
+        if (!responseOfCreatingHistories 
+          || responseOfCreatingHistories.length !== responseOfDeletingOrders.length) {
+            throw ClientCreateHistoryException;
         }
-
-      const responseOfCreatingHistories = await tx.insert(HistoryTable).values({
-        ridderId: responseOfDeletingOrders[0].ridderId,
-        passengerId: responseOfDeletingOrders[0].passengerId,
-        prevOrderId: responseOfDeletingOrders[0].prevOrderId,
-        finalPrice: responseOfDeletingOrders[0].finalPrice,
-        passengerDescription: responseOfDeletingOrders[0].passengerDescription, 
-        ridderDescription: responseOfDeletingOrders[0].ridderDescription, 
-        finalStartCord: responseOfDeletingOrders[0].finalStartCord,
-        finalEndCord: responseOfDeletingOrders[0].finalEndCord,
-        finalStartAddress: responseOfDeletingOrders[0].finalStartAddress,
-        finalEndAddress: responseOfDeletingOrders[0].finalEndAddress,
-        startAfter: responseOfDeletingOrders[0].startAfter,
-        endedAt: responseOfDeletingOrders[0].endedAt,
-        status: "EXPIRED",
-      }).returning({
-        historyId: HistoryTable.id,
-        historyStatus: HistoryTable.status,
-      });
-      if (!responseOfCreatingHistories || responseOfCreatingHistories.length === 0) {
-        throw ClientCreateHistoryException;
+  
+        return [{
+          ...responseOfCreatingHistories,
+        }];
       }
 
       return [{
-        ...responseOfCreatingHistories,
+        ...responseOfDeletingOrders, 
       }];
     });
   }

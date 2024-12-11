@@ -1,5 +1,10 @@
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common"
 
+// private type
+type AdminFieldType = 
+    "passengerAdmin's userName" | "passengerAdmin's email" | "passengerAdmin's password" | "passengerAdmin's userName or email" |
+    "ridderAdmin's userName"    | "ridderAdmin's email"    | "ridderAdmin's password"    | "ridderAdmin's userName or email"    ;
+
 // E-S-001
 export const ServerAllowedPhoneNumberException = new InternalServerErrorException({
     case: "E-S-001",
@@ -91,6 +96,22 @@ export const ServerExtractJwtSecretEnvVariableException = new InternalServerErro
     case: "E-S-900", 
     message: "Failed to extract the required environment variable JWT_SECRET", 
 });
+
+// E-S-901
+export const ServerExtractCronSecretEnvVariableException = new InternalServerErrorException({
+    case: "E-S-901", 
+    message: "Failed to extract the cron secret environment variable CRON_SECRET", 
+});
+
+// E-S-902
+export const ServerExtractAdminAccountEnvVariableException = (field: AdminFieldType | undefined = undefined) => { 
+    return new InternalServerErrorException({
+        case: "E-S-902", 
+        message: field === undefined 
+            ? `Failed to extract the environment variable ${field}` 
+            : "Unknown error while verify admin account", 
+    });
+}
 
 // E-S-999
 export const ServerUnknownException = new InternalServerErrorException({

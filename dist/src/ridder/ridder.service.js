@@ -68,7 +68,6 @@ let RidderService = class RidderService {
             columns: {
                 isOnline: true,
                 age: true,
-                phoneNumber: true,
                 selfIntroduction: true,
                 avatorUrl: true,
                 motocycleLicense: true,
@@ -99,6 +98,8 @@ let RidderService = class RidderService {
                         isOnline: true,
                         age: true,
                         phoneNumber: true,
+                        emergencyUserRole: true,
+                        emergencyPhoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
                         motocycleLicense: true,

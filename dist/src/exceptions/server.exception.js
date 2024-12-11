@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerExtractAdminAccountEnvVariableException = exports.ServerExtractCronSecretEnvVariableException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
@@ -65,6 +65,19 @@ exports.ServerExtractJwtSecretEnvVariableException = new common_1.InternalServer
     case: "E-S-900",
     message: "Failed to extract the required environment variable JWT_SECRET",
 });
+exports.ServerExtractCronSecretEnvVariableException = new common_1.InternalServerErrorException({
+    case: "E-S-901",
+    message: "Failed to extract the cron secret environment variable CRON_SECRET",
+});
+const ServerExtractAdminAccountEnvVariableException = (field = undefined) => {
+    return new common_1.InternalServerErrorException({
+        case: "E-S-902",
+        message: field === undefined
+            ? `Failed to extract the environment variable ${field}`
+            : "Unknown error while verify admin account",
+    });
+};
+exports.ServerExtractAdminAccountEnvVariableException = ServerExtractAdminAccountEnvVariableException;
 exports.ServerUnknownException = new common_1.InternalServerErrorException({
     case: "E-S-999",
     message: "Internal Server Error",

@@ -73,7 +73,7 @@ export class RidderService {
       columns: {
         isOnline: true,
         age: true,
-        phoneNumber: true,
+        // phoneNumber: true,
         selfIntroduction: true,
         avatorUrl: true,
         motocycleLicense: true,
@@ -105,6 +105,8 @@ export class RidderService {
             isOnline: true,
             age: true,
             phoneNumber: true,
+            emergencyUserRole: true,
+            emergencyPhoneNumber: true, 
             selfIntroduction: true,
             avatorUrl: true,
             motocycleLicense: true,
