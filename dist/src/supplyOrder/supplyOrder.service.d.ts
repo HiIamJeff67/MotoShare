@@ -1,10 +1,11 @@
 import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
-import { GetAdjacentSupplyOrdersDto, GetSimilarRouteSupplyOrdersDto, GetSimilarTimeSupplyOrderDto } from './dto/get-supplyOrder.dto';
+import { GetAdjacentSupplyOrdersDto, GetBetterSupplyOrderDto, GetSimilarRouteSupplyOrdersDto, GetSimilarTimeSupplyOrderDto } from './dto/get-supplyOrder.dto';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
 import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { SearchPriorityType } from '../types';
 export declare class SupplyOrderService {
     private passengerNotification;
     private ridderNotification;
@@ -212,6 +213,11 @@ export declare class SupplyOrderService {
         autoAccept: boolean;
         status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
         RDV: unknown;
+    }[]>;
+    searchBetterFirstSupplyOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, getBetterSupplyOrderDto: GetBetterSupplyOrderDto, searchPriorities: SearchPriorityType): Promise<{
+        supplyOrder: any;
+        ridder: any;
+        ridderInfo: any;
     }[]>;
     updateSupplyOrderById(id: string, creatorId: string, updateSupplyOrderDto: UpdateSupplyOrderDto): Promise<{
         id: string;

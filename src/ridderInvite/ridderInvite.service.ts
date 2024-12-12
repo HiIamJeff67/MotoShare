@@ -32,6 +32,7 @@ import {
 } from '../notification/notificationTemplate';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
 import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { SearchPriorityType } from '../types';
 
 @Injectable()
 export class RidderInviteService {
@@ -480,6 +481,101 @@ export class RidderInviteService {
 
     return await query;
   }
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstRidderInvitesByInviterId(
+      inviterId: string,
+      receiverName: string | undefined = undefined,
+      limit: number,
+      offset: number,
+      searchPriorities: SearchPriorityType, 
+    ) {
+      let timeQuery: any = undefined, aboutToStartQuery: any = undefined, 
+          routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+          updatedAtQuery: any = undefined;
+      let spaceResponseField: any = {};
+  
+      timeQuery = sql`ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestStartAfter} - ${PurchaseOrderTable.startAfter}))) +
+                      ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestEndedAt} - ${PurchaseOrderTable.endedAt}))) ASC`;
+      aboutToStartQuery = sql`${RidderInviteTable.suggestStartAfter} ASC`;
+      startQuery = sql`ST_Distance(
+        ${PurchaseOrderTable.startCord},
+        ${RidderInviteTable.startCord}
+      )`;
+      destQuery = sql`ST_Distance(
+        ${PurchaseOrderTable.endCord},
+        ${RidderInviteTable.endCord}
+      )`;
+      routeQuery = sql`
+        ST_Distance(
+          ${PurchaseOrderTable.startCord},
+          ${RidderInviteTable.startCord}
+        )
+      + ST_Distance(
+          ${RidderInviteTable.startCord},
+          ${RidderInviteTable.endCord}
+        )
+      + ST_Distance(
+          ${RidderInviteTable.endCord},
+          ${PurchaseOrderTable.endCord}
+        )
+      - ST_Distance(
+          ${PurchaseOrderTable.startCord},
+          ${PurchaseOrderTable.endCord}
+        )
+      `;
+      updatedAtQuery = sql`${RidderInviteTable.updatedAt} DESC`;
+  
+      spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+  
+      const sortMap = {
+        'T': timeQuery, 
+        'R': routeQuery, 
+        'S': startQuery, 
+        'D': destQuery, 
+        'U': updatedAtQuery, 
+      };
+  
+      const searchQueries = searchPriorities.split('')
+          .map(symbol => sortMap[symbol])
+          .filter(query => query !== undefined);
+      searchQueries.push(aboutToStartQuery);
+  
+      await this.updateExpiredRidderInvites();
+  
+      const query = this.db.select({
+        id: RidderInviteTable.id,
+        orderId: RidderInviteTable.orderId,
+        suggestStartAddress: RidderInviteTable.startAddress,
+        suggestEndAddress: RidderInviteTable.endAddress,
+        receiverName: RidderTable.userName,
+        avatorUrl: RidderInfoTable.avatorUrl,
+        suggestPrice: RidderInviteTable.suggestPrice,
+        suggestStartAfter: RidderInviteTable.suggestStartAfter,
+        suggesEndedAt: RidderInviteTable.suggestEndedAt,
+        createdAt: RidderInviteTable.createdAt,
+        updatedAt: RidderInviteTable.updatedAt,
+        ...spaceResponseField, 
+      }).from(RidderInviteTable);
+  
+      if (receiverName) {
+        query.leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+             .leftJoin(RidderTable, eq(RidderTable.id, PurchaseOrderTable.creatorId))
+             .where(and(eq(RidderInviteTable.userId, inviterId), like(RidderTable.userName, receiverName + "%")));
+      } else {
+        query.where(eq(RidderInviteTable.userId, inviterId))
+             .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId))
+             .leftJoin(RidderTable, eq(RidderTable.id, PurchaseOrderTable.creatorId));
+      }
+  
+      query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+            .orderBy(...searchQueries)
+            .limit(limit)
+            .offset(offset);
+  
+      return await query;
+    }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search RidderInvite operations used by Ridders ================= */
 
 
@@ -774,6 +870,101 @@ export class RidderInviteService {
 
     return await query;
   }
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstRidderInvitesByReceiverId(
+    receiverId: string,
+    inviterName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+    searchPriorities: SearchPriorityType, 
+  ) {
+    let timeQuery: any = undefined, aboutToStartQuery: any = undefined, 
+        routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+        updatedAtQuery: any = undefined;
+    let spaceResponseField: any = {};
+
+    timeQuery = sql`ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestStartAfter} - ${PurchaseOrderTable.startAfter}))) +
+                    ABS(EXTRACT(EPOCH FROM (${RidderInviteTable.suggestEndedAt} - ${PurchaseOrderTable.endedAt}))) ASC`
+    aboutToStartQuery = sql`${RidderInviteTable.suggestStartAfter} ASC`;
+    startQuery = sql`ST_Distance(
+      ${PurchaseOrderTable.startCord},
+      ${RidderInviteTable.startCord}
+    )`;
+    destQuery = sql`ST_Distance(
+      ${PurchaseOrderTable.endCord},
+      ${RidderInviteTable.endCord}
+    )`;
+    routeQuery = sql`
+      ST_Distance(
+        ${PurchaseOrderTable.startCord},
+        ${RidderInviteTable.startCord}
+      )
+    + ST_Distance(
+        ${RidderInviteTable.startCord},
+        ${RidderInviteTable.endCord}
+      )
+    + ST_Distance(
+        ${RidderInviteTable.endCord},
+        ${PurchaseOrderTable.endCord}
+      )
+    - ST_Distance(
+        ${PurchaseOrderTable.startCord},
+        ${PurchaseOrderTable.endCord}
+      )
+    `;
+    updatedAtQuery = sql`${RidderInviteTable.updatedAt} DESC`;
+
+    spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+
+    const sortMap = {
+      'T': timeQuery, 
+      'R': routeQuery, 
+      'S': startQuery, 
+      'D': destQuery, 
+      'U': updatedAtQuery, 
+    };
+
+    const searchQueries = searchPriorities.split('')
+        .map(symbol => sortMap[symbol])
+        .filter(query => query !== undefined);
+    searchQueries.push(aboutToStartQuery);
+
+    await this.updateExpiredRidderInvites();
+
+    const query = this.db.select({
+      id: RidderInviteTable.id,
+      orderId: RidderInviteTable.orderId,
+      suggestStartAddress: RidderInviteTable.startAddress,
+      suggestEndAddress: RidderInviteTable.endAddress,
+      inviterName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: RidderInviteTable.suggestPrice,
+      suggestStartAfter: RidderInviteTable.suggestStartAfter,
+      suggesEndedAt: RidderInviteTable.suggestEndedAt,
+      createdAt: RidderInviteTable.createdAt,
+      updatedAt: RidderInviteTable.updatedAt,
+      status: RidderInviteTable.status,
+      ...spaceResponseField, 
+    }).from(RidderInviteTable)
+      .leftJoin(PurchaseOrderTable, eq(PurchaseOrderTable.id, RidderInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, RidderInviteTable.userId))
+            .where(and(eq(PurchaseOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(PurchaseOrderTable.creatorId, receiverId))
+            .leftJoin(PassengerTable, eq(PassengerTable.id, RidderInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(...searchQueries)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
+  }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search RidderInvite operations used by Passengers ================= */
 
   /* ================================= Get operations ================================= */

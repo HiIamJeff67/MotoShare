@@ -7,6 +7,7 @@ import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
 import { and, asc, desc, eq, gte, like, lt, lte, ne, not, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
+  GetBetterSupplyOrderDto, 
   GetSimilarRouteSupplyOrdersDto, 
   GetSimilarTimeSupplyOrderDto
 } from './dto/get-supplyOrder.dto';
@@ -32,6 +33,7 @@ import {
 } from '../notification/notificationTemplate';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
 import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { SearchPriorityType } from '../types';
 
 @Injectable()
 export class SupplyOrderService {
@@ -473,6 +475,121 @@ export class SupplyOrderService {
         .offset(offset);
   }
   /* ================= Search operations ================= */
+
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstSupplyOrders(
+      creatorName: string | undefined = undefined,
+      limit: number, 
+      offset: number, 
+      isAutoAccept: boolean, 
+      getBetterSupplyOrderDto: GetBetterSupplyOrderDto, 
+      searchPriorities: SearchPriorityType, 
+    ) {
+        let timeQuery: any = undefined, aboutToStartQuery: any = undefined, 
+            routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+            updatedAtQuery: any = undefined;
+        let spaceResponseField: any = {};
+        
+        if (getBetterSupplyOrderDto.startAfter || getBetterSupplyOrderDto.endedAt) {
+            timeQuery = sql`(
+              ${getBetterSupplyOrderDto.startAfter ? 
+                  sql`ABS(EXTRACT(EPOCH FROM (${SupplyOrderTable.startAfter} - ${getBetterSupplyOrderDto.startAfter})))` : 
+                  sql``}
+              ${getBetterSupplyOrderDto.startAfter && getBetterSupplyOrderDto.endedAt ? sql` + ` : sql``}
+              ${getBetterSupplyOrderDto.endedAt ? 
+                  sql`ABS(EXTRACT(EPOCH FROM (${SupplyOrderTable.endedAt} - ${getBetterSupplyOrderDto.endedAt})))` : 
+                  sql``}
+            ) ASC`;
+        }
+  
+        if (getBetterSupplyOrderDto.startCordLongitude && getBetterSupplyOrderDto.startCordLatitude
+            && getBetterSupplyOrderDto.endCordLongitude && getBetterSupplyOrderDto.endCordLatitude
+        ) {
+            routeQuery = sql`(
+              ST_Distance(
+                  ${SupplyOrderTable.startCord},
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.startCordLongitude}, ${getBetterSupplyOrderDto.startCordLatitude}), 4326)
+              ) 
+            + ST_Distance(
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.startCordLongitude}, ${getBetterSupplyOrderDto.startCordLatitude}), 4326),
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.endCordLongitude}, ${getBetterSupplyOrderDto.endCordLatitude}), 4326)
+              ) 
+            + ST_Distance(
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.endCordLongitude}, ${getBetterSupplyOrderDto.endCordLatitude}), 4326),
+                  ${SupplyOrderTable.endCord}
+              ) 
+            - ST_Distance(
+                  ${SupplyOrderTable.startCord},
+                  ${SupplyOrderTable.endCord}
+              )
+            ) ASC`;
+            spaceResponseField = { RDV: routeQuery }
+        } else if (getBetterSupplyOrderDto.startCordLongitude && getBetterSupplyOrderDto.startCordLatitude) {
+            startQuery = sql`(
+              ST_Distance(
+                  ${SupplyOrderTable.startCord},
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.startCordLongitude}, ${getBetterSupplyOrderDto.startCordLatitude}), 4326)
+              )
+            ) ASC`;
+            spaceResponseField = { ...spaceResponseField,  startManhattanDistance: startQuery }
+        } else if (getBetterSupplyOrderDto.endCordLongitude && getBetterSupplyOrderDto.endCordLatitude) {
+            destQuery = sql`(
+              ST_Distance(
+                  ${SupplyOrderTable.endCord},
+                  ST_SetSRID(ST_MakePoint(${getBetterSupplyOrderDto.endCordLongitude}, ${getBetterSupplyOrderDto.endCordLatitude}), 4326)
+              )
+            ) ASC`;
+            spaceResponseField = { ...spaceResponseField, destManhattanDistance: destQuery }
+        }
+  
+        updatedAtQuery = sql`${SupplyOrderTable.updatedAt} DESC`;
+        aboutToStartQuery = sql`${SupplyOrderTable.startAfter} ASC`
+  
+        const sortMap = {
+            'T': timeQuery, 
+            'R': routeQuery,
+            'S': startQuery, 
+            'D': destQuery,  
+            'U': updatedAtQuery, 
+        }
+  
+        const searchQueries = searchPriorities.split('')
+            .map(symbol => sortMap[symbol])
+            .filter(query => query !== undefined);
+        searchQueries.push(aboutToStartQuery);
+  
+        await this.updateExpiredSupplyOrders();
+  
+        return await this.db.select({
+          id: SupplyOrderTable.id,
+          creatorName: RidderTable.userName,
+          avatorUrl: RidderInfoTable.avatorUrl,
+          initPrice: SupplyOrderTable.initPrice,
+          startCord: SupplyOrderTable.startCord,
+          endCord: SupplyOrderTable.endCord,
+          startAddress: SupplyOrderTable.startAddress,
+          endAddress: SupplyOrderTable.endAddress,
+          createdAt: SupplyOrderTable.createdAt,
+          updatedAt: SupplyOrderTable.updatedAt,
+          startAfter: SupplyOrderTable.startAfter,
+          endedAt: SupplyOrderTable.endedAt,
+          tolerableRDV: SupplyOrderTable.tolerableRDV,
+          autoAccept: SupplyOrderTable.autoAccept,
+          status: SupplyOrderTable.status,
+          ...spaceResponseField, 
+        }).from(SupplyOrderTable)
+          .leftJoin(RidderTable, eq(SupplyOrderTable.creatorId, RidderTable.id))
+          .where(and(
+            eq(SupplyOrderTable.status, "POSTED"),
+            (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined),
+            (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined),
+          ))
+          .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
+          .orderBy(...searchQueries)
+          .limit(limit)
+          .offset(offset);
+    }
+  /* ================= Powerful Search operations ================= */
 
   /* ================================= Get operations ================================= */
 

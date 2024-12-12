@@ -12,3 +12,12 @@ export declare class GetSimilarRoutePurchaseOrdersDto {
     endCordLongitude: number;
     endCordLatitude: number;
 }
+export declare class GetBetterPurchaseOrderDto {
+    startAfter: string;
+    endedAt: string;
+    startCordLongitude: number;
+    startCordLatitude: number;
+    endCordLongitude: number;
+    endCordLatitude: number;
+    get _validateWholeObject(): this;
+}

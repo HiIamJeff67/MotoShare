@@ -12,6 +12,7 @@ import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { 
   GetAdjacentPurchaseOrdersDto, 
+  GetBetterPurchaseOrderDto, 
   GetSimilarRoutePurchaseOrdersDto, 
   GetSimilarTimePurchaseOrderDto
 } from './dto/get-purchaseOrder.dto';
@@ -33,6 +34,7 @@ import {
   NotificationTemplateOfRejectingRiddererInvite, 
   NotificationTemplateOfDirectlyStartOrder, 
 } from '../notification/notificationTemplate';
+import { SearchPriorityType } from '../types';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -305,7 +307,7 @@ export class PurchaseOrderService {
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(
           sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.startAfter} - ${getSimilarTimePurchaseOrderDto.startAfter}))) +
-              ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.endedAt} - ${getSimilarTimePurchaseOrderDto.endedAt}))) ASC`
+              ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.endedAt} - ${getSimilarTimePurchaseOrderDto.endedAt}))) ASC`, 
         ).limit(limit)
          .offset(offset);
   }
@@ -472,6 +474,123 @@ export class PurchaseOrderService {
         .offset(offset);
   }
   /* ================= Search operations ================= */
+
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstPurchaseOrders(
+    creatorName: string | undefined = undefined,
+    limit: number, 
+    offset: number, 
+    isAutoAccept: boolean, 
+    getBetterPurchaseOrderDto: GetBetterPurchaseOrderDto, 
+    searchPriorities: SearchPriorityType, 
+  ) {
+      let timeQuery: any = undefined, 
+          routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+          updatedAtQuery: any = undefined, aboutToStartQuery: any = undefined;
+      let spaceResponseField: any = {};
+      
+      if (getBetterPurchaseOrderDto.startAfter || getBetterPurchaseOrderDto.endedAt) {
+          timeQuery = sql`(
+            ${getBetterPurchaseOrderDto.startAfter ? 
+                sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.startAfter} - ${getBetterPurchaseOrderDto.startAfter})))` : 
+                sql``}
+            ${getBetterPurchaseOrderDto.startAfter && getBetterPurchaseOrderDto.endedAt ? sql` + ` : sql``}
+            ${getBetterPurchaseOrderDto.endedAt ? 
+                sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.endedAt} - ${getBetterPurchaseOrderDto.endedAt})))` : 
+                sql``}
+          ) ASC`;
+      }
+
+      if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude
+          && getBetterPurchaseOrderDto.endCordLongitude && getBetterPurchaseOrderDto.endCordLatitude
+      ) {
+          routeQuery = sql`(
+            ST_Distance(
+                ${PurchaseOrderTable.startCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326),
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326),
+                ${PurchaseOrderTable.endCord}
+            ) 
+          - ST_Distance(
+                ${PurchaseOrderTable.startCord},
+                ${PurchaseOrderTable.endCord}
+            )
+          ) ASC`;
+          spaceResponseField = { RDV: routeQuery }
+      }
+      if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude) {
+          startQuery = sql`(
+            ST_Distance(
+                ${PurchaseOrderTable.startCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326)
+            )
+          ) ASC`;
+          spaceResponseField = { ...spaceResponseField, startManhattanDistance: startQuery }
+      }
+      if (getBetterPurchaseOrderDto.endCordLongitude && getBetterPurchaseOrderDto.endCordLatitude) {
+          destQuery = sql`(
+            ST_Distance(
+                ${PurchaseOrderTable.endCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326)
+            )
+          ) ASC`;
+          spaceResponseField = { ...spaceResponseField, destManhattanDistance: destQuery }
+      }
+
+      updatedAtQuery = sql`${PurchaseOrderTable.updatedAt} DESC`;
+      aboutToStartQuery = sql`${PurchaseOrderTable.startAfter} ASC`;
+
+      const sortMap = {
+          'T': timeQuery, 
+          'R': routeQuery, 
+          'S': startQuery, 
+          'D': destQuery, 
+          'U': updatedAtQuery, 
+      };
+
+      const searchQueries = searchPriorities.split('')
+          .map(symbol => sortMap[symbol])
+          .filter(query => query !== undefined);
+      searchQueries.push(aboutToStartQuery);
+
+      await this.updateExpiredPurchaseOrders();
+
+      return await this.db.select({
+        id: PurchaseOrderTable.id,
+        creatorName: PassengerTable.userName,
+        avatorUrl: PassengerInfoTable.avatorUrl,
+        initPrice: PurchaseOrderTable.initPrice,
+        startCord: PurchaseOrderTable.startCord,
+        endCord: PurchaseOrderTable.endCord,
+        startAddress: PurchaseOrderTable.startAddress,
+        endAddress: PurchaseOrderTable.endAddress,
+        createdAt: PurchaseOrderTable.createdAt,
+        updatedAt: PurchaseOrderTable.updatedAt,
+        startAfter: PurchaseOrderTable.startAfter,
+        endedAt: PurchaseOrderTable.endedAt,
+        isUrgent: PurchaseOrderTable.isUrgent,
+        autoAccept: PurchaseOrderTable.autoAccept,
+        status: PurchaseOrderTable.status,
+        ...spaceResponseField, 
+      }).from(PurchaseOrderTable)
+        .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))
+        .where(and(
+          eq(PurchaseOrderTable.status, "POSTED"),
+          (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined),
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+        ))
+        .leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
+        .orderBy(...searchQueries)
+        .limit(limit)
+        .offset(offset);
+  }
+  /* ================= Powerful Search operations ================= */
 
   /* ================================= Get operations ================================= */
 

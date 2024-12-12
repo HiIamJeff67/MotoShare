@@ -3,8 +3,9 @@ import { Response } from 'express';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
-import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto, GetSimilarTimePurchaseOrderDto } from './dto/get-purchaseOrder.dto';
+import { GetAdjacentPurchaseOrdersDto, GetBetterPurchaseOrderDto, GetSimilarRoutePurchaseOrdersDto, GetSimilarTimePurchaseOrderDto } from './dto/get-purchaseOrder.dto';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
+import { SearchPriorityType } from '../types';
 export declare class PurchaseOrderController {
     private readonly purchaseOrderService;
     constructor(purchaseOrderService: PurchaseOrderService);
@@ -17,6 +18,7 @@ export declare class PurchaseOrderController {
     searchCurAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
     searchDestAdjacentPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getAdjacentPurchaseOrdersDto: GetAdjacentPurchaseOrdersDto, response: Response): Promise<void>;
     searchSimilarRoutePurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, getSimilarRoutePurchaseOrdersDto: GetSimilarRoutePurchaseOrdersDto, response: Response): Promise<void>;
+    searchBetterFirstPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, searchPriorities: SearchPriorityType | undefined, getBetterPurchaseOrderDto: GetBetterPurchaseOrderDto, response: Response): Promise<void>;
     updateMyPurchaseOrderById(passenger: PassengerType, id: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto, response: Response): Promise<void>;
     startPurchaseOrderWithoutInvite(ridder: RidderType, id: string, acceptAutoAcceptPurchaseOrderDto: AcceptAutoAcceptPurchaseOrderDto, response: Response): Promise<void>;
     cancelMyPurchaseOrderById(passenger: PassengerType, id: string, response: Response): Promise<void>;

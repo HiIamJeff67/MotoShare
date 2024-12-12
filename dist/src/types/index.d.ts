@@ -7,3 +7,4 @@ export * from "./notification.type";
 export * from "./size.type";
 export * from "./file.type";
 export * from "./time.type";
+export * from "./search.type";

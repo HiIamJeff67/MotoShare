@@ -24,6 +24,7 @@ const create_ridderInvite_dto_1 = require("./dto/create-ridderInvite.dto");
 const update_ridderInvite_dto_1 = require("./dto/update-ridderInvite.dto");
 const constants_1 = require("../constants");
 const utils_1 = require("../utils");
+const types_1 = require("../types");
 let RidderInviteController = class RidderInviteController {
     constructor(ridderInviteService) {
         this.ridderInviteService = ridderInviteService;
@@ -235,6 +236,34 @@ let RidderInviteController = class RidderInviteController {
             });
         }
     }
+    async searchBetterFirstRidderInvitesByInviterId(ridder, receiverName = undefined, limit = "10", offset = "0", searchPriorities = "RTSDU", response) {
+        try {
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            if (!types_1.SearchPriorityTypes.includes(searchPriorities)) {
+                throw exceptions_1.ApiWrongSearchPriorityTypeException;
+            }
+            const res = await this.ridderInviteService.searchBetterFirstRidderInvitesByInviterId(ridder.id, receiverName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true), searchPriorities);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.BadRequestException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async searchPaginationRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", response) {
         try {
             if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
@@ -372,6 +401,34 @@ let RidderInviteController = class RidderInviteController {
             if (!(error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchBetterFirstRidderInvitesByReceiverId(passenger, inviterName = undefined, limit = "10", offset = "0", searchPriorities = "RTSDU", response) {
+        try {
+            if ((0, utils_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, utils_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            if (!types_1.SearchPriorityTypes.includes(searchPriorities)) {
+                throw exceptions_1.ApiWrongSearchPriorityTypeException;
+            }
+            const res = await this.ridderInviteService.searchBetterFirstRidderInvitesByReceiverId(passenger.id, inviterName, (0, utils_1.toNumber)(limit, true), (0, utils_1.toNumber)(offset, true), searchPriorities);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientInviteNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.BadRequestException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -559,6 +616,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchSimilarRouteRidderInvitesByInviterId", null);
 __decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('ridder/searchMyBetterFirstRidderInvites'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('receiverName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Query)('searchPriorities')),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, Object, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchBetterFirstRidderInvitesByInviterId", null);
+__decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Get)('passenger/searchMyPaginationRidderInvites'),
     __param(0, (0, decorator_1.Passenger)()),
@@ -630,6 +700,19 @@ __decorate([
     __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], RidderInviteController.prototype, "searchMySimilarRouteRidderInvitesByReceverId", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('passenger/searchMyBetterFirstRidderInvites'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('inviterName')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('offset')),
+    __param(4, (0, common_1.Query)('searchPriorities')),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], RidderInviteController.prototype, "searchBetterFirstRidderInvitesByReceiverId", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Post)('ridder/updateMyRidderInviteById'),

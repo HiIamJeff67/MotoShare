@@ -2,9 +2,10 @@ import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
-import { GetAdjacentPurchaseOrdersDto, GetSimilarRoutePurchaseOrdersDto, GetSimilarTimePurchaseOrderDto } from './dto/get-purchaseOrder.dto';
+import { GetAdjacentPurchaseOrdersDto, GetBetterPurchaseOrderDto, GetSimilarRoutePurchaseOrdersDto, GetSimilarTimePurchaseOrderDto } from './dto/get-purchaseOrder.dto';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
 import { RidderNotificationService } from '../notification/ridderNotification.service';
+import { SearchPriorityType } from '../types';
 export declare class PurchaseOrderService {
     private passengerNotification;
     private ridderNotification;
@@ -206,6 +207,11 @@ export declare class PurchaseOrderService {
         autoAccept: boolean;
         status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
         RDV: unknown;
+    }[]>;
+    searchBetterFirstPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, getBetterPurchaseOrderDto: GetBetterPurchaseOrderDto, searchPriorities: SearchPriorityType): Promise<{
+        passenger: any;
+        passengerInfo: any;
+        purchaseOrder: any;
     }[]>;
     updatePurchaseOrderById(id: string, creatorId: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): Promise<{
         id: string;

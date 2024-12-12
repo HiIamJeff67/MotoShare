@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiISOStringFormException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiISOStringFormException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiWrongSearchPriorityTypeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     case: "E-A-001",
@@ -9,6 +9,10 @@ exports.ApiMissingParameterException = new common_1.BadRequestException({
 exports.ApiMissingBodyOrWrongDtoException = new common_1.BadRequestException({
     case: "E-A-002",
     message: "Require body and customized dto of current route",
+});
+exports.ApiWrongSearchPriorityTypeException = new common_1.BadRequestException({
+    case: "E-A-003",
+    message: "searchPriorities should be any combination of 'T', 'R', 'U', 'S', 'D', see more on the note",
 });
 const ApiSearchingLimitTooLargeException = (maxLimit) => {
     return new common_1.NotAcceptableException({

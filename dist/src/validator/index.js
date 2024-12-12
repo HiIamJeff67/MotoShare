@@ -25,4 +25,5 @@ __exportStar(require("./costomTextLength.validator"), exports);
 __exportStar(require("./IsIntString.validator"), exports);
 __exportStar(require("./IsPeriodicDateString.validate"), exports);
 __exportStar(require("./IsNotEqualTo.decorator"), exports);
+__exportStar(require("./BetterFirstSearchFieldsValidation.validator"), exports);
 //# sourceMappingURL=index.js.map

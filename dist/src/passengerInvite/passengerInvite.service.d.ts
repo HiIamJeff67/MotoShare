@@ -3,6 +3,7 @@ import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { RidderNotificationService } from '../notification/ridderNotification.service';
 import { PassengerNotificationService } from '../notification/passenerNotification.service';
+import { SearchPriorityType } from '../types';
 export declare class PassengerInviteService {
     private passengerNotification;
     private ridderNotification;
@@ -145,6 +146,11 @@ export declare class PassengerInviteService {
         updatedAt: Date;
         RDV: unknown;
     }[]>;
+    searchBetterFirstPassengerInvitesByInviterId(inviterId: string, receiverName: string | undefined, limit: number, offset: number, searchPriorities: SearchPriorityType): Promise<({
+        [x: string]: any;
+    } | {
+        [x: string]: any;
+    })[]>;
     searchPaginationPasssengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number): Promise<{
         id: string;
         orderId: string;
@@ -231,6 +237,10 @@ export declare class PassengerInviteService {
         updatedAt: Date;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         RDV: unknown;
+    }[]>;
+    searchBetterFirstPassengerInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number, searchPriorities: SearchPriorityType): Promise<{
+        supplyOrder: any;
+        passengerInvite: any;
     }[]>;
     updatePassengerInviteById(id: string, inviterId: string, inviterName: string, updatePassengerInviteDto: UpdatePassengerInviteDto): Promise<{
         id: string;

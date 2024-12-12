@@ -26,6 +26,7 @@ const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
 const constants_1 = require("../constants");
 const stringParser_1 = require("../utils/stringParser");
 const accept_purchaseOrder_dto_1 = require("./dto/accept-purchaseOrder-dto");
+const types_1 = require("../types");
 let PurchaseOrderController = class PurchaseOrderController {
     constructor(purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
@@ -226,6 +227,33 @@ let PurchaseOrderController = class PurchaseOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchBetterFirstPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", searchPriorities = "RTSDU", getBetterPurchaseOrderDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            if (!types_1.SearchPriorityTypes.includes(searchPriorities)) {
+                throw exceptions_1.ApiWrongSearchPriorityTypeException;
+            }
+            const res = await this.purchaseOrderService.searchBetterFirstPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getBetterPurchaseOrderDto, searchPriorities);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException)) {
                 error = exceptions_1.ClientUnknownException;
@@ -483,6 +511,19 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "searchSimilarRoutePurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchBetterFirstPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Query)('searchPriorities')),
+    __param(5, (0, common_1.Body)()),
+    __param(6, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, String, get_purchaseOrder_dto_1.GetBetterPurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchBetterFirstPurchaseOrders", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Patch)('updateMyPurchaseOrderById'),

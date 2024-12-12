@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { CreatePassengerInviteDto } from './dto/create-passengerInvite.dto';
 import { DecidePassengerInviteDto, UpdatePassengerInviteDto } from './dto/update-passengerInvite.dto';
+import { SearchPriorityType } from '../types';
 export declare class PassengerInviteController {
     private readonly passengerInviteService;
     constructor(passengerInviteService: PassengerInviteService);
@@ -15,12 +16,14 @@ export declare class PassengerInviteController {
     searchCurAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchSimilarRoutePassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchBetterFirstPassengerInvitesByInviterId(passenger: PassengerType, receiverName: string | undefined, limit: string | undefined, offset: string | undefined, searchPriorities: SearchPriorityType | undefined, response: Response): Promise<void>;
     searchPaginationPasssengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchSimilarTimePassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchCurAdjacentPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchDestAdjacentPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     searchMySimilarRoutePassengerInvitesByReceverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
+    searchBetterFirstPassengerInvitesByReceiverId(ridder: RidderType, inviterName: string | undefined, limit: string | undefined, offset: string | undefined, searchPriorities: SearchPriorityType | undefined, response: Response): Promise<void>;
     updateMyPassengerInviteById(passenger: PassengerType, id: string, updatePassengerInviteDto: UpdatePassengerInviteDto, response: Response): Promise<void>;
     decidePassengerInviteById(ridder: RidderType, id: string, decidePassengerInviteDto: DecidePassengerInviteDto, response: Response): Promise<void>;
     deleteMyPassengerInviteById(passenger: PassengerType, id: string, response: Response): Promise<void>;

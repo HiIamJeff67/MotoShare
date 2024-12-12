@@ -14,6 +14,7 @@ import {
   ApiMissingParameterException,
   ApiSearchingLimitLessThanZeroException,
   ApiSearchingLimitTooLargeException,
+  ApiWrongSearchPriorityTypeException,
   ClientCreateOrderException,
   ClientCreatePurchaseOrderException,
   ClientPurchaseOrderNotFoundException,
@@ -28,12 +29,14 @@ import { CreatePurchaseOrderDto } from './dto/create-purchaseOrder.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchaseOrder.dto';
 import { 
   GetAdjacentPurchaseOrdersDto, 
+  GetBetterPurchaseOrderDto, 
   GetSimilarRoutePurchaseOrdersDto, 
   GetSimilarTimePurchaseOrderDto
 } from './dto/get-purchaseOrder.dto';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
 import { AcceptAutoAcceptPurchaseOrderDto } from './dto/accept-purchaseOrder-dto';
+import { SearchPriorityType, SearchPriorityTypes } from '../types';
 
 
 @Controller('purchaseOrder')
@@ -382,6 +385,54 @@ export class PurchaseOrderController {
     }
   }
   /* ================= Search operations ================= */
+
+  /* ================= Powerful Search operations ================= */
+  @Post('searchBetterFirstPurchaseOrders')
+  async searchBetterFirstPurchaseOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
+    @Query('searchPriorities') searchPriorities: SearchPriorityType = "RTSDU", 
+    @Body() getBetterPurchaseOrderDto: GetBetterPurchaseOrderDto,
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+      if (!SearchPriorityTypes.includes(searchPriorities)) {
+        throw ApiWrongSearchPriorityTypeException;
+      }
+
+      const res = await this.purchaseOrderService.searchBetterFirstPurchaseOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+        getBetterPurchaseOrderDto, 
+        searchPriorities, 
+      );
+
+      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      console.log(error)
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================= Powerful Search operations ================= */
 
   /* ================================= Get operations ================================= */
   

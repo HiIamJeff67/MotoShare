@@ -16,6 +16,7 @@ import {
   ApiMissingParameterException, 
   ApiSearchingLimitLessThanZeroException, 
   ApiSearchingLimitTooLargeException, 
+  ApiWrongSearchPriorityTypeException, 
   ClientCreateRidderInviteException, 
   ClientInviteNotFoundException, 
   ClientUnknownException 
@@ -33,6 +34,7 @@ import {
 } from './dto/update-ridderInvite.dto';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toNumber } from '../utils';
+import { SearchPriorityType, SearchPriorityTypes } from '../types';
 
 @Controller('ridderInvite')
 export class RidderInviteController {
@@ -378,6 +380,54 @@ export class RidderInviteController {
       });
     }
   }
+  /* ================= Powerful Search operations ================= */
+  @UseGuards(JwtRidderGuard)
+  @Get('ridder/searchMyBetterFirstRidderInvites')
+  async searchBetterFirstRidderInvitesByInviterId(
+    @Ridder() ridder: RidderType,
+    @Query('receiverName') receiverName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('searchPriorities') searchPriorities: SearchPriorityType = "RTSDU", 
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+      if (!SearchPriorityTypes.includes(searchPriorities)) {
+        throw ApiWrongSearchPriorityTypeException;
+      }
+
+      const res = await this.ridderInviteService.searchBetterFirstRidderInvitesByInviterId(
+        ridder.id, 
+        receiverName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        searchPriorities, 
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res)
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException
+        || error instanceof BadRequestException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search RidderInvite operations used by Ridders ================= */
 
 
@@ -621,6 +671,54 @@ export class RidderInviteController {
       });
     }
   }
+  /* ================= Powerful Search operations ================= */
+  @UseGuards(JwtPassengerGuard)
+  @Get('passenger/searchMyBetterFirstRidderInvites')
+  async searchBetterFirstRidderInvitesByReceiverId(
+    @Passenger() passenger: PassengerType,
+    @Query('inviterName') inviterName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('searchPriorities') searchPriorities: SearchPriorityType = "RTSDU", 
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+      if (!SearchPriorityTypes.includes(searchPriorities)) {
+        throw ApiWrongSearchPriorityTypeException;
+      }
+
+      const res = await this.ridderInviteService.searchBetterFirstRidderInvitesByReceiverId(
+        passenger.id, 
+        inviterName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        searchPriorities, 
+      );
+
+      if (!res || res.length === 0) throw ClientInviteNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res)
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException 
+        || error instanceof NotFoundException
+        || error instanceof NotAcceptableException
+        || error instanceof BadRequestException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search RidderInvite operations used by Passengers ================= */
 
   /* ================================= Get operations ================================= */

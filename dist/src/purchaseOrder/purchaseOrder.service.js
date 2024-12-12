@@ -332,6 +332,99 @@ let PurchaseOrderService = class PurchaseOrderService {
             .limit(limit)
             .offset(offset);
     }
+    async searchBetterFirstPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getBetterPurchaseOrderDto, searchPriorities) {
+        let timeQuery = undefined, routeQuery = undefined, startQuery = undefined, destQuery = undefined, updatedAtQuery = undefined, aboutToStartQuery = undefined;
+        let spaceResponseField = {};
+        if (getBetterPurchaseOrderDto.startAfter || getBetterPurchaseOrderDto.endedAt) {
+            timeQuery = (0, drizzle_orm_1.sql) `(
+            ${getBetterPurchaseOrderDto.startAfter ?
+                (0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.startAfter} - ${getBetterPurchaseOrderDto.startAfter})))` :
+                (0, drizzle_orm_1.sql) ``}
+            ${getBetterPurchaseOrderDto.startAfter && getBetterPurchaseOrderDto.endedAt ? (0, drizzle_orm_1.sql) ` + ` : (0, drizzle_orm_1.sql) ``}
+            ${getBetterPurchaseOrderDto.endedAt ?
+                (0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.endedAt} - ${getBetterPurchaseOrderDto.endedAt})))` :
+                (0, drizzle_orm_1.sql) ``}
+          ) ASC`;
+        }
+        if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude
+            && getBetterPurchaseOrderDto.endCordLongitude && getBetterPurchaseOrderDto.endCordLatitude) {
+            routeQuery = (0, drizzle_orm_1.sql) `(
+            ST_Distance(
+                ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326),
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326)
+            ) 
+          + ST_Distance(
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326),
+                ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+            ) 
+          - ST_Distance(
+                ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+                ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+            )
+          ) ASC`;
+            spaceResponseField = { RDV: routeQuery };
+        }
+        if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude) {
+            startQuery = (0, drizzle_orm_1.sql) `(
+            ST_Distance(
+                ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.startCordLongitude}, ${getBetterPurchaseOrderDto.startCordLatitude}), 4326)
+            )
+          ) ASC`;
+            spaceResponseField = { ...spaceResponseField, startManhattanDistance: startQuery };
+        }
+        if (getBetterPurchaseOrderDto.endCordLongitude && getBetterPurchaseOrderDto.endCordLatitude) {
+            destQuery = (0, drizzle_orm_1.sql) `(
+            ST_Distance(
+                ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+                ST_SetSRID(ST_MakePoint(${getBetterPurchaseOrderDto.endCordLongitude}, ${getBetterPurchaseOrderDto.endCordLatitude}), 4326)
+            )
+          ) ASC`;
+            spaceResponseField = { ...spaceResponseField, destManhattanDistance: destQuery };
+        }
+        updatedAtQuery = (0, drizzle_orm_1.sql) `${purchaseOrder_schema_1.PurchaseOrderTable.updatedAt} DESC`;
+        aboutToStartQuery = (0, drizzle_orm_1.sql) `${purchaseOrder_schema_1.PurchaseOrderTable.startAfter} ASC`;
+        const sortMap = {
+            'T': timeQuery,
+            'R': routeQuery,
+            'S': startQuery,
+            'D': destQuery,
+            'U': updatedAtQuery,
+        };
+        const searchQueries = searchPriorities.split('')
+            .map(symbol => sortMap[symbol])
+            .filter(query => query !== undefined);
+        searchQueries.push(aboutToStartQuery);
+        await this.updateExpiredPurchaseOrders();
+        return await this.db.select({
+            id: purchaseOrder_schema_1.PurchaseOrderTable.id,
+            creatorName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            initPrice: purchaseOrder_schema_1.PurchaseOrderTable.initPrice,
+            startCord: purchaseOrder_schema_1.PurchaseOrderTable.startCord,
+            endCord: purchaseOrder_schema_1.PurchaseOrderTable.endCord,
+            startAddress: purchaseOrder_schema_1.PurchaseOrderTable.startAddress,
+            endAddress: purchaseOrder_schema_1.PurchaseOrderTable.endAddress,
+            createdAt: purchaseOrder_schema_1.PurchaseOrderTable.createdAt,
+            updatedAt: purchaseOrder_schema_1.PurchaseOrderTable.updatedAt,
+            startAfter: purchaseOrder_schema_1.PurchaseOrderTable.startAfter,
+            endedAt: purchaseOrder_schema_1.PurchaseOrderTable.endedAt,
+            isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
+            autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
+            status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            ...spaceResponseField,
+        }).from(purchaseOrder_schema_1.PurchaseOrderTable)
+            .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined)))
+            .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .orderBy(...searchQueries)
+            .limit(limit)
+            .offset(offset);
+    }
     async updatePurchaseOrderById(id, creatorId, updatePurchaseOrderDto) {
         return await this.db.transaction(async (tx) => {
             const newStartCord = (updatePurchaseOrderDto.startCordLongitude !== undefined

@@ -13,6 +13,7 @@ import {
   ApiMissingParameterException,
   ApiSearchingLimitLessThanZeroException,
   ApiSearchingLimitTooLargeException,
+  ApiWrongSearchPriorityTypeException,
   ClientCreateOrderException,
   ClientCreateSupplyOrderException,
   ClientSupplyOrderNotFoundException,
@@ -27,12 +28,14 @@ import { CreateSupplyOrderDto } from './dto/create-supplyOrder.dto';
 import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { 
   GetAdjacentSupplyOrdersDto, 
+  GetBetterSupplyOrderDto, 
   GetSimilarRouteSupplyOrdersDto, 
   GetSimilarTimeSupplyOrderDto
 } from './dto/get-supplyOrder.dto';
 import { MAX_SEARCH_LIMIT, MIN_SEARCH_LIMIT } from '../constants';
 import { toBoolean, toNumber } from '../utils/stringParser';
 import { AcceptAutoAcceptSupplyOrderDto } from './dto/accept-supplyOrder.dto';
+import { SearchPriorityType, SearchPriorityTypes } from '../types';
 
 @Controller('supplyOrder')
 export class SupplyOrderController {
@@ -378,6 +381,54 @@ export class SupplyOrderController {
     }
   }
   /* ================= Search operations ================= */
+
+  /* ================= Powerful Search operations ================= */
+  @Post('searchBetterFirstSupplyOrders')
+  async searchBetterFirstSupplyOrders(
+    @Query('creatorName') creatorName: string | undefined = undefined,
+    @Query('limit') limit: string = "10",
+    @Query('offset') offset: string = "0",
+    @Query('isAutoAccept') isAutoAccept: string = "false", 
+    @Query('searchPriorities') searchPriorities: SearchPriorityType = "RTSDU", 
+    @Body() getBetterSupplyOrderDto: GetBetterSupplyOrderDto,
+    @Res() response: Response,
+  ) {
+    try {
+      if (toNumber(limit, true) > MAX_SEARCH_LIMIT) {
+        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+      }
+      if (toNumber(limit, true) < MIN_SEARCH_LIMIT) {
+        throw ApiSearchingLimitLessThanZeroException(MIN_SEARCH_LIMIT);
+      }
+      if (!SearchPriorityTypes.includes(searchPriorities)) {
+        throw ApiWrongSearchPriorityTypeException;
+      }
+
+      const res = await this.supplyOrderService.searchBetterFirstSupplyOrders(
+        creatorName, 
+        toNumber(limit, true), 
+        toNumber(offset, true), 
+        toBoolean(isAutoAccept), 
+        getBetterSupplyOrderDto, 
+        searchPriorities, 
+      );
+
+      if (!res || res.length === 0) throw ClientSupplyOrderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      console.log(error)
+      if (!(error instanceof NotFoundException
+        || error instanceof NotAcceptableException)) {
+        error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response,
+      });
+    }
+  }
+  /* ================= Powerful Search operations ================= */
 
   /* ================================= Get operations ================================= */
 

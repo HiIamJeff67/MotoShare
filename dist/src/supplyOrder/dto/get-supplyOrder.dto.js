@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetSimilarRouteSupplyOrdersDto = exports.GetAdjacentSupplyOrdersDto = exports.GetSimilarTimeSupplyOrderDto = void 0;
+exports.GetBetterSupplyOrderDto = exports.GetSimilarRouteSupplyOrdersDto = exports.GetAdjacentSupplyOrdersDto = exports.GetSimilarTimeSupplyOrderDto = void 0;
 const class_validator_1 = require("class-validator");
 const validator_1 = require("../../validator");
 class GetSimilarTimeSupplyOrderDto {
@@ -65,4 +65,51 @@ __decorate([
     (0, class_validator_1.IsLatitude)(),
     __metadata("design:type", Number)
 ], GetSimilarRouteSupplyOrdersDto.prototype, "endCordLatitude", void 0);
+class GetBetterSupplyOrderDto {
+    get _validateWholeObject() {
+        return this;
+    }
+}
+exports.GetBetterSupplyOrderDto = GetBetterSupplyOrderDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateIf)(o => o.endedAt),
+    (0, validator_1.IsStartBeforeEnd)('endedAt'),
+    (0, validator_1.IsAfterNow)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], GetBetterSupplyOrderDto.prototype, "startAfter", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateIf)(o => o.startAfter),
+    (0, validator_1.IsEndAfterStart)('startAfter'),
+    (0, validator_1.IsAfterNow)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], GetBetterSupplyOrderDto.prototype, "endedAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLongitude)(),
+    __metadata("design:type", Number)
+], GetBetterSupplyOrderDto.prototype, "startCordLongitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLatitude)(),
+    __metadata("design:type", Number)
+], GetBetterSupplyOrderDto.prototype, "startCordLatitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLongitude)(),
+    __metadata("design:type", Number)
+], GetBetterSupplyOrderDto.prototype, "endCordLongitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLatitude)(),
+    __metadata("design:type", Number)
+], GetBetterSupplyOrderDto.prototype, "endCordLatitude", void 0);
+__decorate([
+    (0, class_validator_1.Validate)(validator_1.BetterFirstSearchFieldsValidation),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], GetBetterSupplyOrderDto.prototype, "_validateWholeObject", null);
 //# sourceMappingURL=get-supplyOrder.dto.js.map

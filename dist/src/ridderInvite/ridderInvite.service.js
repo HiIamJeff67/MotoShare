@@ -373,6 +373,82 @@ let RidderInviteService = class RidderInviteService {
             .offset(offset);
         return await query;
     }
+    async searchBetterFirstRidderInvitesByInviterId(inviterId, receiverName = undefined, limit, offset, searchPriorities) {
+        let timeQuery = undefined, aboutToStartQuery = undefined, routeQuery = undefined, startQuery = undefined, destQuery = undefined, updatedAtQuery = undefined;
+        let spaceResponseField = {};
+        timeQuery = (0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${ridderInvite_schema_1.RidderInviteTable.suggestStartAfter} - ${purchaseOrder_schema_1.PurchaseOrderTable.startAfter}))) +
+                      ABS(EXTRACT(EPOCH FROM (${ridderInvite_schema_1.RidderInviteTable.suggestEndedAt} - ${purchaseOrder_schema_1.PurchaseOrderTable.endedAt}))) ASC`;
+        aboutToStartQuery = (0, drizzle_orm_1.sql) `${ridderInvite_schema_1.RidderInviteTable.suggestStartAfter} ASC`;
+        startQuery = (0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+        ${ridderInvite_schema_1.RidderInviteTable.startCord}
+      )`;
+        destQuery = (0, drizzle_orm_1.sql) `ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+        ${ridderInvite_schema_1.RidderInviteTable.endCord}
+      )`;
+        routeQuery = (0, drizzle_orm_1.sql) `
+        ST_Distance(
+          ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+          ${ridderInvite_schema_1.RidderInviteTable.startCord}
+        )
+      + ST_Distance(
+          ${ridderInvite_schema_1.RidderInviteTable.startCord},
+          ${ridderInvite_schema_1.RidderInviteTable.endCord}
+        )
+      + ST_Distance(
+          ${ridderInvite_schema_1.RidderInviteTable.endCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+        )
+      - ST_Distance(
+          ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+          ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+        )
+      `;
+        updatedAtQuery = (0, drizzle_orm_1.sql) `${ridderInvite_schema_1.RidderInviteTable.updatedAt} DESC`;
+        spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+        const sortMap = {
+            'T': timeQuery,
+            'R': routeQuery,
+            'S': startQuery,
+            'D': destQuery,
+            'U': updatedAtQuery,
+        };
+        const searchQueries = searchPriorities.split('')
+            .map(symbol => sortMap[symbol])
+            .filter(query => query !== undefined);
+        searchQueries.push(aboutToStartQuery);
+        await this.updateExpiredRidderInvites();
+        const query = this.db.select({
+            id: ridderInvite_schema_1.RidderInviteTable.id,
+            orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
+            receiverName: ridder_schema_1.RidderTable.userName,
+            avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+            suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
+            suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
+            suggesEndedAt: ridderInvite_schema_1.RidderInviteTable.suggestEndedAt,
+            createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
+            updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
+            ...spaceResponseField,
+        }).from(ridderInvite_schema_1.RidderInviteTable);
+        if (receiverName) {
+            query.leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId), (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, receiverName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(ridderInvite_schema_1.RidderInviteTable.userId, inviterId))
+                .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId))
+                .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, purchaseOrder_schema_1.PurchaseOrderTable.creatorId));
+        }
+        query.leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .orderBy(...searchQueries)
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
     async searchPaginationRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset) {
         await this.updateExpiredRidderInvites();
         const query = this.db.select({
@@ -604,6 +680,82 @@ let RidderInviteService = class RidderInviteService {
               ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
             )
           `)
+            .limit(limit)
+            .offset(offset);
+        return await query;
+    }
+    async searchBetterFirstRidderInvitesByReceiverId(receiverId, inviterName = undefined, limit, offset, searchPriorities) {
+        let timeQuery = undefined, aboutToStartQuery = undefined, routeQuery = undefined, startQuery = undefined, destQuery = undefined, updatedAtQuery = undefined;
+        let spaceResponseField = {};
+        timeQuery = (0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${ridderInvite_schema_1.RidderInviteTable.suggestStartAfter} - ${purchaseOrder_schema_1.PurchaseOrderTable.startAfter}))) +
+                    ABS(EXTRACT(EPOCH FROM (${ridderInvite_schema_1.RidderInviteTable.suggestEndedAt} - ${purchaseOrder_schema_1.PurchaseOrderTable.endedAt}))) ASC`;
+        aboutToStartQuery = (0, drizzle_orm_1.sql) `${ridderInvite_schema_1.RidderInviteTable.suggestStartAfter} ASC`;
+        startQuery = (0, drizzle_orm_1.sql) `ST_Distance(
+      ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+      ${ridderInvite_schema_1.RidderInviteTable.startCord}
+    )`;
+        destQuery = (0, drizzle_orm_1.sql) `ST_Distance(
+      ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
+      ${ridderInvite_schema_1.RidderInviteTable.endCord}
+    )`;
+        routeQuery = (0, drizzle_orm_1.sql) `
+      ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+        ${ridderInvite_schema_1.RidderInviteTable.startCord}
+      )
+    + ST_Distance(
+        ${ridderInvite_schema_1.RidderInviteTable.startCord},
+        ${ridderInvite_schema_1.RidderInviteTable.endCord}
+      )
+    + ST_Distance(
+        ${ridderInvite_schema_1.RidderInviteTable.endCord},
+        ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+      )
+    - ST_Distance(
+        ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
+        ${purchaseOrder_schema_1.PurchaseOrderTable.endCord}
+      )
+    `;
+        updatedAtQuery = (0, drizzle_orm_1.sql) `${ridderInvite_schema_1.RidderInviteTable.updatedAt} DESC`;
+        spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+        const sortMap = {
+            'T': timeQuery,
+            'R': routeQuery,
+            'S': startQuery,
+            'D': destQuery,
+            'U': updatedAtQuery,
+        };
+        const searchQueries = searchPriorities.split('')
+            .map(symbol => sortMap[symbol])
+            .filter(query => query !== undefined);
+        searchQueries.push(aboutToStartQuery);
+        await this.updateExpiredRidderInvites();
+        const query = this.db.select({
+            id: ridderInvite_schema_1.RidderInviteTable.id,
+            orderId: ridderInvite_schema_1.RidderInviteTable.orderId,
+            suggestStartAddress: ridderInvite_schema_1.RidderInviteTable.startAddress,
+            suggestEndAddress: ridderInvite_schema_1.RidderInviteTable.endAddress,
+            inviterName: passenger_schema_1.PassengerTable.userName,
+            avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            suggestPrice: ridderInvite_schema_1.RidderInviteTable.suggestPrice,
+            suggestStartAfter: ridderInvite_schema_1.RidderInviteTable.suggestStartAfter,
+            suggesEndedAt: ridderInvite_schema_1.RidderInviteTable.suggestEndedAt,
+            createdAt: ridderInvite_schema_1.RidderInviteTable.createdAt,
+            updatedAt: ridderInvite_schema_1.RidderInviteTable.updatedAt,
+            status: ridderInvite_schema_1.RidderInviteTable.status,
+            ...spaceResponseField,
+        }).from(ridderInvite_schema_1.RidderInviteTable)
+            .leftJoin(purchaseOrder_schema_1.PurchaseOrderTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, ridderInvite_schema_1.RidderInviteTable.orderId));
+        if (inviterName) {
+            query.leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, ridderInvite_schema_1.RidderInviteTable.userId))
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, inviterName + "%")));
+        }
+        else {
+            query.where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, receiverId))
+                .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, ridderInvite_schema_1.RidderInviteTable.userId));
+        }
+        query.leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
+            .orderBy(...searchQueries)
             .limit(limit)
             .offset(offset);
         return await query;

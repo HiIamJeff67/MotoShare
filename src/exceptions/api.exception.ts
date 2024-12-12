@@ -12,6 +12,12 @@ export const ApiMissingBodyOrWrongDtoException = new BadRequestException({
     message: "Require body and customized dto of current route",
 });
 
+// E-A-003
+export const ApiWrongSearchPriorityTypeException = new BadRequestException({
+    case: "E-A-003", 
+    message: "searchPriorities should be any combination of 'T', 'R', 'U', 'S', 'D', see more on the note", 
+});
+
 // E-A-010
 export const ApiSearchingLimitTooLargeException = (maxLimit: number) => {
     return new NotAcceptableException({

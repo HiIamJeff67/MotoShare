@@ -32,6 +32,7 @@ import {
   NotificationTemplateOfRejectingPassengerInvite, 
   NotificationTemplateOfUpdatingPassengerInvite 
 } from '../notification/notificationTemplate';
+import { SearchPriorityType } from '../types';
 
 @Injectable()
 export class PassengerInviteService {
@@ -486,6 +487,101 @@ export class PassengerInviteService {
 
     return await query;
   }
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstPassengerInvitesByInviterId(
+    inviterId: string,
+    receiverName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+    searchPriorities: SearchPriorityType, 
+  ) {
+    let timeQuery: any = undefined, aboutToStartQuery: any = undefined, 
+        routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+        updatedAtQuery: any = undefined;
+    let spaceResponseField: any = {};
+
+    timeQuery = sql`ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestStartAfter} - ${SupplyOrderTable.startAfter}))) +
+                    ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestEndedAt} - ${SupplyOrderTable.endedAt}))) ASC`;
+    aboutToStartQuery = sql`${PassengerInviteTable.suggestStartAfter} ASC`;
+    startQuery = sql`ST_Distance(
+      ${SupplyOrderTable.startCord},
+      ${PassengerInviteTable.startCord}
+    )`;
+    destQuery = sql`ST_Distance(
+      ${SupplyOrderTable.endCord},
+      ${PassengerInviteTable.endCord}
+    )`;
+    routeQuery = sql`
+      ST_Distance(
+        ${SupplyOrderTable.startCord},
+        ${PassengerInviteTable.startCord}
+      )
+    + ST_Distance(
+        ${PassengerInviteTable.startCord},
+        ${PassengerInviteTable.endCord}
+      )
+    + ST_Distance(
+        ${PassengerInviteTable.endCord},
+        ${SupplyOrderTable.endCord}
+      )
+    - ST_Distance(
+        ${SupplyOrderTable.startCord},
+        ${SupplyOrderTable.endCord}
+      )
+    `;
+    updatedAtQuery = sql`${PassengerInviteTable.updatedAt} DESC`;
+
+    spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+
+    const sortMap = {
+      'T': timeQuery, 
+      'R': routeQuery, 
+      'S': startQuery, 
+      'D': destQuery, 
+      'U': updatedAtQuery, 
+    };
+
+    const searchQueries = searchPriorities.split('')
+        .map(symbol => sortMap[symbol])
+        .filter(query => query !== undefined);
+    searchQueries.push(aboutToStartQuery);
+
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      receiverName: RidderTable.userName,
+      avatorUrl: RidderInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      ...spaceResponseField, 
+    }).from(PassengerInviteTable);
+
+    if (receiverName) {
+      query.leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId))
+           .where(and(eq(PassengerInviteTable.userId, inviterId), like(RidderTable.userName, receiverName + "%")));
+    } else {
+      query.where(eq(PassengerInviteTable.userId, inviterId))
+           .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId))
+           .leftJoin(RidderTable, eq(RidderTable.id, SupplyOrderTable.creatorId));
+    }
+
+    query.leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+          .orderBy(...searchQueries)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
+  }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search PassengerInvite operations used by Passengers ================= */
 
 
@@ -783,6 +879,101 @@ export class PassengerInviteService {
 
     return await query;
   }
+  /* ================= Powerful Search operations ================= */
+  async searchBetterFirstPassengerInvitesByReceiverId(
+    receiverId: string,
+    inviterName: string | undefined = undefined,
+    limit: number,
+    offset: number,
+    searchPriorities: SearchPriorityType, 
+  ) {
+    let timeQuery: any = undefined, aboutToStartQuery: any = undefined, 
+        routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
+        updatedAtQuery: any = undefined;
+    let spaceResponseField: any = {};
+
+    timeQuery = sql`ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestStartAfter} - ${SupplyOrderTable.startAfter}))) +
+                    ABS(EXTRACT(EPOCH FROM (${PassengerInviteTable.suggestEndedAt} - ${SupplyOrderTable.endedAt}))) ASC`
+    aboutToStartQuery = sql`${PassengerInviteTable.suggestStartAfter} ASC`;
+    startQuery = sql`ST_Distance(
+      ${SupplyOrderTable.startCord},
+      ${PassengerInviteTable.startCord}
+    )`;
+    destQuery = sql`ST_Distance(
+      ${SupplyOrderTable.endCord},
+      ${PassengerInviteTable.endCord}
+    )`;
+    routeQuery = sql`
+      ST_Distance(
+        ${SupplyOrderTable.startCord},
+        ${PassengerInviteTable.startCord}
+      )
+    + ST_Distance(
+        ${PassengerInviteTable.startCord},
+        ${PassengerInviteTable.endCord}
+      )
+    + ST_Distance(
+        ${PassengerInviteTable.endCord},
+        ${SupplyOrderTable.endCord}
+      )
+    - ST_Distance(
+        ${SupplyOrderTable.startCord},
+        ${SupplyOrderTable.endCord}
+      )
+    `;
+    updatedAtQuery = sql`${PassengerInviteTable.updatedAt} DESC`;
+
+    spaceResponseField = { RDV: routeQuery, startManhattanDistance: startQuery, destManhattanDistance: destQuery };
+
+    const sortMap = {
+      'T': timeQuery, 
+      'R': routeQuery, 
+      'S': startQuery, 
+      'D': destQuery, 
+      'U': updatedAtQuery, 
+    };
+
+    const searchQueries = searchPriorities.split('')
+        .map(symbol => sortMap[symbol])
+        .filter(query => query !== undefined);
+    searchQueries.push(aboutToStartQuery);
+
+    await this.updateExpiredPassengerInvites();
+
+    const query = this.db.select({
+      id: PassengerInviteTable.id,
+      orderId: PassengerInviteTable.orderId,
+      suggestStartAddress: PassengerInviteTable.startAddress,
+      suggestEndAddress: PassengerInviteTable.endAddress,
+      inviterName: PassengerTable.userName,
+      avatorUrl: PassengerInfoTable.avatorUrl,
+      suggestPrice: PassengerInviteTable.suggestPrice,
+      suggestStartAfter: PassengerInviteTable.suggestStartAfter,
+      suggesEndedAt: PassengerInviteTable.suggestEndedAt,
+      createdAt: PassengerInviteTable.createdAt,
+      updatedAt: PassengerInviteTable.updatedAt,
+      status: PassengerInviteTable.status,
+      ...spaceResponseField, 
+    }).from(PassengerInviteTable)
+      .leftJoin(SupplyOrderTable, eq(SupplyOrderTable.id, PassengerInviteTable.orderId));
+
+    if (inviterName) {
+      query.leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId))
+           .where(and(eq(SupplyOrderTable.creatorId, receiverId), like(PassengerTable.userName, inviterName + "%")));
+    } else {
+      query.where(eq(SupplyOrderTable.creatorId, receiverId))
+           .leftJoin(PassengerTable, eq(PassengerTable.id, PassengerInviteTable.userId));
+    }
+
+    query.leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
+          .orderBy(...searchQueries)
+          .limit(limit)
+          .offset(offset);
+
+    return await query;
+  }
+  /* ================= Powerful Search operations ================= */
+
   /* ================= Search PassengerInvite operations used by Ridders ================= */
 
   /* ================================= Get operations ================================= */
