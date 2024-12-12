@@ -142,8 +142,12 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
             const responseOfUpdatingPeriodicSupplyOrder = await tx.update(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable).set({
                 scheduledDay: updatePeriodicSupplyOrderDto.scheduledDay,
                 initPrice: updatePeriodicSupplyOrderDto.initPrice,
-                startCord: newStartCord,
-                endCord: newEndCord,
+                ...(newStartCord
+                    ? { startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)` }
+                    : {}),
+                ...(newEndCord
+                    ? { endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)` }
+                    : {}),
                 startAddress: updatePeriodicSupplyOrderDto.startAddress,
                 endAddress: updatePeriodicSupplyOrderDto.endAddress,
                 ...(updatePeriodicSupplyOrderDto.startAfter

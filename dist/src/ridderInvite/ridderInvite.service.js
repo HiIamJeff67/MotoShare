@@ -658,8 +658,12 @@ let RidderInviteService = class RidderInviteService {
             const responseOfUpdatingRidderInvite = await tx.update(ridderInvite_schema_1.RidderInviteTable).set({
                 briefDescription: updateRidderInviteDto.briefDescription,
                 suggestPrice: updateRidderInviteDto.suggestPrice,
-                startCord: newStartCord,
-                endCord: newEndCord,
+                ...(newStartCord
+                    ? { startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)` }
+                    : {}),
+                ...(newEndCord
+                    ? { endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)` }
+                    : {}),
                 startAddress: updateRidderInviteDto.startAddress,
                 endAddress: updateRidderInviteDto.endAddress,
                 ...(updateRidderInviteDto.suggestStartAfter
@@ -766,8 +770,8 @@ let RidderInviteService = class RidderInviteService {
                     finalPrice: responseOfDecidingRidderInvite[0].suggestPrice,
                     passengerDescription: responseOfDeletingPurchaseOrder[0].receiverDescription,
                     ridderDescription: responseOfDecidingRidderInvite[0].inviterDescription,
-                    finalStartCord: responseOfDecidingRidderInvite[0].inviterStartCord,
-                    finalEndCord: responseOfDecidingRidderInvite[0].inviterEndCord,
+                    finalStartCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDecidingRidderInvite[0].inviterStartCord.x}, ${responseOfDecidingRidderInvite[0].inviterStartCord.y}), 4326)`,
+                    finalEndCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDecidingRidderInvite[0].inviterEndCord.x}, ${responseOfDecidingRidderInvite[0].inviterEndCord.y}), 4326)`,
                     finalStartAddress: responseOfDecidingRidderInvite[0].inviterStartAddress,
                     finalEndAddress: responseOfDecidingRidderInvite[0].inviterEndAddress,
                     startAfter: responseOfDecidingRidderInvite[0].suggestStartAfter,

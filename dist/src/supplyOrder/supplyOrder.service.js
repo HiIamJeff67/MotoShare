@@ -390,8 +390,12 @@ let SupplyOrderService = class SupplyOrderService {
             const resposeOfUpdatingSupplyOrder = await tx.update(supplyOrder_schema_1.SupplyOrderTable).set({
                 description: updateSupplyOrderDto.description,
                 initPrice: updateSupplyOrderDto.initPrice,
-                startCord: newStartCord,
-                endCord: newEndCord,
+                ...(newStartCord
+                    ? { startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)` }
+                    : {}),
+                ...(newEndCord
+                    ? { endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)` }
+                    : {}),
                 startAddress: updateSupplyOrderDto.startAddress,
                 endAddress: updateSupplyOrderDto.endAddress,
                 ...(updateSupplyOrderDto.startAfter
@@ -456,8 +460,8 @@ let SupplyOrderService = class SupplyOrderService {
                 finalPrice: responseOfDeletingSupplyOrder[0].initPrice,
                 passengerDescription: responseOfDeletingSupplyOrder[0].description,
                 ridderDescription: acceptAutoAcceptSupplyOrderDto.description,
-                finalStartCord: responseOfDeletingSupplyOrder[0].startCord,
-                finalEndCord: responseOfDeletingSupplyOrder[0].endCord,
+                finalStartCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDeletingSupplyOrder[0].startCord.x}, ${responseOfDeletingSupplyOrder[0].startCord.y}), 4326)`,
+                finalEndCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDeletingSupplyOrder[0].endCord.x}, ${responseOfDeletingSupplyOrder[0].endCord.y}), 4326)`,
                 finalStartAddress: responseOfDeletingSupplyOrder[0].startAddress,
                 finalEndAddress: responseOfDeletingSupplyOrder[0].endAddress,
                 startAfter: responseOfDeletingSupplyOrder[0].startAfter,

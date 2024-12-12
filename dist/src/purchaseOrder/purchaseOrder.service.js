@@ -385,8 +385,12 @@ let PurchaseOrderService = class PurchaseOrderService {
             const responseOfUpdatingPurchaseOrder = await tx.update(purchaseOrder_schema_1.PurchaseOrderTable).set({
                 description: updatePurchaseOrderDto.description,
                 initPrice: updatePurchaseOrderDto.initPrice,
-                startCord: newStartCord,
-                endCord: newEndCord,
+                ...(newStartCord
+                    ? { startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)` }
+                    : {}),
+                ...(newEndCord
+                    ? { endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)` }
+                    : {}),
                 startAddress: updatePurchaseOrderDto.startAddress,
                 endAddress: updatePurchaseOrderDto.endAddress,
                 ...(updatePurchaseOrderDto.startAfter
@@ -451,8 +455,8 @@ let PurchaseOrderService = class PurchaseOrderService {
                 finalPrice: responseOfDeletingPurchaseOrder[0].initPrice,
                 passengerDescription: responseOfDeletingPurchaseOrder[0].description,
                 ridderDescription: acceptAutoAcceptPurchaseOrderDto.description,
-                finalStartCord: responseOfDeletingPurchaseOrder[0].startCord,
-                finalEndCord: responseOfDeletingPurchaseOrder[0].endCord,
+                finalStartCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDeletingPurchaseOrder[0].startCord.x}, ${responseOfDeletingPurchaseOrder[0].startCord.y}), 4326)`,
+                finalEndCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${responseOfDeletingPurchaseOrder[0].endCord.x}, ${responseOfDeletingPurchaseOrder[0].endCord.y}), 4326)`,
                 finalStartAddress: responseOfDeletingPurchaseOrder[0].startAddress,
                 finalEndAddress: responseOfDeletingPurchaseOrder[0].endAddress,
                 startAfter: responseOfDeletingPurchaseOrder[0].startAfter,

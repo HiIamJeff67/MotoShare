@@ -142,8 +142,12 @@ let PeriodicPurchaseOrderService = class PeriodicPurchaseOrderService {
             const responseOfUpdatingPeriodicPurchaseOrder = await tx.update(periodicPurchaseOrder_schema_1.PeriodicPurchaseOrderTable).set({
                 scheduledDay: updatePeriodicPurchaseOrderDto.scheduledDay,
                 initPrice: updatePeriodicPurchaseOrderDto.initPrice,
-                startCord: newStartCord,
-                endCord: newEndCord,
+                ...(newStartCord
+                    ? { startCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)` }
+                    : {}),
+                ...(newEndCord
+                    ? { endCord: (0, drizzle_orm_1.sql) `ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)` }
+                    : {}),
                 startAddress: updatePeriodicPurchaseOrderDto.startAddress,
                 endAddress: updatePeriodicPurchaseOrderDto.endAddress,
                 ...(updatePeriodicPurchaseOrderDto.startAfter

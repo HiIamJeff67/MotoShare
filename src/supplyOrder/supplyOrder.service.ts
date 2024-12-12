@@ -556,8 +556,14 @@ export class SupplyOrderService {
       const resposeOfUpdatingSupplyOrder = await tx.update(SupplyOrderTable).set({
         description: updateSupplyOrderDto.description,
         initPrice: updateSupplyOrderDto.initPrice,
-        startCord: newStartCord,
-        endCord: newEndCord,
+        ...(newStartCord 
+          ? { startCord: sql`ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)`}
+          : {}
+        ),
+        ...(newEndCord 
+          ? { endCord: sql`ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)`}
+          : {}
+        ),
         startAddress: updateSupplyOrderDto.startAddress,
         endAddress: updateSupplyOrderDto.endAddress,
         ...(updateSupplyOrderDto.startAfter
@@ -655,8 +661,8 @@ export class SupplyOrderService {
         finalPrice: responseOfDeletingSupplyOrder[0].initPrice, // the receiver accept the suggest price
         passengerDescription: responseOfDeletingSupplyOrder[0].description,
         ridderDescription: acceptAutoAcceptSupplyOrderDto.description,
-        finalStartCord: responseOfDeletingSupplyOrder[0].startCord,
-        finalEndCord: responseOfDeletingSupplyOrder[0].endCord,
+        finalStartCord: sql`ST_SetSRID(ST_MakePoint(${responseOfDeletingSupplyOrder[0].startCord.x}, ${responseOfDeletingSupplyOrder[0].startCord.y}), 4326)`,
+        finalEndCord: sql`ST_SetSRID(ST_MakePoint(${responseOfDeletingSupplyOrder[0].endCord.x}, ${responseOfDeletingSupplyOrder[0].endCord.y}), 4326)`,
         finalStartAddress: responseOfDeletingSupplyOrder[0].startAddress,
         finalEndAddress: responseOfDeletingSupplyOrder[0].endAddress,
         startAfter: responseOfDeletingSupplyOrder[0].startAfter,  // the receiver accept the suggest start time

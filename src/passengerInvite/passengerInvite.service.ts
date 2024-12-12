@@ -864,8 +864,14 @@ export class PassengerInviteService {
       const responseOfUpdatingPassengerInvite = await tx.update(PassengerInviteTable).set({
         briefDescription: updatePassengerInviteDto.briefDescription,
         suggestPrice: updatePassengerInviteDto.suggestPrice,
-        startCord: newStartCord,
-        endCord: newEndCord,
+        ...(newStartCord 
+          ? { startCord: sql`ST_SetSRID(ST_MakePoint(${newStartCord.x}, ${newStartCord.y}), 4326)`}
+          : {}
+        ),
+        ...(newEndCord 
+          ? { endCord: sql`ST_SetSRID(ST_MakePoint(${newEndCord.x}, ${newEndCord.y}), 4326)`}
+          : {}
+        ),
         startAddress: updatePassengerInviteDto.startAddress,
         endAddress: updatePassengerInviteDto.endAddress,
         ...(updatePassengerInviteDto.suggestStartAfter
@@ -1020,8 +1026,8 @@ export class PassengerInviteService {
           finalPrice: responseOfDecidingPassengerInvite[0].suggestPrice,
           passengerDescription: responseOfDecidingPassengerInvite[0].inviterDescription,
           ridderDescription: responseOfDeletingSupplyOrder[0].receiverDescription, 
-          finalStartCord: responseOfDecidingPassengerInvite[0].inviterStartCord,
-          finalEndCord: responseOfDecidingPassengerInvite[0].inviterEndCord,
+          finalStartCord: sql`ST_SetSRID(ST_MakePoint(${responseOfDecidingPassengerInvite[0].inviterStartCord.x}, ${responseOfDecidingPassengerInvite[0].inviterStartCord.y}), 4326)`,
+          finalEndCord: sql`ST_SetSRID(ST_MakePoint(${responseOfDecidingPassengerInvite[0].inviterEndCord.x}, ${responseOfDecidingPassengerInvite[0].inviterEndCord.y}), 4326)`, 
           finalStartAddress: responseOfDecidingPassengerInvite[0].inviterStartAddress,
           finalEndAddress: responseOfDecidingPassengerInvite[0].inviterEndAddress,
           startAfter: responseOfDecidingPassengerInvite[0].suggestStartAfter,
