@@ -12,7 +12,7 @@ export const PassengerAuthTable = pgTable("passengerAuth", {
     authCode: text("authCode").notNull(), 
     authCodeExpiredAt: timestamp("authCodeExpiredAt").notNull(), 
     isDefaultAuthenticated: boolean("isDefaultAuthenticated").notNull().default(false), 
-    isGoogleAuthenticated: boolean("isGoogleAuthenticated").notNull().default(false), 
+    googleId: uuid("googleId"),
 }, (table) => {
     return {
         userIdIndex: uniqueIndex("passengerAuth_userIdIndex").on(table.userId), 

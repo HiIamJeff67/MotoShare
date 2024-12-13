@@ -135,7 +135,7 @@ export class AuthService {
 
             const responseOfCreatingPassengerAuth = await tx.insert(PassengerAuthTable).values({
                 userId: responseOfCreatingPassenger[0].id, 
-                isGoogleAuthenticated: true, 
+                googleId: parseDataFromGoogleToken["sub"], 
                 authCode: this._getRandomAuthCode(), // generate 6 digits auth code (100000~999999)
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000), // * 60000 since the unit is minutes
             }).returning();
@@ -248,7 +248,7 @@ export class AuthService {
 
             const responseOfCreatingRidderAuth = await tx.insert(RidderAuthTable).values({
                 userId: responseOfCreatingRidder[0].id, 
-                isGoogleAuthenticated: true, 
+                googleId: parseDataFromGoogleToken["sub"], 
                 authCode: this._getRandomAuthCode(), 
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000), 
             }).returning();
@@ -330,7 +330,7 @@ export class AuthService {
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
             const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
                 throw ClientInvalidGoogleIdTokenException;
             }
     
@@ -338,7 +338,7 @@ export class AuthService {
             const userResponse = await tx.select({
                 id: PassengerTable.id,
                 email: PassengerTable.email,
-                isGoogleAuthenticated: PassengerAuthTable.isGoogleAuthenticated, 
+                googleId: PassengerAuthTable.googleId, 
             }).from(PassengerTable)
                 .where(eq(PassengerTable.email, parseDataFromGoogleToken["email"]))
                 .leftJoin(PassengerAuthTable, eq(PassengerAuthTable.userId, PassengerTable.id))
@@ -349,7 +349,9 @@ export class AuthService {
             }
 
             const user = userResponse[0];
-            if (!user.isGoogleAuthenticated) throw ClientUserAuthenticatedMethodNotAllowedException;
+            if (!user.googleId || user.googleId === null || parseDataFromGoogleToken["sub"] !== user.googleId) {
+                throw ClientUserAuthenticatedMethodNotAllowedException;
+            }
 
             const result = await this._signToken(user.id, user.email);
             if (!result) throw ApiGeneratingBearerTokenException;
@@ -435,14 +437,14 @@ export class AuthService {
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
             const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
                 throw ClientInvalidGoogleIdTokenException;
             }
 
             const userResponse = await tx.select({
                 id: RidderTable.id, 
                 email: RidderTable.email, 
-                isGoogleAuthenticated: RidderAuthTable.isGoogleAuthenticated, 
+                googleId: RidderAuthTable.googleId, 
             }).from(RidderTable)
               .where(eq(RidderTable.email, parseDataFromGoogleToken["email"]))
               .leftJoin(RidderAuthTable, eq(RidderAuthTable.userId, RidderTable.id))
@@ -453,7 +455,9 @@ export class AuthService {
             }
 
             const user = userResponse[0];
-            if (!user.isGoogleAuthenticated) throw ClientUserAuthenticatedMethodNotAllowedException;
+            if (!user.googleId || user.googleId === null || parseDataFromGoogleToken["sub"] !== user.googleId) {
+                throw ClientUserAuthenticatedMethodNotAllowedException;
+            }
 
             const result = await this._signToken(user.id, user.email);
             if (!result) throw ApiGeneratingBearerTokenException;

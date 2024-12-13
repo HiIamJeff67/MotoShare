@@ -117,7 +117,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingPassengerAuth = await tx.insert(passengerAuth_schema_1.PassengerAuthTable).values({
                 userId: responseOfCreatingPassenger[0].id,
-                isGoogleAuthenticated: true,
+                googleId: parseDataFromGoogleToken["sub"],
                 authCode: this._getRandomAuthCode(),
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
             }).returning();
@@ -212,7 +212,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingRidderAuth = await tx.insert(ridderAuth_schema_1.RidderAuthTable).values({
                 userId: responseOfCreatingRidder[0].id,
-                isGoogleAuthenticated: true,
+                googleId: parseDataFromGoogleToken["sub"],
                 authCode: this._getRandomAuthCode(),
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
             }).returning();
@@ -280,13 +280,13 @@ let AuthService = class AuthService {
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
             const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
             const userResponse = await tx.select({
                 id: passenger_schema_1.PassengerTable.id,
                 email: passenger_schema_1.PassengerTable.email,
-                isGoogleAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isGoogleAuthenticated,
+                googleId: passengerAuth_schema_1.PassengerAuthTable.googleId,
             }).from(passenger_schema_1.PassengerTable)
                 .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, parseDataFromGoogleToken["email"]))
                 .leftJoin(passengerAuth_schema_1.PassengerAuthTable, (0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, passenger_schema_1.PassengerTable.id))
@@ -295,8 +295,9 @@ let AuthService = class AuthService {
                 throw exceptions_1.ClientSignInEmailNotFoundException;
             }
             const user = userResponse[0];
-            if (!user.isGoogleAuthenticated)
+            if (!user.googleId || user.googleId === null || parseDataFromGoogleToken["sub"] !== user.googleId) {
                 throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
+            }
             const result = await this._signToken(user.id, user.email);
             if (!result)
                 throw exceptions_1.ApiGeneratingBearerTokenException;
@@ -368,13 +369,13 @@ let AuthService = class AuthService {
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
             const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
             const userResponse = await tx.select({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,
-                isGoogleAuthenticated: ridderAuth_schema_1.RidderAuthTable.isGoogleAuthenticated,
+                googleId: ridderAuth_schema_1.RidderAuthTable.googleId,
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, parseDataFromGoogleToken["email"]))
                 .leftJoin(ridderAuth_schema_1.RidderAuthTable, (0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, ridder_schema_1.RidderTable.id))
@@ -383,8 +384,9 @@ let AuthService = class AuthService {
                 throw exceptions_1.ClientSignInEmailNotFoundException;
             }
             const user = userResponse[0];
-            if (!user.isGoogleAuthenticated)
+            if (!user.googleId || user.googleId === null || parseDataFromGoogleToken["sub"] !== user.googleId) {
                 throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
+            }
             const result = await this._signToken(user.id, user.email);
             if (!result)
                 throw exceptions_1.ApiGeneratingBearerTokenException;

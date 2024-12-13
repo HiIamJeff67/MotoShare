@@ -114,15 +114,15 @@ export declare const RidderAuthTable: import("drizzle-orm/pg-core").PgTableWithC
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
-        isGoogleAuthenticated: import("drizzle-orm/pg-core").PgColumn<{
-            name: "isGoogleAuthenticated";
+        googleId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "googleId";
             tableName: "ridderAuth";
-            dataType: "boolean";
-            columnType: "PgBoolean";
-            data: boolean;
-            driverParam: boolean;
-            notNull: true;
-            hasDefault: true;
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;

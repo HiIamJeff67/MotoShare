@@ -14,7 +14,7 @@ exports.RidderAuthTable = (0, pg_core_1.pgTable)("ridderAuth", {
     authCode: (0, pg_core_1.text)("authCode").notNull(),
     authCodeExpiredAt: (0, pg_core_1.timestamp)("authCodeExpiredAt").notNull(),
     isDefaultAuthenticated: (0, pg_core_1.boolean)("isDefaultAuthenticated").notNull().default(false),
-    isGoogleAuthenticated: (0, pg_core_1.boolean)("isGoogleAuthenticated").notNull().default(false),
+    googleId: (0, pg_core_1.uuid)("googleId"),
 }, (table) => {
     return {
         userIdIndex: (0, pg_core_1.uniqueIndex)("ridderAuth_userIdIndex").on(table.userId),
