@@ -1,15 +1,16 @@
 import * as bcrypt from "bcrypt";
 import { Inject, Injectable } from '@nestjs/common';
-import { ResetPassengerPasswordDto, UpdatePassengerEmailPasswordDto, ValidatePassengerInfoDto } from './dto/update-passengerAuth.dto';
+import { BindPassengerDefaultAuthDto, BindPassengerGoogleAuthDto, ResetPassengerPasswordDto, UpdatePassengerEmailPasswordDto, ValidatePassengerInfoDto } from './dto/update-passengerAuth.dto';
 import { ConfigService } from '@nestjs/config';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { eq } from 'drizzle-orm';
-import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientPassengerNotFoundException } from '../exceptions';
+import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientPassengerNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
 import { EmailService } from '../email/email.service';
 import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
+import { isTempEmail } from "../utils";
 
 @Injectable()
 export class PassengerAuthService {
@@ -242,4 +243,104 @@ export class PassengerAuthService {
 		});
 	}
 	/* ================================= Forget & Reset Password validation ================================= */
+
+	/* ================================= Binding Operations ================================= */
+	async bindDefaultAuth(
+		id: string, 
+		bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto, 
+	) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingPassengerAuth = await tx.select({
+				isDefaultAuthenticated: PassengerAuthTable.isDefaultAuthenticated, 
+			}).from(PassengerAuthTable)
+			  .where(eq(PassengerAuthTable.userId, id))
+			  .limit(1);
+			if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			if (responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+				throw ClientUserDefaultAuthAlreadyBoundException;
+			}
+
+			const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
+				isDefaultAuthenticated: true, 
+			}).where(eq(PassengerTable.id, id))
+			  .returning();
+			if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			const hash = await bcrypt.hash(bindPassengerDefaultAuthDto.password, Number(this.config.get("SALT_OR_ROUND")));
+			return await tx.update(PassengerTable).set({
+				email: bindPassengerDefaultAuthDto.email, 
+				password: hash, 
+				accessToken: TEMP_ACCESS_TOKEN, 
+			}).where(eq(PassengerTable.id, id))
+			  .returning({
+				userName: PassengerTable.userName, 
+				email: PassengerTable.email, 
+			});
+		});
+	}
+
+	async bindGoogleAuth(
+		id: string, 
+		bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto, 
+	) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingPassengerAuth = await tx.select({
+				googleId: PassengerAuthTable.googleId, 
+			}).from(PassengerAuthTable)
+			  .where(eq(PassengerAuthTable.userId, id))
+			  .limit(1);
+			if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			if (responseOfSelectingPassengerAuth[0].googleId || responseOfSelectingPassengerAuth[0].googleId !== null
+				|| responseOfSelectingPassengerAuth[0].googleId !== "") {
+					throw ClientUserGoogleAuthAlreadyBoundException;
+			}
+
+			const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+			if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
+
+			const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
+			if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+				throw ClientInvalidGoogleIdTokenException;
+			}
+
+			const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
+				googleId: parseDataFromGoogleToken["sub"], 
+			}).where(eq(PassengerTable.id, id))
+			  .returning();
+			if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			const responseOfSelectingPassenger = await tx.select({
+				userName: PassengerTable.userName, 
+				email: PassengerTable.email, 
+			}).from(PassengerTable)
+		      .where(eq(PassengerTable.id, id))
+			  .limit(1);
+			if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			if (isTempEmail(responseOfSelectingPassenger[0].email)) {
+				return await tx.update(PassengerTable).set({
+					email: parseDataFromGoogleToken["email"], 
+				}).where(eq(PassengerTable.id, id))
+				  .returning({
+					userName: PassengerTable.userName, 
+					email: PassengerTable.email, 
+				});
+			}
+
+			return responseOfSelectingPassenger;
+		});
+	}
+    /* ================================= Binding Operations ================================= */
 }

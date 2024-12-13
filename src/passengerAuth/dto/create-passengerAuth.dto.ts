@@ -1,15 +1,24 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class CreatePassengerEmailPasswordDto {
     @IsNotEmpty()
-    @IsString()
-    email: string
+    @IsEmail(
+        undefined,
+        { message: "E-C-006" }
+    )
+    email: string;
 
-    @IsNotEmpty()
-    @IsString()
+     @IsNotEmpty()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
     oldPassword: string
 
-    @IsNotEmpty()
-    @IsString()
+     @IsNotEmpty()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
     newPassword: string
 }

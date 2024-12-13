@@ -137,6 +137,44 @@ let RidderAuthController = class RidderAuthController {
             });
         }
     }
+    async bindDefaultAuth(ridder, bindRidderDefaultAuthDto, response) {
+        try {
+            const res = await this.ridderAuthService.bindDefaultAuth(ridder.id, bindRidderDefaultAuthDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async bindGoogleAuth(ridder, bindRidderGoogleAuthDto, response) {
+        try {
+            const res = await this.ridderAuthService.bindGoogleAuth(ridder.id, bindRidderGoogleAuthDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
 };
 exports.RidderAuthController = RidderAuthController;
 __decorate([
@@ -199,6 +237,28 @@ __decorate([
         update_ridderAuth_dto_1.UpdateRidderEmailPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderAuthController.prototype, "validateAuthCodeToResetEmailOrPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('bindDefaultAuth'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.RidderType,
+        update_ridderAuth_dto_1.BindRidderDefaultAuthDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "bindDefaultAuth", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('bindGoogleAuth'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.RidderType,
+        update_ridderAuth_dto_1.BindRidderGoogleAuthDto, Object]),
+    __metadata("design:returntype", Promise)
+], RidderAuthController.prototype, "bindGoogleAuth", null);
 exports.RidderAuthController = RidderAuthController = __decorate([
     (0, common_1.Controller)('ridderAuth'),
     __metadata("design:paramtypes", [ridderAuth_service_1.RidderAuthService])

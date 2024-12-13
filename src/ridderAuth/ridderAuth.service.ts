@@ -5,11 +5,12 @@ import { EmailService } from '../email/email.service';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
-import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientRidderNotFoundException } from '../exceptions';
+import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientRidderNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
 import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 import { eq } from 'drizzle-orm';
-import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
+import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
+import { isTempEmail } from "../utils";
 
 @Injectable()
 export class RidderAuthService {
@@ -239,4 +240,105 @@ export class RidderAuthService {
 		});
 	}
 	/* ================================= Forget & Reset Password validation ================================= */
+
+
+	/* ================================= Binding Operations ================================= */
+	async bindDefaultAuth(
+		id: string, 
+		bindRidderDefaultAuthDto: BindRidderDefaultAuthDto, 
+	) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingRidderAuth = await tx.select({
+				isDefaultAuthenticated: RidderAuthTable.isDefaultAuthenticated, 
+			}).from(RidderAuthTable)
+				.where(eq(RidderAuthTable.userId, id))
+				.limit(1);
+			if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			if (responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+				throw ClientUserDefaultAuthAlreadyBoundException;
+			}
+
+			const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
+				isDefaultAuthenticated: true, 
+			}).where(eq(RidderTable.id, id))
+				.returning();
+			if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			const hash = await bcrypt.hash(bindRidderDefaultAuthDto.password, Number(this.config.get("SALT_OR_ROUND")));
+			return await tx.update(RidderTable).set({
+				email: bindRidderDefaultAuthDto.email, 
+				password: hash, 
+				accessToken: TEMP_ACCESS_TOKEN, 
+			}).where(eq(RidderTable.id, id))
+				.returning({
+				userName: RidderTable.userName, 
+				email: RidderTable.email, 
+			});
+		});
+	}
+
+	async bindGoogleAuth(
+		id: string, 
+		bindRidderGoogleAuthDto: BindRidderGoogleAuthDto, 
+	) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingRidderAuth = await tx.select({
+				googleId: RidderAuthTable.googleId, 
+			}).from(RidderAuthTable)
+				.where(eq(RidderAuthTable.userId, id))
+				.limit(1);
+			if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			if (responseOfSelectingRidderAuth[0].googleId || responseOfSelectingRidderAuth[0].googleId !== null
+				|| responseOfSelectingRidderAuth[0].googleId !== "") {
+					throw ClientUserGoogleAuthAlreadyBoundException;
+			}
+
+			const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+			if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
+
+			const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindRidderGoogleAuthDto.idToken);
+			if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+				throw ClientInvalidGoogleIdTokenException;
+			}
+
+			const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
+				googleId: parseDataFromGoogleToken["sub"], 
+			}).where(eq(RidderTable.id, id))
+				.returning();
+			if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			const responseOfSelectingRidder = await tx.select({
+				userName: RidderTable.userName, 
+				email: RidderTable.email, 
+			}).from(RidderTable)
+				.where(eq(RidderTable.id, id))
+				.limit(1);
+			if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			if (isTempEmail(responseOfSelectingRidder[0].email)) {
+				return await tx.update(RidderTable).set({
+					email: parseDataFromGoogleToken["email"], 
+				}).where(eq(RidderTable.id, id))
+					.returning({
+					userName: RidderTable.userName, 
+					email: RidderTable.email, 
+				});
+			}
+
+			return responseOfSelectingRidder;
+		});
+	}
+	/* ================================= Binding Operations ================================= */
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCreatePeriodicSupplyOrderException = exports.ClientCreatePeriodicPurchaseOrderException = exports.ClientCreateRidderPreferenceException = exports.ClientCreatePassengerPreferenceException = exports.ClientCreateRidderNotificationException = exports.ClientCreatePassengerNotificationException = exports.ClientCreateRidderAuthException = exports.ClientCreatePassengerAuthException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientPeriodicSupplyOrderNotFoundException = exports.ClientPeriodicPurchaseOrderNotFoundException = exports.ClientRidderPreferenceNotFoundException = exports.ClientPassengerPreferenceNotFoundException = exports.ClientRidderNotificationNotFoundException = exports.ClientPassengerNotificationNotFoundException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientInvalidGoogleIdTokenException = exports.ClientUserAuthenticatedMethodNotAllowedException = exports.ClientWithoutAdvanceAuthorizedUserException = exports.ClientDeleteAccountPasswordNotMatchException = exports.ClientOldPasswordNotMatchException = exports.ClientAuthCodeExpiredException = exports.ClientAuthCodeNotPairException = exports.ClientUserHasNoAccessException = exports.ClientTokenExpiredException = exports.ClientInvalidTokenException = void 0;
-exports.ClientUnknownException = exports.ClientUploadFileMimeTypeException = exports.ClientUploadFileExceedException = exports.ClientEndBeforeStartException = exports.ClientNoChangeOnPasswordException = void 0;
+exports.ClientUnknownException = exports.ClientUploadFileMimeTypeException = exports.ClientUploadFileExceedException = exports.ClientEndBeforeStartException = exports.ClientUserGoogleAuthAlreadyBoundException = exports.ClientUserDefaultAuthAlreadyBoundException = exports.ClientNoChangeOnPasswordException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ClientInvalidTokenException = new common_1.UnauthorizedException({
     case: "E-C-001",
@@ -208,6 +208,14 @@ exports.ClientNoChangeOnEmailException = new common_1.ConflictException({
 exports.ClientNoChangeOnPasswordException = new common_1.ConflictException({
     case: "E-C-302",
     message: "There's no changes on password",
+});
+exports.ClientUserDefaultAuthAlreadyBoundException = new common_1.ConflictException({
+    case: "E-C-303",
+    message: "The current user has already bound his/her default authentication",
+});
+exports.ClientUserGoogleAuthAlreadyBoundException = new common_1.ConflictException({
+    case: "E-C-304",
+    message: "The current user has already bound his/her google authentication",
 });
 exports.ClientEndBeforeStartException = new common_1.ConflictException({
     case: "E-C-351",

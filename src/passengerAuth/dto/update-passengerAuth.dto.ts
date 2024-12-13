@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, ValidateIf } from 'class-validator';
 import { CreatePassengerEmailPasswordDto } from './create-passengerAuth.dto';
 import { PartialType } from '@nestjs/mapped-types';
 
@@ -13,8 +13,11 @@ export class ResetPassengerPasswordDto {
     @IsString()
     authCode: string
 
-    @IsNotEmpty()
-    @IsString()
+     @IsNotEmpty()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
     password: string
 }
 
@@ -22,4 +25,26 @@ export class UpdatePassengerEmailPasswordDto extends PartialType(CreatePassenger
     @IsNotEmpty()
     @IsString()
     authCode: string
+}
+
+export class BindPassengerDefaultAuthDto {
+    @IsNotEmpty()
+    @IsEmail(
+        undefined,
+        { message: "E-C-006" }
+    )
+    email: string
+
+    @IsNotEmpty()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
+    password: string
+}
+
+export class BindPassengerGoogleAuthDto {
+    @IsNotEmpty()
+    @IsString()
+    idToken: string
 }

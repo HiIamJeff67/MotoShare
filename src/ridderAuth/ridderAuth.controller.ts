@@ -6,7 +6,7 @@ import { RidderType } from '../interfaces';
 import { Response } from 'express';
 import { ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
-import { ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
+import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 
 @Controller('ridderAuth')
 export class RidderAuthController {
@@ -191,4 +191,67 @@ export class RidderAuthController {
       }
   }
   /* ================================= Validate AuthCode ================================= */
+
+
+  /* ================================= Binding Operations ================================= */
+  @UseGuards(JwtRidderGuard)
+  @Post('bindDefaultAuth')
+  async bindDefaultAuth(
+      @Ridder() ridder: RidderType, 
+      @Body() bindRidderDefaultAuthDto: BindRidderDefaultAuthDto, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.bindDefaultAuth(
+              ridder.id, 
+              bindRidderDefaultAuthDto, 
+          );
+
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof NotAcceptableException
+              || error instanceof ConflictException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Post('bindGoogleAuth')
+  async bindGoogleAuth(
+      @Ridder() ridder: RidderType, 
+      @Body() bindRidderGoogleAuthDto: BindRidderGoogleAuthDto, 
+      @Res() response: Response, 
+  ) {
+      try {
+          const res = await this.ridderAuthService.bindGoogleAuth(
+              ridder.id, 
+              bindRidderGoogleAuthDto, 
+          );
+
+          if (!res || res.length === 0) throw ClientRidderNotFoundException;
+
+          response.status(HttpStatusCode.Ok).send(res[0]);
+      } catch (error) {
+          if (!(error instanceof UnauthorizedException
+              || error instanceof NotFoundException
+              || error instanceof NotAcceptableException
+              || error instanceof ConflictException)) {
+                  error = ClientUnknownException;
+          }
+
+          response.status(error.status).send({
+              ...error.response, 
+          });
+      }
+  }
+  /* ================================= Binding Operations ================================= */
 }

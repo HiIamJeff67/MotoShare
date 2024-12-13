@@ -23,6 +23,7 @@ const drizzle_orm_1 = require("drizzle-orm");
 const exceptions_1 = require("../exceptions");
 const email_service_1 = require("../email/email.service");
 const auth_constant_1 = require("../constants/auth.constant");
+const utils_1 = require("../utils");
 let PassengerAuthService = class PassengerAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -209,6 +210,87 @@ let PassengerAuthService = class PassengerAuthService {
                 userName: passenger_schema_1.PassengerTable.userName,
                 email: passenger_schema_1.PassengerTable.email,
             });
+        });
+    }
+    async bindDefaultAuth(id, bindPassengerDefaultAuthDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassengerAuth = await tx.select({
+                isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
+            }).from(passengerAuth_schema_1.PassengerAuthTable)
+                .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id))
+                .limit(1);
+            if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            if (responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientUserDefaultAuthAlreadyBoundException;
+            }
+            const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                isDefaultAuthenticated: true,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning();
+            if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            const hash = await bcrypt.hash(bindPassengerDefaultAuthDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            return await tx.update(passenger_schema_1.PassengerTable).set({
+                email: bindPassengerDefaultAuthDto.email,
+                password: hash,
+                accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning({
+                userName: passenger_schema_1.PassengerTable.userName,
+                email: passenger_schema_1.PassengerTable.email,
+            });
+        });
+    }
+    async bindGoogleAuth(id, bindPassengerGoogleAuthDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassengerAuth = await tx.select({
+                googleId: passengerAuth_schema_1.PassengerAuthTable.googleId,
+            }).from(passengerAuth_schema_1.PassengerAuthTable)
+                .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id))
+                .limit(1);
+            if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            if (responseOfSelectingPassengerAuth[0].googleId || responseOfSelectingPassengerAuth[0].googleId !== null
+                || responseOfSelectingPassengerAuth[0].googleId !== "") {
+                throw exceptions_1.ClientUserGoogleAuthAlreadyBoundException;
+            }
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                googleId: parseDataFromGoogleToken["sub"],
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning();
+            if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            const responseOfSelectingPassenger = await tx.select({
+                userName: passenger_schema_1.PassengerTable.userName,
+                email: passenger_schema_1.PassengerTable.email,
+            }).from(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .limit(1);
+            if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            if ((0, utils_1.isTempEmail)(responseOfSelectingPassenger[0].email)) {
+                return await tx.update(passenger_schema_1.PassengerTable).set({
+                    email: parseDataFromGoogleToken["email"],
+                }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                    .returning({
+                    userName: passenger_schema_1.PassengerTable.userName,
+                    email: passenger_schema_1.PassengerTable.email,
+                });
+            }
+            return responseOfSelectingPassenger;
         });
     }
 };

@@ -137,6 +137,44 @@ let PassengerAuthController = class PassengerAuthController {
             });
         }
     }
+    async bindDefaultAuth(passenger, bindPassengerDefaultAuthDto, response) {
+        try {
+            const res = await this.passengerAuthService.bindDefaultAuth(passenger.id, bindPassengerDefaultAuthDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async bindGoogleAuth(passenger, bindPassengerGoogleAuthDto, response) {
+        try {
+            const res = await this.passengerAuthService.bindGoogleAuth(passenger.id, bindPassengerGoogleAuthDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.ConflictException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
 };
 exports.PassengerAuthController = PassengerAuthController;
 __decorate([
@@ -199,6 +237,26 @@ __decorate([
         update_passengerAuth_dto_1.UpdatePassengerEmailPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "validateAuthCodeToResetEmailOrPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Put)('bindDefaultAuth'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType,
+        update_passengerAuth_dto_1.BindPassengerDefaultAuthDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "bindDefaultAuth", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Put)('bindGoogleAuth'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType,
+        update_passengerAuth_dto_1.BindPassengerGoogleAuthDto, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "bindGoogleAuth", null);
 exports.PassengerAuthController = PassengerAuthController = __decorate([
     (0, common_1.Controller)('passengerAuth'),
     __metadata("design:paramtypes", [passengerAuth_service_1.PassengerAuthService])

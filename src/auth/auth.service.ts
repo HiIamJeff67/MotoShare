@@ -325,7 +325,7 @@ export class AuthService {
     }
 
     async signInPassengerWithGoogleAuth(googleSignInDto: GoogleSignInDto) {
-        return this.db.transaction(async (tx) => {
+        return await this.db.transaction(async (tx) => {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
@@ -432,7 +432,7 @@ export class AuthService {
     }
 
     async signInRidderWithGoogleAuth(googleSignInDto: GoogleSignInDto) {
-        return this.db.transaction(async (tx) => {
+        return await this.db.transaction(async (tx) => {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 

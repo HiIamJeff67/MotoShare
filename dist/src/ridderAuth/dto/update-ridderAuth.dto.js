@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateRidderEmailPasswordDto = exports.ResetRidderPasswordDto = exports.ValidateRidderInfoDto = void 0;
+exports.BindRidderGoogleAuthDto = exports.BindRidderDefaultAuthDto = exports.UpdateRidderEmailPasswordDto = exports.ResetRidderPasswordDto = exports.ValidateRidderInfoDto = void 0;
 const mapped_types_1 = require("@nestjs/mapped-types");
 const create_ridderAuth_dto_1 = require("./create-ridderAuth.dto");
 const class_validator_1 = require("class-validator");
@@ -31,7 +31,7 @@ __decorate([
 ], ResetRidderPasswordDto.prototype, "authCode", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], ResetRidderPasswordDto.prototype, "password", void 0);
 class UpdateRidderEmailPasswordDto extends (0, mapped_types_1.PartialType)(create_ridderAuth_dto_1.CreateRidderEmailPasswordDto) {
@@ -42,4 +42,25 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateRidderEmailPasswordDto.prototype, "authCode", void 0);
+class BindRidderDefaultAuthDto {
+}
+exports.BindRidderDefaultAuthDto = BindRidderDefaultAuthDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
+    __metadata("design:type", String)
+], BindRidderDefaultAuthDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
+    __metadata("design:type", String)
+], BindRidderDefaultAuthDto.prototype, "password", void 0);
+class BindRidderGoogleAuthDto {
+}
+exports.BindRidderGoogleAuthDto = BindRidderGoogleAuthDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], BindRidderGoogleAuthDto.prototype, "idToken", void 0);
 //# sourceMappingURL=update-ridderAuth.dto.js.map

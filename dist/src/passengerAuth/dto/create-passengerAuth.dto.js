@@ -16,17 +16,17 @@ class CreatePassengerEmailPasswordDto {
 exports.CreatePassengerEmailPasswordDto = CreatePassengerEmailPasswordDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
     __metadata("design:type", String)
 ], CreatePassengerEmailPasswordDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], CreatePassengerEmailPasswordDto.prototype, "oldPassword", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], CreatePassengerEmailPasswordDto.prototype, "newPassword", void 0);
 //# sourceMappingURL=create-passengerAuth.dto.js.map

@@ -23,6 +23,7 @@ const exceptions_1 = require("../exceptions");
 const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const auth_constant_1 = require("../constants/auth.constant");
+const utils_1 = require("../utils");
 let RidderAuthService = class RidderAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -209,6 +210,87 @@ let RidderAuthService = class RidderAuthService {
                 userName: ridder_schema_1.RidderTable.userName,
                 email: ridder_schema_1.RidderTable.email,
             });
+        });
+    }
+    async bindDefaultAuth(id, bindRidderDefaultAuthDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingRidderAuth = await tx.select({
+                isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
+            }).from(ridderAuth_schema_1.RidderAuthTable)
+                .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id))
+                .limit(1);
+            if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            if (responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientUserDefaultAuthAlreadyBoundException;
+            }
+            const responseOfUpdatingRidderAuth = await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                isDefaultAuthenticated: true,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning();
+            if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            const hash = await bcrypt.hash(bindRidderDefaultAuthDto.password, Number(this.config.get("SALT_OR_ROUND")));
+            return await tx.update(ridder_schema_1.RidderTable).set({
+                email: bindRidderDefaultAuthDto.email,
+                password: hash,
+                accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning({
+                userName: ridder_schema_1.RidderTable.userName,
+                email: ridder_schema_1.RidderTable.email,
+            });
+        });
+    }
+    async bindGoogleAuth(id, bindRidderGoogleAuthDto) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingRidderAuth = await tx.select({
+                googleId: ridderAuth_schema_1.RidderAuthTable.googleId,
+            }).from(ridderAuth_schema_1.RidderAuthTable)
+                .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id))
+                .limit(1);
+            if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            if (responseOfSelectingRidderAuth[0].googleId || responseOfSelectingRidderAuth[0].googleId !== null
+                || responseOfSelectingRidderAuth[0].googleId !== "") {
+                throw exceptions_1.ClientUserGoogleAuthAlreadyBoundException;
+            }
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindRidderGoogleAuthDto.idToken);
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const responseOfUpdatingRidderAuth = await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                googleId: parseDataFromGoogleToken["sub"],
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning();
+            if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            const responseOfSelectingRidder = await tx.select({
+                userName: ridder_schema_1.RidderTable.userName,
+                email: ridder_schema_1.RidderTable.email,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .limit(1);
+            if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            if ((0, utils_1.isTempEmail)(responseOfSelectingRidder[0].email)) {
+                return await tx.update(ridder_schema_1.RidderTable).set({
+                    email: parseDataFromGoogleToken["email"],
+                }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                    .returning({
+                    userName: ridder_schema_1.RidderTable.userName,
+                    email: ridder_schema_1.RidderTable.email,
+                });
+            }
+            return responseOfSelectingRidder;
         });
     }
 };

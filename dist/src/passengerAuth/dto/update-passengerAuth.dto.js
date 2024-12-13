@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdatePassengerEmailPasswordDto = exports.ResetPassengerPasswordDto = exports.ValidatePassengerInfoDto = void 0;
+exports.BindPassengerGoogleAuthDto = exports.BindPassengerDefaultAuthDto = exports.UpdatePassengerEmailPasswordDto = exports.ResetPassengerPasswordDto = exports.ValidatePassengerInfoDto = void 0;
 const class_validator_1 = require("class-validator");
 const create_passengerAuth_dto_1 = require("./create-passengerAuth.dto");
 const mapped_types_1 = require("@nestjs/mapped-types");
@@ -31,7 +31,7 @@ __decorate([
 ], ResetPassengerPasswordDto.prototype, "authCode", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], ResetPassengerPasswordDto.prototype, "password", void 0);
 class UpdatePassengerEmailPasswordDto extends (0, mapped_types_1.PartialType)(create_passengerAuth_dto_1.CreatePassengerEmailPasswordDto) {
@@ -42,4 +42,25 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdatePassengerEmailPasswordDto.prototype, "authCode", void 0);
+class BindPassengerDefaultAuthDto {
+}
+exports.BindPassengerDefaultAuthDto = BindPassengerDefaultAuthDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
+    __metadata("design:type", String)
+], BindPassengerDefaultAuthDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
+    __metadata("design:type", String)
+], BindPassengerDefaultAuthDto.prototype, "password", void 0);
+class BindPassengerGoogleAuthDto {
+}
+exports.BindPassengerGoogleAuthDto = BindPassengerGoogleAuthDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], BindPassengerGoogleAuthDto.prototype, "idToken", void 0);
 //# sourceMappingURL=update-passengerAuth.dto.js.map

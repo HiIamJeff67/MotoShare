@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateRidderEmailPasswordDto } from './create-ridderAuth.dto';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class ValidateRidderInfoDto {
     @IsNotEmpty()
@@ -14,7 +14,10 @@ export class ResetRidderPasswordDto {
     authCode: string
 
     @IsNotEmpty()
-    @IsString()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
     password: string
 }
 
@@ -22,4 +25,26 @@ export class UpdateRidderEmailPasswordDto extends PartialType(CreateRidderEmailP
     @IsNotEmpty()
     @IsString()
     authCode: string
+}
+
+export class BindRidderDefaultAuthDto {
+    @IsNotEmpty()
+    @IsEmail(
+        undefined,
+        { message: "E-C-006" }
+    )
+    email: string
+
+    @IsNotEmpty()
+    @IsStrongPassword(
+        undefined,
+        { message: "E-C-007" }
+    )
+    password: string
+}
+
+export class BindRidderGoogleAuthDto {
+    @IsNotEmpty()
+    @IsString()
+    idToken: string
 }

@@ -51,6 +51,8 @@ export declare const ClientCreatePeriodicSupplyOrderException: ForbiddenExceptio
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;
+export declare const ClientUserDefaultAuthAlreadyBoundException: ConflictException;
+export declare const ClientUserGoogleAuthAlreadyBoundException: ConflictException;
 export declare const ClientEndBeforeStartException: ConflictException;
 export declare const ClientUploadFileExceedException: (maxSize: number, unit: FileSizeUnitType) => NotAcceptableException;
 export declare const ClientUploadFileMimeTypeException: (validMimeType: string[]) => NotAcceptableException;

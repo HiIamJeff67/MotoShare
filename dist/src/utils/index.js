@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./multerToFile"), exports);
 __exportStar(require("./stringParser"), exports);
 __exportStar(require("./timeCalculator"), exports);
+__exportStar(require("./tempUserAuthDetector"), exports);
 //# sourceMappingURL=index.js.map

@@ -327,6 +327,18 @@ export const ClientNoChangeOnPasswordException = new ConflictException({
     message: "There's no changes on password",
 });
 
+// E-C-303
+export const ClientUserDefaultAuthAlreadyBoundException = new ConflictException({
+    case: "E-C-303", 
+    message: "The current user has already bound his/her default authentication", 
+});
+
+// E-C-304
+export const ClientUserGoogleAuthAlreadyBoundException = new ConflictException({
+    case: "E-C-304", 
+    message: "The current user has already bound his/her google authentication", 
+});
+
 // E-C-351
 export const ClientEndBeforeStartException = new ConflictException({
     case: "E-C-351",

@@ -10,4 +10,11 @@ declare const UpdateRidderEmailPasswordDto_base: import("@nestjs/mapped-types").
 export declare class UpdateRidderEmailPasswordDto extends UpdateRidderEmailPasswordDto_base {
     authCode: string;
 }
+export declare class BindRidderDefaultAuthDto {
+    email: string;
+    password: string;
+}
+export declare class BindRidderGoogleAuthDto {
+    idToken: string;
+}
 export {};

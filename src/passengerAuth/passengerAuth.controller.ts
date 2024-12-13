@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, UnauthorizedException, NotFoundException, InternalServerErrorException, NotAcceptableException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, UnauthorizedException, NotFoundException, InternalServerErrorException, NotAcceptableException, ConflictException, BadRequestException, Put } from '@nestjs/common';
 import { PassengerAuthService } from './passengerAuth.service';
 import { JwtPassengerGuard } from '../auth/guard';
 import { Passenger } from '../auth/decorator';
@@ -6,7 +6,7 @@ import { PassengerType } from '../interfaces';
 import { Response } from 'express';
 import { ClientPassengerNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
-import { ResetPassengerPasswordDto, UpdatePassengerEmailPasswordDto, ValidatePassengerInfoDto } from './dto/update-passengerAuth.dto';
+import { BindPassengerDefaultAuthDto, BindPassengerGoogleAuthDto, ResetPassengerPasswordDto, UpdatePassengerEmailPasswordDto, ValidatePassengerInfoDto } from './dto/update-passengerAuth.dto';
 
 @Controller('passengerAuth')
 export class PassengerAuthController {
@@ -191,4 +191,67 @@ export class PassengerAuthController {
         }
     }
     /* ================================= Validate AuthCode ================================= */
+
+
+    /* ================================= Binding Operations ================================= */
+    @UseGuards(JwtPassengerGuard)
+    @Put('bindDefaultAuth')
+    async bindDefaultAuth(
+        @Passenger() passenger: PassengerType, 
+        bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto, 
+        @Res() response: Response, 
+    ) {
+        try {
+            const res = await this.passengerAuthService.bindDefaultAuth(
+                passenger.id, 
+                bindPassengerDefaultAuthDto, 
+            );
+
+            if (!res || res.length === 0) throw ClientPassengerNotFoundException;
+
+            response.status(HttpStatusCode.Ok).send(res[0]);
+        } catch (error) {
+            if (!(error instanceof UnauthorizedException
+                || error instanceof NotFoundException
+                || error instanceof NotAcceptableException
+                || error instanceof ConflictException)) {
+                    error = ClientUnknownException;
+            }
+
+            response.status(error.status).send({
+                ...error.response, 
+            });
+        }
+    }
+
+    @UseGuards(JwtPassengerGuard)
+    @Put('bindGoogleAuth')
+    async bindGoogleAuth(
+        @Passenger() passenger: PassengerType, 
+        bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto, 
+        @Res() response: Response, 
+    ) {
+        try {
+            const res = await this.passengerAuthService.bindGoogleAuth(
+                passenger.id, 
+                bindPassengerGoogleAuthDto, 
+            );
+
+            if (!res || res.length === 0) throw ClientPassengerNotFoundException;
+
+            response.status(HttpStatusCode.Ok).send(res[0]);
+        } catch (error) {
+            if (!(error instanceof UnauthorizedException
+                || error instanceof NotFoundException
+                || error instanceof NotAcceptableException
+                || error instanceof ConflictException)) {
+                    error = ClientUnknownException;
+            }
+
+            response.status(error.status).send({
+                ...error.response, 
+            });
+        }
+    }
+    /* ================================= Binding Operations ================================= */
 }

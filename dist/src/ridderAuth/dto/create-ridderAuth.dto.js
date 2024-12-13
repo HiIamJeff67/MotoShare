@@ -16,17 +16,17 @@ class CreateRidderEmailPasswordDto {
 exports.CreateRidderEmailPasswordDto = CreateRidderEmailPasswordDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEmail)(undefined, { message: "E-C-006" }),
     __metadata("design:type", String)
 ], CreateRidderEmailPasswordDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], CreateRidderEmailPasswordDto.prototype, "oldPassword", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsStrongPassword)(undefined, { message: "E-C-007" }),
     __metadata("design:type", String)
 ], CreateRidderEmailPasswordDto.prototype, "newPassword", void 0);
 //# sourceMappingURL=create-ridderAuth.dto.js.map
