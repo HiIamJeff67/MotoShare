@@ -13,6 +13,8 @@ exports.PassengerAuthTable = (0, pg_core_1.pgTable)("passengerAuth", {
     isPhoneAuthenticated: (0, pg_core_1.boolean)("isPhoneAuthenticated").notNull().default(false),
     authCode: (0, pg_core_1.text)("authCode").notNull(),
     authCodeExpiredAt: (0, pg_core_1.timestamp)("authCodeExpiredAt").notNull(),
+    isDefaultAuthenticated: (0, pg_core_1.boolean)("isDefaultAuthenticated").notNull().default(false),
+    isGoogleAuthenticated: (0, pg_core_1.boolean)("isGoogleAuthenticated").notNull().default(false),
 }, (table) => {
     return {
         userIdIndex: (0, pg_core_1.uniqueIndex)("passengerAuth_userIdIndex").on(table.userId),

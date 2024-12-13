@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerExtractAdminAccountEnvVariableException = exports.ServerExtractCronSecretEnvVariableException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerExtractGoogleAuthUrlEnvVariableException = exports.ServerExtractAdminAccountEnvVariableException = exports.ServerExtractCronSecretEnvVariableException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
@@ -78,6 +78,10 @@ const ServerExtractAdminAccountEnvVariableException = (field = undefined) => {
     });
 };
 exports.ServerExtractAdminAccountEnvVariableException = ServerExtractAdminAccountEnvVariableException;
+exports.ServerExtractGoogleAuthUrlEnvVariableException = new common_1.InternalServerErrorException({
+    case: "E-S-903",
+    message: "Failed to extract the google auth url environment variable GOOGLE_AUTH_URL",
+});
 exports.ServerUnknownException = new common_1.InternalServerErrorException({
     case: "E-S-999",
     message: "Internal Server Error",

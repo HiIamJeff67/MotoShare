@@ -243,49 +243,4 @@ export declare class PurchaseOrderService {
         id: string;
         status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
     }[]>;
-    getAllPurchaseOrders(): Promise<{
-        id: string;
-        description: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        creatorId: string;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        startAddress: string;
-        endAddress: string;
-        startAfter: Date;
-        endedAt: Date;
-        autoAccept: boolean;
-        status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
-        isUrgent: boolean;
-    }[]>;
-    searchPaginationPurchaseOrdersWithUpdateExpired(updateExpiredData: boolean, userName: string | undefined, limit: number, offset: number): Promise<{
-        id: string;
-        creatorName: string | null;
-        avatorUrl: never;
-        initPrice: number;
-        startCord: {
-            x: number;
-            y: number;
-        };
-        endCord: {
-            x: number;
-            y: number;
-        };
-        startAddress: string;
-        endAddress: string;
-        createdAt: Date;
-        updatedAt: Date;
-        startAfter: Date;
-        endedAt: Date;
-        isUrgent: boolean;
-        status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
-    }[]>;
 }

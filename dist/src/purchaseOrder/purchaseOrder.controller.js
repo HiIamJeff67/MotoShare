@@ -253,9 +253,9 @@ let PurchaseOrderController = class PurchaseOrderController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
-            console.log(error);
             if (!(error instanceof common_1.NotFoundException
-                || error instanceof common_1.NotAcceptableException)) {
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.BadRequestException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -356,49 +356,6 @@ let PurchaseOrderController = class PurchaseOrderController {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {
-                error = exceptions_1.ClientUnknownException;
-            }
-            response.status(error.status).send({
-                ...error.response,
-            });
-        }
-    }
-    getAllPurchaseOrders() {
-        return this.purchaseOrderService.getAllPurchaseOrders();
-    }
-    async testWithExpired(creatorName = undefined, limit = "10", offset = "0", response) {
-        try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
-            }
-            const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
-            if (!res || res.length === 0)
-                throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            console.log(error);
-            if (!(error instanceof common_1.NotFoundException)) {
-                error = exceptions_1.ClientUnknownException;
-            }
-            response.status(error.status).send({
-                ...error.response,
-            });
-        }
-    }
-    async testWithoutExpired(creatorName = undefined, limit = "10", offset = "0", response) {
-        try {
-            if (+limit > constants_1.MAX_SEARCH_LIMIT) {
-                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
-            }
-            const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);
-            if (!res || res.length === 0)
-                throw exceptions_1.ClientPurchaseOrderNotFoundException;
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
-        }
-        catch (error) {
-            console.log(error);
-            if (!(error instanceof common_1.NotFoundException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -566,32 +523,6 @@ __decorate([
     __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "deleteMyPurchaseOrderById", null);
-__decorate([
-    (0, common_1.Get)('getAllPurchaseOrders'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], PurchaseOrderController.prototype, "getAllPurchaseOrders", null);
-__decorate([
-    (0, common_1.Get)('testWithExpired'),
-    __param(0, (0, common_1.Query)('creatorName')),
-    __param(1, (0, common_1.Query)('limit')),
-    __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
-    __metadata("design:returntype", Promise)
-], PurchaseOrderController.prototype, "testWithExpired", null);
-__decorate([
-    (0, common_1.Get)('testWithoutExpired'),
-    __param(0, (0, common_1.Query)('creatorName')),
-    __param(1, (0, common_1.Query)('limit')),
-    __param(2, (0, common_1.Query)('offset')),
-    __param(3, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
-    __metadata("design:returntype", Promise)
-], PurchaseOrderController.prototype, "testWithoutExpired", null);
 exports.PurchaseOrderController = PurchaseOrderController = __decorate([
     (0, common_1.Controller)('purchaseOrder'),
     __metadata("design:paramtypes", [purchaseOrder_service_1.PurchaseOrderService])

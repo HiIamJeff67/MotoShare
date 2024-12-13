@@ -66,6 +66,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingPassengerAuth = await tx.insert(passengerAuth_schema_1.PassengerAuthTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                isDefaultAuthenticated: true,
                 authCode: this._getRandomAuthCode(),
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
             }).returning();
@@ -75,7 +76,58 @@ let AuthService = class AuthService {
             return result;
         });
     }
-    async signUpRidderWithEmailAndPassword(signUpDto) {
+    async signUpPassengerWithGoogleAuth(googleSignUpDto) {
+        return await this.db.transaction(async (tx) => {
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
+            const responseOfCreatingPassenger = await tx.insert(passenger_schema_1.PassengerTable).values({
+                userName: userName,
+                email: googleSignUpDto.email,
+                password: "",
+                accessToken: tempAccessToken.accessToken,
+            }).returning({
+                id: passenger_schema_1.PassengerTable.id,
+                email: passenger_schema_1.PassengerTable.email,
+            });
+            if (!responseOfCreatingPassenger || responseOfCreatingPassenger.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingPassengerInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+            }).returning();
+            if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
+                throw exceptions_1.ClientCreatePassengerInfoException;
+            }
+            const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(passenger_schema_1.PassengerTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, responseOfCreatingPassenger[0].id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingPassengerAuth = await tx.insert(passengerAuth_schema_1.PassengerAuthTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+                isGoogleAuthenticated: true,
+                authCode: this._getRandomAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).returning();
+            if (!responseOfCreatingPassengerAuth || responseOfCreatingPassengerAuth.length === 0) {
+                throw exceptions_1.ClientCreatePassengerAuthException;
+            }
+            return result;
+        });
+    }
+    async signUpRidderWithUserNameAndEmailAndPassword(signUpDto) {
         return await this.db.transaction(async (tx) => {
             const hash = await bcrypt.hash(signUpDto.password, Number(this.config.get("SALT_OR_ROUND")));
             const tempAccessToken = await this._tempSignToken(signUpDto.userName, signUpDto.email);
@@ -109,6 +161,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingRidderAuth = await tx.insert(ridderAuth_schema_1.RidderAuthTable).values({
                 userId: responseOfCreatingRidder[0].id,
+                isDefaultAuthenticated: true,
                 authCode: this._getRandomAuthCode(),
                 authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
             }).returning();
@@ -118,7 +171,58 @@ let AuthService = class AuthService {
             return result;
         });
     }
-    async signInPassengerEmailAndPassword(signInDto) {
+    async signUpRidderWithGoogleAuth(googleSignUpDto) {
+        return await this.db.transaction(async (tx) => {
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
+            const responseOfCreatingRidder = await tx.insert(ridder_schema_1.RidderTable).values({
+                userName: userName,
+                email: googleSignUpDto.email,
+                password: "",
+                accessToken: tempAccessToken.accessToken,
+            }).returning({
+                id: ridder_schema_1.RidderTable.id,
+                email: ridder_schema_1.RidderTable.email,
+            });
+            if (!responseOfCreatingRidder || responseOfCreatingRidder.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingRidderInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
+                userId: responseOfCreatingRidder[0].id,
+            }).returning();
+            if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
+                throw exceptions_1.ClientCreatePassengerInfoException;
+            }
+            const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(ridder_schema_1.RidderTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, responseOfCreatingRidder[0].id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignUpUserException;
+            }
+            const responseOfCreatingRidderAuth = await tx.insert(ridderAuth_schema_1.RidderAuthTable).values({
+                userId: responseOfCreatingRidder[0].id,
+                isGoogleAuthenticated: true,
+                authCode: this._getRandomAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).returning();
+            if (!responseOfCreatingRidderAuth || responseOfCreatingRidderAuth.length === 0) {
+                throw exceptions_1.ClientCreatePassengerAuthException;
+            }
+            return result;
+        });
+    }
+    async signInPassengerWithAccountAndPassword(signInDto) {
         return await this.db.transaction(async (tx) => {
             let userResponse = null;
             if (signInDto.userName) {
@@ -126,8 +230,10 @@ let AuthService = class AuthService {
                     id: passenger_schema_1.PassengerTable.id,
                     email: passenger_schema_1.PassengerTable.email,
                     hash: passenger_schema_1.PassengerTable.password,
+                    isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
                 }).from(passenger_schema_1.PassengerTable)
                     .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.userName, signInDto.userName))
+                    .leftJoin(passengerAuth_schema_1.PassengerAuthTable, (0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, passenger_schema_1.PassengerTable.id))
                     .limit(1);
                 if (!userResponse || userResponse.length === 0) {
                     throw exceptions_1.ClientSignInUserNameNotFoundException;
@@ -138,14 +244,18 @@ let AuthService = class AuthService {
                     id: passenger_schema_1.PassengerTable.id,
                     email: passenger_schema_1.PassengerTable.email,
                     hash: passenger_schema_1.PassengerTable.password,
+                    isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
                 }).from(passenger_schema_1.PassengerTable)
                     .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, signInDto.email))
+                    .leftJoin(passengerAuth_schema_1.PassengerAuthTable, (0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, passenger_schema_1.PassengerTable.id))
                     .limit(1);
                 if (!userResponse || userResponse.length === 0) {
                     throw exceptions_1.ClientSignInEmailNotFoundException;
                 }
             }
             const user = userResponse[0];
+            if (!user.isDefaultAuthenticated)
+                throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
             const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
             delete user.hash;
             if (!pwMatches) {
@@ -164,7 +274,43 @@ let AuthService = class AuthService {
             return result;
         });
     }
-    async signInRidderByEmailAndPassword(signInDto) {
+    async signInPassengerWithGoogleAuth(googleSignInDto) {
+        return this.db.transaction(async (tx) => {
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const userResponse = await tx.select({
+                id: passenger_schema_1.PassengerTable.id,
+                email: passenger_schema_1.PassengerTable.email,
+                isGoogleAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isGoogleAuthenticated,
+            }).from(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, parseDataFromGoogleToken["email"]))
+                .leftJoin(passengerAuth_schema_1.PassengerAuthTable, (0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, passenger_schema_1.PassengerTable.id))
+                .limit(1);
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInEmailNotFoundException;
+            }
+            const user = userResponse[0];
+            if (!user.isGoogleAuthenticated)
+                throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
+            const result = await this._signToken(user.id, user.email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(passenger_schema_1.PassengerTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, user.id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
+            return result;
+        });
+    }
+    async signInRidderWithAccountAndPassword(signInDto) {
         return await this.db.transaction(async (tx) => {
             let userResponse = null;
             if (signInDto.userName) {
@@ -172,8 +318,10 @@ let AuthService = class AuthService {
                     id: ridder_schema_1.RidderTable.id,
                     email: ridder_schema_1.RidderTable.email,
                     hash: ridder_schema_1.RidderTable.password,
+                    isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
                 }).from(ridder_schema_1.RidderTable)
                     .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.userName, signInDto.userName))
+                    .leftJoin(ridderAuth_schema_1.RidderAuthTable, (0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, ridder_schema_1.RidderTable.id))
                     .limit(1);
                 if (!userResponse || userResponse.length === 0) {
                     throw exceptions_1.ClientSignInUserNameNotFoundException;
@@ -184,14 +332,18 @@ let AuthService = class AuthService {
                     id: ridder_schema_1.RidderTable.id,
                     email: ridder_schema_1.RidderTable.email,
                     hash: ridder_schema_1.RidderTable.password,
+                    isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
                 }).from(ridder_schema_1.RidderTable)
                     .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, signInDto.email))
+                    .leftJoin(ridderAuth_schema_1.RidderAuthTable, (0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, ridder_schema_1.RidderTable.id))
                     .limit(1);
                 if (!userResponse || userResponse.length === 0) {
                     throw exceptions_1.ClientSignInEmailNotFoundException;
                 }
             }
             const user = userResponse[0];
+            if (!user.isDefaultAuthenticated)
+                throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
             const pwMatches = await bcrypt.compare(signInDto.password, user.hash);
             delete user.hash;
             if (!pwMatches) {
@@ -206,6 +358,42 @@ let AuthService = class AuthService {
                 .returning();
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
                 throw exceptions_1.ClientSignUpUserException;
+            }
+            return result;
+        });
+    }
+    async signInRidderWithGoogleAuth(googleSignInDto) {
+        return this.db.transaction(async (tx) => {
+            const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
+            if (!googleAuthUrl)
+                throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
+            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"]) {
+                throw exceptions_1.ClientInvalidGoogleIdTokenException;
+            }
+            const userResponse = await tx.select({
+                id: ridder_schema_1.RidderTable.id,
+                email: ridder_schema_1.RidderTable.email,
+                isGoogleAuthenticated: ridderAuth_schema_1.RidderAuthTable.isGoogleAuthenticated,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, parseDataFromGoogleToken["email"]))
+                .leftJoin(ridderAuth_schema_1.RidderAuthTable, (0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, ridder_schema_1.RidderTable.id))
+                .limit(1);
+            if (!userResponse || userResponse.length === 0) {
+                throw exceptions_1.ClientSignInEmailNotFoundException;
+            }
+            const user = userResponse[0];
+            if (!user.isGoogleAuthenticated)
+                throw exceptions_1.ClientUserAuthenticatedMethodNotAllowedException;
+            const result = await this._signToken(user.id, user.email);
+            if (!result)
+                throw exceptions_1.ApiGeneratingBearerTokenException;
+            const responseOfUpdatingAccessToken = await tx.update(ridder_schema_1.RidderTable).set({
+                accessToken: result.accessToken,
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, user.id))
+                .returning();
+            if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
             }
             return result;
         });

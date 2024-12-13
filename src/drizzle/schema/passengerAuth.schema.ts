@@ -11,6 +11,8 @@ export const PassengerAuthTable = pgTable("passengerAuth", {
     isPhoneAuthenticated: boolean("isPhoneAuthenticated").notNull().default(false), 
     authCode: text("authCode").notNull(), 
     authCodeExpiredAt: timestamp("authCodeExpiredAt").notNull(), 
+    isDefaultAuthenticated: boolean("isDefaultAuthenticated").notNull().default(false), 
+    isGoogleAuthenticated: boolean("isGoogleAuthenticated").notNull().default(false), 
 }, (table) => {
     return {
         userIdIndex: uniqueIndex("passengerAuth_userIdIndex").on(table.userId), 

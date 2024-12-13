@@ -53,6 +53,18 @@ export const ClientWithoutAdvanceAuthorizedUserException = new UnauthorizedExcep
     message: "The user cannot continue the services without email authenticated", 
 });
 
+// E-C-015
+export const ClientUserAuthenticatedMethodNotAllowedException = new UnauthorizedException({
+    case: "E-C-015", 
+    message: "The user cannot use this method to authenticate", 
+});
+
+// E-C-016
+export const ClientInvalidGoogleIdTokenException = new UnauthorizedException({
+    case: "E-C-016", 
+    message: "Invalid google id token detected", 
+})
+
 /* ============================== Error about authorization ============================== */
 
 
@@ -153,8 +165,6 @@ export const ClientPeriodicSupplyOrderNotFoundException = new NotFoundException(
     case: "E-C-115", 
     message: "Failed to find any periodicSupplyOrders", 
 });
-
-
 
 /* ============================== Error about select operation ============================== */
 

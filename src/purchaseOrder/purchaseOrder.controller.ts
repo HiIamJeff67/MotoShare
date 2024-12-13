@@ -176,7 +176,7 @@ export class PurchaseOrderController {
     } catch (error) {
       if (!(error instanceof NotFoundException
         || error instanceof NotAcceptableException)) {
-        error = ClientUnknownException;
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -421,10 +421,10 @@ export class PurchaseOrderController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      console.log(error)
       if (!(error instanceof NotFoundException
-        || error instanceof NotAcceptableException)) {
-        error = ClientUnknownException;
+        || error instanceof NotAcceptableException
+        || error instanceof BadRequestException)) {
+          error = ClientUnknownException;
       }
 
       response.status(error.status).send({
@@ -594,67 +594,67 @@ export class PurchaseOrderController {
 
 
   /* ================================= Test operations ================================= */
-  @Get('getAllPurchaseOrders')
-  getAllPurchaseOrders() {
-    return this.purchaseOrderService.getAllPurchaseOrders();
-  }
+  // @Get('getAllPurchaseOrders')
+  // getAllPurchaseOrders() {
+  //   return this.purchaseOrderService.getAllPurchaseOrders();
+  // }
 
-  @Get('testWithExpired')
-  async testWithExpired(
-    @Query('creatorName') creatorName: string | undefined = undefined,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
-      }
+  // @Get('testWithExpired')
+  // async testWithExpired(
+  //   @Query('creatorName') creatorName: string | undefined = undefined,
+  //   @Query('limit') limit: string = "10",
+  //   @Query('offset') offset: string = "0",
+  //   @Res() response: Response,
+  // ) {
+  //   try {
+  //     if (+limit > MAX_SEARCH_LIMIT) {
+  //       throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+  //     }
 
-      const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
+  //     const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(true, creatorName, +limit, +offset);
 
-      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+  //     if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      console.log(error)
-      if (!(error instanceof NotFoundException)) {
-        error = ClientUnknownException;
-      }
+  //     response.status(HttpStatusCode.Ok).send(res);
+  //   } catch (error) {
+  //     console.log(error)
+  //     if (!(error instanceof NotFoundException)) {
+  //       error = ClientUnknownException;
+  //     }
 
-      response.status(error.status).send({
-        ...error.response,
-      });
-    }
-  }
+  //     response.status(error.status).send({
+  //       ...error.response,
+  //     });
+  //   }
+  // }
 
-  @Get('testWithoutExpired')
-  async testWithoutExpired(
-    @Query('creatorName') creatorName: string | undefined = undefined,
-    @Query('limit') limit: string = "10",
-    @Query('offset') offset: string = "0",
-    @Res() response: Response,
-  ) {
-    try {
-      if (+limit > MAX_SEARCH_LIMIT) {
-        throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
-      }
+  // @Get('testWithoutExpired')
+  // async testWithoutExpired(
+  //   @Query('creatorName') creatorName: string | undefined = undefined,
+  //   @Query('limit') limit: string = "10",
+  //   @Query('offset') offset: string = "0",
+  //   @Res() response: Response,
+  // ) {
+  //   try {
+  //     if (+limit > MAX_SEARCH_LIMIT) {
+  //       throw ApiSearchingLimitTooLargeException(MAX_SEARCH_LIMIT);
+  //     }
 
-      const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);
+  //     const res = await this.purchaseOrderService.searchPaginationPurchaseOrdersWithUpdateExpired(false, creatorName, +limit, +offset);
 
-      if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
+  //     if (!res || res.length === 0) throw ClientPurchaseOrderNotFoundException;
 
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      console.log(error)
-      if (!(error instanceof NotFoundException)) {
-        error = ClientUnknownException;
-      }
+  //     response.status(HttpStatusCode.Ok).send(res);
+  //   } catch (error) {
+  //     console.log(error)
+  //     if (!(error instanceof NotFoundException)) {
+  //       error = ClientUnknownException;
+  //     }
 
-      response.status(error.status).send({
-        ...error.response,
-      });
-    }
-  }
+  //     response.status(error.status).send({
+  //       ...error.response,
+  //     });
+  //   }
+  // }
   /* ================================= Test operations ================================= */
 }

@@ -8,6 +8,8 @@ export declare const ClientAuthCodeExpiredException: NotAcceptableException;
 export declare const ClientOldPasswordNotMatchException: NotAcceptableException;
 export declare const ClientDeleteAccountPasswordNotMatchException: NotAcceptableException;
 export declare const ClientWithoutAdvanceAuthorizedUserException: UnauthorizedException;
+export declare const ClientUserAuthenticatedMethodNotAllowedException: UnauthorizedException;
+export declare const ClientInvalidGoogleIdTokenException: UnauthorizedException;
 export declare const ClientPassengerNotFoundException: NotFoundException;
 export declare const ClientRidderNotFoundException: NotFoundException;
 export declare const ClientInviteNotFoundException: NotFoundException;

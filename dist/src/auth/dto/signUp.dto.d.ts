@@ -3,3 +3,7 @@ export declare class SignUpDto {
     email: string;
     password: string;
 }
+export declare class GoogleSignUpDto {
+    email: string;
+    idToken: string;
+}

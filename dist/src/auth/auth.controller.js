@@ -22,7 +22,7 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async signUpPassengerWithEmailAndPassword(signUpDto, response) {
+    async signUpPassengerWithUserNameAndEmailAndPassword(signUpDto, response) {
         try {
             const res = await this.authService.signUpPassengerWithUserNameAndEmailAndPassword(signUpDto);
             if (!res)
@@ -42,9 +42,31 @@ let AuthController = class AuthController {
             });
         }
     }
-    async signUpRidderWithEmailAndPassword(signUpDto, response) {
+    async signUpPassengerWithGoogleAuth(googleSignUpDto, response) {
         try {
-            const res = await this.authService.signUpRidderWithEmailAndPassword(signUpDto);
+            const res = await this.authService.signUpPassengerWithGoogleAuth(googleSignUpDto);
+            if (!res)
+                throw exceptions_1.ClientSignUpUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
+        }
+        catch (error) {
+            if (error.status === undefined) {
+                error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
+            }
+            else if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async signUpRidderWithUserNameAndEmailAndPassword(signUpDto, response) {
+        try {
+            const res = await this.authService.signUpRidderWithUserNameAndEmailAndPassword(signUpDto);
             if (!res)
                 throw exceptions_1.ClientSignUpUserException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
@@ -62,9 +84,31 @@ let AuthController = class AuthController {
             });
         }
     }
+    async signUpRidderWithGoogleAuth(googleSignUpDto, response) {
+        try {
+            const res = await this.authService.signUpRidderWithGoogleAuth(googleSignUpDto);
+            if (!res)
+                throw exceptions_1.ClientSignUpUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Created).send(res);
+        }
+        catch (error) {
+            if (error.status === undefined) {
+                error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
+            }
+            else if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async signInPassengerWithAccountAndPassword(signInDto, response) {
         try {
-            const res = await this.authService.signInPassengerEmailAndPassword(signInDto);
+            const res = await this.authService.signInPassengerWithAccountAndPassword(signInDto);
             if (!res)
                 throw exceptions_1.ClientSignInUserException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -80,9 +124,29 @@ let AuthController = class AuthController {
             });
         }
     }
+    async signInPassengerWithGoogleAuth(googleSignInDto, response) {
+        try {
+            const res = await this.authService.signInPassengerWithGoogleAuth(googleSignInDto);
+            if (!res)
+                throw exceptions_1.ClientSignInUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.InternalServerErrorException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async signInRidderWithAccountAndPassword(signInDto, response) {
         try {
-            const res = await this.authService.signInRidderByEmailAndPassword(signInDto);
+            const res = await this.authService.signInRidderWithAccountAndPassword(signInDto);
             if (!res)
                 throw exceptions_1.ClientSignInUserException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -91,6 +155,26 @@ let AuthController = class AuthController {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.ForbiddenException
                 || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async signInRidderWithGoogleAuth(googleSignInDto, response) {
+        try {
+            const res = await this.authService.signInRidderWithGoogleAuth(googleSignInDto);
+            if (!res)
+                throw exceptions_1.ClientSignInUserException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.InternalServerErrorException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -101,23 +185,39 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('signUpPassenger'),
+    (0, common_1.Post)('signUpPassengerWithUserNameAndEmailAndPassword'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [index_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "signUpPassengerWithEmailAndPassword", null);
+], AuthController.prototype, "signUpPassengerWithUserNameAndEmailAndPassword", null);
 __decorate([
-    (0, common_1.Post)('signUpRidder'),
+    (0, common_1.Post)('signUpPassengerWithGoogleAuth'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.GoogleSignUpDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signUpPassengerWithGoogleAuth", null);
+__decorate([
+    (0, common_1.Post)('signUpRidderWithUserNameAndEmailAndPassword'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [index_1.SignUpDto, Object]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "signUpRidderWithEmailAndPassword", null);
+], AuthController.prototype, "signUpRidderWithUserNameAndEmailAndPassword", null);
 __decorate([
-    (0, common_1.Post)('signInPassenger'),
+    (0, common_1.Post)('signUpRidderWithGoogleAuth'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.GoogleSignUpDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signUpRidderWithGoogleAuth", null);
+__decorate([
+    (0, common_1.Post)('signInPassengerWithAccountAndPassword'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -125,13 +225,29 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signInPassengerWithAccountAndPassword", null);
 __decorate([
-    (0, common_1.Post)('signInRidder'),
+    (0, common_1.Post)('signInPassengerWithGoogleAuth'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.GoogleSignInDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signInPassengerWithGoogleAuth", null);
+__decorate([
+    (0, common_1.Post)('signInRidderWithAccountAndPassword'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [index_1.SignInDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signInRidderWithAccountAndPassword", null);
+__decorate([
+    (0, common_1.Post)('signInRidderWithGoogleAuth'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [index_1.GoogleSignInDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signInRidderWithGoogleAuth", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

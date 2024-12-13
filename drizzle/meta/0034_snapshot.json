@@ -1,0 +1,2943 @@
+{
+  "id": "73928d65-2ae4-454b-8dee-dcd4676d29e2",
+  "prevId": "06d830bc-9dc2-42ad-8fcd-803ee61a7172",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.history": {
+      "name": "history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "passengerId": {
+          "name": "passengerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ridderId": {
+          "name": "ridderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prevOrderId": {
+          "name": "prevOrderId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalPrice": {
+          "name": "finalPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "passengerDescription": {
+          "name": "passengerDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ridderDescription": {
+          "name": "ridderDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finalStartCord": {
+          "name": "finalStartCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalEndCord": {
+          "name": "finalEndCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalStartAddress": {
+          "name": "finalStartAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalEndAddress": {
+          "name": "finalEndAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starRatingByPassenger": {
+          "name": "starRatingByPassenger",
+          "type": "starRating",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "starRatingByRidder": {
+          "name": "starRatingByRidder",
+          "type": "starRating",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "commentByP": {
+          "name": "commentByP",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commentByR": {
+          "name": "commentByR",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "historyStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'FINISHED'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "udpatedAt": {
+          "name": "udpatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "history_passengerIdIndex": {
+          "name": "history_passengerIdIndex",
+          "columns": [
+            {
+              "expression": "passengerId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "history_ridderIdIndex": {
+          "name": "history_ridderIdIndex",
+          "columns": [
+            {
+              "expression": "ridderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "history_updatedAtIndex": {
+          "name": "history_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "udpatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "history_passengerId_passenger_id_fk": {
+          "name": "history_passengerId_passenger_id_fk",
+          "tableFrom": "history",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "passengerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "history_ridderId_ridder_id_fk": {
+          "name": "history_ridderId_ridder_id_fk",
+          "tableFrom": "history",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "ridderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.order": {
+      "name": "order",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "passengerId": {
+          "name": "passengerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ridderId": {
+          "name": "ridderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prevOrderId": {
+          "name": "prevOrderId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalPrice": {
+          "name": "finalPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "passengerDescription": {
+          "name": "passengerDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ridderDescription": {
+          "name": "ridderDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finalStartCord": {
+          "name": "finalStartCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalEndCord": {
+          "name": "finalEndCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalStartAddress": {
+          "name": "finalStartAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finalEndAddress": {
+          "name": "finalEndAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "passengerStatus": {
+          "name": "passengerStatus",
+          "type": "passengerOrderStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'UNSTARTED'"
+        },
+        "ridderStatus": {
+          "name": "ridderStatus",
+          "type": "ridderOrderStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'UNSTARTED'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "order_passengerIdIndex": {
+          "name": "order_passengerIdIndex",
+          "columns": [
+            {
+              "expression": "passengerId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "order_ridderIdIndex": {
+          "name": "order_ridderIdIndex",
+          "columns": [
+            {
+              "expression": "ridderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "order_startAfterIndex": {
+          "name": "order_startAfterIndex",
+          "columns": [
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "order_statusStartAfterIndex": {
+          "name": "order_statusStartAfterIndex",
+          "columns": [
+            {
+              "expression": "passengerStatus",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "ridderStatus",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "order_updatedAtIndex": {
+          "name": "order_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "order_passengerId_passenger_id_fk": {
+          "name": "order_passengerId_passenger_id_fk",
+          "tableFrom": "order",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "passengerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "order_ridderId_ridder_id_fk": {
+          "name": "order_ridderId_ridder_id_fk",
+          "tableFrom": "order",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "ridderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.passenger": {
+      "name": "passenger",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userName": {
+          "name": "userName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accessToken": {
+          "name": "accessToken",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "passenger_userNameIndex": {
+          "name": "passenger_userNameIndex",
+          "columns": [
+            {
+              "expression": "userName",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passenger_emailIndex": {
+          "name": "passenger_emailIndex",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "passenger_userName_unique": {
+          "name": "passenger_userName_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userName"
+          ]
+        },
+        "passenger_email_unique": {
+          "name": "passenger_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "passenger_accessToken_unique": {
+          "name": "passenger_accessToken_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "accessToken"
+          ]
+        }
+      }
+    },
+    "public.passengerAuth": {
+      "name": "passengerAuth",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isEmailAuthenticated": {
+          "name": "isEmailAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "isPhoneAuthenticated": {
+          "name": "isPhoneAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "authCode": {
+          "name": "authCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "authCodeExpiredAt": {
+          "name": "authCodeExpiredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isDefaultAuthenticated": {
+          "name": "isDefaultAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "isGoogleAuthenticated": {
+          "name": "isGoogleAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "passengerAuth_userIdIndex": {
+          "name": "passengerAuth_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerAuth_authCodeIndex": {
+          "name": "passengerAuth_authCodeIndex",
+          "columns": [
+            {
+              "expression": "authCode",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerAuth_userId_passenger_id_fk": {
+          "name": "passengerAuth_userId_passenger_id_fk",
+          "tableFrom": "passengerAuth",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "passengerAuth_userId_unique": {
+          "name": "passengerAuth_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      }
+    },
+    "public.passengerCollectionsToOrders": {
+      "name": "passengerCollectionsToOrders",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "passengerCollectionsToOrders_userIdIndex": {
+          "name": "passengerCollectionsToOrders_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerCollectionsToOrders_orderIdIndex": {
+          "name": "passengerCollectionsToOrders_orderIdIndex",
+          "columns": [
+            {
+              "expression": "orderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerCollectionsToOrders_userId_passenger_id_fk": {
+          "name": "passengerCollectionsToOrders_userId_passenger_id_fk",
+          "tableFrom": "passengerCollectionsToOrders",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "passengerCollectionsToOrders_orderId_supplyOrder_id_fk": {
+          "name": "passengerCollectionsToOrders_orderId_supplyOrder_id_fk",
+          "tableFrom": "passengerCollectionsToOrders",
+          "tableTo": "supplyOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "passengerCollectionsToOrders_userId_orderId_pk": {
+          "name": "passengerCollectionsToOrders_userId_orderId_pk",
+          "columns": [
+            "userId",
+            "orderId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.passengerInfo": {
+      "name": "passengerInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isOnline": {
+          "name": "isOnline",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyUserRole": {
+          "name": "emergencyUserRole",
+          "type": "userRole",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyPhoneNumber": {
+          "name": "emergencyPhoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selfIntroduction": {
+          "name": "selfIntroduction",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatorUrl": {
+          "name": "avatorUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "passengerInfo_userIdIndex": {
+          "name": "passengerInfo_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerInfo_phoneNumberIndex": {
+          "name": "passengerInfo_phoneNumberIndex",
+          "columns": [
+            {
+              "expression": "phoneNumber",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerInfo_userId_passenger_id_fk": {
+          "name": "passengerInfo_userId_passenger_id_fk",
+          "tableFrom": "passengerInfo",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "passengerInfo_userId_unique": {
+          "name": "passengerInfo_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        },
+        "passengerInfo_phoneNumber_unique": {
+          "name": "passengerInfo_phoneNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phoneNumber"
+          ]
+        }
+      }
+    },
+    "public.passengerInvite": {
+      "name": "passengerInvite",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "briefDesciption": {
+          "name": "briefDesciption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suggestPrice": {
+          "name": "suggestPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestStartAfter": {
+          "name": "suggestStartAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestEndedAt": {
+          "name": "suggestEndedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "inviteStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CHECKING'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "passengerInvite_userIdIndex": {
+          "name": "passengerInvite_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerInvite_orderIdIndex": {
+          "name": "passengerInvite_orderIdIndex",
+          "columns": [
+            {
+              "expression": "orderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerInvite_startAfterIndex": {
+          "name": "passengerInvite_startAfterIndex",
+          "columns": [
+            {
+              "expression": "suggestStartAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerInvite_statusStartAfterIndex": {
+          "name": "passengerInvite_statusStartAfterIndex",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "suggestStartAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerInvite_updatedAtIndex": {
+          "name": "passengerInvite_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerInvite_userId_passenger_id_fk": {
+          "name": "passengerInvite_userId_passenger_id_fk",
+          "tableFrom": "passengerInvite",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "passengerInvite_orderId_supplyOrder_id_fk": {
+          "name": "passengerInvite_orderId_supplyOrder_id_fk",
+          "tableFrom": "passengerInvite",
+          "tableTo": "supplyOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.passengerNotification": {
+      "name": "passengerNotification",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notificationType": {
+          "name": "notificationType",
+          "type": "notificationType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linkId": {
+          "name": "linkId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isRead": {
+          "name": "isRead",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "passengerNotification_userIdIndex": {
+          "name": "passengerNotification_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerNotification_createdAtIndex": {
+          "name": "passengerNotification_createdAtIndex",
+          "columns": [
+            {
+              "expression": "createdAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerNotification_userId_passenger_id_fk": {
+          "name": "passengerNotification_userId_passenger_id_fk",
+          "tableFrom": "passengerNotification",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.passengerPreferences": {
+      "name": "passengerPreferences",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "preferenceUserId": {
+          "name": "preferenceUserId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "passengerPreferences_userIdIndex": {
+          "name": "passengerPreferences_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "passengerPreferences_preferenceUserIdIndex": {
+          "name": "passengerPreferences_preferenceUserIdIndex",
+          "columns": [
+            {
+              "expression": "preferenceUserId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "passengerPreferences_userId_passenger_id_fk": {
+          "name": "passengerPreferences_userId_passenger_id_fk",
+          "tableFrom": "passengerPreferences",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "passengerPreferences_preferenceUserId_ridder_id_fk": {
+          "name": "passengerPreferences_preferenceUserId_ridder_id_fk",
+          "tableFrom": "passengerPreferences",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "preferenceUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "passengerPreferences_userId_preferenceUserId_pk": {
+          "name": "passengerPreferences_userId_preferenceUserId_pk",
+          "columns": [
+            "userId",
+            "preferenceUserId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.periodicPurchaseOrder": {
+      "name": "periodicPurchaseOrder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scheduledDay": {
+          "name": "scheduledDay",
+          "type": "daysOfWeek",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "initPrice": {
+          "name": "initPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isUrgent": {
+          "name": "isUrgent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "autoAccept": {
+          "name": "autoAccept",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "periodicPurchaseOrder_creatorIdIndex": {
+          "name": "periodicPurchaseOrder_creatorIdIndex",
+          "columns": [
+            {
+              "expression": "creatorId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicPurchaseOrder_startAfterIndex": {
+          "name": "periodicPurchaseOrder_startAfterIndex",
+          "columns": [
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicPurchaseOrder_endedAtIndex": {
+          "name": "periodicPurchaseOrder_endedAtIndex",
+          "columns": [
+            {
+              "expression": "endedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicPurchaseOrder_scheduledDayIndex": {
+          "name": "periodicPurchaseOrder_scheduledDayIndex",
+          "columns": [
+            {
+              "expression": "scheduledDay",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicPurchaseOrder_updatedAtIndex": {
+          "name": "periodicPurchaseOrder_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "periodicPurchaseOrder_creatorId_passenger_id_fk": {
+          "name": "periodicPurchaseOrder_creatorId_passenger_id_fk",
+          "tableFrom": "periodicPurchaseOrder",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.periodicSupplyOrder": {
+      "name": "periodicSupplyOrder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "initPrice": {
+          "name": "initPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scheduledDay": {
+          "name": "scheduledDay",
+          "type": "daysOfWeek",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tolerableRDV": {
+          "name": "tolerableRDV",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "autoAccept": {
+          "name": "autoAccept",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "periodicSupplyOrder_creatorIdIndex": {
+          "name": "periodicSupplyOrder_creatorIdIndex",
+          "columns": [
+            {
+              "expression": "creatorId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicSupplyOrder_scheduledDayIndex": {
+          "name": "periodicSupplyOrder_scheduledDayIndex",
+          "columns": [
+            {
+              "expression": "scheduledDay",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicSupplyOrder_startAfterIndex": {
+          "name": "periodicSupplyOrder_startAfterIndex",
+          "columns": [
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicSupplyOrder_endedAtIndex": {
+          "name": "periodicSupplyOrder_endedAtIndex",
+          "columns": [
+            {
+              "expression": "endedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "periodicSupplyOrder_updatedAtIndex": {
+          "name": "periodicSupplyOrder_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "periodicSupplyOrder_creatorId_ridder_id_fk": {
+          "name": "periodicSupplyOrder_creatorId_ridder_id_fk",
+          "tableFrom": "periodicSupplyOrder",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.purchaseOrder": {
+      "name": "purchaseOrder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "initPrice": {
+          "name": "initPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isUrgent": {
+          "name": "isUrgent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "autoAccept": {
+          "name": "autoAccept",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "status": {
+          "name": "status",
+          "type": "postStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'POSTED'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "purchaseOrder_creatorIdIndex": {
+          "name": "purchaseOrder_creatorIdIndex",
+          "columns": [
+            {
+              "expression": "creatorId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "puchaseOrder_startAfterIndex": {
+          "name": "puchaseOrder_startAfterIndex",
+          "columns": [
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "purchaseOrder_endedAtIndex": {
+          "name": "purchaseOrder_endedAtIndex",
+          "columns": [
+            {
+              "expression": "endedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "purchaseOrder_statusStartAfterIndex": {
+          "name": "purchaseOrder_statusStartAfterIndex",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "purchaseOrder_updatedAtIndex": {
+          "name": "purchaseOrder_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "purchaseOrder_creatorId_passenger_id_fk": {
+          "name": "purchaseOrder_creatorId_passenger_id_fk",
+          "tableFrom": "purchaseOrder",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.ridder": {
+      "name": "ridder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userName": {
+          "name": "userName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accessToken": {
+          "name": "accessToken",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "ridder_userNameIndex": {
+          "name": "ridder_userNameIndex",
+          "columns": [
+            {
+              "expression": "userName",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridder_emailIndex": {
+          "name": "ridder_emailIndex",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ridder_userName_unique": {
+          "name": "ridder_userName_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userName"
+          ]
+        },
+        "ridder_email_unique": {
+          "name": "ridder_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "ridder_accessToken_unique": {
+          "name": "ridder_accessToken_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "accessToken"
+          ]
+        }
+      }
+    },
+    "public.ridderAuth": {
+      "name": "ridderAuth",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isEmailAuthenticated": {
+          "name": "isEmailAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "isPhoneAuthenticated": {
+          "name": "isPhoneAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "authCode": {
+          "name": "authCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "authCodeExpiredAt": {
+          "name": "authCodeExpiredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isDefaultAuthenticated": {
+          "name": "isDefaultAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "isGoogleAuthenticated": {
+          "name": "isGoogleAuthenticated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "ridderAuth_userIdIndex": {
+          "name": "ridderAuth_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderAuth_authCodeIndex": {
+          "name": "ridderAuth_authCodeIndex",
+          "columns": [
+            {
+              "expression": "authCode",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderAuth_userId_ridder_id_fk": {
+          "name": "ridderAuth_userId_ridder_id_fk",
+          "tableFrom": "ridderAuth",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ridderAuth_userId_unique": {
+          "name": "ridderAuth_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      }
+    },
+    "public.ridderCollectionsToOrders": {
+      "name": "ridderCollectionsToOrders",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "ridderCollectionsToOrders_userIdIndex": {
+          "name": "ridderCollectionsToOrders_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderCollectionsToOrders_orderIdIndex": {
+          "name": "ridderCollectionsToOrders_orderIdIndex",
+          "columns": [
+            {
+              "expression": "orderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderCollectionsToOrders_userId_ridder_id_fk": {
+          "name": "ridderCollectionsToOrders_userId_ridder_id_fk",
+          "tableFrom": "ridderCollectionsToOrders",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ridderCollectionsToOrders_orderId_purchaseOrder_id_fk": {
+          "name": "ridderCollectionsToOrders_orderId_purchaseOrder_id_fk",
+          "tableFrom": "ridderCollectionsToOrders",
+          "tableTo": "purchaseOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "ridderCollectionsToOrders_userId_orderId_pk": {
+          "name": "ridderCollectionsToOrders_userId_orderId_pk",
+          "columns": [
+            "userId",
+            "orderId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.ridderInfo": {
+      "name": "ridderInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isOnline": {
+          "name": "isOnline",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyUserRole": {
+          "name": "emergencyUserRole",
+          "type": "userRole",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyPhoneNumber": {
+          "name": "emergencyPhoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selfIntroduction": {
+          "name": "selfIntroduction",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatorUrl": {
+          "name": "avatorUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motocycleLicense": {
+          "name": "motocycleLicense",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motocycleType": {
+          "name": "motocycleType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motocyclePhotoUrl": {
+          "name": "motocyclePhotoUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ridderInfo_userIdIndex": {
+          "name": "ridderInfo_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderInfo_phoneNumberIndex": {
+          "name": "ridderInfo_phoneNumberIndex",
+          "columns": [
+            {
+              "expression": "phoneNumber",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderInfo_userId_ridder_id_fk": {
+          "name": "ridderInfo_userId_ridder_id_fk",
+          "tableFrom": "ridderInfo",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ridderInfo_userId_unique": {
+          "name": "ridderInfo_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        },
+        "ridderInfo_phoneNumber_unique": {
+          "name": "ridderInfo_phoneNumber_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phoneNumber"
+          ]
+        },
+        "ridderInfo_motocycleLicense_unique": {
+          "name": "ridderInfo_motocycleLicense_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "motocycleLicense"
+          ]
+        }
+      }
+    },
+    "public.ridderInvite": {
+      "name": "ridderInvite",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "briefDesciption": {
+          "name": "briefDesciption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suggestPrice": {
+          "name": "suggestPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestStartAfter": {
+          "name": "suggestStartAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "suggestEndedAt": {
+          "name": "suggestEndedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "inviteStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CHECKING'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ridderInvite_userIdIndex": {
+          "name": "ridderInvite_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderInvite_orderIdIndex": {
+          "name": "ridderInvite_orderIdIndex",
+          "columns": [
+            {
+              "expression": "orderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderInvite_startAfterIndex": {
+          "name": "ridderInvite_startAfterIndex",
+          "columns": [
+            {
+              "expression": "suggestStartAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderInvite_statusStartAfterIndex": {
+          "name": "ridderInvite_statusStartAfterIndex",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "suggestStartAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderInvite_updatedAtIndex": {
+          "name": "ridderInvite_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderInvite_userId_ridder_id_fk": {
+          "name": "ridderInvite_userId_ridder_id_fk",
+          "tableFrom": "ridderInvite",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ridderInvite_orderId_purchaseOrder_id_fk": {
+          "name": "ridderInvite_orderId_purchaseOrder_id_fk",
+          "tableFrom": "ridderInvite",
+          "tableTo": "purchaseOrder",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.ridderNotification": {
+      "name": "ridderNotification",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notificationType": {
+          "name": "notificationType",
+          "type": "notificationType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linkId": {
+          "name": "linkId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isRead": {
+          "name": "isRead",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ridderNotification_userIdIndex": {
+          "name": "ridderNotification_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderNotification_createdAtIndex": {
+          "name": "ridderNotification_createdAtIndex",
+          "columns": [
+            {
+              "expression": "createdAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderNotification_userId_ridder_id_fk": {
+          "name": "ridderNotification_userId_ridder_id_fk",
+          "tableFrom": "ridderNotification",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.ridderPreferences": {
+      "name": "ridderPreferences",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "preferenceUserId": {
+          "name": "preferenceUserId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "ridderPreferences_userIdIndex": {
+          "name": "ridderPreferences_userIdIndex",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "ridderPreferences_preferenceUserIdIndex": {
+          "name": "ridderPreferences_preferenceUserIdIndex",
+          "columns": [
+            {
+              "expression": "preferenceUserId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ridderPreferences_userId_ridder_id_fk": {
+          "name": "ridderPreferences_userId_ridder_id_fk",
+          "tableFrom": "ridderPreferences",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ridderPreferences_preferenceUserId_passenger_id_fk": {
+          "name": "ridderPreferences_preferenceUserId_passenger_id_fk",
+          "tableFrom": "ridderPreferences",
+          "tableTo": "passenger",
+          "columnsFrom": [
+            "preferenceUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "ridderPreferences_userId_preferenceUserId_pk": {
+          "name": "ridderPreferences_userId_preferenceUserId_pk",
+          "columns": [
+            "userId",
+            "preferenceUserId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.supplyOrder": {
+      "name": "supplyOrder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "initPrice": {
+          "name": "initPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startCord": {
+          "name": "startCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endCord": {
+          "name": "endCord",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAddress": {
+          "name": "startAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endAddress": {
+          "name": "endAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startAfter": {
+          "name": "startAfter",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tolerableRDV": {
+          "name": "tolerableRDV",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "autoAccept": {
+          "name": "autoAccept",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "status": {
+          "name": "status",
+          "type": "postStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'POSTED'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "supplyOrder_creatorIdIndex": {
+          "name": "supplyOrder_creatorIdIndex",
+          "columns": [
+            {
+              "expression": "creatorId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "supplyOrder_startAfterIndex": {
+          "name": "supplyOrder_startAfterIndex",
+          "columns": [
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "supplyOrder_endedAtIndex": {
+          "name": "supplyOrder_endedAtIndex",
+          "columns": [
+            {
+              "expression": "endedAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "supplyOrder_statusStartAfterIndex": {
+          "name": "supplyOrder_statusStartAfterIndex",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "startAfter",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "supplyOrder_updatedAtIndex": {
+          "name": "supplyOrder_updatedAtIndex",
+          "columns": [
+            {
+              "expression": "updatedAt",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "supplyOrder_creatorId_ridder_id_fk": {
+          "name": "supplyOrder_creatorId_ridder_id_fk",
+          "tableFrom": "supplyOrder",
+          "tableTo": "ridder",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

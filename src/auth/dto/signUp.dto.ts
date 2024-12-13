@@ -1,7 +1,5 @@
-import { IsAlphanumeric, IsEmail, IsNotEmpty, IsStrongPassword, MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
+import { IsAlphanumeric, IsEmail, IsNotEmpty, IsString, IsStrongPassword, MaxLength, MinLength, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import { CustomTextLength } from "../../validator";
-
-
 
 export class SignUpDto {
     @IsNotEmpty()
@@ -32,4 +30,17 @@ export class SignUpDto {
     // lowercase and uppercase english letters, number, sign,
     // and its length must be longer than 8
     password: string;
+}
+
+export class GoogleSignUpDto {
+    @IsNotEmpty()
+    @IsEmail(
+        undefined,
+        { message: "E-C-006" }
+    )
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    idToken: string;
 }

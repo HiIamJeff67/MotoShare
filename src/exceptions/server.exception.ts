@@ -108,10 +108,16 @@ export const ServerExtractAdminAccountEnvVariableException = (field: AdminFieldT
     return new InternalServerErrorException({
         case: "E-S-902", 
         message: field === undefined 
-            ? `Failed to extract the environment variable ${field}` 
-            : "Unknown error while verify admin account", 
+        ? `Failed to extract the environment variable ${field}` 
+        : "Unknown error while verify admin account", 
     });
 }
+
+// E-S-903
+export const ServerExtractGoogleAuthUrlEnvVariableException = new InternalServerErrorException({
+    case: "E-S-903", 
+    message: "Failed to extract the google auth url environment variable GOOGLE_AUTH_URL", 
+});
 
 // E-S-999
 export const ServerUnknownException = new InternalServerErrorException({

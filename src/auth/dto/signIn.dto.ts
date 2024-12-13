@@ -33,3 +33,9 @@ export class SignInDto {
     // and its length must be longer than 8
     password: string;
 }
+
+export class GoogleSignInDto {
+    @IsNotEmpty()
+    @IsString()
+    idToken: string;
+}

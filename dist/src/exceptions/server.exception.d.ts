@@ -17,5 +17,6 @@ export declare const ServerSupabaseUploadFileException: (message?: string) => In
 export declare const ServerExtractJwtSecretEnvVariableException: InternalServerErrorException;
 export declare const ServerExtractCronSecretEnvVariableException: InternalServerErrorException;
 export declare const ServerExtractAdminAccountEnvVariableException: (field?: AdminFieldType | undefined) => InternalServerErrorException;
+export declare const ServerExtractGoogleAuthUrlEnvVariableException: InternalServerErrorException;
 export declare const ServerUnknownException: InternalServerErrorException;
 export {};

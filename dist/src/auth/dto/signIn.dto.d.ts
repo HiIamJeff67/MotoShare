@@ -3,3 +3,6 @@ export declare class SignInDto {
     email: string;
     password: string;
 }
+export declare class GoogleSignInDto {
+    idToken: string;
+}
