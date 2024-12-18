@@ -186,11 +186,8 @@ const RidderLogin = () => {
       }
 
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidder`,
-        data,
-        {
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        }
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidderWithAccountAndPassword`,
+        data
       );
 
       if (response && response.data) {

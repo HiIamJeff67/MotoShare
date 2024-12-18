@@ -1,14 +1,5 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  Pressable,
-  Modal,
-  TextInput,
-  ActivityIndicator,
-} from "react-native";
+import React from "react";
+import { Text, View, StyleSheet, ScrollView, Alert, Pressable, Modal, TextInput, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -33,6 +24,7 @@ interface OrderType {
   endAddress: string;
   inviteUdpatedAt: Date;
   inviteBriefDescription: string;
+  inviteStatus: string;
 }
 
 const MyInviteDetail = () => {
@@ -167,9 +159,7 @@ const MyInviteDetail = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
         return;
       }
 
@@ -196,14 +186,10 @@ const MyInviteDetail = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
       }
     }
   };
@@ -226,56 +212,37 @@ const MyInviteDetail = () => {
                 {invite ? (
                   <>
                     <Text style={styles.maintitle}>我的推薦</Text>
-                    <Text style={styles.title}>
-                      起點：{invite.suggestStartAddress}
-                    </Text>
-                    <Text style={styles.title}>
-                      終點：{invite.suggestEndAddress}
-                    </Text>
+                    <Text style={styles.title}>起點：{invite.suggestStartAddress}</Text>
+                    <Text style={styles.title}>終點：{invite.suggestEndAddress}</Text>
                     <Text style={styles.title}>
                       開車時間:{" "}
-                      {new Date(invite.suggestStartAfter).toLocaleString(
-                        "en-GB",
-                        {
-                          timeZone: "Asia/Taipei",
-                        }
-                      )}
+                      {new Date(invite.suggestStartAfter).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
                     </Text>
-                    <Text style={styles.title}>
-                      價格: {invite.suggestPrice}
-                    </Text>
+                    <Text style={styles.title}>價格: {invite.suggestPrice}</Text>
                     <Text style={styles.title}>
                       更新時間:{" "}
-                      {new Date(invite.inviteUdpatedAt).toLocaleString(
-                        "en-GB",
-                        {
-                          timeZone: "Asia/Taipei",
-                        }
-                      )}
+                      {new Date(invite.inviteUdpatedAt).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
                     </Text>
-                    <Text style={styles.title}>
-                      備註: {invite.inviteBriefDescription}
-                    </Text>
-                    <Pressable
-                      style={[styles.inviteButton]}
-                      onPress={() => setModalVisible(true)}
-                      disabled={loading || lockButton}
-                    >
-                      <Text style={styles.inviteButtonText}>取消邀請</Text>
-                    </Pressable>
+                    <Text style={styles.title}>備註: {invite.inviteBriefDescription}</Text>
+                    {invite.inviteStatus == "CHECKING" && (
+                      <Pressable style={[styles.inviteButton]} onPress={() => setModalVisible(true)} disabled={loading || lockButton}>
+                        <Text style={styles.inviteButtonText}>取消邀請</Text>
+                      </Pressable>
+                    )}
                   </>
                 ) : null}
               </View>
             </View>
-            <View style={{ marginTop: 15 }} />
             <View style={styles.card}>
               <View style={styles.body}>
                 {invite ? (
                   <>
                     <Text style={styles.maintitle}>原本訂單</Text>
-                    <Text style={styles.title}>
-                      起點：{invite.startAddress}
-                    </Text>
+                    <Text style={styles.title}>起點：{invite.startAddress}</Text>
                     <Text style={styles.title}>終點：{invite.endAddress}</Text>
                     <Text style={styles.title}>
                       開車時間:{" "}
@@ -290,46 +257,48 @@ const MyInviteDetail = () => {
               </View>
             </View>
             {/* 彈出窗口 */}
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>請輸入取消原因:</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="取消原因"
-                    value={inputValue}
-                    onChangeText={setInputValue}
-                    placeholderTextColor="gray"
-                  />
-                  <View style={{ flexDirection: "row" }}>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => setModalVisible(!modalVisible)}
-                      disabled={loading || lockButton}
-                    >
-                      <Text style={styles.textStyle}>返回</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => {
-                        setModalVisible(!modalVisible);
-                        InviteStatus();
-                      }}
-                      disabled={loading || lockButton}
-                    >
-                      <Text style={styles.textStyle}>{loading ? "確認中..." : "確認"}</Text>
-                    </Pressable>
+            {invite?.inviteStatus == "CHECKING" && (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <Text style={styles.modalText}>請輸入取消原因:</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="取消原因"
+                      value={inputValue}
+                      onChangeText={setInputValue}
+                      placeholderTextColor="gray"
+                    />
+                    <View style={{ flexDirection: "row" }}>
+                      <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                        disabled={loading || lockButton}
+                      >
+                        <Text style={styles.textStyle}>返回</Text>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => {
+                          setModalVisible(!modalVisible);
+                          InviteStatus();
+                        }}
+                        disabled={loading || lockButton}
+                      >
+                        <Text style={styles.textStyle}>{loading ? "確認中..." : "確認"}</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </Modal>
+              </Modal>
+            )}
           </View>
         </ScrollView>
       )}
@@ -346,10 +315,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: scale(20), // 設置水平間距
-    paddingTop: verticalScale(15), // 設置垂直間距
     paddingBottom: verticalScale(30), // 設置垂直間距
   },
   card: {
+    marginTop: verticalScale(15),
     backgroundColor: "white",
     borderRadius: moderateScale(10),
     shadowColor: "#000",

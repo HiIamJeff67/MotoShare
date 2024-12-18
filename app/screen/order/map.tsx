@@ -1,21 +1,5 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
-import {
-  View,
-  StyleSheet,
-  Alert,
-  Text,
-  Platform,
-  Keyboard,
-  Pressable,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from "react-native";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { View, StyleSheet, Alert, Text, Platform, Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback, Image } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
@@ -23,21 +7,36 @@ import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapViewDirections from "react-native-maps-directions";
-import BottomSheet, {
-  BottomSheetView,
-  BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import debounce from "lodash/debounce";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
 import "react-native-get-random-values";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 import { z } from "zod";
+import { Dropdown } from "react-native-element-dropdown";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView } from "react-native-gesture-handler";
+
+interface DataType {
+  id: string;
+  creatorName: string;
+  avatorUrl: string;
+  updatedAt: Date;
+  startAddress: string;
+  endAddress: string;
+  autoAccept: boolean;
+  startAfter: Date;
+  initPrice: number;
+}
 
 const MapWithBottomSheet = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [searchData, setSearchData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -55,14 +54,17 @@ const MapWithBottomSheet = () => {
     longitude: number;
   } | null>(null);
   const [showDetailsPage, setShowDetailsPage] = useState<boolean>(false);
-  const GOOGLE_MAPS_APIKEY: string = process.env
-    .EXPO_PUBLIC_GOOGLE_API_KEY as string;
+  const [lockButton, setLockButton] = useState(false);
+  const [showSearchPage, setShowSearchPage] = useState(false);
+  const [value, setValue] = useState<string | null>("1");
+  const [isFocus, setIsFocus] = useState(false);
+  const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
   const mapRef = useRef<MapView>(null);
   const user = useSelector((state: RootState) => state.user);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "85%"], []);
   const navigation = useNavigation();
-  const [lockButton, setLockButton] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const getToken = async () => {
     try {
@@ -109,39 +111,31 @@ const MapWithBottomSheet = () => {
       .refine((val) => {
         const price = parseInt(val, 10);
         return price >= 5 && price <= 3000;
-      }, "Price must be between 5 and 3000")
+      }, "Price must be between 5 and 3000");
 
     const descriptionSchema = z
       .string()
       .regex(/^[一-龥a-zA-Z0-9\s.,!?]*$/, "Order description contains illegal characters")
       .max(100, "Order description must be less than 100 characters");
 
-    const startAfterSchema = z
-      .date()
-      .refine((date) => date > new Date(), "Start date must be in the future");
+    const startAfterSchema = z.date().refine((date) => date > new Date(), "Start date must be in the future");
 
     const priceValidation = priceSchema.safeParse(initialPrice);
     const descriptionValidation = descriptionSchema.safeParse(orderDescription);
     const startAfterValidation = startAfterSchema.safeParse(selectedDate);
 
     if (!priceValidation.success) {
-      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
     if (!descriptionValidation.success) {
-      Alert.alert("Validation Error", descriptionValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("Validation Error", descriptionValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
     if (!startAfterValidation.success) {
-      Alert.alert("Validation Error", startAfterValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("Validation Error", startAfterValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
@@ -173,7 +167,7 @@ const MapWithBottomSheet = () => {
         unsubscribe();
       }
 
-      if (lockButton) {
+      if (lockButton && showSearchPage && 1 + 1 > 5) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -191,6 +185,52 @@ const MapWithBottomSheet = () => {
     };
   }, [loading, navigation]);
 
+  const searchOrderData = async () => {
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
+        return;
+      }
+
+      const data = {
+        startCordLongitude: origin?.longitude,
+        startCordLatitude: origin?.latitude,
+        endCordLongitude: destination?.longitude,
+        endCordLatitude: destination?.latitude,
+      };
+
+      let url = "";
+
+      if (user.role == 1) {
+        url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/searchSimilarRoutePurchaseOrders`;
+      } else if (user.role == 2) {
+        url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchSimilarRoutePurchaseOrders`;
+      }
+
+      const response = await axios.post(url, data, {
+        params: {
+          limit: 5,
+          offset: 0,
+        },
+      });
+
+      setSearchData(response.data);
+      setLockButton(true);
+      console.log(response.data);
+      setShowSearchPage(true);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
+      } else {
+        console.log("An unexpected error occurred:", error);
+        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
+      }
+    }
+  };
+
   const updateOrderData = async () => {
     setLoading(true);
 
@@ -202,9 +242,7 @@ const MapWithBottomSheet = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
         return;
       }
 
@@ -247,14 +285,10 @@ const MapWithBottomSheet = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
       }
     }
   };
@@ -323,9 +357,14 @@ const MapWithBottomSheet = () => {
     if (origin && destination) setShowDetailsPage(true);
   }, [origin, destination]);
 
+  const dropDownData = [
+    { label: "相似路徑", value: "1" },
+    { label: "相似時間", value: "2" },
+  ];
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
         <MapView ref={mapRef} style={styles.map} region={region || undefined}>
           {origin && (
             <Marker
@@ -356,9 +395,7 @@ const MapWithBottomSheet = () => {
               strokeColor="hotpink"
               strokeWidth={4}
               onStart={(params) => {
-                console.log(
-                  `Started routing between ${params.origin} and ${params.destination}`
-                );
+                console.log(`Started routing between ${params.origin} and ${params.destination}`);
               }}
               onReady={(result) => {
                 console.log(`Distance: ${result.distance} km`);
@@ -375,171 +412,276 @@ const MapWithBottomSheet = () => {
           snapPoints={snapPoints}
           keyboardBehavior="extend" // 設置鍵盤行為
           enablePanDownToClose={false}
+          enableHandlePanningGesture={true}
+          enableContentPanningGesture={true}
           index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
         >
-          <BottomSheetView
-            style={{
-              flex: 1,
-              paddingHorizontal: scale(20), // 設置水平間距
-              paddingVertical: verticalScale(20), // 設置垂直間距
-            }}
-          >
-            {showDetailsPage ? (
-              <View>
-                <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
-                {origin && destination && (
-                  <>
-                    <Text style={styles.bottomSheetText}>
-                      起始位置: {originAddress}
-                    </Text>
-                    <Text style={styles.bottomSheetText}>
-                      目的地址: {destinationAddress}
-                    </Text>
-                    <View style={styles.dateContainer}>
-                      <Text style={styles.bottomSheetText}>開始時間：</Text>
-                      <Text style={styles.bottomSheetText}>
-                        {selectedDate
-                          ? selectedDate.toLocaleString("en-GB", {
-                              timeZone: "Asia/Taipei",
-                            })
-                          : "未選擇日期"}
-                      </Text>
-                      <TouchableOpacity
-                        style={styles.bottomSheetDate}
-                        onPress={() => showDatePicker()}
-                      >
-                        <Entypo
-                          name="calendar"
-                          size={moderateScale(24)}
-                          color="black"
-                        />
-                      </TouchableOpacity>
+          {showDetailsPage ? (
+            <>
+              {!showSearchPage ? (
+                <BottomSheetView
+                  style={{
+                    flex: 1,
+                    paddingHorizontal: scale(20), // 設置水平間距
+                    paddingVertical: verticalScale(20), // 設置垂直間距
+                  }}
+                >
+                  <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
+                  {origin && destination && (
+                    <>
+                      <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
+                      <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                      <View style={styles.dateContainer}>
+                        <Text style={styles.bottomSheetText}>開始時間：</Text>
+                        <Text style={styles.bottomSheetText}>
+                          {selectedDate
+                            ? selectedDate.toLocaleString("en-GB", {
+                                timeZone: "Asia/Taipei",
+                              })
+                            : "未選擇日期"}
+                        </Text>
+                        <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
+                          <Entypo name="calendar" size={moderateScale(24)} color="black" />
+                        </TouchableOpacity>
+                      </View>
+                      <BottomSheetTextInput
+                        style={styles.input}
+                        placeholder="初始價格"
+                        value={initialPrice}
+                        onChangeText={setinitialPrice}
+                        placeholderTextColor="gray"
+                      />
+                      <BottomSheetTextInput
+                        style={styles.input}
+                        placeholder="訂單描述"
+                        value={orderDescription}
+                        onChangeText={setorderDescription}
+                        placeholderTextColor="gray"
+                      />
+                    </>
+                  )}
+                  <DateTimePickerModal
+                    date={selectedDate}
+                    mode="datetime"
+                    locale="zh-tw"
+                    is24Hour={true}
+                    minimumDate={new Date()}
+                    isVisible={isDatePickerVisible}
+                    onConfirm={handleConfirm}
+                    onCancel={hideDatePicker}
+                    timeZoneName={"Asia/Taipei"}
+                  />
+                  <View style={styles.buttonContainer}>
+                    <Pressable
+                      style={[styles.button, { backgroundColor: "#3498db" }]}
+                      onPress={() => {
+                        setOrigin(null);
+                        setDestination(null);
+                        setShowDetailsPage(false);
+                      }}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.buttonText}>返回</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.button, { backgroundColor: "#228B22" }]}
+                      onPress={() => {
+                        searchOrderData();
+                      }}
+                      disabled={loading || lockButton}
+                    >
+                      <Text style={styles.buttonText}>{loading ? "搜尋中..." : "搜尋訂單"}</Text>
+                    </Pressable>
+                  </View>
+                </BottomSheetView>
+              ) : (
+                <>
+                  <ScrollView
+                    style={{
+                      flex: 1,
+                      paddingHorizontal: scale(20), // 設置水平間距
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    <View style={styles.dropdowncontainer}>
+                      <Dropdown
+                        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                        selectedTextStyle={styles.dropdownselectedTextStyle}
+                        placeholderStyle={styles.dropdownplaceholderStyle}
+                        containerStyle={styles.dropdowncontainerStyle}
+                        iconStyle={styles.dropdowniconStyle}
+                        dropdownPosition="bottom"
+                        data={dropDownData}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? "請選擇" : "..."}
+                        value={value}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={(item) => {
+                          setValue(item.value);
+                          setIsFocus(false);
+                        }}
+                        renderLeftIcon={() => <AntDesign style={styles.dropdownicon} color={isFocus ? "blue" : "black"} name="Safety" size={20} />}
+                      />
                     </View>
-                    <BottomSheetTextInput
-                      style={styles.input}
-                      placeholder="初始價格"
-                      value={initialPrice}
-                      onChangeText={setinitialPrice}
-                      placeholderTextColor="gray"
-                    />
-                    <BottomSheetTextInput
-                      style={styles.input}
-                      placeholder="訂單描述"
-                      value={orderDescription}
-                      onChangeText={setorderDescription}
-                      placeholderTextColor="gray"
-                    />
-                  </>
-                )}
-                <DateTimePickerModal
-                  date={selectedDate}
-                  mode="datetime"
-                  locale="zh-tw"
-                  is24Hour={true}
-                  minimumDate={new Date()}
-                  isVisible={isDatePickerVisible}
-                  onConfirm={handleConfirm}
-                  onCancel={hideDatePicker}
-                  timeZoneName={"Asia/Taipei"}
+                    {searchData.map((item, index) => {
+                      const isActive = index === activeIndex;
+
+                      return (
+                        <TouchableWithoutFeedback key={index} onPress={() => setActiveIndex(index)}>
+                          {isActive ? (
+                            <View style={styles.activeCard}>
+                              <View style={styles.cardImageContainer}>
+                                {item.avatorUrl ? (
+                                  <Image source={{ uri: item.avatorUrl }} style={styles.activeCardImage} />
+                                ) : (
+                                  <FontAwesome name="user" size={50} color="black" />
+                                )}
+                              </View>
+
+                              <View style={styles.cardContent}>
+                                <View style={styles.cardLeftSection}>
+                                  <View style={styles.cardTextContainer}>
+                                    <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
+                                    <Text style={styles.cardSubtitle}>出發地：{item.startAddress}</Text>
+                                    <Text style={styles.cardSubtitle}>目的地：{item.endAddress}</Text>
+                                    <Text style={styles.cardSubtitle}>
+                                      開車時間：
+                                      {new Date(item.startAfter).toLocaleString("en-GB", {
+                                        timeZone: "Asia/Taipei",
+                                      })}
+                                    </Text>
+                                  </View>
+                                </View>
+                                <View style={styles.cardRightSection}>
+                                  <Text style={styles.cardPrice}>${item.initPrice}</Text>
+                                </View>
+                              </View>
+
+                              {item.autoAccept ? (
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                                  <TouchableOpacity style={styles.inviteButton}>
+                                    <Text style={styles.inviteButtonText}>提出要求</Text>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity style={styles.inviteButton}>
+                                    <Text style={styles.inviteButtonText}>直接邀請</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              ) : (
+                                <TouchableOpacity style={styles.inviteButton}>
+                                  <Text style={styles.inviteButtonText}>提出要求</Text>
+                                </TouchableOpacity>
+                              )}
+                            </View>
+                          ) : (
+                            <View style={styles.card}>
+                              <View style={styles.cardContent}>
+                                <View style={styles.cardLeftSection}>
+                                  {item.avatorUrl ? (
+                                    <Image source={{ uri: item.avatorUrl }} style={styles.cardImage} />
+                                  ) : (
+                                    <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
+                                  )}
+                                  <View style={styles.cardTextContainer}>
+                                    <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
+                                    <Text style={styles.cardSubtitle}>
+                                      開車時間：
+                                      {new Date(item.startAfter).toLocaleString("en-GB", {
+                                        timeZone: "Asia/Taipei",
+                                      })}
+                                    </Text>
+                                  </View>
+                                </View>
+                                <View style={styles.cardRightSection}>
+                                  <Text style={styles.cardPrice}>${item.initPrice}</Text>
+                                </View>
+                              </View>
+                            </View>
+                          )}
+                        </TouchableWithoutFeedback>
+                      );
+                    })}
+                  </ScrollView>
+                  <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
+                    <TouchableOpacity style={styles.footerButton}>
+                      <Text style={styles.footerButtonText}>自行建立</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+            </>
+          ) : (
+            <BottomSheetView
+              style={{
+                flex: 1,
+                paddingHorizontal: scale(20), // 設置水平間距
+                paddingVertical: verticalScale(20), // 設置垂直間距
+              }}
+            >
+              <View
+                style={{
+                  flex: 0.3,
+                }}
+              >
+                <GooglePlacesAutocomplete
+                  placeholder="搜尋起始位置"
+                  textInputProps={{
+                    placeholderTextColor: "#626262",
+                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                  }}
+                  fetchDetails={true}
+                  onPress={(data, details = null) => handleLocationPress(data, details, "origin")}
+                  query={{
+                    key: GOOGLE_MAPS_APIKEY,
+                    language: "zh-TW",
+                    components: "country:tw",
+                  }}
+                  onFail={(error) => {
+                    console.log("GooglePlacesAutocomplete Error:", error);
+                    Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
+                  }}
+                  styles={{
+                    textInputContainer: styles.textInputContainer,
+                    textInput: styles.textInput,
+                    predefinedPlacesDescription: styles.predefinedPlacesDescription,
+                    listView: styles.listView,
+                  }}
                 />
-                <View style={styles.buttonContainer}>
-                  <Pressable
-                    style={[styles.button, { backgroundColor: "#3498db" }]}
-                    onPress={() => {
-                      setOrigin(null);
-                      setDestination(null);
-                      setShowDetailsPage(false);
-                    }}
-                    disabled={loading || lockButton}
-                  >
-                    <Text style={styles.buttonText}>返回</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.button, { backgroundColor: "#228B22" }]}
-                    onPress={() => updateOrderData()}
-                    disabled={loading || lockButton}
-                  >
-                    <Text style={styles.buttonText}>{loading ? "送出中..." : "送出訂單"}</Text>
-                  </Pressable>
-                </View>
               </View>
-            ) : (
-              <>
-                <View
-                  style={{
-                    flex: 0.3,
+              <View
+                style={{
+                  flex: 0.3,
+                }}
+              >
+                <GooglePlacesAutocomplete
+                  placeholder="搜尋目的地"
+                  textInputProps={{
+                    placeholderTextColor: "#626262",
+                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
                   }}
-                >
-                  <GooglePlacesAutocomplete
-                    placeholder="搜尋起始位置"
-                    textInputProps={{
-                      placeholderTextColor: "#626262",
-                      onFocus: () =>
-                        Platform.OS === "ios"
-                          ? handleSnapPress(3)
-                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
-                    }}
-                    fetchDetails={true}
-                    onPress={(data, details = null) =>
-                      handleLocationPress(data, details, "origin")
-                    }
-                    query={{
-                      key: GOOGLE_MAPS_APIKEY,
-                      language: "zh-TW",
-                      components: "country:tw",
-                    }}
-                    onFail={(error) => {
-                      console.log("GooglePlacesAutocomplete Error:", error);
-                      Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
-                    }}
-                    styles={{
-                      textInputContainer: styles.textInputContainer,
-                      textInput: styles.textInput,
-                      predefinedPlacesDescription:
-                        styles.predefinedPlacesDescription,
-                      listView: styles.listView,
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    flex: 0.3,
+                  fetchDetails={true}
+                  onPress={(data, details = null) => handleLocationPress(data, details, "destination")}
+                  query={{
+                    key: GOOGLE_MAPS_APIKEY,
+                    language: "zh-TW",
+                    components: "country:tw",
                   }}
-                >
-                  <GooglePlacesAutocomplete
-                    placeholder="搜尋目的地"
-                    textInputProps={{
-                      placeholderTextColor: "#626262",
-                      onFocus: () =>
-                        Platform.OS === "ios"
-                          ? handleSnapPress(3)
-                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
-                    }}
-                    fetchDetails={true}
-                    onPress={(data, details = null) =>
-                      handleLocationPress(data, details, "destination")
-                    }
-                    query={{
-                      key: GOOGLE_MAPS_APIKEY,
-                      language: "zh-TW",
-                      components: "country:tw",
-                    }}
-                    onFail={(error) => {
-                      console.log("GooglePlacesAutocomplete Error:", error);
-                      Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
-                    }}
-                    styles={{
-                      textInputContainer: styles.textInputContainer,
-                      textInput: styles.textInput,
-                      predefinedPlacesDescription:
-                        styles.predefinedPlacesDescription,
-                      listView: styles.listView,
-                    }}
-                  />
-                </View>
-              </>
-            )}
-          </BottomSheetView>
+                  onFail={(error) => {
+                    console.log("GooglePlacesAutocomplete Error:", error);
+                    Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
+                  }}
+                  styles={{
+                    textInputContainer: styles.textInputContainer,
+                    textInput: styles.textInput,
+                    predefinedPlacesDescription: styles.predefinedPlacesDescription,
+                    listView: styles.listView,
+                  }}
+                />
+              </View>
+            </BottomSheetView>
+          )}
         </BottomSheet>
       </GestureHandlerRootView>
     </TouchableWithoutFeedback>
@@ -616,6 +758,144 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#ffffff",
+    fontSize: moderateScale(16),
+    fontWeight: "bold",
+  },
+  dropdowncontainer: {
+    width: "50%",
+    marginBlock: verticalScale(10),
+  },
+  dropdown: {
+    height: verticalScale(40),
+    borderColor: "gray",
+    borderWidth: scale(0.5),
+    borderRadius: moderateScale(8),
+    paddingHorizontal: scale(8),
+  },
+  dropdownicon: {
+    marginRight: scale(5),
+  },
+  dropdownplaceholderStyle: {
+    fontSize: moderateScale(16),
+  },
+  dropdownselectedTextStyle: {
+    fontSize: moderateScale(16),
+  },
+  dropdowniconStyle: {
+    width: scale(20),
+    height: verticalScale(20),
+  },
+  dropdowncontainerStyle: {
+    top: -verticalScale(70),
+  },
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: verticalScale(80),
+    marginVertical: verticalScale(1),
+    padding: moderateScale(15),
+    borderRadius: moderateScale(10),
+  },
+  activeCard: {
+    alignItems: "center",
+    height: "auto",
+    marginVertical: verticalScale(1),
+    padding: moderateScale(15),
+    borderWidth: scale(2),
+    borderRadius: moderateScale(10),
+  },
+  cardText: {
+    fontSize: scale(16),
+    color: "#fff",
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cardLeftSection: {
+    flex: 7,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cardImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    resizeMode: "cover",
+    marginRight: scale(10),
+  },
+  activeCardImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  cardImageContainer: {
+    flexDirection: "column",
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  cardTextContainer: {
+    flexDirection: "column",
+  },
+  cardTitle: {
+    fontSize: moderateScale(16),
+    fontWeight: "bold",
+    color: "#000",
+  },
+  cardSubtitle: {
+    fontSize: moderateScale(14),
+    color: "#6D6D6D",
+    marginTop: verticalScale(5),
+  },
+  cardRightSection: {
+    flex: 1,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  cardPrice: {
+    fontSize: moderateScale(16),
+    fontWeight: "bold",
+    color: "#000",
+  },
+  fixedFooter: {
+    paddingHorizontal: scale(20),
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#ccc",
+  },
+  footerButton: {
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(10),
+    height: verticalScale(50),
+    width: "100%",
+    backgroundColor: "#000",
+    borderRadius: scale(5),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerButtonText: {
+    color: "#fff",
+    fontSize: moderateScale(16),
+    fontWeight: "bold",
+  },
+  inviteButton: {
+    marginTop: verticalScale(10),
+    height: verticalScale(40),
+    width: "45%",
+    backgroundColor: "#000",
+    borderRadius: scale(5),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inviteButtonText: {
+    color: "#fff",
     fontSize: moderateScale(16),
     fontWeight: "bold",
   },

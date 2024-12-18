@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   InteractionManager,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -50,82 +51,45 @@ const Home = () => {
             paddingTop: verticalScale(insets.top),
             paddingBottom: verticalScale(insets.bottom),
             paddingHorizontal: scale(20), // 設置水平間距
-            paddingVertical: verticalScale(20), // 設置垂直間距
           }}
         >
           <Text style={styles.welcomeText}>
             歡迎{roleText}, {user.username}
           </Text>
 
-          <View style={styles.inputWrapper}>
-            <Image
-              source={require("../../assets/images/search.png")}
-              style={styles.icon}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Where to go"
-              placeholderTextColor="#000000"
-            />
-          </View>
+          <TouchableWithoutFeedback onPress={() => navigation.navigate("map")}>
+            <View style={styles.inputWrapper}>
+              <Image source={require("../../assets/images/search.png")} style={styles.icon} />
+              <TextInput style={styles.textInput} placeholder="要去哪裡？" placeholderTextColor="#000000" editable={false}/>
+            </View>
+          </TouchableWithoutFeedback>
 
           <Text style={styles.MainText}>建議</Text>
-          <View
-            style={{ marginTop: verticalScale(20) }}
-            className="flex flex-row justify-between items-center"
-          >
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate("map")}
-            >
+          <View style={{ marginTop: verticalScale(20) }} className="flex flex-row justify-between items-center">
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("map")}>
               <View className="items-center">
-                <FontAwesome6
-                  name="motorcycle"
-                  size={moderateScale(24)}
-                  color="black"
-                />
+                <FontAwesome6 name="motorcycle" size={moderateScale(24)} color="black" />
                 <Text style={{ marginTop: verticalScale(5) }}>建立訂單</Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate("order")}
-            >
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("order")}>
               <View className="items-center">
-                <FontAwesome6
-                  name="list"
-                  size={moderateScale(24)}
-                  color="black"
-                />
+                <FontAwesome6 name="list" size={moderateScale(24)} color="black" />
                 <Text style={{ marginTop: verticalScale(5) }}>查看訂單</Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate("myinvite")}
-            >
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myinvite")}>
               <View className="items-center">
-                <Ionicons
-                  name="people"
-                  size={moderateScale(24)}
-                  color="black"
-                />
+                <Ionicons name="people" size={moderateScale(24)} color="black" />
                 <Text style={{ marginTop: verticalScale(5) }}>查看邀請</Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate("myorder")}
-            >
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myorder")}>
               <View className="items-center">
-                <FontAwesome6
-                  name="edit"
-                  size={moderateScale(24)}
-                  color="black"
-                />
+                <FontAwesome6 name="edit" size={moderateScale(24)} color="black" />
                 <Text style={{ marginTop: verticalScale(5) }}>訂單管理</Text>
               </View>
             </TouchableOpacity>

@@ -29,21 +29,9 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import "../global.css";
-import {
-  View,
-  Pressable,
-  StatusBar,
-  Platform,
-  useColorScheme,
-  Alert,
-  AppState,
-} from "react-native";
+import { View, Pressable, StatusBar, Platform, useColorScheme, Alert, AppState } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  NavigationContainer,
-  CommonActions,
-  useNavigation,
-} from "@react-navigation/native";
+import { NavigationContainer, CommonActions, useNavigation } from "@react-navigation/native";
 import { moderateScale, scale } from "react-native-size-matters";
 import { MyTheme, MyDarkTheme } from "./screen/theme";
 import React, { useEffect, useState } from "react";
@@ -64,11 +52,7 @@ const CustomBackHeader = ({ navigation }: { navigation: any }) => (
     }}
   >
     <Pressable onPress={() => navigation.goBack()}>
-      <Ionicons
-        name="arrow-back-circle"
-        size={moderateScale(40)}
-        color="black"
-      />
+      <Ionicons name="arrow-back-circle" size={moderateScale(40)} color="black" />
     </Pressable>
   </View>
 );
@@ -172,7 +156,7 @@ const TabNavigator = () => {
           console.log(`Token expires in ${expiresIn} seconds`);
           timer = setTimeout(() => {
             fetchToken();
-          }, expiresIn * 1000);
+          }, expiresIn * 1000 + 1000);
         }
       }
     };
@@ -188,10 +172,7 @@ const TabNavigator = () => {
       }
     };
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
 
     // 清理定時器和事件監聽器，避免內存洩漏
     return () => {
@@ -199,7 +180,6 @@ const TabNavigator = () => {
         clearTimeout(timer);
       }
       subscription.remove();
-      console.log("End Timer");
     };
   }, [user.role]);
 
@@ -211,13 +191,7 @@ const TabNavigator = () => {
         options={{
           title: "主頁",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <FontAwesome
-              name="home"
-              size={moderateScale(24)}
-              color={focused ? "#3498db" : "black"}
-            />
-          ),
+          tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? "#3498db" : "black"} />,
         }}
       />
       <Tab.Screen
@@ -226,13 +200,7 @@ const TabNavigator = () => {
         options={{
           title: "服務",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <FontAwesome
-              name="shopping-cart"
-              size={moderateScale(24)}
-              color={focused ? "#3498db" : "black"}
-            />
-          ),
+          tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? "#3498db" : "black"} />,
         }}
       />
       <Tab.Screen
@@ -241,13 +209,7 @@ const TabNavigator = () => {
         options={{
           title: "我的",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons
-              name="account"
-              size={moderateScale(24)}
-              color={focused ? "#3498db" : "black"}
-            />
-          ),
+          tabBarIcon: ({ focused }) => <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? "#3498db" : "black"} />,
         }}
       />
     </Tab.Navigator>
@@ -259,57 +221,19 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer
-        theme={systemTheme === "dark" ? MyDarkTheme : MyTheme}
-      >
+      <NavigationContainer theme={systemTheme === "dark" ? MyDarkTheme : MyTheme}>
         <SafeAreaProvider>
           {/* 根據平台條件設置 StatusBar */}
-          {Platform.OS === "ios" ? (
-            <StatusBar barStyle="dark-content" />
-          ) : (
-            <StatusBar barStyle="dark-content" hidden={true} />
-          )}
+          {Platform.OS === "ios" ? <StatusBar barStyle="dark-content" /> : <StatusBar barStyle="dark-content" hidden={true} />}
           <Stack.Navigator>
-            <Stack.Screen
-              name="welcome"
-              component={WelcomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="home"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="choose"
-              component={ChooseScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="choose2"
-              component={Choose2Screen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="plogin"
-              component={PLoginScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="rlogin"
-              component={RLoginScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="preg"
-              component={PRegScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="rreg"
-              component={RRegScreen}
-              options={{ headerShown: false }}
-            />
+            <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="home" component={TabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="choose" component={ChooseScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
+            <Stack.Screen name="plogin" component={PLoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="rlogin" component={RLoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="preg" component={PRegScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="rreg" component={RRegScreen} options={{ headerShown: false }} />
             <Stack.Screen
               name="invitemap"
               component={InviteMap}

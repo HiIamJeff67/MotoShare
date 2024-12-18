@@ -1,12 +1,5 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
+import React from "react";
+import { Text, View, StyleSheet, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -196,9 +189,7 @@ const MyOrderDetail = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
         return;
       }
 
@@ -227,17 +218,13 @@ const MyOrderDetail = () => {
         console.log(error.response?.data);
 
         if (status != 2) {
-          Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
-            { onPress: () => setLoading(false) },
-          ]);
+          Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
         }
       } else {
         console.log("An unexpected error occurred:", error);
 
         if (status != 2) {
-          Alert.alert("錯誤", "發生未知錯誤", [
-            { onPress: () => setLoading(false) },
-          ]);
+          Alert.alert("錯誤", "發生未知錯誤", [{ onPress: () => setLoading(false) }]);
         }
       }
     }
@@ -248,20 +235,12 @@ const MyOrderDetail = () => {
       console.log(order.ridderStatus);
       console.log(order.passengerStatus);
 
-      if (
-        user.role == 1 &&
-        order.passengerStatus == "UNSTARTED" &&
-        new Date(order.startAfter) <= new Date()
-      ) {
+      if (user.role == 1 && order.passengerStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單1");
         OrderStatus(2);
       }
 
-      if (
-        user.role == 2 &&
-        order.ridderStatus == "UNSTARTED" &&
-        new Date(order.startAfter) <= new Date()
-      ) {
+      if (user.role == 2 && order.ridderStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單2");
         OrderStatus(2);
       }
@@ -279,68 +258,39 @@ const MyOrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>
-                  我的訂單編號: {order?.id}
-                </Text>
+                <Text style={styles.orderNumber}>我的訂單編號: {order?.id}</Text>
               </View>
 
               <View style={styles.body}>
                 {order ? (
                   <>
                     <Text style={styles.title}>
-                      {roleText}：
-                      {user.role == 1 ? order.ridderName : order.passengerName}
+                      {roleText}：{user.role == 1 ? order.ridderName : order.passengerName}
                     </Text>
-                    <Text style={styles.title}>
-                      起點：{order.finalStartAddress}
-                    </Text>
-                    <Text style={styles.title}>
-                      終點：{order.finalEndAddress}
-                    </Text>
+                    <Text style={styles.title}>起點：{order.finalStartAddress}</Text>
+                    <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
                     <Text style={styles.title}>
                       開車時間:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>
-                      最終價格: {order.finalPrice}
-                    </Text>
-                    <Text style={styles.title}>
-                      我的備註:{" "}
-                      {user.role == 1
-                        ? order.passengerDescription
-                        : order.ridderDescription}
-                    </Text>
-                    <Text style={styles.title}>
-                      對方備註:{" "}
-                      {user.role == 1
-                        ? order.ridderDescription
-                        : order.passengerDescription}
-                    </Text>
+                    <Text style={styles.title}>最終價格: {order.finalPrice}</Text>
+                    <Text style={styles.title}>我的備註: {user.role == 1 ? order.passengerDescription : order.ridderDescription}</Text>
+                    <Text style={styles.title}>對方備註: {user.role == 1 ? order.ridderDescription : order.passengerDescription}</Text>
                     <Text style={styles.title}>
                       更新時間:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role == 1 && order.passengerStatus == "STARTED") ||
-                    (user.role == 2 && order.ridderStatus == "STARTED") ? (
-                      <Pressable
-                        style={[styles.actionButton]}
-                        onPress={() => OrderStatus(3)}
-                        disabled={loading || lockButton}
-                      >
+                    {(user.role == 1 && order.passengerStatus == "STARTED") || (user.role == 2 && order.ridderStatus == "STARTED") ? (
+                      <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
                         <Text style={styles.actionButtonText}>付款</Text>
                       </Pressable>
                     ) : null}
-                    {(user.role == 1 && order.passengerStatus == "UNPAID") ||
-                    (user.role == 2 && order.ridderStatus == "UNPAID") ? (
-                      <Pressable
-                        style={[styles.actionButton]}
-                        onPress={() => OrderStatus(1)}
-                        disabled={loading || lockButton}
-                      >
+                    {(user.role == 1 && order.passengerStatus == "UNPAID") || (user.role == 2 && order.ridderStatus == "UNPAID") ? (
+                      <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(1)} disabled={loading || lockButton}>
                         <Text style={styles.actionButtonText}>完成</Text>
                       </Pressable>
                     ) : null}

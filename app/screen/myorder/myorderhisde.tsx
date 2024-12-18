@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Text,
   View,
@@ -283,7 +284,7 @@ const MyOrderHistoryDetail = () => {
             </View>
             {order ? (
               <>
-                <View style={{ marginTop: 15 }} />
+                <View style={{ marginTop: verticalScale(15) }} />
                 {(user.role == 1 && order.starRatingByRidder > 0) ||
                 (user.role == 2 && order.starRatingByPassenger > 0) ? (
                   <View style={styles.card}>

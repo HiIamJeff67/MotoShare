@@ -224,8 +224,6 @@ const InviteMap = () => {
 
       let endDate = new Date(selectedDate);
       endDate.setDate(endDate.getDate() + 1);
-      console.log("selectedDate", new Date(selectedDate));
-      console.log("endDate", endDate);
 
       const data = {
         briefDescription: orderDescription,

@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { Text, View, Pressable, ActivityIndicator, RefreshControl, Alert } from "react-native";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
@@ -87,9 +80,7 @@ const MyInvite = () => {
         },
       });
 
-      setInvites((prevOrders) =>
-        newOffset === 0 ? response.data : [...prevOrders, ...response.data]
-      );
+      setInvites((prevOrders) => (newOffset === 0 ? response.data : [...prevOrders, ...response.data]));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -134,69 +125,53 @@ const MyInvite = () => {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-          <FlashList
-            data={invites}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) =>
-              item.status == "CHECKING" ? (
-                <View key={item.id} style={styles.container}>
-                  <Pressable
-                    onPress={() =>
-                      navigation.navigate("myinvitede", { orderid: item.id })
-                    }
-                  >
-                    <View style={styles.card}>
-                      <View style={styles.header}>
-                        <Text style={styles.orderNumber}>
-                          邀請編號: {item.id}
-                        </Text>
-                      </View>
+        <FlashList
+          data={invites}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View key={item.id} style={styles.container}>
+              <Pressable onPress={() => navigation.navigate("myinvitede", { orderid: item.id })}>
+                <View style={styles.card}>
+                  <View style={styles.header}>
+                    <Text style={styles.orderNumber}>邀請編號: {item.id}</Text>
+                  </View>
 
-                      <View style={styles.body}>
-                        <Text style={styles.title}>
-                          你邀請了：{item.receiverName}
-                        </Text>
-                        <Text style={styles.title}>
-                          推薦起點：{item.suggestStartAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          推薦終點：{item.suggestEndAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          更新時間:{" "}
-                          {new Date(item.updatedAt).toLocaleString("en-GB", {
-                            timeZone: "Asia/Taipei",
-                          })}
-                        </Text>
-                      </View>
-                    </View>
-                  </Pressable>
+                  <View style={styles.body}>
+                    <Text style={styles.title}>你邀請了：{item.receiverName}</Text>
+                    <Text style={styles.title}>推薦起點：{item.suggestStartAddress}</Text>
+                    <Text style={styles.title}>推薦終點：{item.suggestEndAddress}</Text>
+                    <Text style={styles.title}>
+                      更新時間:{" "}
+                      {new Date(item.updatedAt).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                  </View>
                 </View>
-              ) : null
-            }
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            estimatedItemSize={282}
-            onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
-            onEndReachedThreshold={0.2}
-            ListFooterComponent={
-              isFetchingMore && invites.length >= 10 ? (
-                <View
-                  style={{
-                    marginTop: verticalScale(10),
-                    marginBottom: verticalScale(25),
-                  }}
-                >
-                  <ActivityIndicator size="large" color="black" />
-                </View>
-              ) : null
-            }
-            contentContainerStyle={{
-              paddingHorizontal: scale(20),
-              paddingVertical: verticalScale(15),
-            }}
-          />
+              </Pressable>
+            </View>
+          )}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          estimatedItemSize={282}
+          onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={
+            isFetchingMore && invites.length >= 10 ? (
+              <View
+                style={{
+                  marginTop: verticalScale(10),
+                  marginBottom: verticalScale(25),
+                }}
+              >
+                <ActivityIndicator size="large" color="black" />
+              </View>
+            ) : null
+          }
+          contentContainerStyle={{
+            paddingHorizontal: scale(20),
+            paddingVertical: verticalScale(15),
+          }}
+        />
       )}
     </View>
   );

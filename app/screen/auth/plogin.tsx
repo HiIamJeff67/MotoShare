@@ -22,19 +22,10 @@ import { setUser } from "../../(store)/userSlice";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {signIn} from './Gsignin';
 import { z } from "zod";
 
 // 驗證規則
-GoogleSignin.configure({
-  webClientId: '1025910817637-5ft7cl4a6tgjbcltusfqjsp31clnd61e.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
-  scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
-  offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-  forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
-  iosClientId: '1025910817637-akkk9ocfjqufrfpm0790qdf7aso8d7vd.apps.googleusercontent.com',
-});
-
 const usernameSchema = z
   .string()
   .regex(/^[a-zA-Z0-9_]+$/, "1111111111")
@@ -91,7 +82,8 @@ const PassengerLogin = () => {
   }, [translateY]);
 
   const handleSocialLogin = (provider: "Google" | "Apple") => {
-    Alert.alert("社交登入", `您選擇了 ${provider} 登入`);
+    Alert.alert("社交登入", `您選擇了 ${provider} 登入1111`);
+    console.log("社交登入", `您選擇了 ${provider} 登入`);
   };
 
   const saveToken = async (token: string) => {
@@ -198,7 +190,7 @@ const PassengerLogin = () => {
       }
 
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassenger`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithAccountAndPassword`,
         data,
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -315,7 +307,7 @@ const PassengerLogin = () => {
           <Text style={styles.otherLoginText}>使用其他方式</Text>
         </View>
         <View style={styles.socialContainer}>
-          <TouchableWithoutFeedback onPress={() => signIn}>
+          <TouchableWithoutFeedback onPress={() => {}}>
             <Image
               source={require("../../../assets/images/google.png")}
               style={styles.socialIcon}

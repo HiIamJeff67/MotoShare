@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Text,
   View,
@@ -179,7 +180,7 @@ const OtherInviteDetail = () => {
         return;
       }
 
-      response = await axios.post(
+      response = await axios.patch(
         url,
         {
           status: decideT, // 這裡是 body 的部分，應該放在第二個參數
@@ -268,7 +269,7 @@ const OtherInviteDetail = () => {
                     >
                       <Text style={styles.inviteButtonText}>接受邀請</Text>
                     </Pressable>
-                    <View style={{ marginTop: 10 }} />
+                    <View style={{ marginTop: verticalScale(10) }} />
                     <Pressable
                       style={[
                         styles.inviteButton,
@@ -287,7 +288,7 @@ const OtherInviteDetail = () => {
                 ) : null}
               </View>
             </View>
-            <View style={{ marginTop: 15 }} />
+            <View style={{ marginTop: verticalScale(15) }} />
             <View style={styles.card}>
               <View style={styles.body}>
                 {invite ? (
