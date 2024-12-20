@@ -26,6 +26,8 @@ import { PassengerPreferencesModule } from './passengerPreferences/passengerPref
 import { RidderPreferencesModule } from './ridderPreferences/ridderPreferences.module';
 import { PeriodicPurchaseOrderModule } from './periodicPurchaseOrder/periodicPurchaseOrder.module';
 import { PeriodicSupplyOrderModule } from './periodicSupplyOrder/periodicSupplyOrder.module';
+import { PassengerRecordModule } from './passengerRecord/passengerRecord.module';
+import { RidderRecordModule } from './ridderRecord/ridderRecord.module';
 
 @Module({
   imports: [
@@ -64,7 +66,9 @@ import { PeriodicSupplyOrderModule } from './periodicSupplyOrder/periodicSupplyO
     PassengerPreferencesModule,
     RidderPreferencesModule,
     PeriodicPurchaseOrderModule,
-    PeriodicSupplyOrderModule, 
+    PeriodicSupplyOrderModule,
+    PassengerRecordModule,
+    RidderRecordModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

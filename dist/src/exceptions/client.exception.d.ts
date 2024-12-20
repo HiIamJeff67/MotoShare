@@ -26,6 +26,8 @@ export declare const ClientPassengerPreferenceNotFoundException: NotFoundExcepti
 export declare const ClientRidderPreferenceNotFoundException: NotFoundException;
 export declare const ClientPeriodicPurchaseOrderNotFoundException: NotFoundException;
 export declare const ClientPeriodicSupplyOrderNotFoundException: NotFoundException;
+export declare const ClientPassengerRecordNotFoundException: NotFoundException;
+export declare const ClientRidderRecordNotFoundException: NotFoundException;
 export declare const ClientSignInUserException: ForbiddenException;
 export declare const ClientSignInPasswordNotMatchException: ForbiddenException;
 export declare const ClientSignUpUserException: ForbiddenException;
@@ -48,6 +50,10 @@ export declare const ClientCreatePassengerPreferenceException: ForbiddenExceptio
 export declare const ClientCreateRidderPreferenceException: ForbiddenException;
 export declare const ClientCreatePeriodicPurchaseOrderException: ForbiddenException;
 export declare const ClientCreatePeriodicSupplyOrderException: ForbiddenException;
+export declare const ClientCreatePassengerRecordException: ForbiddenException;
+export declare const ClientCreateRidderRecordException: ForbiddenException;
+export declare const ClientStoreSearchRecordsException: ForbiddenException;
+export declare const ClientMaintainSearchRecordsException: ForbiddenException;
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;

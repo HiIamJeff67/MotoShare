@@ -11,6 +11,7 @@ import {
     PassengerPreferences,
     RidderPreferences,
     PeriodicPurchaseOrderTable,
+    PassengerRecordTable,
 } from "./schema";
 import { PassengerNotificationTable } from "./passengerNotification.schema";
 
@@ -38,4 +39,5 @@ export const PassengerRelation = relations(PassengerTable, ({ one, many }) => ({
     preferences: many(PassengerPreferences), 
     preferencedBy: many(RidderPreferences), 
     periodicPurchaseOrders: many(PeriodicPurchaseOrderTable), 
+    record: one(PassengerRecordTable), 
 }));

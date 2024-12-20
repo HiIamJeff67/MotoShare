@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtPassengerGuard = void 0;
 const passport_1 = require("@nestjs/passport");
+const exceptions_1 = require("../../exceptions");
 class JwtPassengerGuard extends (0, passport_1.AuthGuard)('jwt-passenger') {
     constructor() {
         super();
@@ -12,6 +13,7 @@ class JwtPassengerGuard extends (0, passport_1.AuthGuard)('jwt-passenger') {
             return true;
         }
         catch (error) {
+            throw exceptions_1.ClientInvalidTokenException;
             return false;
         }
     }

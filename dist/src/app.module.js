@@ -35,6 +35,8 @@ const passengerPreferences_module_1 = require("./passengerPreferences/passengerP
 const ridderPreferences_module_1 = require("./ridderPreferences/ridderPreferences.module");
 const periodicPurchaseOrder_module_1 = require("./periodicPurchaseOrder/periodicPurchaseOrder.module");
 const periodicSupplyOrder_module_1 = require("./periodicSupplyOrder/periodicSupplyOrder.module");
+const passengerRecord_module_1 = require("./passengerRecord/passengerRecord.module");
+const ridderRecord_module_1 = require("./ridderRecord/ridderRecord.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -77,6 +79,8 @@ exports.AppModule = AppModule = __decorate([
             ridderPreferences_module_1.RidderPreferencesModule,
             periodicPurchaseOrder_module_1.PeriodicPurchaseOrderModule,
             periodicSupplyOrder_module_1.PeriodicSupplyOrderModule,
+            passengerRecord_module_1.PassengerRecordModule,
+            ridderRecord_module_1.RidderRecordModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

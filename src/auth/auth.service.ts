@@ -16,7 +16,9 @@ import { ApiGeneratingBearerTokenException,
     ClientSignInUserException,
     ServerExtractGoogleAuthUrlEnvVariableException,
     ClientUserAuthenticatedMethodNotAllowedException,
-    ClientInvalidGoogleIdTokenException, 
+    ClientInvalidGoogleIdTokenException,
+    ClientCreatePassengerRecordException,
+    ClientCreateRidderRecordException, 
 } from '../exceptions';
 
 import { PassengerTable } from "../../src/drizzle/schema/passenger.schema";
@@ -27,6 +29,8 @@ import { GoogleSignInDto, GoogleSignUpDto, SignInDto, SignUpDto } from "./dto/in
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
 import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
+import { PassengerRecordTable } from '../drizzle/schema/passengerRecord.schema';
+import { RidderRecordTable } from '../drizzle/schema/ridderRecord.schema';
 
 @Injectable()
 export class AuthService {
@@ -62,6 +66,13 @@ export class AuthService {
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
+            }
+
+            const responseOfCreatingPassengerRecord = await tx.insert(PassengerRecordTable).values({
+                userId: responseOfCreatingPassenger[0].id,  
+            }).returning();
+            if (!responseOfCreatingPassengerRecord || responseOfCreatingPassengerRecord.length === 0) {
+                throw ClientCreatePassengerRecordException;
             }
 
             const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
@@ -122,6 +133,13 @@ export class AuthService {
                 throw ClientCreatePassengerInfoException;
             }
 
+            const responseOfCreatingPassengerRecord = await tx.insert(PassengerRecordTable).values({
+                userId: responseOfCreatingPassenger[0].id,  
+            }).returning();
+            if (!responseOfCreatingPassengerRecord || responseOfCreatingPassengerRecord.length === 0) {
+                throw ClientCreatePassengerRecordException;
+            }
+
             const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
             if (!result) throw ApiGeneratingBearerTokenException;
 
@@ -175,6 +193,13 @@ export class AuthService {
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
+            }
+
+            const responseOfCreatingRidderRecord = await tx.insert(RidderRecordTable).values({
+                userId: responseOfCreatingRidder[0].id, 
+            }).returning()
+            if (!responseOfCreatingRidderRecord || responseOfCreatingRidderRecord.length === 0) {
+                throw ClientCreateRidderRecordException;
             }
 
             const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
@@ -233,6 +258,13 @@ export class AuthService {
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
+            }
+
+            const responseOfCreatingRidderRecord = await tx.insert(RidderRecordTable).values({
+                userId: responseOfCreatingRidder[0].id, 
+            }).returning()
+            if (!responseOfCreatingRidderRecord || responseOfCreatingRidderRecord.length === 0) {
+                throw ClientCreateRidderRecordException;
             }
 
             const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);

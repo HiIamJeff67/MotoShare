@@ -166,6 +166,18 @@ export const ClientPeriodicSupplyOrderNotFoundException = new NotFoundException(
     message: "Failed to find any periodicSupplyOrders", 
 });
 
+// E-C-116
+export const ClientPassengerRecordNotFoundException = new NotFoundException({
+    case: "E-C-116", 
+    message: "Failed to find any passengerRecords", 
+});
+
+// E-C-117
+export const ClientRidderRecordNotFoundException = new NotFoundException({
+    case: "E-C-117", 
+    message: "Failed to find any ridderRecords", 
+});
+
 /* ============================== Error about select operation ============================== */
 
 
@@ -302,6 +314,30 @@ export const ClientCreatePeriodicPurchaseOrderException = new ForbiddenException
 export const ClientCreatePeriodicSupplyOrderException = new ForbiddenException({
     case: "E-C-222", 
     message: "Failed to create a periodSupplyOrder", 
+});
+
+// E-C-223
+export const ClientCreatePassengerRecordException = new ForbiddenException({
+    case: "E-C-223", 
+    message: "Failed to create passengerRecord", 
+});
+
+// E-C-224
+export const ClientCreateRidderRecordException = new ForbiddenException({
+    case: "E-C-224", 
+    message: "Failed to create ridderRecord", 
+});
+
+// E-C-225
+export const ClientStoreSearchRecordsException = new ForbiddenException({
+    case: "E-C-225", 
+    message: "Failed to store searchRecords", 
+});
+
+// E-C-226
+export const ClientMaintainSearchRecordsException = new ForbiddenException({
+    case: "E-C-226", 
+    message: "Failed to maintain searchRecords", 
 });
 
 /* ============================== Error about create operation ============================== */

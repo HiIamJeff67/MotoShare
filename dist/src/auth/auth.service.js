@@ -26,6 +26,8 @@ const ridder_schema_1 = require("../../src/drizzle/schema/ridder.schema");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 const passengerAuth_schema_1 = require("../drizzle/schema/passengerAuth.schema");
 const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
+const passengerRecord_schema_1 = require("../drizzle/schema/passengerRecord.schema");
+const ridderRecord_schema_1 = require("../drizzle/schema/ridderRecord.schema");
 let AuthService = class AuthService {
     constructor(config, db, jwt) {
         this.config = config;
@@ -53,6 +55,12 @@ let AuthService = class AuthService {
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
+            }
+            const responseOfCreatingPassengerRecord = await tx.insert(passengerRecord_schema_1.PassengerRecordTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+            }).returning();
+            if (!responseOfCreatingPassengerRecord || responseOfCreatingPassengerRecord.length === 0) {
+                throw exceptions_1.ClientCreatePassengerRecordException;
             }
             const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
             if (!result)
@@ -105,6 +113,12 @@ let AuthService = class AuthService {
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
             }
+            const responseOfCreatingPassengerRecord = await tx.insert(passengerRecord_schema_1.PassengerRecordTable).values({
+                userId: responseOfCreatingPassenger[0].id,
+            }).returning();
+            if (!responseOfCreatingPassengerRecord || responseOfCreatingPassengerRecord.length === 0) {
+                throw exceptions_1.ClientCreatePassengerRecordException;
+            }
             const result = await this._signToken(responseOfCreatingPassenger[0].id, responseOfCreatingPassenger[0].email);
             if (!result)
                 throw exceptions_1.ApiGeneratingBearerTokenException;
@@ -148,6 +162,12 @@ let AuthService = class AuthService {
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
+            }
+            const responseOfCreatingRidderRecord = await tx.insert(ridderRecord_schema_1.RidderRecordTable).values({
+                userId: responseOfCreatingRidder[0].id,
+            }).returning();
+            if (!responseOfCreatingRidderRecord || responseOfCreatingRidderRecord.length === 0) {
+                throw exceptions_1.ClientCreateRidderRecordException;
             }
             const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
             if (!result)
@@ -199,6 +219,12 @@ let AuthService = class AuthService {
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
+            }
+            const responseOfCreatingRidderRecord = await tx.insert(ridderRecord_schema_1.RidderRecordTable).values({
+                userId: responseOfCreatingRidder[0].id,
+            }).returning();
+            if (!responseOfCreatingRidderRecord || responseOfCreatingRidderRecord.length === 0) {
+                throw exceptions_1.ClientCreateRidderRecordException;
             }
             const result = await this._signToken(responseOfCreatingRidder[0].id, responseOfCreatingRidder[0].email);
             if (!result)
