@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { RidderRecordTable } from '../drizzle/schema/RidderRecord.schema';
+import { RidderRecordTable } from '../drizzle/schema/schema';
 import { eq, sql } from 'drizzle-orm';
 import { ClientMaintainSearchRecordsException, ClientRidderRecordNotFoundException } from '../exceptions';
 import { SEARCH_RECORD_MAX_LENGTH } from '../constants';
