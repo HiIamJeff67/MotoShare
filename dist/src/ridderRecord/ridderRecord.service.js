@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RidderRecordService = void 0;
 const common_1 = require("@nestjs/common");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
-const RidderRecord_schema_1 = require("../drizzle/schema/RidderRecord.schema");
+const schema_1 = require("../drizzle/schema/schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const exceptions_1 = require("../exceptions");
 const constants_1 = require("../constants");
@@ -26,9 +26,9 @@ let RidderRecordService = class RidderRecordService {
     async storeSearchRecordByUserId(id, storeRidderRecordDto) {
         return await this.db.transaction(async (tx) => {
             const responseOfSelectingRidderRecord = await tx.select({
-                searchRecords: RidderRecord_schema_1.RidderRecordTable.searchRecords,
-            }).from(RidderRecord_schema_1.RidderRecordTable)
-                .where((0, drizzle_orm_1.eq)(RidderRecord_schema_1.RidderRecordTable.userId, id))
+                searchRecords: schema_1.RidderRecordTable.searchRecords,
+            }).from(schema_1.RidderRecordTable)
+                .where((0, drizzle_orm_1.eq)(schema_1.RidderRecordTable.userId, id))
                 .limit(1);
             if (!responseOfSelectingRidderRecord || responseOfSelectingRidderRecord.length === 0) {
                 throw exceptions_1.ClientRidderRecordNotFoundException;
@@ -36,32 +36,32 @@ let RidderRecordService = class RidderRecordService {
             if (responseOfSelectingRidderRecord[0].searchRecords
                 && responseOfSelectingRidderRecord[0].searchRecords.length >= constants_1.SEARCH_RECORD_MAX_LENGTH) {
                 const trimLength = constants_1.SEARCH_RECORD_MAX_LENGTH - responseOfSelectingRidderRecord[0].searchRecords.length + 1;
-                const responseOfMaintainSizeOfSearchRecords = await tx.update(RidderRecord_schema_1.RidderRecordTable).set({
-                    searchRecords: (0, drizzle_orm_1.sql) `${RidderRecord_schema_1.RidderRecordTable.searchRecords}[1:GREATEST(array_length(${RidderRecord_schema_1.RidderRecordTable.searchRecords}, 1) - ${trimLength}, 0)]`,
-                }).where((0, drizzle_orm_1.eq)(RidderRecord_schema_1.RidderRecordTable.userId, id))
+                const responseOfMaintainSizeOfSearchRecords = await tx.update(schema_1.RidderRecordTable).set({
+                    searchRecords: (0, drizzle_orm_1.sql) `${schema_1.RidderRecordTable.searchRecords}[1:GREATEST(array_length(${schema_1.RidderRecordTable.searchRecords}, 1) - ${trimLength}, 0)]`,
+                }).where((0, drizzle_orm_1.eq)(schema_1.RidderRecordTable.userId, id))
                     .returning({
-                    searchRecords: RidderRecord_schema_1.RidderRecordTable.searchRecords,
+                    searchRecords: schema_1.RidderRecordTable.searchRecords,
                 });
                 if (!responseOfMaintainSizeOfSearchRecords || responseOfMaintainSizeOfSearchRecords.length === 0) {
                     throw exceptions_1.ClientMaintainSearchRecordsException;
                 }
             }
-            return await tx.update(RidderRecord_schema_1.RidderRecordTable).set({
+            return await tx.update(schema_1.RidderRecordTable).set({
                 searchRecords: (0, drizzle_orm_1.sql) `array_prepend(
           ${JSON.stringify(storeRidderRecordDto.searchRecord)}::jsonb, 
-          ${RidderRecord_schema_1.RidderRecordTable.searchRecords}
+          ${schema_1.RidderRecordTable.searchRecords}
         )`,
-            }).where((0, drizzle_orm_1.eq)(RidderRecord_schema_1.RidderRecordTable.userId, id))
+            }).where((0, drizzle_orm_1.eq)(schema_1.RidderRecordTable.userId, id))
                 .returning({
-                searchRecords: RidderRecord_schema_1.RidderRecordTable.searchRecords,
+                searchRecords: schema_1.RidderRecordTable.searchRecords,
             });
         });
     }
     async getSearchRecordsByUserId(id) {
         return await this.db.select({
-            searchRecords: RidderRecord_schema_1.RidderRecordTable.searchRecords,
-        }).from(RidderRecord_schema_1.RidderRecordTable)
-            .where((0, drizzle_orm_1.eq)(RidderRecord_schema_1.RidderRecordTable.userId, id))
+            searchRecords: schema_1.RidderRecordTable.searchRecords,
+        }).from(schema_1.RidderRecordTable)
+            .where((0, drizzle_orm_1.eq)(schema_1.RidderRecordTable.userId, id))
             .limit(1);
     }
 };

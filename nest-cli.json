@@ -4,7 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [{
-      "include": "emailTemplates/*.hbs", 
+      "include": "email/emailTemplates/**/*", 
       "outDir": "dist/src"
     }],
     "watchAssets": true,
