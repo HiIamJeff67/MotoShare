@@ -34,7 +34,8 @@ let AuthController = class AuthController {
                 error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
             }
             else if (!(error instanceof common_1.BadRequestException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -76,7 +77,8 @@ let AuthController = class AuthController {
                 error = (0, exceptions_1.ClientDuplicateFieldDetectedException)(error.message);
             }
             else if (!(error instanceof common_1.BadRequestException
-                || error instanceof common_1.ForbiddenException)) {
+                || error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -116,7 +118,8 @@ let AuthController = class AuthController {
         catch (error) {
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.ForbiddenException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({
@@ -152,9 +155,11 @@ let AuthController = class AuthController {
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.BadRequestException
                 || error instanceof common_1.ForbiddenException
-                || error instanceof common_1.NotFoundException)) {
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.UnauthorizedException)) {
                 error = exceptions_1.ClientUnknownException;
             }
             response.status(error.status).send({

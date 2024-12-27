@@ -25,7 +25,8 @@ export class AuthController {
             if (error.status === undefined) {  // conflict from database
                 error = ClientDuplicateFieldDetectedException(error.message);
             } else if (!(error instanceof BadRequestException
-                || error instanceof ForbiddenException)) {
+                || error instanceof ForbiddenException
+                || error instanceof UnauthorizedException)) {
                     error = ClientUnknownException;
             }
 
@@ -80,7 +81,8 @@ export class AuthController {
             if (error.status === undefined) {  // conflict from database
                 error = ClientDuplicateFieldDetectedException(error.message);
             } else if (!(error instanceof BadRequestException
-                || error instanceof ForbiddenException)) {
+                || error instanceof ForbiddenException
+                || error instanceof UnauthorizedException)) {
                     error = ClientUnknownException;
             }
 
@@ -134,7 +136,8 @@ export class AuthController {
         } catch (error) {
             if (!(error instanceof BadRequestException
                 || error instanceof ForbiddenException
-                || error instanceof NotFoundException)) {
+                || error instanceof NotFoundException
+                || error instanceof UnauthorizedException)) {
                     error = ClientUnknownException;
             }
 
@@ -185,9 +188,11 @@ export class AuthController {
 
             response.status(HttpStatusCode.Ok).send(res);
         } catch (error) {
+            console.log(error)
             if (!(error instanceof BadRequestException
                 || error instanceof ForbiddenException
-                || error instanceof NotFoundException)) {
+                || error instanceof NotFoundException
+                || error instanceof UnauthorizedException)) {
                     error = ClientUnknownException;
             }
 
