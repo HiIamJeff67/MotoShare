@@ -46,7 +46,7 @@ async function setUpRidderNotificationTrigger() {
             EXECUTE FUNCTION ridder_notification_trigger_function();
         `);
       
-        console.log('Event ridder trigger setup complete.');
+        console.log('Event ridder notification trigger setup complete.');
         await _Client.end();
     } catch (e) {
         console.log(e);

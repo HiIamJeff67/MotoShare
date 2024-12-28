@@ -10,7 +10,6 @@ const _Client = new Client({
     connectionString: _CONNECTIONSTRING, 
 });
 
-
 async function setUpPassengerNotificationTrigger() {
     try {
         // Connect to Postgres
@@ -46,7 +45,7 @@ async function setUpPassengerNotificationTrigger() {
             EXECUTE FUNCTION passenger_notification_trigger_function();
         `);
       
-        console.log('Event passenger trigger setup complete.');
+        console.log('Event passenger notifiction trigger setup complete.');
         await _Client.end();
     } catch (e) {
         console.log(e);
