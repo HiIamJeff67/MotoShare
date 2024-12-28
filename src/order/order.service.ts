@@ -141,7 +141,7 @@ export class OrderService {
     }).from(OrderTable)
       .where(and(
         eq(OrderTable.id, id),
-        eq(OrderTable.passengerId, userId),
+        eq(OrderTable.ridderId, userId),
       ))
       .leftJoin(PassengerTable, eq(PassengerTable.id, OrderTable.passengerId))
       .leftJoin(RidderTable, eq(RidderTable.id, OrderTable.ridderId))
