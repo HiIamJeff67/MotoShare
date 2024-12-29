@@ -28,7 +28,6 @@ const userSlice = createSlice({
     },
     setUserSettings: (state, action: PayloadAction<UserSettings>) => {
       state.theme = action.payload.theme;
-      console.log(state.theme)
     }, 
     clearUser: (state) => {
       state.username = '';

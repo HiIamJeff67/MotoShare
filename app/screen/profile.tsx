@@ -7,13 +7,18 @@ import { FlashList } from "@shopify/flash-list";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { clearUser } from "../(store)/userSlice";
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import { styles } from "./profile.style";
+import { ProfileScreenStyles } from "./profile.style";
+import { useState } from "react";
+import { getUserTheme, ThemeType } from "@/theme";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const user = useSelector((state: RootState) => state.user);
   const insets = useSafeAreaInsets();
+  const user = useSelector((state: RootState) => state.user);
+
+  const [themeName, setThemeName] = useState<ThemeType>(user.theme ?? "DarkTheme");
+  const styles = ProfileScreenStyles(getUserTheme(themeName));
 
   const listData = [
     { id: "1", icon: "shopping-cart", label: "我的訂單" },
