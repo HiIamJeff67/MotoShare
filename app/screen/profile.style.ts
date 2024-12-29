@@ -2,21 +2,86 @@ import { StyleSheet } from "react-native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
 export const styles = StyleSheet.create({
-    imageWrapper: {
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: verticalScale(20),
-    },
-    text: {
-      fontSize: moderateScale(16),
-      padding: verticalScale(2),
-      fontWeight: "bold",
-      color: "#000000",
-      marginTop: verticalScale(10),
-    },
-    image: {
-      width: scale(120), // 圖片寬度
-      height: verticalScale(120), // 圖片高度
-      resizeMode: "contain",
-    },
-  });
+  container: {
+    flex: 1,
+  },
+  profileHeader: {
+    alignItems: "center",
+    marginBottom: moderateScale(16),
+  },
+  avatar: {
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(40),
+    marginBottom: moderateScale(8),
+  },
+  name: {
+    fontSize: moderateScale(18),
+    fontWeight: "bold",
+    color: "#333",
+  },
+  description: {
+    fontSize: moderateScale(12),
+    color: "#999",
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: moderateScale(16),
+  },
+  infoBox: {
+    flex: 1,
+    alignItems: "center",
+    marginHorizontal: scale(8),
+    backgroundColor: "#f5f5f5",
+    padding: moderateScale(12),
+    borderRadius: moderateScale(8),
+  },
+  infoTitle: {
+    fontSize: moderateScale(14),
+    color: "#666",
+  },
+  infoValue: {
+    fontSize: moderateScale(18),
+    fontWeight: "bold",
+    color: "#333",
+    marginVertical: verticalScale(4),
+  },
+  infoHint: {
+    fontSize: moderateScale(10),
+    color: "#999",
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: verticalScale(12),
+    borderBottomWidth: scale(1),
+    borderBottomColor: "#eee",
+  },
+  iconContainer: {
+    width: moderateScale(40),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: scale(8),
+  },
+  label: {
+    fontSize: moderateScale(14),
+    color: "#333",
+  },
+  extra: {
+    fontSize: moderateScale(12),
+    color: "#999",
+  },
+  badge: {
+    backgroundColor: "red",
+    color: "#fff",
+    fontSize: moderateScale(12),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(2),
+    borderRadius: moderateScale(8),
+    overflow: "hidden",
+  },
+});
