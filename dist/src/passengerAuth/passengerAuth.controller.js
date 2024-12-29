@@ -79,6 +79,23 @@ let PassengerAuthController = class PassengerAuthController {
             });
         }
     }
+    async getMyAuth(passenger, response) {
+        try {
+            const res = await this.passengerAuthService.getPassengerAuthByUserId(passenger.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPassengerAuthNotFoundException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async validateAuthCodeForEmail(passenger, validatePassengerInfoDto, response) {
         try {
             const res = await this.passengerAuthService.validateAuthCodeForEmail(passenger.id, validatePassengerInfoDto);
@@ -204,6 +221,15 @@ __decorate([
     __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "sendAuthCodeToResetEmailOrPassword", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('getMyAuth'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerAuthController.prototype, "getMyAuth", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Post)('validateAuthCodeForEmail'),

@@ -23,6 +23,7 @@ const ridderInfo_schema_1 = require("../../src/drizzle/schema/ridderInfo.schema"
 const exceptions_1 = require("../exceptions");
 const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
 const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
+const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 let RidderService = class RidderService {
     constructor(storage, config, db) {
         this.storage = storage;
@@ -213,6 +214,15 @@ let RidderService = class RidderService {
                     }
                 }
             }
+            if (updateRidderInfoDto.phoneNumber && updateRidderInfoDto.phoneNumber.length !== 0) {
+                const responseOfUpdatingRidderAuth = await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                    isPhoneAuthenticated: false,
+                }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, userId))
+                    .returning();
+                if (!responseOfUpdatingRidderAuth || responseOfUpdatingRidderAuth.length === 0) {
+                    throw exceptions_1.ClientRidderAuthNotFoundException;
+                }
+            }
             return await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
                 isOnline: updateRidderInfoDto.isOnline,
                 age: updateRidderInfoDto.age,
@@ -231,7 +241,19 @@ let RidderService = class RidderService {
                     }
                     : {}),
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId));
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, userId))
+                .returning({
+                isOnline: ridderInfo_schema_1.RidderInfoTable.isOnline,
+                age: ridderInfo_schema_1.RidderInfoTable.age,
+                phoneNumber: ridderInfo_schema_1.RidderInfoTable.phoneNumber,
+                emergencyPhoneNumber: ridderInfo_schema_1.RidderInfoTable.emergencyPhoneNumber,
+                emergencyUserRole: ridderInfo_schema_1.RidderInfoTable.emergencyUserRole,
+                selfIntroduction: ridderInfo_schema_1.RidderInfoTable.selfIntroduction,
+                motocycleLicense: ridderInfo_schema_1.RidderInfoTable.motocycleLicense,
+                motocycleType: ridderInfo_schema_1.RidderInfoTable.motocycleType,
+                avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+                motocyclePhotoUrl: ridderInfo_schema_1.RidderInfoTable.motocyclePhotoUrl,
+            });
         });
     }
     async deleteRiddderById(id, deleteRidderDto) {

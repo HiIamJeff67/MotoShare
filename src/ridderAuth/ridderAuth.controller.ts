@@ -4,7 +4,7 @@ import { JwtRidderGuard } from '../auth/guard';
 import { Ridder } from '../auth/decorator';
 import { RidderType } from '../interfaces';
 import { Response } from 'express';
-import { ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
+import { ClientRidderAuthNotFoundException, ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
 import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 
@@ -97,6 +97,33 @@ export class RidderAuthController {
       }
   }
   /* ================================= Send AuthCode ================================= */
+
+
+  /* ================================= Get Operations ================================= */
+      @UseGuards(JwtRidderGuard)
+      @Get('getMyAuth')
+      async getMyAuth(
+          @Ridder() ridder: RidderType, 
+          @Res() response: Response, 
+      ) {
+          try {
+              const res = await this.ridderAuthService.getRidderAuthByUserId(ridder.id);
+  
+              if (!res || res.length === 0) throw ClientRidderAuthNotFoundException;
+  
+              response.status(HttpStatusCode.Ok).send(res[0]);
+          } catch (error) {
+              if (!(error instanceof UnauthorizedException
+                  || error instanceof NotFoundException)) {
+                      error = ClientUnknownException;
+              }
+  
+              response.status(error.status).send({
+                  ...error.response, 
+              });
+          }
+      }
+      /* ================================= Get Operations ================================= */
 
 
   /* ================================= Validate AuthCode ================================= */

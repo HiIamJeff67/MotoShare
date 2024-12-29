@@ -72,6 +72,21 @@ let RidderAuthService = class RidderAuthService {
                 }];
         });
     }
+    async getRidderAuthByUserId(userId) {
+        const responseOfSelectingRidderAuth = await this.db.select({
+            isEmailAuthenticated: ridderAuth_schema_1.RidderAuthTable.isEmailAuthenticated,
+            isPhoneAuthenticated: ridderAuth_schema_1.RidderAuthTable.isPhoneAuthenticated,
+            isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
+            googleId: ridderAuth_schema_1.RidderAuthTable.googleId,
+        }).from(ridderAuth_schema_1.RidderAuthTable)
+            .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, userId));
+        return [{
+                isEmailAuthenticated: responseOfSelectingRidderAuth[0].isEmailAuthenticated,
+                isPhoneAuthenticated: responseOfSelectingRidderAuth[0].isPhoneAuthenticated,
+                isDefaultAuthenticated: responseOfSelectingRidderAuth[0].isDefaultAuthenticated,
+                isGoogleAuthenticated: (responseOfSelectingRidderAuth[0].googleId && responseOfSelectingRidderAuth[0].googleId.length === 0 ? true : false),
+            }];
+    }
     async validateAuthCodeForEmail(id, validateRidderInfoDto) {
         return await this.db.transaction(async (tx) => {
             const responseOfSelectingRidderAuth = await tx.select({

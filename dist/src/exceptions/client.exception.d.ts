@@ -28,6 +28,8 @@ export declare const ClientPeriodicPurchaseOrderNotFoundException: NotFoundExcep
 export declare const ClientPeriodicSupplyOrderNotFoundException: NotFoundException;
 export declare const ClientPassengerRecordNotFoundException: NotFoundException;
 export declare const ClientRidderRecordNotFoundException: NotFoundException;
+export declare const ClientPassengerAuthNotFoundException: NotFoundException;
+export declare const ClientRidderAuthNotFoundException: NotFoundException;
 export declare const ClientSignInUserException: ForbiddenException;
 export declare const ClientSignInPasswordNotMatchException: ForbiddenException;
 export declare const ClientSignUpUserException: ForbiddenException;

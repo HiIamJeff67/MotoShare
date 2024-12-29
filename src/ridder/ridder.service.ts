@@ -13,12 +13,14 @@ import { UpdateRidderInfoDto } from './dto/update-info.dto';
 import { 
   ClientDeleteAccountPasswordNotMatchException, 
   ClientNoChangeOnUserNameException, 
+  ClientRidderAuthNotFoundException, 
   ClientRidderNotFoundException 
 } from '../exceptions';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 import { DeleteRidderDto } from './dto/delete-ridder.dto';
 import { UserRoleType } from '../types';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
+import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 
 @Injectable()
 export class RidderService {
@@ -246,6 +248,18 @@ export class RidderService {
           }
         }
       }
+
+      // if the user also want to update his/her phoneNumber, 
+      // we should make sure his/her previous phone authentication is set to default
+      if (updateRidderInfoDto.phoneNumber && updateRidderInfoDto.phoneNumber.length !== 0) {
+        const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
+          isPhoneAuthenticated: false, 
+        }).where(eq(RidderAuthTable.userId, userId))
+          .returning();
+        if (!responseOfUpdatingRidderAuth || responseOfUpdatingRidderAuth.length === 0) {
+          throw ClientRidderAuthNotFoundException;
+        }
+      }
   
       return await tx.update(RidderInfoTable).set({
         isOnline: updateRidderInfoDto.isOnline,
@@ -275,7 +289,19 @@ export class RidderService {
           : {}
         ), 
         updatedAt: new Date(), 
-      }).where(eq(RidderInfoTable.userId, userId));
+      }).where(eq(RidderInfoTable.userId, userId))
+        .returning({
+          isOnline: RidderInfoTable.isOnline, 
+          age: RidderInfoTable.age, 
+          phoneNumber: RidderInfoTable.phoneNumber, 
+          emergencyPhoneNumber: RidderInfoTable.emergencyPhoneNumber, 
+          emergencyUserRole: RidderInfoTable.emergencyUserRole, 
+          selfIntroduction: RidderInfoTable.selfIntroduction, 
+          motocycleLicense: RidderInfoTable.motocycleLicense, 
+          motocycleType: RidderInfoTable.motocycleType, 
+          avatorUrl: RidderInfoTable.avatorUrl, 
+          motocyclePhotoUrl: RidderInfoTable.motocyclePhotoUrl, 
+        });
     });
   }
   // note that we don't need to modify the collection

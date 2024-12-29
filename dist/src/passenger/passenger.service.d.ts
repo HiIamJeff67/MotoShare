@@ -86,7 +86,15 @@ export declare class PassengerService {
         userName: string;
         eamil: string;
     }[]>;
-    updatePassengerInfoByUserId(userId: string, updatePassengerInfoDto: UpdatePassengerInfoDto, uploadedAvatorFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
+    updatePassengerInfoByUserId(userId: string, updatePassengerInfoDto: UpdatePassengerInfoDto, uploadedAvatorFile?: Express.Multer.File | undefined): Promise<{
+        isOnline: boolean;
+        age: number | null;
+        phoneNumber: string | null;
+        emergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        emergencyPhoneNumber: string | null;
+        selfIntroduction: string | null;
+        avatorUrl: string | null;
+    }[]>;
     deletePassengerById(id: string, deletePassengerDto: DeletePassengerDto): Promise<{
         id: string;
         userName: string;

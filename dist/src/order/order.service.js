@@ -119,7 +119,7 @@ let OrderService = class OrderService {
             createdAt: order_schema_1.OrderTable.createdAt,
             updatedAt: order_schema_1.OrderTable.updatedAt,
         }).from(order_schema_1.OrderTable)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.passengerId, userId)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.eq)(order_schema_1.OrderTable.ridderId, userId)))
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, order_schema_1.OrderTable.passengerId))
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, order_schema_1.OrderTable.ridderId))
             .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, order_schema_1.OrderTable.passengerId))

@@ -22,7 +22,6 @@ async function setUpPassengerSearchRecordTrigger() {
                         'endAddress', NEW."endAddress",
                         'startCord', ST_AsGeoJSON(ST_Transform(NEW."startCord", 4326))::jsonb,
                         'endCord', ST_AsGeoJSON(ST_Transform(NEW."endCord", 4326))::jsonb,
-                        'isUrgent', NEW."isUrgent",
                         'createdAt', NEW."createdAt"
                     ), 
                     "searchRecords"

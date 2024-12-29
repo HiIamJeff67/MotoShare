@@ -12,6 +12,12 @@ export declare class RidderAuthService {
         email: string;
         authCodeExpiredAt: Date;
     }[]>;
+    getRidderAuthByUserId(userId: string): Promise<{
+        isEmailAuthenticated: boolean;
+        isPhoneAuthenticated: boolean;
+        isDefaultAuthenticated: boolean;
+        isGoogleAuthenticated: boolean;
+    }[]>;
     validateAuthCodeForEmail(id: string, validateRidderInfoDto: ValidateRidderInfoDto): Promise<{
         isEmailAuthenticated: boolean;
     }[]>;

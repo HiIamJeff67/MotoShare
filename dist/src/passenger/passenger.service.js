@@ -23,6 +23,7 @@ const passengerInfo_schema_1 = require("../../src/drizzle/schema/passengerInfo.s
 const exceptions_1 = require("../exceptions");
 const supabaseStorage_service_1 = require("../supabaseStorage/supabaseStorage.service");
 const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
+const passengerAuth_schema_1 = require("../drizzle/schema/passengerAuth.schema");
 let PassengerService = class PassengerService {
     constructor(config, storage, db) {
         this.config = config;
@@ -204,6 +205,15 @@ let PassengerService = class PassengerService {
                     }
                 }
             }
+            if (updatePassengerInfoDto.phoneNumber && updatePassengerInfoDto.phoneNumber.length !== 0) {
+                const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                    isPhoneAuthenticated: false,
+                }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, userId))
+                    .returning();
+                if (!responseOfUpdatingPassengerAuth || responseOfUpdatingPassengerAuth.length === 0) {
+                    throw exceptions_1.ClientPassengerAuthNotFoundException;
+                }
+            }
             return await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
                 isOnline: updatePassengerInfoDto.isOnline,
                 age: updatePassengerInfoDto.age,
@@ -216,7 +226,16 @@ let PassengerService = class PassengerService {
                     }
                     : {}),
                 updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId));
+            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, userId))
+                .returning({
+                isOnline: passengerInfo_schema_1.PassengerInfoTable.isOnline,
+                age: passengerInfo_schema_1.PassengerInfoTable.age,
+                phoneNumber: passengerInfo_schema_1.PassengerInfoTable.phoneNumber,
+                emergencyPhoneNumber: passengerInfo_schema_1.PassengerInfoTable.emergencyPhoneNumber,
+                emergencyUserRole: passengerInfo_schema_1.PassengerInfoTable.emergencyUserRole,
+                selfIntroduction: passengerInfo_schema_1.PassengerInfoTable.selfIntroduction,
+                avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            });
         });
     }
     async deletePassengerById(id, deletePassengerDto) {

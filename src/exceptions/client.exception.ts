@@ -178,6 +178,18 @@ export const ClientRidderRecordNotFoundException = new NotFoundException({
     message: "Failed to find any ridderRecords", 
 });
 
+// E-C-118
+export const ClientPassengerAuthNotFoundException = new NotFoundException({
+    case: "E-C-118", 
+    message: "Failed to find any passengerAuths", 
+});
+
+// E-C-119
+export const ClientRidderAuthNotFoundException = new NotFoundException({
+    case: "E-C-119", 
+    message: "Failed to find any ridderAuths", 
+});
+
 /* ============================== Error about select operation ============================== */
 
 

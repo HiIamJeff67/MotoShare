@@ -95,7 +95,18 @@ export declare class RidderService {
         userName: string;
         eamil: string;
     }[]>;
-    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedAvatorFile?: Express.Multer.File | undefined, uploadedMotocyclePhotoFile?: Express.Multer.File | undefined): Promise<import("pg").QueryResult<never>>;
+    updateRidderInfoByUserId(userId: string, updateRidderInfoDto: UpdateRidderInfoDto, uploadedAvatorFile?: Express.Multer.File | undefined, uploadedMotocyclePhotoFile?: Express.Multer.File | undefined): Promise<{
+        isOnline: boolean;
+        age: number | null;
+        phoneNumber: string | null;
+        emergencyUserRole: "Passenger" | "Ridder" | "Admin" | "Guest" | null;
+        emergencyPhoneNumber: string | null;
+        selfIntroduction: string | null;
+        avatorUrl: string | null;
+        motocycleLicense: string | null;
+        motocycleType: string | null;
+        motocyclePhotoUrl: string | null;
+    }[]>;
     deleteRiddderById(id: string, deleteRidderDto: DeleteRidderDto): Promise<{
         id: string;
         userName: string;

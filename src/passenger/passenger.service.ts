@@ -13,12 +13,14 @@ import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { 
   ClientDeleteAccountPasswordNotMatchException, 
   ClientNoChangeOnUserNameException, 
+  ClientPassengerAuthNotFoundException, 
   ClientPassengerNotFoundException 
 } from '../exceptions';
 import { SupabaseStorageService } from '../supabaseStorage/supabaseStorage.service';
 import { DeletePassengerDto } from './dto/delete-passenger.dto';
 import { UserRoleType } from '../types';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
+import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 
 @Injectable()
 export class PassengerService {
@@ -239,6 +241,18 @@ export class PassengerService {
           }
         }
       }
+
+      // if the user also want to update his/her phoneNumber, 
+      // we should make sure his/her previous phone authentication is set to default
+      if (updatePassengerInfoDto.phoneNumber && updatePassengerInfoDto.phoneNumber.length !== 0) {
+        const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
+          isPhoneAuthenticated: false, 
+        }).where(eq(PassengerAuthTable.userId, userId))
+          .returning();
+        if (!responseOfUpdatingPassengerAuth || responseOfUpdatingPassengerAuth.length === 0) {
+          throw ClientPassengerAuthNotFoundException;
+        }
+      }
   
       return await tx.update(PassengerInfoTable).set({
         isOnline: updatePassengerInfoDto.isOnline,
@@ -257,7 +271,16 @@ export class PassengerService {
           : {}
         ),
         updatedAt: new Date(), 
-      }).where(eq(PassengerInfoTable.userId, userId));
+      }).where(eq(PassengerInfoTable.userId, userId))
+        .returning({
+          isOnline: PassengerInfoTable.isOnline, 
+          age: PassengerInfoTable.age, 
+          phoneNumber: PassengerInfoTable.phoneNumber, 
+          emergencyPhoneNumber: PassengerInfoTable.emergencyPhoneNumber, 
+          emergencyUserRole: PassengerInfoTable.emergencyUserRole, 
+          selfIntroduction: PassengerInfoTable.selfIntroduction, 
+          avatorUrl: PassengerInfoTable.avatorUrl, 
+        });
     });
   }
   // note that we don't need to modify the collection

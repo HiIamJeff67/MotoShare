@@ -72,6 +72,28 @@ export class PassengerAuthService {
 	}
 	/* ================================= AuthCode Generator & Sender ================================= */
 
+
+	/* ================================= Get Operations ================================= */
+	async getPassengerAuthByUserId(
+		userId: string, 
+	) {
+		const responseOfSelectingPassengerAuth = await this.db.select({
+			isEmailAuthenticated: PassengerAuthTable.isEmailAuthenticated, 
+			isPhoneAuthenticated: PassengerAuthTable.isPhoneAuthenticated, 
+			isDefaultAuthenticated: PassengerAuthTable.isDefaultAuthenticated, 
+			googleId: PassengerAuthTable.googleId, 
+		}).from(PassengerAuthTable)
+		  .where(eq(PassengerAuthTable.userId, userId));
+		
+		return [{
+			isEmailAuthenticated: responseOfSelectingPassengerAuth[0].isEmailAuthenticated, 
+			isPhoneAuthenticated: responseOfSelectingPassengerAuth[0].isPhoneAuthenticated, 
+			isDefaultAuthenticated: responseOfSelectingPassengerAuth[0].isDefaultAuthenticated, 
+			isGoogleAuthenticated: (responseOfSelectingPassengerAuth[0].googleId && responseOfSelectingPassengerAuth[0].googleId.length !== 0 ? true : false), 
+		}];
+	}
+	/* ================================= Get Operations ================================= */
+
 	
 	/* ================================= Email validation ================================= */
 	async validateAuthCodeForEmail(

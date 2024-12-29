@@ -72,6 +72,21 @@ let PassengerAuthService = class PassengerAuthService {
                 }];
         });
     }
+    async getPassengerAuthByUserId(userId) {
+        const responseOfSelectingPassengerAuth = await this.db.select({
+            isEmailAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isEmailAuthenticated,
+            isPhoneAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isPhoneAuthenticated,
+            isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
+            googleId: passengerAuth_schema_1.PassengerAuthTable.googleId,
+        }).from(passengerAuth_schema_1.PassengerAuthTable)
+            .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, userId));
+        return [{
+                isEmailAuthenticated: responseOfSelectingPassengerAuth[0].isEmailAuthenticated,
+                isPhoneAuthenticated: responseOfSelectingPassengerAuth[0].isPhoneAuthenticated,
+                isDefaultAuthenticated: responseOfSelectingPassengerAuth[0].isDefaultAuthenticated,
+                isGoogleAuthenticated: (responseOfSelectingPassengerAuth[0].googleId && responseOfSelectingPassengerAuth[0].googleId.length !== 0 ? true : false),
+            }];
+    }
     async validateAuthCodeForEmail(id, validatePassengerInfoDto) {
         return await this.db.transaction(async (tx) => {
             const responseOfSelectingPassengerAuth = await tx.select({

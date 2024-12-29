@@ -73,6 +73,28 @@ export class RidderAuthService {
 	/* ================================= AuthCode Generator & Sender ================================= */
 
 	
+	/* ================================= Get Operations ================================= */
+	async getRidderAuthByUserId(
+		userId: string, 
+	) {
+		const responseOfSelectingRidderAuth = await this.db.select({
+			isEmailAuthenticated: RidderAuthTable.isEmailAuthenticated, 
+			isPhoneAuthenticated: RidderAuthTable.isPhoneAuthenticated, 
+			isDefaultAuthenticated: RidderAuthTable.isDefaultAuthenticated, 
+			googleId: RidderAuthTable.googleId, 
+		}).from(RidderAuthTable)
+		  .where(eq(RidderAuthTable.userId, userId));
+
+		return [{
+			isEmailAuthenticated: responseOfSelectingRidderAuth[0].isEmailAuthenticated, 
+			isPhoneAuthenticated: responseOfSelectingRidderAuth[0].isPhoneAuthenticated, 
+			isDefaultAuthenticated: responseOfSelectingRidderAuth[0].isDefaultAuthenticated, 
+			isGoogleAuthenticated: (responseOfSelectingRidderAuth[0].googleId && responseOfSelectingRidderAuth[0].googleId.length === 0 ? true : false), 
+		}]
+	}
+	/* ================================= Get Operations ================================= */
+
+
 	/* ================================= Email validation ================================= */
 	async validateAuthCodeForEmail(id: string, validateRidderInfoDto: ValidateRidderInfoDto) {
 		return await this.db.transaction(async (tx) => {

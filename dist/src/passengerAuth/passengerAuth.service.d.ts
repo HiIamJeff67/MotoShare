@@ -12,6 +12,12 @@ export declare class PassengerAuthService {
         email: string;
         authCodeExpiredAt: Date;
     }[]>;
+    getPassengerAuthByUserId(userId: string): Promise<{
+        isEmailAuthenticated: boolean;
+        isPhoneAuthenticated: boolean;
+        isDefaultAuthenticated: boolean;
+        isGoogleAuthenticated: boolean;
+    }[]>;
     validateAuthCodeForEmail(id: string, validatePassengerInfoDto: ValidatePassengerInfoDto): Promise<{
         isEmailAuthenticated: boolean;
     }[]>;

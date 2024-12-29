@@ -4,7 +4,7 @@ import { JwtPassengerGuard } from '../auth/guard';
 import { Passenger } from '../auth/decorator';
 import { PassengerType } from '../interfaces';
 import { Response } from 'express';
-import { ClientPassengerNotFoundException, ClientUnknownException } from '../exceptions';
+import { ClientPassengerAuthNotFoundException, ClientPassengerNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
 import { BindPassengerDefaultAuthDto, BindPassengerGoogleAuthDto, ResetPassengerPasswordDto, UpdatePassengerEmailPasswordDto, ValidatePassengerInfoDto } from './dto/update-passengerAuth.dto';
 
@@ -97,6 +97,33 @@ export class PassengerAuthController {
         }
     }
     /* ================================= Send AuthCode ================================= */
+
+
+    /* ================================= Get Operations ================================= */
+    @UseGuards(JwtPassengerGuard)
+    @Get('getMyAuth')
+    async getMyAuth(
+        @Passenger() passenger: PassengerType, 
+        @Res() response: Response, 
+    ) {
+        try {
+            const res = await this.passengerAuthService.getPassengerAuthByUserId(passenger.id);
+
+            if (!res || res.length === 0) throw ClientPassengerAuthNotFoundException;
+
+            response.status(HttpStatusCode.Ok).send(res[0]);
+        } catch (error) {
+            if (!(error instanceof UnauthorizedException
+                || error instanceof NotFoundException)) {
+                    error = ClientUnknownException;
+            }
+
+            response.status(error.status).send({
+                ...error.response, 
+            });
+        }
+    }
+    /* ================================= Get Operations ================================= */
 
 
     /* ================================= Validate AuthCode ================================= */

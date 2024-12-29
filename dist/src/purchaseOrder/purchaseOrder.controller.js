@@ -42,7 +42,6 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
         catch (error) {
-            console.log(error);
             if (!(error instanceof common_1.ForbiddenException
                 || error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException)) {
