@@ -1,5 +1,18 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { View, StyleSheet, Alert, Text, Platform, Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  Text,
+  Platform,
+  Keyboard,
+  Pressable,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Image,
+  ActivityIndicator,
+  Switch,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
@@ -37,7 +50,12 @@ interface DataType {
 const MapWithBottomSheet = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [searchData, setSearchData] = useState<DataType[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<{ [key: string]: boolean }>({
+    fetchData: false,
+    createNewOrder: false,
+    makeRequest: false,
+    inviteNow: false,
+  });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [initialPrice, setinitialPrice] = useState("");
@@ -53,18 +71,30 @@ const MapWithBottomSheet = () => {
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [showDetailsPage, setShowDetailsPage] = useState<boolean>(false);
+  const [showSetPage, setShowSetPage] = useState<boolean>(false);
   const [lockButton, setLockButton] = useState(false);
-  const [showSearchPage, setShowSearchPage] = useState(false);
-  const [value, setValue] = useState<string | null>("1");
-  const [isFocus, setIsFocus] = useState(false);
+  const [showSearchOrderPage, setShowSearchOrderPage] = useState(false);
+  const [dropdownValue, setDropdownValue] = useState<string | null>("1");
+  const [isDropdownFocus, setIsDropdownFocus] = useState(false);
   const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
   const mapRef = useRef<MapView>(null);
   const user = useSelector((state: RootState) => state.user);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "85%"], []);
+  const [snapPoints, setSnapPoints] = useState(["25%", "50%", "85%"]); // 初始高度
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const anyLoadingTrue = Object.values(loading).some((value) => value === true);
+  const [isSwitchEnabled, setIsSwitchEnabled] = useState(true);
+  const toggleSwitch = () => setIsSwitchEnabled((previousState) => !previousState);
+
+  const toggleLoading = (key: string, value: boolean) => {
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const lockHeight = useCallback((height: string) => {
+    setSnapPoints([height]); // 鎖定到單一高度
+    bottomSheetRef.current?.expand(); // 確保展開到新高度
+  }, []);
 
   const getToken = async () => {
     try {
@@ -119,23 +149,22 @@ const MapWithBottomSheet = () => {
       .max(100, "Order description must be less than 100 characters");
 
     const startAfterSchema = z.date().refine((date) => date > new Date(), "Start date must be in the future");
-
     const priceValidation = priceSchema.safeParse(initialPrice);
     const descriptionValidation = descriptionSchema.safeParse(orderDescription);
     const startAfterValidation = startAfterSchema.safeParse(selectedDate);
 
     if (!priceValidation.success) {
-      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
+      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [{ onPress: () => toggleLoading("fetchData", false) }]);
       return false;
     }
 
     if (!descriptionValidation.success) {
-      Alert.alert("Validation Error", descriptionValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
+      Alert.alert("Validation Error", descriptionValidation.error.errors[0].message, [{ onPress: () => toggleLoading("fetchData", false) }]);
       return false;
     }
 
     if (!startAfterValidation.success) {
-      Alert.alert("Validation Error", startAfterValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
+      Alert.alert("Validation Error", startAfterValidation.error.errors[0].message, [{ onPress: () => toggleLoading("fetchData", false) }]);
       return false;
     }
 
@@ -146,7 +175,7 @@ const MapWithBottomSheet = () => {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
-    if (loading) {
+    if (anyLoadingTrue) {
       // 禁用手勢返回並隱藏返回按鈕
       navigation.setOptions({
         gestureEnabled: false,
@@ -167,7 +196,7 @@ const MapWithBottomSheet = () => {
         unsubscribe();
       }
 
-      if (lockButton && showSearchPage && 1 + 1 > 5) {
+      if (lockButton && showSearchOrderPage) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -183,56 +212,10 @@ const MapWithBottomSheet = () => {
         unsubscribe();
       }
     };
-  }, [loading, navigation]);
+  }, [anyLoadingTrue, navigation]);
 
-  const searchOrderData = async () => {
-    try {
-      const token = await getToken();
-
-      if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
-        return;
-      }
-
-      const data = {
-        startCordLongitude: origin?.longitude,
-        startCordLatitude: origin?.latitude,
-        endCordLongitude: destination?.longitude,
-        endCordLatitude: destination?.latitude,
-      };
-
-      let url = "";
-
-      if (user.role == 1) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/searchSimilarRoutePurchaseOrders`;
-      } else if (user.role == 2) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchSimilarRoutePurchaseOrders`;
-      }
-
-      const response = await axios.post(url, data, {
-        params: {
-          limit: 5,
-          offset: 0,
-        },
-      });
-
-      setSearchData(response.data);
-      setLockButton(true);
-      console.log(response.data);
-      setShowSearchPage(true);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
-      } else {
-        console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
-      }
-    }
-  };
-
-  const updateOrderData = async () => {
-    setLoading(true);
+  const searchOrderData = async (mode: string) => {
+    toggleLoading("fetchData", true);
 
     if (!validateOrderData()) {
       return;
@@ -242,7 +225,7 @@ const MapWithBottomSheet = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => toggleLoading("fetchData", false) }]);
         return;
       }
 
@@ -250,25 +233,126 @@ const MapWithBottomSheet = () => {
       endDate.setDate(endDate.getDate() + 1);
 
       const data = {
-        description: orderDescription,
-        startAddress: originAddress,
-        endAddress: destinationAddress,
-        initPrice: initialPrice,
         startCordLongitude: origin?.longitude,
         startCordLatitude: origin?.latitude,
         endCordLongitude: destination?.longitude,
         endCordLatitude: destination?.latitude,
         startAfter: selectedDate,
         endedAt: endDate,
-        isUrgent: false,
       };
 
       let url = "";
 
-      if (user.role == 1) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/createPurchaseOrder`;
-      } else if (user.role == 2) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/SupplyOrder/createSupplyOrder`;
+      if (user.role == 2) {
+        url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/searchBetterFirstPurchaseOrders`;
+      } else if (user.role == 1) {
+        url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchBetterFirstSupplyOrders`;
+      }
+
+      const response = await axios.post(url, data, {
+        params: {
+          limit: 5,
+          offset: 0,
+          searchPriorities: mode === "1" ? "RTSDU" : "TRSDU",
+        },
+      });
+
+      setSearchData(response.data);
+      setShowSearchOrderPage(true);
+      toggleLoading("fetchData", false);
+      lockHeight("85%");
+      //console.log(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => toggleLoading("fetchData", false) }]);
+      } else {
+        console.log("An unexpected error occurred:", error);
+        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => toggleLoading("fetchData", false) }]);
+      }
+    }
+  };
+
+  const createOrderData = async (type: number, orderId?: String) => {
+    if (type === 1) {
+      toggleLoading("createNewOrder", true);
+    } else if (type === 2) {
+      toggleLoading("inviteNow", true);
+    } else if (type === 3) {
+      toggleLoading("makeRequest", true);
+    }
+
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
+          {
+            onPress: () => {
+              toggleLoading("createNewOrder", false);
+              toggleLoading("inviteNow", false);
+              toggleLoading("makeRequest", false);
+            },
+          },
+        ]);
+        return;
+      }
+
+      let endDate = new Date(selectedDate);
+      endDate.setDate(endDate.getDate() + 1);
+
+      const data = {
+        startAddress: originAddress,
+        endAddress: destinationAddress,
+        startCordLongitude: origin?.longitude,
+        startCordLatitude: origin?.latitude,
+        endCordLongitude: destination?.longitude,
+        endCordLatitude: destination?.latitude,
+        ...(type === 1 && {
+          description: orderDescription,
+          initPrice: initialPrice,
+          startAfter: selectedDate,
+          endedAt: endDate,
+          isUrgent: false,
+          autoAccept: isSwitchEnabled,
+        }),
+        ...(type === 3 && {
+          briefDescription: orderDescription,
+          suggestPrice: initialPrice,
+          suggestStartAfter: selectedDate,
+          suggestEndedAt: endDate,
+        }),
+      };
+
+      let url = "";
+      let params = null;
+
+      if (type === 1) {
+        if (user.role == 1) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/createPurchaseOrder`;
+        } else if (user.role == 2) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/createSupplyOrder`;
+        }
+      } else if (type === 2) {
+        if (user.role == 2) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/startPurchaseOrderWithoutInvite`;
+        } else if (user.role == 1) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/SupplyOrder/startSupplyOrderWithoutInvite`;
+        }
+
+        params = {
+          id: orderId,
+        };
+      } else if (type === 3) {
+        if (user.role == 1) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/createPassengerInviteByOrderId`;
+        } else if (user.role == 2) {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/createRidderInviteByOrderId`;
+        }
+
+        params = {
+          orderId: orderId,
+        };
       }
 
       const response = await axios.post(url, data, {
@@ -276,19 +360,38 @@ const MapWithBottomSheet = () => {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Bearer ${token}`,
         },
+        params: params,
       });
 
+      toggleLoading("createNewOrder", false);
+      toggleLoading("inviteNow", false);
+      toggleLoading("makeRequest", false);
       setLockButton(true);
-      console.log("Update Response:", response.data);
-      setLoading(false);
       Alert.alert("成功", "送出訂單成功");
+      //console.log("Update Response:", response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
+          {
+            onPress: () => {
+              toggleLoading("createNewOrder", false);
+              toggleLoading("inviteNow", false);
+              toggleLoading("makeRequest", false);
+            },
+          },
+        ]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
+        Alert.alert("錯誤", "伺服器錯誤", [
+          {
+            onPress: () => {
+              toggleLoading("createNewOrder", false);
+              toggleLoading("inviteNow", false);
+              toggleLoading("makeRequest", false);
+            },
+          },
+        ]);
       }
     }
   };
@@ -354,7 +457,7 @@ const MapWithBottomSheet = () => {
   );
 
   useEffect(() => {
-    if (origin && destination) setShowDetailsPage(true);
+    if (origin && destination) setShowSetPage(true);
   }, [origin, destination]);
 
   const dropDownData = [
@@ -416,9 +519,9 @@ const MapWithBottomSheet = () => {
           enableContentPanningGesture={true}
           index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
         >
-          {showDetailsPage ? (
+          {showSetPage ? (
             <>
-              {!showSearchPage ? (
+              {!showSearchOrderPage ? (
                 <BottomSheetView
                   style={{
                     flex: 1,
@@ -427,39 +530,45 @@ const MapWithBottomSheet = () => {
                   }}
                 >
                   <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
-                  {origin && destination && (
-                    <>
-                      <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
-                      <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
-                      <View style={styles.dateContainer}>
-                        <Text style={styles.bottomSheetText}>開始時間：</Text>
-                        <Text style={styles.bottomSheetText}>
-                          {selectedDate
-                            ? selectedDate.toLocaleString("en-GB", {
-                                timeZone: "Asia/Taipei",
-                              })
-                            : "未選擇日期"}
-                        </Text>
-                        <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
-                          <Entypo name="calendar" size={moderateScale(24)} color="black" />
-                        </TouchableOpacity>
-                      </View>
-                      <BottomSheetTextInput
-                        style={styles.input}
-                        placeholder="初始價格"
-                        value={initialPrice}
-                        onChangeText={setinitialPrice}
-                        placeholderTextColor="gray"
-                      />
-                      <BottomSheetTextInput
-                        style={styles.input}
-                        placeholder="訂單描述"
-                        value={orderDescription}
-                        onChangeText={setorderDescription}
-                        placeholderTextColor="gray"
-                      />
-                    </>
-                  )}
+                  <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
+                  <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                  <View style={styles.dateContainer}>
+                    <Text style={styles.bottomSheetText}>開始時間：</Text>
+                    <Text style={styles.bottomSheetText}>
+                      {selectedDate
+                        ? selectedDate.toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })
+                        : "未選擇日期"}
+                    </Text>
+                    <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
+                      <Entypo name="calendar" size={moderateScale(24)} color="black" />
+                    </TouchableOpacity>
+                  </View>
+                  <BottomSheetTextInput
+                    style={styles.input}
+                    placeholder="初始價格"
+                    value={initialPrice}
+                    onChangeText={setinitialPrice}
+                    placeholderTextColor="gray"
+                  />
+                  <BottomSheetTextInput
+                    style={styles.input}
+                    placeholder="訂單描述"
+                    value={orderDescription}
+                    onChangeText={setorderDescription}
+                    placeholderTextColor="gray"
+                  />
+                  <View style={{ alignItems: "center", flexDirection: "row" }}>
+                    <Switch
+                      trackColor={{ false: "#767577", true: "#81b0ff" }}
+                      thumbColor={isSwitchEnabled ? "#f5dd4b" : "#f4f3f4"}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={toggleSwitch}
+                      value={isSwitchEnabled}
+                    />
+                    <Text style={styles.bottomSheetText}>可直接開始</Text>
+                  </View>
                   <DateTimePickerModal
                     date={selectedDate}
                     mode="datetime"
@@ -477,20 +586,20 @@ const MapWithBottomSheet = () => {
                       onPress={() => {
                         setOrigin(null);
                         setDestination(null);
-                        setShowDetailsPage(false);
+                        setShowSetPage(false);
                       }}
-                      disabled={loading || lockButton}
+                      disabled={loading.fetchData}
                     >
                       <Text style={styles.buttonText}>返回</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.button, { backgroundColor: "#228B22" }]}
                       onPress={() => {
-                        searchOrderData();
+                        searchOrderData("1");
                       }}
-                      disabled={loading || lockButton}
+                      disabled={loading.fetchData}
                     >
-                      <Text style={styles.buttonText}>{loading ? "搜尋中..." : "搜尋訂單"}</Text>
+                      <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : "搜尋訂單"}</Text>
                     </Pressable>
                   </View>
                 </BottomSheetView>
@@ -506,7 +615,7 @@ const MapWithBottomSheet = () => {
                   >
                     <View style={styles.dropdowncontainer}>
                       <Dropdown
-                        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                        style={[styles.dropdown, isDropdownFocus && { borderColor: "blue" }]}
                         selectedTextStyle={styles.dropdownselectedTextStyle}
                         placeholderStyle={styles.dropdownplaceholderStyle}
                         containerStyle={styles.dropdowncontainerStyle}
@@ -515,99 +624,130 @@ const MapWithBottomSheet = () => {
                         data={dropDownData}
                         labelField="label"
                         valueField="value"
-                        placeholder={!isFocus ? "請選擇" : "..."}
-                        value={value}
-                        onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
+                        placeholder={!isDropdownFocus ? "請選擇" : "..."}
+                        value={dropdownValue}
+                        onFocus={() => setIsDropdownFocus(true)}
+                        onBlur={() => setIsDropdownFocus(false)}
                         onChange={(item) => {
-                          setValue(item.value);
-                          setIsFocus(false);
+                          setSearchData([]);
+                          setIsDropdownFocus(false);
+                          setDropdownValue(item.value);
+                          searchOrderData(item.value);
                         }}
-                        renderLeftIcon={() => <AntDesign style={styles.dropdownicon} color={isFocus ? "blue" : "black"} name="Safety" size={20} />}
+                        renderLeftIcon={() => (
+                          <AntDesign style={styles.dropdownicon} color={isDropdownFocus ? "blue" : "black"} name="Safety" size={20} />
+                        )}
                       />
                     </View>
-                    {searchData.map((item, index) => {
-                      const isActive = index === activeIndex;
 
-                      return (
-                        <TouchableWithoutFeedback key={index} onPress={() => setActiveIndex(index)}>
-                          {isActive ? (
-                            <View style={styles.activeCard}>
-                              <View style={styles.cardImageContainer}>
-                                {item.avatorUrl ? (
-                                  <Image source={{ uri: item.avatorUrl }} style={styles.activeCardImage} />
-                                ) : (
-                                  <FontAwesome name="user" size={50} color="black" />
-                                )}
-                              </View>
+                    {loading.fetchData ? (
+                      <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="black" />
+                      </View>
+                    ) : (
+                      <>
+                        {searchData.map((item, index) => {
+                          const isActive = index === activeIndex;
 
-                              <View style={styles.cardContent}>
-                                <View style={styles.cardLeftSection}>
-                                  <View style={styles.cardTextContainer}>
-                                    <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
-                                    <Text style={styles.cardSubtitle}>出發地：{item.startAddress}</Text>
-                                    <Text style={styles.cardSubtitle}>目的地：{item.endAddress}</Text>
-                                    <Text style={styles.cardSubtitle}>
-                                      開車時間：
-                                      {new Date(item.startAfter).toLocaleString("en-GB", {
-                                        timeZone: "Asia/Taipei",
-                                      })}
-                                    </Text>
+                          return (
+                            <TouchableWithoutFeedback key={index} onPress={() => setActiveIndex(index)}>
+                              {isActive ? (
+                                <View style={styles.activeCard}>
+                                  <View style={styles.cardImageContainer}>
+                                    {item.avatorUrl ? (
+                                      <Image source={{ uri: item.avatorUrl }} style={styles.activeCardImage} />
+                                    ) : (
+                                      <FontAwesome name="user" size={50} color="black" />
+                                    )}
                                   </View>
-                                </View>
-                                <View style={styles.cardRightSection}>
-                                  <Text style={styles.cardPrice}>${item.initPrice}</Text>
-                                </View>
-                              </View>
 
-                              {item.autoAccept ? (
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                                  <TouchableOpacity style={styles.inviteButton}>
-                                    <Text style={styles.inviteButtonText}>提出要求</Text>
-                                  </TouchableOpacity>
-                                  <TouchableOpacity style={styles.inviteButton}>
-                                    <Text style={styles.inviteButtonText}>直接邀請</Text>
-                                  </TouchableOpacity>
+                                  <View style={styles.cardContent}>
+                                    <View style={styles.cardLeftSection}>
+                                      <View style={styles.cardTextContainer}>
+                                        <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
+                                        <Text style={styles.cardSubtitle}>出發地：{item.startAddress}</Text>
+                                        <Text style={styles.cardSubtitle}>目的地：{item.endAddress}</Text>
+                                        <Text style={styles.cardSubtitle}>
+                                          開車時間：
+                                          {new Date(item.startAfter).toLocaleString("en-GB", {
+                                            timeZone: "Asia/Taipei",
+                                          })}
+                                        </Text>
+                                      </View>
+                                    </View>
+                                    <View style={styles.cardRightSection}>
+                                      <Text style={styles.cardPrice}>${item.initPrice}</Text>
+                                    </View>
+                                  </View>
+
+                                  {item.autoAccept ? (
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                                      <Pressable
+                                        style={styles.inviteButton}
+                                        disabled={anyLoadingTrue || lockButton}
+                                        onPress={() => createOrderData(3, item.id)}
+                                      >
+                                        <Text style={styles.inviteButtonText}>
+                                          {loading.makeRequest ? <ActivityIndicator size="large" /> : "提出要求"}
+                                        </Text>
+                                      </Pressable>
+                                      <Pressable
+                                        style={styles.inviteButton}
+                                        disabled={anyLoadingTrue || lockButton}
+                                        onPress={() => createOrderData(2, item.id)}
+                                      >
+                                        <Text style={styles.inviteButtonText}>
+                                          {loading.inviteNow ? <ActivityIndicator size="large" /> : "接受訂單"}
+                                        </Text>
+                                      </Pressable>
+                                    </View>
+                                  ) : (
+                                    <Pressable
+                                      style={styles.inviteButton}
+                                      disabled={anyLoadingTrue || lockButton}
+                                      onPress={() => createOrderData(3, item.id)}
+                                    >
+                                      <Text style={styles.inviteButtonText}>
+                                        {loading.makeRequest ? <ActivityIndicator size="large" /> : "提出要求"}
+                                      </Text>
+                                    </Pressable>
+                                  )}
                                 </View>
                               ) : (
-                                <TouchableOpacity style={styles.inviteButton}>
-                                  <Text style={styles.inviteButtonText}>提出要求</Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          ) : (
-                            <View style={styles.card}>
-                              <View style={styles.cardContent}>
-                                <View style={styles.cardLeftSection}>
-                                  {item.avatorUrl ? (
-                                    <Image source={{ uri: item.avatorUrl }} style={styles.cardImage} />
-                                  ) : (
-                                    <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
-                                  )}
-                                  <View style={styles.cardTextContainer}>
-                                    <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
-                                    <Text style={styles.cardSubtitle}>
-                                      開車時間：
-                                      {new Date(item.startAfter).toLocaleString("en-GB", {
-                                        timeZone: "Asia/Taipei",
-                                      })}
-                                    </Text>
+                                <View style={styles.card}>
+                                  <View style={styles.cardContent}>
+                                    <View style={styles.cardLeftSection}>
+                                      {item.avatorUrl ? (
+                                        <Image source={{ uri: item.avatorUrl }} style={styles.cardImage} />
+                                      ) : (
+                                        <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
+                                      )}
+                                      <View style={styles.cardTextContainer}>
+                                        <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
+                                        <Text style={styles.cardSubtitle}>
+                                          開車時間：
+                                          {new Date(item.startAfter).toLocaleString("en-GB", {
+                                            timeZone: "Asia/Taipei",
+                                          })}
+                                        </Text>
+                                      </View>
+                                    </View>
+                                    <View style={styles.cardRightSection}>
+                                      <Text style={styles.cardPrice}>${item.initPrice}</Text>
+                                    </View>
                                   </View>
                                 </View>
-                                <View style={styles.cardRightSection}>
-                                  <Text style={styles.cardPrice}>${item.initPrice}</Text>
-                                </View>
-                              </View>
-                            </View>
-                          )}
-                        </TouchableWithoutFeedback>
-                      );
-                    })}
+                              )}
+                            </TouchableWithoutFeedback>
+                          );
+                        })}
+                      </>
+                    )}
                   </ScrollView>
                   <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
-                    <TouchableOpacity style={styles.footerButton}>
-                      <Text style={styles.footerButtonText}>自行建立</Text>
-                    </TouchableOpacity>
+                    <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
+                      <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : "自行建立"}</Text>
+                    </Pressable>
                   </View>
                 </>
               )}
@@ -689,6 +829,11 @@ const MapWithBottomSheet = () => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -816,7 +961,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   cardLeftSection: {
-    flex: 7,
+    flex: 5,
     flexDirection: "row",
     alignItems: "center",
   },

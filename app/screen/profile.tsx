@@ -1,47 +1,38 @@
-import { Text, StyleSheet, Image, View } from "react-native";
+import { Text, StyleSheet, Image, View, Pressable, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { RootState } from "../(store)/";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { FlashList } from "@shopify/flash-list";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const user = useSelector((state: RootState) => state.user);
-  const [token, setToken] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const userToken = await SecureStore.getItemAsync("userToken");
-      setToken(userToken);
-    };
+  const listData = [
+    { id: "1", icon: "shopping-cart", label: "我的訂單" },
+    { id: "2", icon: "notifications", label: "消息通知", badge: 24 },
+    { id: "3", icon: "person", label: "更新個人資料", page: "editprofile" },
+    { id: "4", icon: "home", label: "綁定門戶", extra: "未綁定" },
+    { id: "5", icon: "help", label: "幫助中心" },
+    { id: "6", icon: "settings", label: "設置" },
+  ];
 
-    fetchToken();
-  }, []);
-
-  const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-
-  const getProfileData = async () => {
-    if (token) {
-      try {
-        const response = await api.get("/passenger/getMe", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("Profile Data:", response.data);
-      } catch (error) {
-        console.error("API 請求出錯:", error);
-      }
-    } else {
-      console.log("Token 未獲取");
-    }
-  };
+  const renderItem = ({ item }: any) => (
+    <Pressable style={styles.listItem} onPress={() => navigation.navigate(item.page as never)}>
+      <View style={styles.iconContainer}>
+        <AntDesign name="right" size={24} color="black" />
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.label}>{item.label}</Text>
+        {item.extra && <Text style={styles.extra}>{item.extra}</Text>}
+      </View>
+      {item.badge && <Text style={styles.badge}>{item.badge}</Text>}
+    </Pressable>
+  );
 
   return (
     <View
@@ -50,37 +41,122 @@ const Profile = () => {
         paddingTop: verticalScale(insets.top),
         paddingBottom: verticalScale(insets.bottom),
         paddingHorizontal: scale(20), // 設置水平間距
-        paddingVertical: verticalScale(20), // 設置垂直間距
       }}
     >
-      <View style={styles.imageWrapper}>
-        <Image
-          source={require("../../assets/images/motorbike.jpg")}
-          style={styles.image}
-        />
-        <Text style={styles.text}>UserName: {user.username}</Text>
+      <View style={styles.container}>
+        {/* 頭像部分 */}
+        <View style={styles.profileHeader}>
+          <Image
+            source={{ uri: "https://via.placeholder.com/100" }} // 替換為你的頭像 URL
+            style={styles.avatar}
+          />
+          <Text style={styles.name}>{user.username}</Text>
+          <Text style={styles.description}>加入跑子環保的第240天</Text>
+        </View>
+
+        {/* 積分和回收部分 */}
+        <View style={styles.infoRow}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>環保積分</Text>
+            <Text style={styles.infoValue}>680.00</Text>
+            <Text style={styles.infoHint}>積分可進行提現兌換</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>回收總量</Text>
+            <Text style={styles.infoValue}>24.0 公斤</Text>
+            <Text style={styles.infoHint}>感謝您為環保貢獻的力量</Text>
+          </View>
+        </View>
+
+        {/* 功能列表 */}
+        <FlashList data={listData} renderItem={renderItem} keyExtractor={(item) => item.id} estimatedItemSize={282} />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  imageWrapper: {
+  container: {
+    flex: 1,
+  },
+  profileHeader: {
+    alignItems: "center",
+    marginBottom: moderateScale(16),
+  },
+  avatar: {
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(40),
+    marginBottom: moderateScale(8),
+  },
+  name: {
+    fontSize: moderateScale(18),
+    fontWeight: "bold",
+    color: "#333",
+  },
+  description: {
+    fontSize: moderateScale(12),
+    color: "#999",
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: moderateScale(16),
+  },
+  infoBox: {
+    flex: 1,
+    alignItems: "center",
+    marginHorizontal: scale(8),
+    backgroundColor: "#f5f5f5",
+    padding: moderateScale(12),
+    borderRadius: moderateScale(8),
+  },
+  infoTitle: {
+    fontSize: moderateScale(14),
+    color: "#666",
+  },
+  infoValue: {
+    fontSize: moderateScale(18),
+    fontWeight: "bold",
+    color: "#333",
+    marginVertical: verticalScale(4),
+  },
+  infoHint: {
+    fontSize: moderateScale(10),
+    color: "#999",
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: verticalScale(12),
+    borderBottomWidth: scale(1),
+    borderBottomColor: "#eee",
+  },
+  iconContainer: {
+    width: moderateScale(40),
     justifyContent: "center",
     alignItems: "center",
-    marginTop: verticalScale(20),
   },
-  text: {
-    fontSize: moderateScale(16),
-    padding: verticalScale(2),
-    fontWeight: "bold",
-    color: "#000000",
-    marginTop: verticalScale(10),
+  textContainer: {
+    flex: 1,
+    marginLeft: scale(8),
   },
-  image: {
-    width: scale(120), // 圖片寬度
-    height: verticalScale(120), // 圖片高度
-    resizeMode: "contain",
+  label: {
+    fontSize: moderateScale(14),
+    color: "#333",
+  },
+  extra: {
+    fontSize: moderateScale(12),
+    color: "#999",
+  },
+  badge: {
+    backgroundColor: "red",
+    color: "#fff",
+    fontSize: moderateScale(12),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(2),
+    borderRadius: moderateScale(8),
+    overflow: "hidden",
   },
 });
 

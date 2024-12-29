@@ -23,6 +23,7 @@ import MyInviteDeScreen from "./screen/invite/myinvitede";
 import OtherInviteScreen from "./screen/invite/otherinvite";
 import OtherInviteDeScreen from "./screen/invite/otherinvitede";
 import InviteMap from "./screen/invite/invitemap";
+import EditProfile from "./screen/setting/editprofile";
 import store from "./(store)/";
 import { Provider } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -234,6 +235,7 @@ export default function App() {
             <Stack.Screen name="rlogin" component={RLoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="preg" component={PRegScreen} options={{ headerShown: false }} />
             <Stack.Screen name="rreg" component={RRegScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="editprofile" component={EditProfile} options={{ headerShown: true }} />
             <Stack.Screen
               name="invitemap"
               component={InviteMap}
