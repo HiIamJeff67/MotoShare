@@ -335,6 +335,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     async searchBetterFirstPurchaseOrders(creatorName = undefined, limit, offset, isAutoAccept, getBetterPurchaseOrderDto, searchPriorities) {
         let timeQuery = undefined, routeQuery = undefined, startQuery = undefined, destQuery = undefined, updatedAtQuery = undefined, aboutToStartQuery = undefined;
         let spaceResponseField = {};
+        let timeResponseField = {};
         if (getBetterPurchaseOrderDto.startAfter || getBetterPurchaseOrderDto.endedAt) {
             timeQuery = (0, drizzle_orm_1.sql) `(
             ${getBetterPurchaseOrderDto.startAfter ?
@@ -345,6 +346,7 @@ let PurchaseOrderService = class PurchaseOrderService {
                 (0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.endedAt} - ${getBetterPurchaseOrderDto.endedAt})))` :
                 (0, drizzle_orm_1.sql) ``}
           ) ASC`;
+            timeResponseField = { timeDiff: timeQuery };
         }
         if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude
             && getBetterPurchaseOrderDto.endCordLongitude && getBetterPurchaseOrderDto.endCordLatitude) {
@@ -399,6 +401,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             .map(symbol => sortMap[symbol])
             .filter(query => query !== undefined);
         searchQueries.push(aboutToStartQuery);
+        console.log(searchQueries);
         await this.updateExpiredPurchaseOrders();
         return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,
@@ -416,6 +419,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             isUrgent: purchaseOrder_schema_1.PurchaseOrderTable.isUrgent,
             autoAccept: purchaseOrder_schema_1.PurchaseOrderTable.autoAccept,
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
+            ...timeResponseField,
             ...spaceResponseField,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))

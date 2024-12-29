@@ -488,6 +488,7 @@ export class PurchaseOrderService {
           routeQuery: any = undefined, startQuery: any = undefined, destQuery: any = undefined, 
           updatedAtQuery: any = undefined, aboutToStartQuery: any = undefined;
       let spaceResponseField: any = {};
+      let timeResponseField: any = {};
       
       if (getBetterPurchaseOrderDto.startAfter || getBetterPurchaseOrderDto.endedAt) {
           timeQuery = sql`(
@@ -499,6 +500,7 @@ export class PurchaseOrderService {
                 sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.endedAt} - ${getBetterPurchaseOrderDto.endedAt})))` : 
                 sql``}
           ) ASC`;
+          timeResponseField = { timeDiff: timeQuery };
       }
 
       if (getBetterPurchaseOrderDto.startCordLongitude && getBetterPurchaseOrderDto.startCordLatitude
@@ -577,6 +579,7 @@ export class PurchaseOrderService {
         isUrgent: PurchaseOrderTable.isUrgent,
         autoAccept: PurchaseOrderTable.autoAccept,
         status: PurchaseOrderTable.status,
+        ...timeResponseField, 
         ...spaceResponseField, 
       }).from(PurchaseOrderTable)
         .leftJoin(PassengerTable, eq(PurchaseOrderTable.creatorId, PassengerTable.id))

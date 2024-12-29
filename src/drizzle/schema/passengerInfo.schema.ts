@@ -16,6 +16,7 @@ export const PassengerInfoTable = pgTable("passengerInfo", {
     emergencyPhoneNumber: text("emergencyPhoneNumber"), 
     selfIntroduction: text("selfIntroduction"),
     avatorUrl: text("avatorUrl"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(), 
     updatedAt: timestamp("updatedAt").notNull().defaultNow(), 
 }, (table) => {
     return {

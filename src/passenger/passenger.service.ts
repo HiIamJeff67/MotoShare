@@ -63,6 +63,7 @@ export class PassengerService {
             // phoneNumber: true,
             selfIntroduction: true,
             avatorUrl: true,
+            createdAt: true, 
             updatedAt: true,
           }
         },
@@ -79,6 +80,7 @@ export class PassengerService {
         // phoneNumber: true,
         selfIntroduction: true,
         avatorUrl: true,
+        createdAt: true, 
         updatedAt: true,
       },
       with: {
@@ -109,6 +111,7 @@ export class PassengerService {
             emergencyPhoneNumber: true, 
             selfIntroduction: true, 
             avatorUrl: true, 
+            createdAt: true, 
             updatedAt: true, 
           }
         },

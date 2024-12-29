@@ -19,6 +19,7 @@ export const RidderInfoTable = pgTable("ridderInfo", {
     motocycleLicense: text("motocycleLicense").unique(),
     motocycleType: text("motocycleType"),
     motocyclePhotoUrl: text("motocyclePhotoUrl"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(), 
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 }, (table) => {
     return {

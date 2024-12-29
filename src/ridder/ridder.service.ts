@@ -31,7 +31,7 @@ export class RidderService {
   ) {}
 
   /* ================================= Get operations ================================= */
-  private async getRidderById(id: string) {
+  private async _getRidderById(id: string) {
     const response =  await this.db.select({
       id: RidderTable.id,
       userName: RidderTable.userName,
@@ -62,6 +62,7 @@ export class RidderService {
             avatorUrl: true,
             motocycleType: true,
             motocyclePhotoUrl: true,
+            createdAt: true, 
             updatedAt: true,
           }
         },
@@ -81,6 +82,7 @@ export class RidderService {
         motocycleLicense: true,
         motocycleType: true,
         motocyclePhotoUrl: true,
+        createdAt: true, 
         updatedAt: true,
       },
       with: {
@@ -114,6 +116,7 @@ export class RidderService {
             motocycleLicense: true,
             motocycleType: true,
             motocyclePhotoUrl: true,
+            createdAt: true, 
             updatedAt: true,
           }
         },
@@ -194,7 +197,7 @@ export class RidderService {
     updateRidderDto: UpdateRidderDto,
   ) {
     // check if the new password is same as the previous one
-    const user = await this.getRidderById(id);
+    const user = await this._getRidderById(id);
     if (!user) {
       throw ClientRidderNotFoundException;
     }
