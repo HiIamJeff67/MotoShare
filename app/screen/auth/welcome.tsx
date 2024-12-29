@@ -3,7 +3,7 @@ import { Text, View, Image, Pressable, StatusBar, Platform } from 'react-native'
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
-import { Theme } from '../theme'; // 引入自定義的主題類型
+import { Theme } from '../../../theme/theme'; // 引入自定義的主題類型
 
 const WelcomeScreen = () => {
     const navigation = useNavigation();

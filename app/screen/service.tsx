@@ -1,16 +1,20 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { RootState } from "../(store)/";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
+import { Theme } from "../../theme/theme";
+import { styles } from "./service.style";
 
 const Service = () => {
   const user = useSelector((state: RootState) => state.user);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const theme = useTheme() as Theme;
+  const { colors } = theme;
 
   return (
     <View
@@ -22,14 +26,14 @@ const Service = () => {
         paddingVertical: verticalScale(20), // 設置垂直間距
       }}
     >
-      <Text style={styles.MainText}>服務</Text>
+      <Text style={{...styles.MainText, color: colors.text}}>服務</Text>
       <View
         style={{ marginTop: verticalScale(20) }}
         className="flex flex-row justify-between items-center"
       >
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate("map")}
+          onPress={() => navigation.navigate("map" as never)}
         >
           <View className="items-center">
             <FontAwesome6 name="motorcycle" size={24} color="black" />
@@ -39,7 +43,7 @@ const Service = () => {
 
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate("order")}
+          onPress={() => navigation.navigate("order" as never)}
         >
           <View className="items-center">
             <FontAwesome6 name="list" size={24} color="black" />
@@ -49,7 +53,7 @@ const Service = () => {
 
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate("myinvite")}
+          onPress={() => navigation.navigate("myinvite" as never)}
         >
           <View className="items-center">
             <Ionicons name="people" size={24} color="black" />
@@ -59,7 +63,7 @@ const Service = () => {
 
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate("myorder")}
+          onPress={() => navigation.navigate("myorder" as never)}
         >
           <View className="items-center">
             <FontAwesome6 name="edit" size={24} color="black" />
@@ -70,29 +74,5 @@ const Service = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  MainText: {
-    fontSize: moderateScale(25),
-    fontWeight: "bold",
-  },
-  card: {
-    width: scale(70),
-    height: verticalScale(60),
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "black",
-    shadowOffset: {
-      width: scale(0),
-      height: verticalScale(2),
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: moderateScale(3.84),
-    elevation: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-  },
-});
 
 export default Service;

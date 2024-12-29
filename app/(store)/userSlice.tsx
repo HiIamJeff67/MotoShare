@@ -1,3 +1,4 @@
+import { ThemeType } from '@/theme';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
@@ -5,9 +6,16 @@ interface UserState {
   role: number;
 }
 
-const initialState: UserState = {
+interface UserSettings {
+  theme: ThemeType | null;
+}
+
+interface AllState extends Partial<UserState & UserSettings> {}
+
+const initialState: AllState = {
   username: '',
-  role: 0
+  role: 0, 
+  theme: null, 
 };
 
 const userSlice = createSlice({
@@ -18,6 +26,10 @@ const userSlice = createSlice({
       state.username = action.payload.username;
       state.role = action.payload.role;
     },
+    setUserSettings: (state, action: PayloadAction<UserSettings>) => {
+      state.theme = action.payload.theme;
+      console.log(state.theme)
+    }, 
     clearUser: (state) => {
       state.username = '';
       state.role = 0;
@@ -25,5 +37,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, setUserSettings } = userSlice.actions;
 export default userSlice.reducer;
