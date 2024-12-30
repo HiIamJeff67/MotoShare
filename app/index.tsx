@@ -2,12 +2,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import WelcomeScreen from "./screen/auth/welcome";
-import PLoginScreen from "./screen/auth/plogin";
-import RLoginScreen from "./screen/auth/rlogin";
+import LoginScreen from "./screen/auth/login";
 import ChooseScreen from "./screen/auth/choose";
 import Choose2Screen from "./screen/auth/choose2";
-import PRegScreen from "./screen/auth/preg";
-import RRegScreen from "./screen/auth/rreg";
+import RegScreen from "./screen/auth/reg";
 import HomeScreen from "./screen/home";
 import ProfileScreen from "./screen/profile";
 import ServiceScreen from "./screen/service";
@@ -249,16 +247,14 @@ function AppContent() {
     <NavigationContainer theme={systemTheme === "dark" ? DarkTheme : LightTheme}>
       <SafeAreaProvider>
         {/* 根據平台條件設置 StatusBar */}
-        {Platform.OS === "ios" ? <StatusBar barStyle="dark-content" /> : <StatusBar barStyle="dark-content" hidden={true} />}
+        {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
         <Stack.Navigator>
           <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
           <Stack.Screen name="home" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="choose" component={ChooseScreen} options={{ headerShown: false }} />
           <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
-          <Stack.Screen name="plogin" component={PLoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="rlogin" component={RLoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="preg" component={PRegScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="rreg" component={RRegScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
           <Stack.Screen name="editprofile" component={EditProfile} options={{ headerShown: true }} />
           <Stack.Screen
             name="invitemap"

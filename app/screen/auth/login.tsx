@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigation, CommonActions } from "@react-navigation/native";
+import { useNavigation, CommonActions, useRoute } from "@react-navigation/native";
 import {
   TextInput,
   Text,
@@ -17,34 +17,9 @@ import {
   StatusBar,
   ActivityIndicator,
 } from "react-native";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../(store)/userSlice";
-import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
-import { GoogleSignin, isErrorWithCode, statusCodes, isSuccessResponse } from "@react-native-google-signin/google-signin";
-import { z } from "zod";
-
-GoogleSignin.configure({
-  webClientId: "845286501383-anaskssv4t2mn71hddrdll74uamcgne2.apps.googleusercontent.com", // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
-  scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
-  iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
-});
-
-// 驗證規則
-const usernameSchema = z
-  .string()
-  .regex(/^[a-zA-Z0-9_]+$/, "使用者名稱只能包含英文字母、數字和底線")
-  .min(4, "使用者名稱至少需要4個字元")
-  .max(20, "使用者名稱最多20個字元");
-
-const emailSchema = z.string().email("請輸入有效的電子郵件地址");
-
-const passwordSchema = z
-  .string()
-  .min(8, "密碼至少需要8個字元")
-  .refine((val) => !/\s/.test(val), "密碼不能包含空格");
+import { HandleGoogleSignIn, HandleLogin } from "./handlelogin";
 
 const PassengerLogin = () => {
   const navigation = useNavigation();
@@ -55,7 +30,28 @@ const PassengerLogin = () => {
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
-  const dispatch = useDispatch();
+  const route = useRoute();
+  const { role } = route.params as { role: number };
+
+  // Regular login handler
+  const { handleLoginSubmit } = HandleLogin({
+    usernameOrEmail,
+    password,
+    role,
+    onSignInStart: () => setLoading(true),
+    onSignInComplete: () => setLoading(false),
+    onSignInSuccess: () => setLockButton(true),
+    onSignInError: () => setLoading(false),
+  });
+
+  // Google login handler
+  const { initiateGoogleSignIn } = HandleGoogleSignIn({
+    role,
+    onSignInStart: () => setIsGoogleInProgress(true),
+    onSignInComplete: () => setIsGoogleInProgress(false),
+    onSignInSuccess: () => setLockButton(true),
+    onSignInError: () => setIsGoogleInProgress(false),
+  });
 
   useEffect(() => {
     const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
@@ -88,15 +84,6 @@ const PassengerLogin = () => {
   const handleSocialLogin = (provider: "Google" | "Apple") => {
     Alert.alert("社交登入", `您選擇了 ${provider} 登入1111`);
     console.log("社交登入", `您選擇了 ${provider} 登入`);
-  };
-
-  const saveToken = async (token: string) => {
-    try {
-      await SecureStore.setItemAsync("userToken", token);
-      console.log("Token 保存成功");
-    } catch (error) {
-      console.error("保存 Token 出錯:", error);
-    }
   };
 
   // 監控 loading 狀態變化，禁用或恢復返回
@@ -142,138 +129,8 @@ const PassengerLogin = () => {
     };
   }, [loading, navigation, isGoogleInProgress]);
 
-  const handleLogin = async () => {
-    setLoading(true);
-
-    // 根據 "@" 判斷是使用者名稱還是電子郵件
-    if (usernameOrEmail.includes("@")) {
-      // 檢查是否為有效的電子郵件
-      const emailValidation = emailSchema.safeParse(usernameOrEmail);
-      if (!emailValidation.success) {
-        Alert.alert("錯誤", emailValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
-        return;
-      }
-    } else {
-      // 檢查是否為有效的使用者名稱
-      const usernameValidation = usernameSchema.safeParse(usernameOrEmail);
-      if (!usernameValidation.success) {
-        Alert.alert("錯誤", usernameValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
-        return;
-      }
-    }
-
-    // 驗證密碼
-    const passwordValidation = passwordSchema.safeParse(password);
-    if (!passwordValidation.success) {
-      Alert.alert("錯誤", passwordValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
-      return;
-    }
-
-    try {
-      let data;
-
-      // 判斷是否包含 "@"
-      if (usernameOrEmail.includes("@")) {
-        // 如果輸入是電子郵件
-        data = {
-          email: usernameOrEmail,
-          password: password,
-        };
-      } else {
-        // 如果輸入的是使用者名稱
-        data = {
-          userName: usernameOrEmail,
-          password: password,
-        };
-      }
-
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithAccountAndPassword`, data, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
-      if (response && response.data) {
-        saveToken(response.data.accessToken);
-        dispatch(setUser({ username: usernameOrEmail, role: 1 }));
-        setLockButton(true);
-        setLoading(false);
-        Alert.alert("成功", `登入成功，使用者：${usernameOrEmail}`);
-      } else {
-        Alert.alert("錯誤", "請求伺服器失敗", [{ onPress: () => setLoading(false) }]);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(JSON.stringify(error.response?.data.message));
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
-      } else {
-        console.log("An unexpected error occurred:", JSON.stringify(error));
-        Alert.alert("錯誤", "發生意外錯誤", [{ onPress: () => setLoading(false) }]);
-      }
-    }
-  };
-
-  const HandleGSignIn2 = async (response: any) => {
-    try {
-      const data = {
-        idToken: response.data.idToken,
-      };
-
-      const axiosResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithGoogleAuth`, data, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
-      if (axiosResponse && axiosResponse.data) {
-        saveToken(axiosResponse.data.accessToken);
-        dispatch(setUser({ username: response.data.user.email, role: 1 }));
-        setLockButton(true);
-        setIsGoogleInProgress(false);
-        Alert.alert("成功", `登入成功，使用者：${response.data.user.email}`);
-      } else {
-        Alert.alert("錯誤", "請求伺服器失敗", [{ onPress: () => setIsGoogleInProgress(false) }]);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(JSON.stringify(error.response?.data.message));
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setIsGoogleInProgress(false) }]);
-      } else {
-        console.log("An unexpected error occurred:", JSON.stringify(error));
-        Alert.alert("錯誤", "發生意外錯誤", [{ onPress: () => setIsGoogleInProgress(false) }]);
-      }
-    }
-  };
-
-  const HandleGSignIn = async () => {
-    setIsGoogleInProgress(true);
-
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        HandleGSignIn2(response);
-      } else {
-        // sign in was cancelled by user
-        setIsGoogleInProgress(false);
-      }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.SIGN_IN_CANCELLED:
-            console.error("SIGN_IN_CANCELLED");
-            break;
-          case statusCodes.IN_PROGRESS:
-            console.error("IN_PROGRESS");
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            console.error("PLAY_SERVICES_NOT_AVAILABLE");
-            break;
-          default:
-        }
-
-        setIsGoogleInProgress(false);
-      } else {
-        // handle other errors
-        setIsGoogleInProgress(false);
-      }
-    }
+  const handleGoogleLogin = () => {
+    initiateGoogleSignIn();
   };
 
   return (
@@ -286,7 +143,7 @@ const PassengerLogin = () => {
     >
       <ScrollView
         contentContainerStyle={{
-          flex: 1,
+          flexGrow: 1,
           backgroundColor: "#ffffff",
           paddingTop: verticalScale(insets.top),
           paddingBottom: verticalScale(insets.bottom),
@@ -301,7 +158,7 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>乘客登入</Text>
+          <Text style={styles.headerText}>{role == 1 ? "乘客登入" : "車主登入"}</Text>
         </View>
 
         <View style={styles.inputWrapper}>
@@ -328,7 +185,7 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.centerAlign}>
-          <Pressable style={styles.loginButton} onPress={handleLogin} disabled={isGoogleInProgress || loading || lockButton}>
+          <Pressable style={styles.loginButton} onPress={handleLoginSubmit} disabled={isGoogleInProgress || loading || lockButton}>
             <Text style={styles.loginButtonText}>{loading ? <ActivityIndicator size="large" /> : "登入"}</Text>
           </Pressable>
         </View>
@@ -342,7 +199,7 @@ const PassengerLogin = () => {
         <View style={styles.socialContainer}>
           <TouchableWithoutFeedback
             onPress={() => {
-              HandleGSignIn();
+              handleGoogleLogin();
             }}
             disabled={isGoogleInProgress || loading || lockButton}
           >

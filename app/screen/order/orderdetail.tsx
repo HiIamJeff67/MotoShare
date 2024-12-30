@@ -1,24 +1,12 @@
 import React from "react";
-import {
-  Text,
-  View,
-  ScrollView,
-  Alert,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
+import { Text, View, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
 import * as SecureStore from "expo-secure-store";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import {
-  ScaledSheet,
-  scale,
-  verticalScale,
-  moderateScale,
-} from "react-native-size-matters";
+import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 // 定義 Creator 的資料結構
 interface CreatorInfoType {
@@ -133,9 +121,7 @@ const OrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                    <Text style={styles.orderNumber}>
-                      訂單編號: {order?.id}
-                    </Text>
+                <Text style={styles.orderNumber}>訂單編號: {order?.id}</Text>
               </View>
 
               <View style={styles.body}>
@@ -152,14 +138,8 @@ const OrderDetail = () => {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>
-                      初始價格: {order.initPrice}
-                    </Text>
-                    {user.role == 1 ? (
-                      <Text style={styles.title}>
-                        路徑偏差距離: {order.tolerableRDV}
-                      </Text>
-                    ) : null}
+                    <Text style={styles.title}>初始價格: {order.initPrice}</Text>
+                    {user.role == 1 ? <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text> : null}
                     <Text style={styles.title}>
                       更新時間:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
@@ -170,15 +150,19 @@ const OrderDetail = () => {
                     <Pressable
                       style={[styles.inviteButton]}
                       onPress={() =>
-                        navigation.navigate("invitemap", { orderid: orderid })
+                        navigation.navigate("invitemap", {
+                          orderId: orderid,
+                          orderStartAddress: order.startAddress,
+                          orderEndAddress: order.endAddress,
+                          orderInitPrice: order.initPrice,
+                          orderStartAfter: order.startAfter,
+                        })
                       }
                     >
                       <Text style={styles.inviteButtonText}>建立邀請</Text>
                     </Pressable>
                   </>
-                ) : (
-                  null
-                )}
+                ) : null}
               </View>
             </View>
           </View>
