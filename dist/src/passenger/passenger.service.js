@@ -55,6 +55,7 @@ let PassengerService = class PassengerService {
                         age: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        createdAt: true,
                         updatedAt: true,
                     }
                 },
@@ -69,6 +70,7 @@ let PassengerService = class PassengerService {
                 age: true,
                 selfIntroduction: true,
                 avatorUrl: true,
+                createdAt: true,
                 updatedAt: true,
             },
             with: {
@@ -98,6 +100,7 @@ let PassengerService = class PassengerService {
                         emergencyPhoneNumber: true,
                         selfIntroduction: true,
                         avatorUrl: true,
+                        createdAt: true,
                         updatedAt: true,
                     }
                 },

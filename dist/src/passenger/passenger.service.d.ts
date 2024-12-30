@@ -14,6 +14,7 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
@@ -22,6 +23,7 @@ export declare class PassengerService {
         } | null;
     } | undefined>;
     getPassengerWithInfoByPhoneNumber(phoneNumber: string): Promise<{
+        createdAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
@@ -36,6 +38,7 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;

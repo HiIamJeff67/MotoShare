@@ -12,7 +12,7 @@ export const RidderAuthTable = pgTable("ridderAuth", {
     authCode: text("authCode").notNull(), 
     authCodeExpiredAt: timestamp("authCodeExpiredAt").notNull(), 
     isDefaultAuthenticated: boolean("isDefaultAuthenticated").notNull().default(false), 
-    googleId: uuid("googleId"), 
+    googleId: text("googleId").unique(), 
 }, (table) => {
     return {
         userIdIndex: uniqueIndex("ridderAuth_userIdIndex").on(table.userId), 

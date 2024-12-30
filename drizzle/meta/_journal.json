@@ -274,6 +274,13 @@
       "when": 1735490992557,
       "tag": "0038_milky_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1735568840031,
+      "tag": "0039_brave_the_spike",
+      "breakpoints": true
     }
   ]
 }

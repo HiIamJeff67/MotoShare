@@ -89,10 +89,11 @@ let AuthService = class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
-            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
             const responseOfCreatingPassenger = await tx.insert(passenger_schema_1.PassengerTable).values({
@@ -196,10 +197,11 @@ let AuthService = class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
-            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
             const responseOfCreatingRidder = await tx.insert(ridder_schema_1.RidderTable).values({
@@ -305,10 +307,11 @@ let AuthService = class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const userResponse = await tx.select({
                 id: passenger_schema_1.PassengerTable.id,
                 email: passenger_schema_1.PassengerTable.email,
@@ -394,10 +397,11 @@ let AuthService = class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const userResponse = await tx.select({
                 id: ridder_schema_1.RidderTable.id,
                 email: ridder_schema_1.RidderTable.email,

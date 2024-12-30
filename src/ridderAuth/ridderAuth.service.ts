@@ -326,10 +326,11 @@ export class RidderAuthService {
 			const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
 			if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-			const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindRidderGoogleAuthDto.idToken);
-			if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
-				throw ClientInvalidGoogleIdTokenException;
-			}
+			const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + bindRidderGoogleAuthDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
+                throw ClientInvalidGoogleIdTokenException;
+            }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
 			const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
 				googleId: parseDataFromGoogleToken["sub"], 

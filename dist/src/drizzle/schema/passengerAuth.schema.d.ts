@@ -118,7 +118,7 @@ export declare const PassengerAuthTable: import("drizzle-orm/pg-core").PgTableWi
             name: "googleId";
             tableName: "passengerAuth";
             dataType: "string";
-            columnType: "PgUUID";
+            columnType: "PgText";
             data: string;
             driverParam: string;
             notNull: false;
@@ -126,7 +126,7 @@ export declare const PassengerAuthTable: import("drizzle-orm/pg-core").PgTableWi
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: undefined;
+            enumValues: [string, ...string[]];
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;

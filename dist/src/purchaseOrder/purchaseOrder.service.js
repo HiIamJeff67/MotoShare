@@ -401,7 +401,6 @@ let PurchaseOrderService = class PurchaseOrderService {
             .map(symbol => sortMap[symbol])
             .filter(query => query !== undefined);
         searchQueries.push(aboutToStartQuery);
-        console.log(searchQueries);
         await this.updateExpiredPurchaseOrders();
         return await this.db.select({
             id: purchaseOrder_schema_1.PurchaseOrderTable.id,

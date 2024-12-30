@@ -30,7 +30,7 @@ let RidderService = class RidderService {
         this.config = config;
         this.db = db;
     }
-    async getRidderById(id) {
+    async _getRidderById(id) {
         const response = await this.db.select({
             id: ridder_schema_1.RidderTable.id,
             userName: ridder_schema_1.RidderTable.userName,
@@ -57,6 +57,7 @@ let RidderService = class RidderService {
                         avatorUrl: true,
                         motocycleType: true,
                         motocyclePhotoUrl: true,
+                        createdAt: true,
                         updatedAt: true,
                     }
                 },
@@ -74,6 +75,7 @@ let RidderService = class RidderService {
                 motocycleLicense: true,
                 motocycleType: true,
                 motocyclePhotoUrl: true,
+                createdAt: true,
                 updatedAt: true,
             },
             with: {
@@ -106,6 +108,7 @@ let RidderService = class RidderService {
                         motocycleLicense: true,
                         motocycleType: true,
                         motocyclePhotoUrl: true,
+                        createdAt: true,
                         updatedAt: true,
                     }
                 },
@@ -169,7 +172,7 @@ let RidderService = class RidderService {
         });
     }
     async updateRidderById(id, updateRidderDto) {
-        const user = await this.getRidderById(id);
+        const user = await this._getRidderById(id);
         if (!user) {
             throw exceptions_1.ClientRidderNotFoundException;
         }

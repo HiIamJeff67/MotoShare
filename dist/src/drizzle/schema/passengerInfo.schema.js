@@ -17,6 +17,7 @@ exports.PassengerInfoTable = (0, pg_core_1.pgTable)("passengerInfo", {
     emergencyPhoneNumber: (0, pg_core_1.text)("emergencyPhoneNumber"),
     selfIntroduction: (0, pg_core_1.text)("selfIntroduction"),
     avatorUrl: (0, pg_core_1.text)("avatorUrl"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
 }, (table) => {
     return {

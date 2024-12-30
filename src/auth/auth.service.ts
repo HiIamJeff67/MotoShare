@@ -105,10 +105,11 @@ export class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
-            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
             const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
@@ -232,10 +233,11 @@ export class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignUpDto.idToken);
-            if (!parseDataFromGoogleToken || parseDataFromGoogleToken["email"] !== googleSignUpDto.email) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignUpDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
             const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
@@ -361,10 +363,11 @@ export class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
     
             // find the user by email which is parsed from google id token
             const userResponse = await tx.select({
@@ -468,10 +471,11 @@ export class AuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + googleSignInDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + googleSignInDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
             const userResponse = await tx.select({
                 id: RidderTable.id, 

@@ -328,10 +328,11 @@ export class PassengerAuthService {
 			const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
 			if (!googleAuthUrl) throw ServerExtractGoogleAuthUrlEnvVariableException;
 
-			const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
-			if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
-				throw ClientInvalidGoogleIdTokenException;
-			}
+			const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
+                throw ClientInvalidGoogleIdTokenException;
+            }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
 			const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
 				googleId: parseDataFromGoogleToken["sub"], 

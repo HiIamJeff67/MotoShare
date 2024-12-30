@@ -9,11 +9,12 @@ export declare class RidderService {
     private config;
     private db;
     constructor(storage: SupabaseStorageService, config: ConfigService, db: DrizzleDB);
-    private getRidderById;
+    private _getRidderById;
     getRidderWithInfoByUserName(userName: string): Promise<{
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
@@ -24,6 +25,7 @@ export declare class RidderService {
         } | null;
     } | undefined>;
     getRidderWithInfoByPhoneNumber(phoneNumber: string): Promise<{
+        createdAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
@@ -41,6 +43,7 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;

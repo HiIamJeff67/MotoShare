@@ -118,7 +118,7 @@ export declare const RidderAuthTable: import("drizzle-orm/pg-core").PgTableWithC
             name: "googleId";
             tableName: "ridderAuth";
             dataType: "string";
-            columnType: "PgUUID";
+            columnType: "PgText";
             data: string;
             driverParam: string;
             notNull: false;
@@ -126,7 +126,7 @@ export declare const RidderAuthTable: import("drizzle-orm/pg-core").PgTableWithC
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: undefined;
+            enumValues: [string, ...string[]];
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;

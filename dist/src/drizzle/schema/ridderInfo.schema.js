@@ -20,6 +20,7 @@ exports.RidderInfoTable = (0, pg_core_1.pgTable)("ridderInfo", {
     motocycleLicense: (0, pg_core_1.text)("motocycleLicense").unique(),
     motocycleType: (0, pg_core_1.text)("motocycleType"),
     motocyclePhotoUrl: (0, pg_core_1.text)("motocyclePhotoUrl"),
+    createdAt: (0, pg_core_1.timestamp)("createdAt").notNull().defaultNow(),
     updatedAt: (0, pg_core_1.timestamp)("updatedAt").notNull().defaultNow(),
 }, (table) => {
     return {

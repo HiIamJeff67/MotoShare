@@ -276,10 +276,11 @@ let PassengerAuthService = class PassengerAuthService {
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");
             if (!googleAuthUrl)
                 throw exceptions_1.ServerExtractGoogleAuthUrlEnvVariableException;
-            const parseDataFromGoogleToken = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
-            if (!parseDataFromGoogleToken || !parseDataFromGoogleToken["email"] || !parseDataFromGoogleToken["sub"]) {
+            const parseDataFromGoogleTokenResponse = await fetch(googleAuthUrl + bindPassengerGoogleAuthDto.idToken);
+            if (!parseDataFromGoogleTokenResponse.ok) {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
+            const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
                 googleId: parseDataFromGoogleToken["sub"],
             }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
