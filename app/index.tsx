@@ -189,19 +189,21 @@ const TabNavigator = () => {
   }, [user.role]);
 
   return (
-    <Tab.Navigator screenOptions={{
-      tabBarStyle: {
-        paddingTop: verticalScale(5), 
-        borderColor: colors.border, 
-        backgroundColor: colors.card, 
-        shadowColor: "#000", 
-        shadowOpacity: 0.25, 
-        shadowOffset: {
-          width: scale(0),
-          height: verticalScale(-5),
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          ...(Platform.OS === "ios" && { paddingTop: verticalScale(5) }),
+          borderColor: colors.border,
+          backgroundColor: colors.card,
+          shadowColor: "#000",
+          shadowOpacity: 0.25,
+          shadowOffset: {
+            width: scale(0),
+            height: verticalScale(-5),
+          },
         },
-      }
-    }}>
+      }}
+    >
       <Tab.Screen
         name="Home Page"
         component={HomeScreen}
@@ -226,7 +228,9 @@ const TabNavigator = () => {
         options={{
           title: "我的",
           headerShown: false,
-          tabBarIcon: ({ focused }) => <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -238,7 +242,7 @@ function AppContent() {
   const user = useSelector((state: RootState) => state.user);
   const systemTheme = useColorScheme();
   if (user.theme === null) {
-    dispatch(setUserSettings({ theme: (systemTheme === "dark" ? "DarkTheme" : "LightTheme") }));
+    dispatch(setUserSettings({ theme: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
 
   return (

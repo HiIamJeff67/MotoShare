@@ -15,17 +15,25 @@ import {
   Animated,
   Easing,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { GoogleSignin, isErrorWithCode, statusCodes, isSuccessResponse } from "@react-native-google-signin/google-signin";
 import { z } from "zod";
+
+GoogleSignin.configure({
+  webClientId: "845286501383-anaskssv4t2mn71hddrdll74uamcgne2.apps.googleusercontent.com", // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+  scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
+  iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
+});
 
 const usernameSchema = z
   .string()
   .regex(/^[a-zA-Z0-9_]+$/, "使用者名稱只能包含英文字母、數字和底線")
   .min(4, "使用者名稱至少需要4個字元")
-  .max(20, "使用者名稱最多20個字元")
+  .max(20, "使用者名稱最多20個字元");
 
 const passwordSchema = z
   .string()
@@ -36,9 +44,7 @@ const passwordSchema = z
   .regex(/[@$!%*?&]/, "密碼必須包含至少一個特殊字元 @$!%*?&")
   .refine((val) => !/\s/.test(val), "密碼不能包含空格");
 
-const emailSchema = z
-  .string()
-  .email("請輸入有效的電子郵件地址");
+const emailSchema = z.string().email("請輸入有效的電子郵件地址");
 
 const PassengerReg = () => {
   const navigation = useNavigation();
@@ -50,12 +56,11 @@ const PassengerReg = () => {
   const [conPassword, setConPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
+  const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
 
   useEffect(() => {
-    const showEvent =
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent =
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const keyboardShowListener = Keyboard.addListener(showEvent, (event) => {
       Animated.timing(translateY, {
@@ -89,7 +94,7 @@ const PassengerReg = () => {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
-    if (loading) {
+    if (loading || isGoogleInProgress) {
       // 禁用手勢返回並隱藏返回按鈕
       navigation.setOptions({
         gestureEnabled: false,
@@ -126,7 +131,7 @@ const PassengerReg = () => {
         unsubscribe();
       }
     };
-  }, [loading, navigation]);
+  }, [loading, navigation, isGoogleInProgress]);
 
   const handleRegister = async () => {
     setLoading(true);
@@ -135,18 +140,14 @@ const PassengerReg = () => {
     const usernameValidation = usernameSchema.safeParse(username);
 
     if (!usernameValidation.success) {
-      Alert.alert("錯誤", usernameValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("錯誤", usernameValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return;
     }
 
     // 驗證電子郵件
     const emailValidation = emailSchema.safeParse(email);
     if (!emailValidation.success) {
-      Alert.alert("錯誤", emailValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("錯誤", emailValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return;
     }
 
@@ -154,9 +155,7 @@ const PassengerReg = () => {
     const passwordValidation = passwordSchema.safeParse(password);
 
     if (!passwordValidation.success) {
-      Alert.alert("錯誤", passwordValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("錯誤", passwordValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return;
     }
 
@@ -184,21 +183,80 @@ const PassengerReg = () => {
         setLoading(false);
         Alert.alert("成功", `註冊成功，使用者：${username}`);
       } else {
-        Alert.alert("錯誤", "請求伺服器失敗", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", "請求伺服器失敗", [{ onPress: () => setLoading(false) }]);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(JSON.stringify(error.response?.data.message));
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
         console.log("An unexpected error occurred:", JSON.stringify(error));
-        Alert.alert("錯誤", "發生意外錯誤", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", "發生意外錯誤", [{ onPress: () => setLoading(false) }]);
+      }
+    }
+  };
+
+  const HandleGReg2 = async (response: any) => {
+    try {
+      const data = {
+        email: response.data.user.email,
+        idToken: response.data.idToken,
+      };
+
+      const axiosResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/signUpPassengerWithGoogleAuth`, data, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      if (axiosResponse && axiosResponse.data) {
+        console.log(axiosResponse.data);
+        setLockButton(true);
+        setIsGoogleInProgress(false);
+        Alert.alert("成功", `註冊成功，使用者：${response.data.user.email}`);
+      } else {
+        Alert.alert("錯誤", "請求伺服器失敗", [{ onPress: () => setIsGoogleInProgress(false) }]);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(JSON.stringify(error.response?.data.message));
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setIsGoogleInProgress(false) }]);
+      } else {
+        console.log("An unexpected error occurred:", JSON.stringify(error));
+        Alert.alert("錯誤", "發生意外錯誤", [{ onPress: () => setIsGoogleInProgress(false) }]);
+      }
+    }
+  };
+
+  const HandleGReg = async () => {
+    setIsGoogleInProgress(true);
+
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        HandleGReg2(response);
+      } else {
+        // sign in was cancelled by user
+        setIsGoogleInProgress(false);
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.SIGN_IN_CANCELLED:
+            console.error("SIGN_IN_CANCELLED");
+            break;
+          case statusCodes.IN_PROGRESS:
+            console.error("IN_PROGRESS");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.error("PLAY_SERVICES_NOT_AVAILABLE");
+            break;
+          default:
+        }
+
+        setIsGoogleInProgress(false);
+      } else {
+        // handle other errors
+        setIsGoogleInProgress(false);
       }
     }
   };
@@ -222,17 +280,9 @@ const PassengerReg = () => {
         keyboardShouldPersistTaps="handled" // 確保使用者能點擊非鍵盤區域關閉鍵盤
       >
         {/* 根據平台條件設置 StatusBar */}
-        {Platform.OS === "ios" ? (
-          <StatusBar barStyle="dark-content" />
-        ) : (
-          <StatusBar barStyle="light-content" hidden={true} />
-        )}
+        {Platform.OS === "ios" ? <StatusBar barStyle="dark-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
         <View style={styles.imageContainer}>
-          <Image
-            source={require("../../../assets/images/motorbike.jpg")}
-            style={styles.image}
-            resizeMode="contain"
-          />
+          <Image source={require("../../../assets/images/motorbike.jpg")} style={styles.image} resizeMode="contain" />
         </View>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>乘客註冊</Text>
@@ -301,14 +351,8 @@ const PassengerReg = () => {
         </View>
 
         <View style={styles.centerAlign}>
-          <Pressable
-            style={styles.registerButton}
-            onPress={handleRegister}
-            disabled={loading || lockButton}
-          >
-            <Text style={styles.registerButtonText}>
-              {loading ? "註冊中..." : "註冊"}
-            </Text>
+          <Pressable style={styles.registerButton} onPress={handleRegister} disabled={isGoogleInProgress || loading || lockButton}>
+            <Text style={styles.registerButtonText}>{loading ? <ActivityIndicator size="large" /> : "註冊"}</Text>
           </Pressable>
         </View>
 
@@ -316,17 +360,11 @@ const PassengerReg = () => {
           <Text style={styles.otherRegisterText}>使用其他方式</Text>
         </View>
         <View style={styles.socialContainer}>
-          <TouchableWithoutFeedback onPress={() => handleSocialLogin("Google")}>
-            <Image
-              source={require("../../../assets/images/google.png")}
-              style={styles.socialIcon}
-            />
+          <TouchableWithoutFeedback onPress={() => HandleGReg()} disabled={isGoogleInProgress || loading || lockButton}>
+            <Image source={require("../../../assets/images/google.png")} style={styles.socialIcon} />
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => handleSocialLogin("Apple")}>
-            <Image
-              source={require("../../../assets/images/apple.png")}
-              style={styles.socialIcon}
-            />
+            <Image source={require("../../../assets/images/apple.png")} style={styles.socialIcon} />
           </TouchableWithoutFeedback>
         </View>
       </ScrollView>

@@ -21,6 +21,7 @@
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.henryong.ridesharingsystem"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -28,8 +29,18 @@
     "plugins": [
       "expo-secure-store",
       "expo-font",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1025910817637-akkk9ocfjqufrfpm0790qdf7aso8d7vd"
+        }
+      ]
     ],
     "extra": {
-    }
+      "eas": {
+        "projectId": "fe8670e5-13d4-4020-ab1d-1edf2148b313"
+      }
+    },
+    "owner": "henryong"
   }
 }

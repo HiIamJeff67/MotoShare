@@ -14,7 +14,7 @@ const WelcomeScreen = () => {
     return (
         <View style={{ 
             flex: 1,
-            backgroundColor: colors.backgroundWhite, 
+            backgroundColor: colors.background, 
             paddingTop: verticalScale(insets.top),
             paddingBottom: verticalScale(insets.bottom),
             paddingHorizontal: scale(20), // 設置水平間距
