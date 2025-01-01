@@ -51,7 +51,7 @@ const ChooseScreen = () => {
                         alignItems: 'center',
                     }}
                     className="rounded-lg bg-white shadow-lg"
-                    onPress={() => navigation.navigate("plogin")}
+                    onPress={() => navigation.navigate("plogin" as never)}
                 >
                     <Text className="font-semibold text-black text-lg">我是乘客</Text>
                 </Pressable>
@@ -65,7 +65,7 @@ const ChooseScreen = () => {
                         alignItems: 'center',
                     }}
                     className="rounded-lg bg-white shadow-lg"
-                    onPress={() => navigation.navigate("rlogin")}
+                    onPress={() => navigation.navigate("rlogin" as never)}
                 >
                     <Text className="font-semibold text-black text-lg">我是車主</Text>
                 </Pressable>

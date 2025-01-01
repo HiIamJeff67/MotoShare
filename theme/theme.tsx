@@ -15,7 +15,7 @@ export type Theme = typeof DefaultTheme;
 export const LightTheme: Theme = {
     dark: false, 
     colors: {
-        primary: '#3B5998', 
+        primary: '#3498db', 
         background: '#F7F9FC', 
         card: '#FFFFFF', 
         text: '#1C1C1E', 
@@ -45,7 +45,7 @@ export const LightTheme: Theme = {
 export const DarkTheme: Theme = {
     dark: true, 
     colors: {
-        primary: '#4C8BF5',
+        primary: '#3498db',
         background: '#1C1C1E',
         card: '#2C2C2E',
         text: '#FFFFFF',

@@ -14,7 +14,7 @@ const WelcomeScreen = () => {
     return (
         <View style={{ 
             flex: 1,
-            backgroundColor: colors.backgroundWhite, 
+            backgroundColor: colors.background, 
             paddingTop: verticalScale(insets.top),
             paddingBottom: verticalScale(insets.bottom),
             paddingHorizontal: scale(20), // 設置水平間距
@@ -48,7 +48,7 @@ const WelcomeScreen = () => {
             >
                 <Text
                     style={{
-                        color: '#3498db',
+                        color: colors.primary,
                         fontSize: moderateScale(32), // Equivalent to "text-4xl"
                         paddingBottom: verticalScale(10),
                         fontWeight: 'bold',
@@ -58,7 +58,7 @@ const WelcomeScreen = () => {
                 </Text>
                 <Text
                     style={{
-                        color: '#3498db',
+                        color: colors.primary,
                         fontSize: moderateScale(15), // Equivalent to "text-base"
                     }}
                 >
@@ -76,13 +76,13 @@ const WelcomeScreen = () => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         borderRadius: moderateScale(10), // Adjusting for rounded corners
-                        backgroundColor: '#3498db',
-                        shadowColor: '#3498db',
+                        backgroundColor: colors.primary,
+                        shadowColor: colors.primary,
                         shadowOffset: { width: 0, height: verticalScale(5) },
                         shadowOpacity: 0.5,
                         shadowRadius: moderateScale(10),
                     }}
-                    onPress={() => navigation.navigate('choose2')}
+                    onPress={() => navigation.navigate('choose2' as never)}
                 >
                     <Text
                         style={{
@@ -98,10 +98,10 @@ const WelcomeScreen = () => {
 
             {/* Existing Account Text */}
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: verticalScale(15) }}>
-                <Pressable onPress={() => navigation.navigate('choose')}>
+                <Pressable onPress={() => navigation.navigate('choose' as never)}>
                     <Text
                         style={{
-                            color: '#3498db',
+                            color: colors.primary,
                             fontSize: moderateScale(16), // Equivalent to "text-lg"
                         }}
                     >

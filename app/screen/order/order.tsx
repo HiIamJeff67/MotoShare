@@ -23,6 +23,7 @@ import {
 } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import { FlashList } from "@shopify/flash-list";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 interface OrderType {
   id: string;
@@ -45,9 +46,9 @@ const Order = () => {
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 1) {
+  if (user.role == "Ridder") {
     roleText = "車主";
-  } else if (user.role == 2) {
+  } else if (user.role == "Passenger") {
     roleText = "乘客";
   }
 
@@ -71,9 +72,9 @@ const Order = () => {
     let response: { data: OrderType[] },
       url: string = "";
 
-    if (user.role == 1) {
+    if (user.role == "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchPaginationSupplyOrders`;
-    } else if (user.role == 2) {
+    } else if (user.role == "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/searchPaginationPurchaseOrders`;
     }
 
@@ -129,9 +130,7 @@ const Order = () => {
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+        <LoadingWrapper />
       ) : (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <FlashList

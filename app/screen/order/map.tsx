@@ -243,9 +243,9 @@ const MapWithBottomSheet = () => {
 
       let url = "";
 
-      if (user.role == 2) {
+      if (user.role == "Ridder") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/searchBetterFirstPurchaseOrders`;
-      } else if (user.role == 1) {
+      } else if (user.role == "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/searchBetterFirstSupplyOrders`;
       }
 
@@ -328,15 +328,15 @@ const MapWithBottomSheet = () => {
       let params = null;
 
       if (type === 1) {
-        if (user.role == 1) {
+        if (user.role == "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/createPurchaseOrder`;
-        } else if (user.role == 2) {
+        } else if (user.role == "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/createSupplyOrder`;
         }
       } else if (type === 2) {
-        if (user.role == 2) {
+        if (user.role == "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/startPurchaseOrderWithoutInvite`;
-        } else if (user.role == 1) {
+        } else if (user.role == "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/SupplyOrder/startSupplyOrderWithoutInvite`;
         }
 
@@ -344,9 +344,9 @@ const MapWithBottomSheet = () => {
           id: orderId,
         };
       } else if (type === 3) {
-        if (user.role == 1) {
+        if (user.role == "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/createPassengerInviteByOrderId`;
-        } else if (user.role == 2) {
+        } else if (user.role == "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/createRidderInviteByOrderId`;
         }
 

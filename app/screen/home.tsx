@@ -22,28 +22,34 @@ import React, { useEffect, useState } from "react";
 import { HomeScreenStyles } from "./home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
 import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
-import { getUserTheme, ThemeType } from "@/theme";
+import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
 
 const Home = () => {
   const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
   const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL, 
     headers: { "Content-Type": "application/x-www-form-urlencoded" }, 
   });
   let roleText = "載入中...";
-
-  const [themeName, setThemeName] = useState<ThemeType>(user.theme ?? "DarkTheme");
+  
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [userRecords, setUserRecords] = useState<SearchRecordInterface[]>([]);
+  
+  const insets = useSafeAreaInsets();
+  const [styles, setStyles] = useState<any>(null);
 
-  const styles = HomeScreenStyles(getUserTheme(themeName), insets);
+  useEffect(() => {
+    if (theme) {
+      setStyles(HomeScreenStyles(theme, insets));
+    }
+  }, [theme]);
 
-  if (user.role == 1) {
+  if (user.role == "Passenger") {
     roleText = "乘客";
-  } else if (user.role == 2) {
+  } else if (user.role == "Ridder") {
     roleText = "車主";
   }
 
@@ -65,9 +71,9 @@ const Home = () => {
   }, [token]);
 
   const getUserRecords = async () => {
-    if (token) {
+    if (token && token.length !== 0) {
       try {
-        const response = await api.get(user.role === 1
+        const response = await api.get(user.role === "Passenger"
           ? "/passengerRecord/getSearchRecordsByUserId"
           : "/ridderRecord/getSearchRecordsByUserId", {
           headers: {
@@ -84,13 +90,11 @@ const Home = () => {
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+        <LoadingWrapper />
       ) : (
         <View style={styles.container}>
           <Text style={styles.welcomeText}>
-            歡迎{roleText}, {user.username}
+            歡迎{roleText}, {user.userName}
           </Text>
 
           <TouchableWithoutFeedback onPress={() => navigation.navigate("map" as never)}>

@@ -19,6 +19,7 @@ import {
   verticalScale,
   moderateScale,
 } from "react-native-size-matters";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 // 定義 Creator 的資料結構
 interface CreatorInfoType {
@@ -56,9 +57,9 @@ const OrderDetail = () => {
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 1) {
+  if (user.role == "Ridder") {
     roleText = "車主";
-  } else if (user.role == 2) {
+  } else if (user.role == "Passenger") {
     roleText = "乘客";
   }
 
@@ -80,9 +81,9 @@ const OrderDetail = () => {
     let response,
       url = "";
 
-    if (user.role == 1) {
+    if (user.role == "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
-    } else if (user.role == 2) {
+    } else if (user.role == "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/getPurchaseOrderById`;
     }
 
@@ -125,9 +126,7 @@ const OrderDetail = () => {
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+        <LoadingWrapper />
       ) : (
         <ScrollView>
           <View style={styles.container}>
@@ -155,7 +154,7 @@ const OrderDetail = () => {
                     <Text style={styles.title}>
                       初始價格: {order.initPrice}
                     </Text>
-                    {user.role == 1 ? (
+                    {user.role == "Ridder" ? (
                       <Text style={styles.title}>
                         路徑偏差距離: {order.tolerableRDV}
                       </Text>

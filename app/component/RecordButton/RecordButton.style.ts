@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import { LightTheme, Theme } from "@/theme/theme";
 
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { EdgeInsets } from "react-native-safe-area-context";
 
 export const RecordButtonStyles = (theme: Theme) => {
     const [_colors, _fonts] = [theme.colors, theme.fonts];
@@ -9,7 +10,7 @@ export const RecordButtonStyles = (theme: Theme) => {
     return StyleSheet.create({
         container: {
             position: "relative", 
-            borderWidth: 1, 
+            borderWidth: scale(1), 
             borderStyle: "solid", 
             borderRadius: moderateScale(10), 
             borderColor: _colors.border, 
@@ -56,6 +57,6 @@ export const RecordButtonStyles = (theme: Theme) => {
             tintColor: _colors.text, 
             width: scale(10), 
             height: verticalScale(10), 
-        }
+        }, 
     });
 }

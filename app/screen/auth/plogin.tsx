@@ -199,7 +199,7 @@ const PassengerLogin = () => {
 
       if (response && response.data) {
         saveToken(response.data.accessToken);
-        dispatch(setUser({ username: usernameOrEmail, role: 1 }));
+        dispatch(setUser({ userName: usernameOrEmail, role: "Passenger" }));
         setLockButton(true);
         setLoading(false);
         Alert.alert("成功", `登入成功，使用者：${usernameOrEmail}`);

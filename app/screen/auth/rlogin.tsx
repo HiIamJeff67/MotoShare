@@ -192,7 +192,7 @@ const RidderLogin = () => {
 
       if (response && response.data) {
         saveToken(response.data.accessToken);
-        dispatch(setUser({ username: usernameOrEmail, role: 2 }));
+        dispatch(setUser({ userName: usernameOrEmail, role: "Ridder" }));
         setLockButton(true);
         setLoading(false);
         Alert.alert("成功", `登入成功，使用者：${usernameOrEmail}`);

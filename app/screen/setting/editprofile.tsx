@@ -23,6 +23,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 const EditableInput = ({
   label,
@@ -141,9 +142,9 @@ const EditProfile = () => {
     try {
       let url = "";
 
-      if (user.role == 1) {
+      if (user.role == "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/passenger/updateMyInfo`;
-      } else if (user.role == 2) {
+      } else if (user.role == "Ridder") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/ridder/updateMyInfo`;
       }
 
@@ -188,27 +189,13 @@ const EditProfile = () => {
         return;
       }
 
-      let url = "";
-
-      if (user.role == 1) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/passenger/getMyInfo`;
-      } else if (user.role == 2) {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/ridder/getMyInfo`;
-      }
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setUsername(response.data.userName);
-      setEmail(response.data.email);
-      setPhone(response.data.info.phoneNumber);
-      setDescription(response.data.info.selfIntroduction);
-      setAge(response.data.info.age);
-      setAvatar(response.data.info.avatorUrl);
-      console.log(response.data);
+      setUsername(user.userName ?? "");
+      setEmail(user.email ?? "");
+      setPhone(user.info?.phoneNumber ?? "");
+      setDescription(user.info?.selfIntroduction ?? "");
+      setAge(String(user.info?.age) ?? "");
+      setAvatar(user.info?.avatorUrl ?? "");
+      console.log(user.info)
     } catch (error) {
       console.error("Error fetching profile data:", error);
     } finally {
@@ -251,9 +238,7 @@ const EditProfile = () => {
   return (
     <>
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+        <LoadingWrapper />
       ) : (
         <Animated.View style={{ flex: 1, transform: [{ translateY }] }}>
           <ScrollView
@@ -270,11 +255,7 @@ const EditProfile = () => {
             </View>
 
             <View style={styles.profileHeader}>
-              {!avatar ? (
-                <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.avatar} />
-              ) : (
-                <Image source={{ uri: avatar }} style={styles.avatar} />
-              )}
+              <Image source={{ uri: avatar ?? "https://via.placeholder.com/100" }} style={styles.avatar} />
             </View>
 
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
