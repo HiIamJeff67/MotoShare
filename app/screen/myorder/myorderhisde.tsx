@@ -58,10 +58,10 @@ const MyOrderHistoryDetail = () => {
   const [lockButton, setLockButton] = useState(false);
   let roleText = "載入中...";
 
-  if (user.role == 2) {
+  if (user.role === "Ridder") {
     //home.tsx才正確
     roleText = "乘客";
-  } else if (user.role == 1) {
+  } else if (user.role === "Passenger") {
     roleText = "車主";
   }
 
@@ -128,9 +128,9 @@ const MyOrderHistoryDetail = () => {
         let response,
           url = "";
 
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/history/passenger/getHistoryById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/history/ridder/getHistoryById`;
         }
 
@@ -175,9 +175,9 @@ const MyOrderHistoryDetail = () => {
       let response,
         url = "";
 
-      if (user.role == 1) {
+      if (user.role === "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/history/passenger/rateAndCommentHistoryById`;
-      } else if (user.role == 2) {
+      } else if (user.role === "Ridder") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/history/ridder/rateAndCommentHistoryById`;
       }
 
@@ -245,7 +245,7 @@ const MyOrderHistoryDetail = () => {
                   <>
                     <Text style={styles.title}>
                       {roleText}：
-                      {user.role == 1 ? order.ridderName : order.passengerName}
+                      {user.role === "Passenger" ? order.ridderName : order.passengerName}
                     </Text>
                     <Text style={styles.title}>
                       起點：{order.finalStartAddress}
@@ -268,8 +268,8 @@ const MyOrderHistoryDetail = () => {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role == 1 && order.starRatingByPassenger == 0) ||
-                    (user.role == 2 && order.starRatingByRidder == 0) ? (
+                    {(user.role === "Passenger" && order.starRatingByPassenger == 0) ||
+                    (user.role === "Ridder" && order.starRatingByRidder == 0) ? (
                       <Pressable
                         style={[styles.rateButton]}
                         onPress={() => setModalVisible(true)}
@@ -285,19 +285,19 @@ const MyOrderHistoryDetail = () => {
             {order ? (
               <>
                 <View style={{ marginTop: verticalScale(15) }} />
-                {(user.role == 1 && order.starRatingByRidder > 0) ||
-                (user.role == 2 && order.starRatingByPassenger > 0) ? (
+                {(user.role === "Passenger" && order.starRatingByRidder > 0) ||
+                (user.role === "Ridder" && order.starRatingByPassenger > 0) ? (
                   <View style={styles.card}>
                     <View style={styles.body}>
                       <Text style={styles.title}>
                         對方給你的評分：
-                        {user.role == 1
+                        {user.role === "Passenger"
                           ? order?.starRatingByRidder
                           : order?.starRatingByPassenger}
                       </Text>
                       <Text style={styles.title}>
                         對方給你的留言：
-                        {user.role == 1
+                        {user.role === "Passenger"
                           ? order?.commentByRidder
                           : order?.commentByPassenger}
                       </Text>

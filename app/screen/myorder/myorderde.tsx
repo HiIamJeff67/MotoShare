@@ -41,10 +41,10 @@ const MyOrderDetail = () => {
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 2) {
+  if (user.role === "Ridder") {
     //home.tsx才正確
     roleText = "乘客";
-  } else if (user.role == 1) {
+  } else if (user.role === "Passenger") {
     roleText = "車主";
   }
 
@@ -111,9 +111,9 @@ const MyOrderDetail = () => {
         let response,
           url = "";
 
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/getOrderById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/getOrderById`;
         }
 
@@ -162,23 +162,23 @@ const MyOrderDetail = () => {
         message = "";
 
       if (status == 1) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toFinishedStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toFinishedStatusById`;
         }
 
         message = "完成訂單成功";
       } else if (status == 2) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toStartedStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toStartedStatusById`;
         }
       } else if (status == 3) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toUnpaidStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toUnpaidStatusById`;
         }
 
@@ -235,12 +235,12 @@ const MyOrderDetail = () => {
       console.log(order.ridderStatus);
       console.log(order.passengerStatus);
 
-      if (user.role == 1 && order.passengerStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
+      if (user.role === "Passenger" && order.passengerStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單1");
         OrderStatus(2);
       }
 
-      if (user.role == 2 && order.ridderStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
+      if (user.role === "Ridder" && order.ridderStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單2");
         OrderStatus(2);
       }
@@ -265,7 +265,7 @@ const MyOrderDetail = () => {
                 {order ? (
                   <>
                     <Text style={styles.title}>
-                      {roleText}：{user.role == 1 ? order.ridderName : order.passengerName}
+                      {roleText}：{user.role === "Passenger" ? order.ridderName : order.passengerName}
                     </Text>
                     <Text style={styles.title}>起點：{order.finalStartAddress}</Text>
                     <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
@@ -276,20 +276,20 @@ const MyOrderDetail = () => {
                       })}
                     </Text>
                     <Text style={styles.title}>最終價格: {order.finalPrice}</Text>
-                    <Text style={styles.title}>我的備註: {user.role == 1 ? order.passengerDescription : order.ridderDescription}</Text>
-                    <Text style={styles.title}>對方備註: {user.role == 1 ? order.ridderDescription : order.passengerDescription}</Text>
+                    <Text style={styles.title}>我的備註: {user.role === "Passenger" ? order.passengerDescription : order.ridderDescription}</Text>
+                    <Text style={styles.title}>對方備註: {user.role === "Passenger" ? order.ridderDescription : order.passengerDescription}</Text>
                     <Text style={styles.title}>
                       更新時間:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role == 1 && order.passengerStatus == "STARTED") || (user.role == 2 && order.ridderStatus == "STARTED") ? (
+                    {(user.role === "Passenger" && order.passengerStatus == "STARTED") || (user.role === "Ridder" && order.ridderStatus == "STARTED") ? (
                       <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
                         <Text style={styles.actionButtonText}>付款</Text>
                       </Pressable>
                     ) : null}
-                    {(user.role == 1 && order.passengerStatus == "UNPAID") || (user.role == 2 && order.ridderStatus == "UNPAID") ? (
+                    {(user.role === "Passenger" && order.passengerStatus == "UNPAID") || (user.role === "Ridder" && order.ridderStatus == "UNPAID") ? (
                       <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(1)} disabled={loading || lockButton}>
                         <Text style={styles.actionButtonText}>完成</Text>
                       </Pressable>

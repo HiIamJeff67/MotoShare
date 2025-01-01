@@ -100,9 +100,9 @@ const MyInviteDetail = () => {
     let response,
       url = "";
 
-    if (user.role == 1) {
+    if (user.role === "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/getMyPassengerInviteById`;
-    } else if (user.role == 2) {
+    } else if (user.role === "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/getMyRidderInviteById`;
     }
 
@@ -149,9 +149,9 @@ const MyInviteDetail = () => {
       let response,
         url = "";
 
-      if (user.role == 1) {
+      if (user.role === "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/updateMyPassengerInviteById`;
-      } else if (user.role == 2) {
+      } else if (user.role === "Ridder") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/updateMyRidderInviteById`;
       }
 

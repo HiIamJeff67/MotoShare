@@ -46,9 +46,9 @@ const MyOrder = () => {
   const navigation = useNavigation();
   let roleText = "載入中...";
 
-  if (user.role == 2) {
+  if (user.role === "Ridder") {
     roleText = "乘客";
-  } else if (user.role == 1) {
+  } else if (user.role === "Passenger") {
     roleText = "車主";
   }
 
@@ -69,9 +69,9 @@ const MyOrder = () => {
     let response: { data: OrderType[] },
       url: string = "";
 
-    if (user.role == 1) {
+    if (user.role === "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/searchMyPaginationOrders`;
-    } else if (user.role == 2) {
+    } else if (user.role === "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/searchMyPaginationOrders`;
     }
 
@@ -165,7 +165,7 @@ const MyOrder = () => {
                       <View style={styles.body}>
                         <Text style={styles.title}>
                           {roleText}：
-                          {user.role == 1
+                          {user.role === "Passenger"
                             ? item.ridderName
                             : item.passengerName}
                         </Text>

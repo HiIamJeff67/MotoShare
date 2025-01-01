@@ -53,9 +53,9 @@ const MyInvite = () => {
     let response: { data: OrderType[] },
       url: string = "";
 
-    if (user.role == 1) {
+    if (user.role === "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/searchMyPaginationPassengerInvites`;
-    } else if (user.role == 2) {
+    } else if (user.role === "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/searchMyPaginationRidderInvites`;
     }
 
