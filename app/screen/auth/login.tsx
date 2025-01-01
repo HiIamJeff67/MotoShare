@@ -33,7 +33,7 @@ const PassengerLogin = () => {
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
   const route = useRoute();
   const { role } = route.params as { role: UserRoleType };
-
+  
   // Regular login handler
   const { handleLoginSubmit } = HandleLogin({
     usernameOrEmail,
@@ -159,7 +159,7 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{role == "Passenger" ? "乘客登入" : "車主登入"}</Text>
+          <Text style={styles.headerText}>{role === "Passenger" ? "乘客登入" : "車主登入"}</Text>
         </View>
 
         <View style={styles.inputWrapper}>

@@ -45,15 +45,15 @@ interface GoogleRegParams {
 }
 
 export const handleGoogleReg2 = async (
-  response: any,
+  googleResponse: any,
   role: UserRoleType,
   setIsGoogleInProgress: (value: boolean) => void,
   setLockButton: (value: boolean) => void
 ) => {
   try {
     const data = {
-      email: response.data.user.email,
-      idToken: response.data.idToken,
+      email: googleResponse.data.user.email,
+      idToken: googleResponse.data.idToken,
     };
 
     let url = "";
@@ -69,10 +69,9 @@ export const handleGoogleReg2 = async (
     });
 
     if (axiosResponse && axiosResponse.data) {
-      console.log(axiosResponse.data);
       setLockButton(true);
       setIsGoogleInProgress(false);
-      Alert.alert("成功", `註冊成功，使用者：${response.data.user.email}`);
+      Alert.alert("成功", `註冊成功，使用者：${googleResponse.data.user.email}`);
     } else {
       Alert.alert("錯誤", "請求伺服器失敗", [{ onPress: () => setIsGoogleInProgress(false) }]);
     }
@@ -170,7 +169,6 @@ export const handleRegister = async ({ username, email, password, conPassword, r
     );
 
     if (response) {
-      console.log(response);
       setLockButton(true);
       setLoading(false);
       Alert.alert("成功", `註冊成功，使用者：${username}`);

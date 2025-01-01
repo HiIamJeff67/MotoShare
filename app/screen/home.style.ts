@@ -14,19 +14,38 @@ export const HomeScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
         paddingBottom: verticalScale(insets.bottom),
       }),
       paddingHorizontal: scale(20), // 設置水平間距
-      backgroundColor: _colors.background, 
-    }, 
+      backgroundColor: _colors.background,
+    },
+    mapContainer: {
+      marginTop: verticalScale(15),
+      height: verticalScale(200),
+      width: "100%",
+      borderRadius: moderateScale(10),
+      overflow: "hidden",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: scale(2),
+        height: verticalScale(2),
+      },
+      shadowOpacity: 0.15,
+      shadowRadius: moderateScale(3.84),
+      elevation: 5,
+    },
+    map: {
+      width: "100%",
+      height: "100%",
+    },
     welcomeText: {
       paddingLeft: scale(5),
       fontSize: moderateScale(25),
       fontWeight: _fonts.heavy.fontWeight,
-      color: _colors.text, 
-    }, 
+      color: _colors.text,
+    },
     loadingContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-    }, 
+    },
     textInput: {
       flex: 1, // 使輸入框填滿剩餘空間
       color: _colors.text, // 文字顏色
@@ -44,21 +63,21 @@ export const HomeScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
       marginBottom: verticalScale(20),
     },
     recordContainer: {
-      position: "relative", 
-      flexDirection: "column", 
-      gap: verticalScale(10), 
-      marginBottom: verticalScale(15), 
-    }, 
+      position: "relative",
+      flexDirection: "column",
+      gap: verticalScale(10),
+      marginBottom: verticalScale(15),
+    },
     icon: {
       width: scale(22),
       height: verticalScale(20),
       marginRight: scale(10), // 圖標與文字之間的距離
-      tintColor: _colors.text, 
+      tintColor: _colors.text,
     },
     MainText: {
       fontSize: moderateScale(20),
       fontWeight: "bold",
-      color: _colors.text, 
+      color: _colors.text,
     },
     card: {
       width: scale(70),
@@ -79,11 +98,173 @@ export const HomeScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
     },
     cardIcon: {
       fontWeight: _fonts.regular.fontWeight,
-      color: _colors.text, 
-    }, 
+      color: _colors.text,
+    },
     cardText: {
-      marginTop: verticalScale(5), 
-      color: _colors.text, 
-    }, 
+      marginTop: verticalScale(5),
+      color: _colors.text,
+    },
   });
-}
+};
+
+export const mapStyle = [
+  {
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#242f3e",
+      },
+    ],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#746855",
+      },
+    ],
+  },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [
+      {
+        color: "#242f3e",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#d59563",
+      },
+    ],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#d59563",
+      },
+    ],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#263c3f",
+      },
+    ],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#6b9a76",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#38414e",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#212a37",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#9ca5b3",
+      },
+    ],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#746855",
+      },
+    ],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#1f2835",
+      },
+    ],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#f3d19c",
+      },
+    ],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#2f3948",
+      },
+    ],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#d59563",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#17263c",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#515c6d",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [
+      {
+        color: "#17263c",
+      },
+    ],
+  },
+];

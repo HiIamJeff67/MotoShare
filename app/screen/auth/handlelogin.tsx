@@ -110,9 +110,9 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 
       if (response?.data) {
         await saveToken(response.data.accessToken);
-        dispatch(setUser({ userName: usernameOrEmail, role: role, email: response.data.user.email }));
+        dispatch(setUser({ userName: response.data.userName, email: response.data.email, role: role }));
         onSignInSuccess?.();
-        Alert.alert("Success", `Logged in successfully as: ${usernameOrEmail}`);
+        Alert.alert("Success", `Logged in successfully as: ${response.data.userName}`);
       } else {
         throw new Error("Server request failed");
       }
@@ -136,7 +136,7 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSignInSuccess }: GoogleSignInProps) => {
   const dispatch = useDispatch();
 
-  const handleSignInResult = async (response: GoogleSignInResponse) => {
+  const handleSignInResult = async (googleResponse: GoogleSignInResponse) => {
     try {
       let url = "";
 
@@ -147,7 +147,7 @@ const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSig
       }
 
       const data = {
-        idToken: response.data.idToken,
+        idToken: googleResponse.data.idToken,
       };
 
       const axiosResponse = await axios.post(url, data, {
@@ -155,11 +155,10 @@ const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSig
       });
 
       if (axiosResponse?.data) {
-        console.log(response.data);
         await saveToken(axiosResponse.data.accessToken);
-        dispatch(setUser({ userName: axiosResponse.data.userName, role: role, email: response.data.user.email }));
+        dispatch(setUser({ userName: axiosResponse.data.userName, email: googleResponse.data.user.email, role: role }));
         onSignInSuccess?.();
-        Alert.alert("Success", `Logged in successfully as: ${response.data.user.email}`);
+        Alert.alert("Success", `Logged in successfully as: ${googleResponse.data.user.email}`);
       } else {
         throw new Error("Server request failed");
       }
