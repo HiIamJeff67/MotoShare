@@ -51,7 +51,7 @@ const Choose2Screen = () => {
                         alignItems: 'center',
                     }}
                     className="rounded-lg bg-white shadow-lg"
-                    onPress={() => navigation.navigate("preg" as never)}
+                    onPress={() => navigation.navigate(["reg", { role: 1 }] as never)}
                 >
                     <Text className="font-semibold text-black text-lg">我是乘客</Text>
                 </Pressable>
@@ -65,7 +65,7 @@ const Choose2Screen = () => {
                         alignItems: 'center',
                     }}
                     className="rounded-lg bg-white shadow-lg"
-                    onPress={() => navigation.navigate("rreg" as never)}
+                    onPress={() => navigation.navigate(["reg", { role: 2 }] as never)}
                 >
                     <Text className="font-semibold text-black text-lg">我是車主</Text>
                 </Pressable>

@@ -1,21 +1,5 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
-import {
-  View,
-  StyleSheet,
-  Alert,
-  Text,
-  Platform,
-  Keyboard,
-  Pressable,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from "react-native";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { View, StyleSheet, Alert, Text, Platform, Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/";
@@ -23,32 +7,35 @@ import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapViewDirections from "react-native-maps-directions";
-import BottomSheet, {
-  BottomSheetView,
-  BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import debounce from "lodash/debounce";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Entypo } from "@expo/vector-icons";
 import "react-native-get-random-values";
-import {
-  useNavigation,
-  CommonActions,
-  useRoute,
-} from "@react-navigation/native";
+import { useNavigation, CommonActions, useRoute } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 import { z } from "zod";
 
 const InviteMap = () => {
+  const route = useRoute();
+  const { orderId, orderStartAddress, orderEndAddress, orderInitPrice, orderStartAfter } = route.params as {
+    orderId: string;
+    orderStartAddress: string;
+    orderEndAddress: string;
+    orderInitPrice: number;
+    orderStartAfter: string;
+  };
+
+  const parsedOrderStartAfter = new Date(orderStartAfter);
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(parsedOrderStartAfter);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [initialPrice, setinitialPrice] = useState("");
+  const [initialPrice, setinitialPrice] = useState(orderInitPrice.toString());
   const [orderDescription, setorderDescription] = useState("");
-  const [originAddress, setOriginAddress] = useState("");
-  const [destinationAddress, setDestinationAddress] = useState("");
+  const [originAddress, setOriginAddress] = useState(orderStartAddress);
+  const [destinationAddress, setDestinationAddress] = useState(orderEndAddress);
   const [region, setRegion] = useState<Region | null>(null);
   const [destination, setDestination] = useState<{
     latitude: number;
@@ -58,15 +45,12 @@ const InviteMap = () => {
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [showDetailsPage, setShowDetailsPage] = useState<boolean>(false); // 新增狀態用於控制是否顯示詳細資訊頁面
-  const GOOGLE_MAPS_APIKEY: string = process.env
-    .EXPO_PUBLIC_GOOGLE_API_KEY as string; // 正確讀取 API 金鑰
+  const [showDetailsPage, setShowDetailsPage] = useState(true); // 新增狀態用於控制是否顯示詳細資訊頁面
+  const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string; // 正確讀取 API 金鑰
   const mapRef = useRef<MapView>(null);
   const user = useSelector((state: RootState) => state.user);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "85%"], []);
-  const route = useRoute();
-  const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
   const [lockButton, setLockButton] = useState(false);
 
@@ -119,42 +103,27 @@ const InviteMap = () => {
 
     const descriptionSchema = z
       .string()
-      .regex(
-        /^[一-龥a-zA-Z0-9\s.,!?]*$/,
-        "Order description contains illegal characters"
-      )
+      .regex(/^[一-龥a-zA-Z0-9\s.,!?]*$/, "Order description contains illegal characters")
       .max(100, "Order description must be less than 100 characters");
 
-    const startAfterSchema = z
-      .date()
-      .refine((date) => date > new Date(), "Start date must be in the future");
+    const startAfterSchema = z.date().refine((date) => date > new Date(), "Start date must be in the future");
 
     const priceValidation = priceSchema.safeParse(initialPrice);
     const descriptionValidation = descriptionSchema.safeParse(orderDescription);
     const startAfterValidation = startAfterSchema.safeParse(selectedDate);
 
     if (!priceValidation.success) {
-      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [
-        { onPress: () => setLoading(false) },
-      ]);
+      Alert.alert("Validation Error", priceValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
     if (!descriptionValidation.success) {
-      Alert.alert(
-        "Validation Error",
-        descriptionValidation.error.errors[0].message,
-        [{ onPress: () => setLoading(false) }]
-      );
+      Alert.alert("Validation Error", descriptionValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
     if (!startAfterValidation.success) {
-      Alert.alert(
-        "Validation Error",
-        startAfterValidation.error.errors[0].message,
-        [{ onPress: () => setLoading(false) }]
-      );
+      Alert.alert("Validation Error", startAfterValidation.error.errors[0].message, [{ onPress: () => setLoading(false) }]);
       return false;
     }
 
@@ -216,9 +185,7 @@ const InviteMap = () => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
         return;
       }
 
@@ -251,7 +218,7 @@ const InviteMap = () => {
       // 使用獲取到的 Token 發送請求
       const response = await axios.post(url, data, {
         params: {
-          orderId: orderid,
+          orderId: orderId,
         },
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -266,14 +233,10 @@ const InviteMap = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
-        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [
-          { onPress: () => setLoading(false) },
-        ]);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
       } else {
         console.log("An unexpected error occurred:", error);
-        Alert.alert("錯誤", "伺服器錯誤", [
-          { onPress: () => setLoading(false) },
-        ]);;
+        Alert.alert("錯誤", "伺服器錯誤", [{ onPress: () => setLoading(false) }]);
       }
     }
   };
@@ -384,9 +347,7 @@ const InviteMap = () => {
               strokeColor="hotpink"
               strokeWidth={4}
               onStart={(params) => {
-                console.log(
-                  `Started routing between ${params.origin} and ${params.destination}`
-                );
+                console.log(`Started routing between ${params.origin} and ${params.destination}`);
               }}
               onReady={(result) => {
                 console.log(`Distance: ${result.distance} km`);
@@ -404,7 +365,7 @@ const InviteMap = () => {
           snapPoints={snapPoints}
           keyboardBehavior="extend" // 設置鍵盤行為
           enablePanDownToClose={false}
-          index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
+          index={Platform.OS === "ios" ? 3 : 2} // 設置初始索引
         >
           <BottomSheetView
             style={{
@@ -417,46 +378,37 @@ const InviteMap = () => {
               // 顯示目的地詳細資訊的頁面
               <View>
                 <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
-                {origin && destination && (
-                  <>
-                    <Text style={styles.bottomSheetText}>
-                      起始位置: {originAddress}
-                    </Text>
-                    <Text style={styles.bottomSheetText}>
-                      目的地址: {destinationAddress}
-                    </Text>
-                    <View style={styles.dateContainer}>
-                      <Text style={styles.bottomSheetText}>開始時間：</Text>
-                      <Text style={styles.bottomSheetText}>
-                        {selectedDate
-                          ? selectedDate.toLocaleString("en-GB", {
-                              timeZone: "Asia/Taipei",
-                            })
-                          : "未選擇日期"}
-                      </Text>
-                      <TouchableOpacity
-                        style={styles.bottomSheetDate}
-                        onPress={() => showDatePicker()}
-                      >
-                        <Entypo name="calendar" size={24} color="black" />
-                      </TouchableOpacity>
-                    </View>
-                    <BottomSheetTextInput
-                      style={styles.input}
-                      placeholder="推薦價格"
-                      value={initialPrice}
-                      onChangeText={setinitialPrice}
-                      placeholderTextColor="gray"
-                    />
-                    <BottomSheetTextInput
-                      style={styles.input}
-                      placeholder="描述"
-                      value={orderDescription}
-                      onChangeText={setorderDescription}
-                      placeholderTextColor="gray"
-                    />
-                  </>
-                )}
+                <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
+                <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                <View style={styles.dateContainer}>
+                  <Text style={styles.bottomSheetText}>開始時間：</Text>
+                  <Text style={styles.bottomSheetText}>
+                    {selectedDate
+                      ? selectedDate.toLocaleString("en-GB", {
+                          timeZone: "Asia/Taipei",
+                        })
+                      : "未選擇日期"}
+                  </Text>
+                  <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
+                    <Entypo name="calendar" size={24} color="black" />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.bottomSheetText}>推薦價格:</Text>
+                <BottomSheetTextInput
+                  style={styles.input}
+                  placeholder="推薦價格"
+                  value={initialPrice}
+                  onChangeText={setinitialPrice}
+                  placeholderTextColor="gray"
+                />
+                <Text style={styles.bottomSheetText}>描述:</Text>
+                <BottomSheetTextInput
+                  style={styles.input}
+                  placeholder="描述"
+                  value={orderDescription}
+                  onChangeText={setorderDescription}
+                  placeholderTextColor="gray"
+                />
                 <DateTimePickerModal
                   date={selectedDate}
                   mode="datetime"
@@ -478,7 +430,7 @@ const InviteMap = () => {
                     }}
                     disabled={loading || lockButton}
                   >
-                    <Text style={styles.buttonText}>返回</Text>
+                    <Text style={styles.buttonText}>選擇地址</Text>
                   </Pressable>
 
                   <Pressable
@@ -502,15 +454,10 @@ const InviteMap = () => {
                     placeholder="搜尋起始位置"
                     textInputProps={{
                       placeholderTextColor: "#626262",
-                      onFocus: () =>
-                        Platform.OS === "ios"
-                          ? handleSnapPress(3)
-                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
                     }}
                     fetchDetails={true}
-                    onPress={(data, details = null) =>
-                      handleLocationPress(data, details, "origin")
-                    }
+                    onPress={(data, details = null) => handleLocationPress(data, details, "origin")}
                     query={{
                       key: GOOGLE_MAPS_APIKEY,
                       language: "zh-TW",
@@ -523,8 +470,7 @@ const InviteMap = () => {
                     styles={{
                       textInputContainer: styles.textInputContainer,
                       textInput: styles.textInput,
-                      predefinedPlacesDescription:
-                        styles.predefinedPlacesDescription,
+                      predefinedPlacesDescription: styles.predefinedPlacesDescription,
                       listView: styles.listView,
                     }}
                   />
@@ -538,15 +484,10 @@ const InviteMap = () => {
                     placeholder="搜尋目的地"
                     textInputProps={{
                       placeholderTextColor: "#626262",
-                      onFocus: () =>
-                        Platform.OS === "ios"
-                          ? handleSnapPress(3)
-                          : handleSnapPress(2), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
                     }}
                     fetchDetails={true}
-                    onPress={(data, details = null) =>
-                      handleLocationPress(data, details, "destination")
-                    }
+                    onPress={(data, details = null) => handleLocationPress(data, details, "destination")}
                     query={{
                       key: GOOGLE_MAPS_APIKEY,
                       language: "zh-TW",
@@ -559,8 +500,7 @@ const InviteMap = () => {
                     styles={{
                       textInputContainer: styles.textInputContainer,
                       textInput: styles.textInput,
-                      predefinedPlacesDescription:
-                        styles.predefinedPlacesDescription,
+                      predefinedPlacesDescription: styles.predefinedPlacesDescription,
                       listView: styles.listView,
                     }}
                   />

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Text, View, Image, Pressable, StatusBar, Platform } from 'react-native';
-import { useNavigation, useTheme } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
-import { Theme } from '../../../theme/theme'; // 引入自定義的主題類型
+import React from "react";
+import { Text, View, Image, Pressable, StatusBar, Platform } from "react-native";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { Theme } from "../../../theme/theme"; // 引入自定義的主題類型
 
 const WelcomeScreen = () => {
     const navigation = useNavigation();
@@ -27,16 +27,17 @@ const WelcomeScreen = () => {
                 <StatusBar barStyle="dark-content" hidden={true}/>
             )}
 
-            {/* Top Image */}
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Image
-                    source={require('../../../assets/images/motorbike.jpg')}
-                    style={{
-                        width: scale(256), // Equivalent to "w-64"
-                        height: verticalScale(256), // Equivalent to "h-64"
-                        resizeMode: 'contain',
-                }} />
-            </View>
+      {/* Top Image */}
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <Image
+          source={require("../../../assets/images/motorbike.jpg")}
+          style={{
+            width: scale(256), // Equivalent to "w-64"
+            height: verticalScale(256), // Equivalent to "h-64"
+            resizeMode: "contain",
+          }}
+        />
+      </View>
 
             {/* Title Section */}
             <View
