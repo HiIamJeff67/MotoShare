@@ -56,8 +56,7 @@ export class RidderAuthController {
 
           response.status(HttpStatusCode.Ok).send(res[0]);
       } catch (error) {
-          if (!(error instanceof UnauthorizedException
-              || error instanceof NotFoundException
+          if (!(error instanceof NotFoundException
               || error instanceof InternalServerErrorException)) {
                   error = ClientUnknownException;
           }
@@ -156,16 +155,13 @@ export class RidderAuthController {
       }
   }
 
-  @UseGuards(JwtRidderGuard)
   @Post('validateAuthCodeToResetForgottenPassword')
   async validateAuthCodeToResetForgottenPassword(
-      @Ridder() ridder: RidderType, 
       @Body() resetRidderPasswordDto: ResetRidderPasswordDto, 
       @Res() response: Response, 
   ) {
       try {
           const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(
-              ridder.id, 
               resetRidderPasswordDto, 
           );
 
@@ -173,8 +169,7 @@ export class RidderAuthController {
 
           response.status(HttpStatusCode.Ok).send(res[0]);
       } catch (error) {
-          if (!(error instanceof UnauthorizedException
-              || error instanceof NotFoundException
+          if (!(error instanceof NotFoundException
               || error instanceof NotAcceptableException
               || error instanceof ConflictException)) {
                   error = ClientUnknownException;

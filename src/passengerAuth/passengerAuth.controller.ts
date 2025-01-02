@@ -57,8 +57,7 @@ export class PassengerAuthController {
 
             response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
-            if (!(error instanceof UnauthorizedException
-                || error instanceof NotFoundException
+            if (!(error instanceof NotFoundException
                 || error instanceof InternalServerErrorException)) {
                     error = ClientUnknownException;
             }
@@ -157,16 +156,13 @@ export class PassengerAuthController {
         }
     }
 
-    @UseGuards(JwtPassengerGuard)
     @Post('validateAuthCodeToResetForgottenPassword')
     async validateAuthCodeToResetForgottenPassword(
-        @Passenger() passenger: PassengerType, 
         @Body() resetPassengerPasswordDto: ResetPassengerPasswordDto, 
         @Res() response: Response, 
     ) {
         try {
             const res = await this.passengerAuthService.validateAuthCodeToResetForgottenPassword(
-                passenger.id, 
                 resetPassengerPasswordDto, 
             );
 
@@ -174,8 +170,7 @@ export class PassengerAuthController {
 
             response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
-            if (!(error instanceof UnauthorizedException
-                || error instanceof NotFoundException
+            if (!(error instanceof NotFoundException
                 || error instanceof NotAcceptableException
                 || error instanceof ConflictException)) {
                     error = ClientUnknownException;

@@ -10,6 +10,10 @@ export class ValidateRidderInfoDto {
 
 export class ResetRidderPasswordDto {
     @IsNotEmpty()
+    @IsEmail()
+    email: string
+    
+    @IsNotEmpty()
     @IsString()
     authCode: string
 

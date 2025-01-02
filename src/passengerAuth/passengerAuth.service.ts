@@ -27,7 +27,10 @@ export class PassengerAuthService {
 		return randomAuthCode;
 	}
 
-	async sendAuthenticationCodeById(id: string, title: string) {
+	async sendAuthenticationCodeById(
+		id: string, 
+		title: string
+	) {
 		return await this.db.transaction(async (tx) => {
 			const responseOfSelectingPassenger = await tx.select({
 				userName: PassengerTable.userName, 
@@ -71,7 +74,10 @@ export class PassengerAuthService {
 		});
 	}
 
-	async sendAuthenticationCodeByEmail(email: string, title: string) {
+	async sendAuthenticationCodeByEmail(
+		email: string, 
+		title: string
+	) {
 		return await this.db.transaction(async (tx) => {
 			const responseOfSelectingPassenger = await tx.select({
 				id: PassengerTable.id, 
@@ -177,20 +183,28 @@ export class PassengerAuthService {
 
 	/* ================================= Forget & Reset Password validation ================================= */
 	async validateAuthCodeToResetForgottenPassword(
-		id: string, 
 		resetPassengerPasswordDto: ResetPassengerPasswordDto, 
 	) {
 		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingPassenger = await tx.select({
+				id: PassengerTable.id,
+				hash: PassengerTable.password,
+			  }).from(PassengerTable)
+				.where(eq(PassengerTable.email, resetPassengerPasswordDto.email))
+				.limit(1);
+			if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
 			const responseOfSelectingPassengerAuth = await tx.select({
 				authCode: PassengerAuthTable.authCode, 
 				authCodeExpiredAt: PassengerAuthTable.authCodeExpiredAt, 
 			}).from(PassengerAuthTable)
-			  .where(eq(PassengerAuthTable.userId, id))
+			  .where(eq(PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
 			  .limit(1);
 			if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
 				throw ClientPassengerNotFoundException;
 			}
-
 			if (responseOfSelectingPassengerAuth[0].authCode !== resetPassengerPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
 			}
@@ -198,31 +212,22 @@ export class PassengerAuthService {
 				throw ClientAuthCodeExpiredException;
 			}
 
-			// make sure the authCode is expired after being used
-			await tx.update(PassengerAuthTable).set({
-				authCode: "USED", 
-				authCodeExpiredAt: new Date(), 
-			}).where(eq(PassengerAuthTable.userId, id));
-
-			// reset logic
-			const responseOfSelectingPassenger = await tx.select({
-				id: PassengerTable.id,
-				hash: PassengerTable.password,
-			  }).from(PassengerTable)
-				.where(eq(PassengerTable.id, id))
-				.limit(1);
-			if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
-				throw ClientPassengerNotFoundException;
-			}
-
+			// check using the previous password as new password
 			const pwMatches = await bcrypt.compare(resetPassengerPasswordDto.password, responseOfSelectingPassenger[0].hash);
 			if (pwMatches) throw ClientNoChangeOnPasswordException;
 
+			// set authCode to expired status after being used
+			await tx.update(PassengerAuthTable).set({
+				authCode: "USED", 
+				authCodeExpiredAt: new Date(), 
+			}).where(eq(PassengerAuthTable.userId, responseOfSelectingPassenger[0].id));
+
+			// reset logic
 			const hash = await bcrypt.hash(resetPassengerPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
 			return await tx.update(PassengerTable).set({
 				password: hash, 
 				accessToken: TEMP_ACCESS_TOKEN, 
-			}).where(eq(PassengerTable.id, id))
+			}).where(eq(PassengerTable.id, responseOfSelectingPassenger[0].id))
 				.returning({
 				userName: PassengerTable.userName, 
 				email: PassengerTable.email, 

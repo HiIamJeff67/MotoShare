@@ -174,20 +174,28 @@ export class RidderAuthService {
 
 	/* ================================= Forget & Reset Password validation ================================= */
 	async validateAuthCodeToResetForgottenPassword(
-		id: string, 
 		resetRidderPasswordDto: ResetRidderPasswordDto, 
 	) {
 		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingRidder = await tx.select({
+				id: RidderTable.id,
+				hash: RidderTable.password,
+			  }).from(RidderTable)
+				.where(eq(RidderTable.email, resetRidderPasswordDto.email))
+				.limit(1);
+			if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
 			const responseOfSelectingRidderAuth = await tx.select({
 				authCode: RidderAuthTable.authCode, 
 				authCodeExpiredAt: RidderAuthTable.authCodeExpiredAt, 
 			}).from(RidderAuthTable)
-			  .where(eq(RidderAuthTable.userId, id))
+			  .where(eq(RidderAuthTable.userId, responseOfSelectingRidder[0].id))
 			  .limit(1);
 			if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
 				throw ClientRidderNotFoundException;
 			}
-
 			if (responseOfSelectingRidderAuth[0].authCode !== resetRidderPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
 			}
@@ -199,19 +207,9 @@ export class RidderAuthService {
 			await tx.update(RidderAuthTable).set({
 				authCode: "USED", 
 				authCodeExpiredAt: new Date(), 
-			}).where(eq(RidderAuthTable.userId, id));
+			}).where(eq(RidderAuthTable.userId, responseOfSelectingRidder[0].id));
 
-			// reset logic
-			const responseOfSelectingRidder = await tx.select({
-				id: RidderTable.id,
-				hash: RidderTable.password,
-			  }).from(RidderTable)
-				.where(eq(RidderTable.id, id))
-				.limit(1);
-			if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
-				throw ClientRidderNotFoundException;
-			}
-
+			// check using the previous password as new password
 			const pwMatches = await bcrypt.compare(resetRidderPasswordDto.password, responseOfSelectingRidder[0].hash);
 			if (pwMatches) throw ClientNoChangeOnPasswordException;
 
@@ -219,7 +217,7 @@ export class RidderAuthService {
 			return await tx.update(RidderTable).set({
 				password: hash, 
 				accessToken: TEMP_ACCESS_TOKEN, 
-			}).where(eq(RidderTable.id, id))
+			}).where(eq(RidderTable.id, responseOfSelectingRidder[0].id))
 				.returning({
 				userName: RidderTable.userName, 
 				email: RidderTable.email, 
