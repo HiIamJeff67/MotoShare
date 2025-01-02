@@ -513,7 +513,7 @@ const MapWithBottomSheet = () => {
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
-          keyboardBehavior="extend" // 設置鍵盤行為
+          keyboardBehavior="interactive" // 設置鍵盤行為
           enablePanDownToClose={false}
           enableHandlePanningGesture={true}
           enableContentPanningGesture={true}

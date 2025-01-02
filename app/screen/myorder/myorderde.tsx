@@ -193,7 +193,7 @@ const MyOrderDetail = () => {
         return;
       }
 
-      response = await axios.post(
+      response = await axios.patch(
         url,
         null, // No body, so use `null` as the second argument
         {

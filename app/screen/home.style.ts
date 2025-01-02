@@ -17,6 +17,7 @@ export const HomeScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
       backgroundColor: _colors.background,
     },
     mapContainer: {
+      marginBottom: verticalScale(15),
       marginTop: verticalScale(15),
       height: verticalScale(200),
       width: "100%",

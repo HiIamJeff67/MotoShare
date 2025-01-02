@@ -117,7 +117,14 @@ const PassengerReg = () => {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "plogin" }],
+            routes: [
+              {
+                name: "login",
+                params: {
+                  role: role,
+                },
+              },
+            ],
           })
         );
       }
