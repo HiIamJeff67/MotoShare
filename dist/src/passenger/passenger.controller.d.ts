@@ -15,6 +15,7 @@ export declare class PassengerController {
     searchPaginationPassengers(userName: string | undefined, limit: string | undefined, offset: string | undefined, response: Response): Promise<void>;
     updateMe(passenger: PassengerType, updatePassengerDto: UpdatePassengerDto, response: Response): Promise<void>;
     updateMyInfo(passenger: PassengerType, updatePassengerInfoDto: UpdatePassengerInfoDto, avatorFile: Express.Multer.File | undefined, response: Response): Promise<void>;
+    resetAccessTokenToLogout(passenger: PassengerType, response: Response): Promise<void>;
     deleteMe(passenger: PassengerType, deletePassengerDto: DeletePassengerDto, response: Response): Promise<void>;
     getTest(response: Response): void;
     getAllPassengers(response: Response): Promise<void>;

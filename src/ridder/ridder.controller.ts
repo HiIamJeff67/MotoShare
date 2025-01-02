@@ -27,8 +27,8 @@ import {
 } from '../exceptions';
 
 import { AnyGuard, JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
-import { PassengerType, RidderType } from '../interfaces/auth.interface';
-import { Passenger, Ridder } from '../auth/decorator';
+import { RidderType } from '../interfaces/auth.interface';
+import { Ridder } from '../auth/decorator';
 
 import { UpdateRidderDto } from './dto/update-ridder.dto';
 import { UpdateRidderInfoDto } from './dto/update-info.dto';
@@ -70,19 +70,15 @@ export class RidderController {
   async getRidderWithInfoByUserName(
     // @Passenger() passenger: PassengerType, 
     // @Ridder() ridder: RidderType,
-    @Query('phoneNumber') phoneNumber: string,
+    @Query('userName') userName: string,
     @Res() response: Response,
   ) {
     try {
-      if (!phoneNumber) {
+      if (!userName) {
         throw ApiMissingParameterException;
       }
-      for (const allowedPhoneNumber of AllowedPhoneNumberTypes) {
-        if (PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber)) break;
-        throw ServerAllowedPhoneNumberException;
-      }
 
-      const res = await this.ridderService.getRidderWithInfoByPhoneNumber(phoneNumber);
+      const res = await this.ridderService.getRidderWithInfoByUserName(userName);
 
       if (!res) throw ClientRidderNotFoundException;
 
@@ -105,15 +101,19 @@ export class RidderController {
   async getRidderWithInfoByPhoneNumber(
     // @Passenger() passenger: PassengerType, 
     // @Ridder() ridder: RidderType,
-    @Query('userName') userName: string,
+    @Query('phoneNumber') phoneNumber: string,
     @Res() response: Response,
   ) {
     try {
-      if (!userName) {
+      if (!phoneNumber) {
         throw ApiMissingParameterException;
       }
+      for (const allowedPhoneNumber of AllowedPhoneNumberTypes) {
+        if (PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber)) break;
+        throw ServerAllowedPhoneNumberException;
+      }
 
-      const res = await this.ridderService.getRidderWithInfoByUserName(userName);
+      const res = await this.ridderService.getRidderWithInfoByPhoneNumber(phoneNumber);
 
       if (!res) throw ClientRidderNotFoundException;
 
@@ -290,6 +290,32 @@ export class RidderController {
       
       response.status(error.status).send({
         ...error.response,
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Patch('resetAccessTokenToLogout')
+  async resetAccessTokenToLogout(
+    @Ridder() ridder: RidderType, 
+    @Res() response: Response, 
+  ) {
+    try {
+      const res = await this.ridderService.resetRidderAccessTokenById(
+        ridder.id
+      );
+
+      if (!res) throw ClientRidderNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res[0]);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response, 
       });
     }
   }

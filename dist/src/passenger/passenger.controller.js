@@ -194,6 +194,23 @@ let PassengerController = class PassengerController {
             });
         }
     }
+    async resetAccessTokenToLogout(passenger, response) {
+        try {
+            const res = await this.passengerService.resetPassengerAccessTokenById(passenger.id);
+            if (!res)
+                throw exceptions_1.ClientPassengerNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async deleteMe(passenger, deletePassengerDto, response) {
         try {
             const res = await this.passengerService.deletePassengerById(passenger.id, deletePassengerDto);
@@ -319,6 +336,15 @@ __decorate([
         update_info_dto_1.UpdatePassengerInfoDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerController.prototype, "updateMyInfo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('resetAccessTokenToLogout'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], PassengerController.prototype, "resetAccessTokenToLogout", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_passenger_guard_1.JwtPassengerGuard),
     (0, common_1.Delete)('deleteMe'),

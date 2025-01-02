@@ -110,6 +110,9 @@ export declare class RidderService {
         motocycleType: string | null;
         motocyclePhotoUrl: string | null;
     }[]>;
+    resetRidderAccessTokenById(id: string): Promise<{
+        accessToken: string;
+    }[]>;
     deleteRiddderById(id: string, deleteRidderDto: DeleteRidderDto): Promise<{
         id: string;
         userName: string;

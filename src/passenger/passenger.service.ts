@@ -286,6 +286,16 @@ export class PassengerService {
         });
     });
   }
+
+  async resetPassengerAccessTokenById(id: string) { // use for user logout
+    return await this.db.update(PassengerTable).set({
+      accessToken: "LOGGED_OUT", 
+    }).where(eq(PassengerTable.id, id))
+      .returning({
+        accessToken: PassengerTable.accessToken, 
+      });
+  }
+  
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
 

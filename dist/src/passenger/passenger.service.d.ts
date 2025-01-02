@@ -98,6 +98,9 @@ export declare class PassengerService {
         selfIntroduction: string | null;
         avatorUrl: string | null;
     }[]>;
+    resetPassengerAccessTokenById(id: string): Promise<{
+        accessToken: string;
+    }[]>;
     deletePassengerById(id: string, deletePassengerDto: DeletePassengerDto): Promise<{
         id: string;
         userName: string;

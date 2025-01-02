@@ -241,6 +241,14 @@ let PassengerService = class PassengerService {
             });
         });
     }
+    async resetPassengerAccessTokenById(id) {
+        return await this.db.update(passenger_schema_1.PassengerTable).set({
+            accessToken: "LOGGED_OUT",
+        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            .returning({
+            accessToken: passenger_schema_1.PassengerTable.accessToken,
+        });
+    }
     async deletePassengerById(id, deletePassengerDto) {
         return await this.db.transaction(async (tx) => {
             const responseOfSelectingPassenger = await tx.select({

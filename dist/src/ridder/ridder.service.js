@@ -259,6 +259,14 @@ let RidderService = class RidderService {
             });
         });
     }
+    async resetRidderAccessTokenById(id) {
+        return await this.db.update(ridder_schema_1.RidderTable).set({
+            accessToken: "LOGGED_OUT",
+        }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+            .returning({
+            accessToken: ridder_schema_1.RidderTable.accessToken,
+        });
+    }
     async deleteRiddderById(id, deleteRidderDto) {
         return await this.db.transaction(async (tx) => {
             const responseOfSelectingRidder = await tx.select({

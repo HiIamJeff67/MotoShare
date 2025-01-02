@@ -26,19 +26,19 @@ export declare class PassengerAuthService {
         isEmailAuthenticated: boolean;
     }[]>;
     validateAuthCodeToResetForgottenPassword(resetPassengerPasswordDto: ResetPassengerPasswordDto): Promise<{
-        email: string;
         userName: string;
+        email: string;
     }[]>;
     validateAuthCodeToResetEmailOrPassword(id: string, updatePassengerEmailPasswordDto: UpdatePassengerEmailPasswordDto): Promise<{
-        email: string;
         userName: string;
+        email: string;
     }[]>;
     bindDefaultAuth(id: string, bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto): Promise<{
-        email: string;
         userName: string;
+        email: string;
     }[]>;
     bindGoogleAuth(id: string, bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto): Promise<{
-        email: string;
         userName: string;
+        email: string;
     }[]>;
 }

@@ -47,17 +47,12 @@ let RidderController = class RidderController {
             });
         }
     }
-    async getRidderWithInfoByUserName(phoneNumber, response) {
+    async getRidderWithInfoByUserName(userName, response) {
         try {
-            if (!phoneNumber) {
+            if (!userName) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            for (const allowedPhoneNumber of types_1.AllowedPhoneNumberTypes) {
-                if (types_1.PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber))
-                    break;
-                throw exceptions_1.ServerAllowedPhoneNumberException;
-            }
-            const res = await this.ridderService.getRidderWithInfoByPhoneNumber(phoneNumber);
+            const res = await this.ridderService.getRidderWithInfoByUserName(userName);
             if (!res)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -73,12 +68,17 @@ let RidderController = class RidderController {
             });
         }
     }
-    async getRidderWithInfoByPhoneNumber(userName, response) {
+    async getRidderWithInfoByPhoneNumber(phoneNumber, response) {
         try {
-            if (!userName) {
+            if (!phoneNumber) {
                 throw exceptions_1.ApiMissingParameterException;
             }
-            const res = await this.ridderService.getRidderWithInfoByUserName(userName);
+            for (const allowedPhoneNumber of types_1.AllowedPhoneNumberTypes) {
+                if (types_1.PhoneNumberRegex[allowedPhoneNumber].test(phoneNumber))
+                    break;
+                throw exceptions_1.ServerAllowedPhoneNumberException;
+            }
+            const res = await this.ridderService.getRidderWithInfoByPhoneNumber(phoneNumber);
             if (!res)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
@@ -193,6 +193,23 @@ let RidderController = class RidderController {
             });
         }
     }
+    async resetAccessTokenToLogout(ridder, response) {
+        try {
+            const res = await this.ridderService.resetRidderAccessTokenById(ridder.id);
+            if (!res)
+                throw exceptions_1.ClientRidderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res[0]);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
     async deleteMe(ridder, deleteRidderDto, response) {
         try {
             const res = await this.ridderService.deleteRiddderById(ridder.id, deleteRidderDto);
@@ -243,7 +260,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
     (0, common_1.Get)('getRidderWithInfoByUserName'),
-    __param(0, (0, common_1.Query)('phoneNumber')),
+    __param(0, (0, common_1.Query)('userName')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
@@ -252,7 +269,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
     (0, common_1.Get)('getRidderWithInfoByPhoneNumber'),
-    __param(0, (0, common_1.Query)('userName')),
+    __param(0, (0, common_1.Query)('phoneNumber')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
@@ -314,6 +331,15 @@ __decorate([
         update_info_dto_1.UpdateRidderInfoDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], RidderController.prototype, "updateMyInfo", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Patch)('resetAccessTokenToLogout'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, Object]),
+    __metadata("design:returntype", Promise)
+], RidderController.prototype, "resetAccessTokenToLogout", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Delete)('deleteMe'),

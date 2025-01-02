@@ -289,6 +289,32 @@ export class PassengerController {
       });
     }
   }
+
+  @UseGuards(JwtPassengerGuard)
+  @Patch('resetAccessTokenToLogout')
+  async resetAccessTokenToLogout(
+    @Passenger() passenger: PassengerType, 
+    @Res() response: Response, 
+  ) {
+    try {
+      const res = await this.passengerService.resetPassengerAccessTokenById(
+        passenger.id
+      );
+
+      if (!res) throw ClientPassengerNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res[0]);
+    } catch (error) {
+      if (!(error instanceof UnauthorizedException
+        || error instanceof NotFoundException)) {
+          error = ClientUnknownException;
+      }
+
+      response.status(error.status).send({
+        ...error.response, 
+      });
+    }
+  }
   /* ================================= Update operations ================================= */
 
 

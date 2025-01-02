@@ -307,6 +307,16 @@ export class RidderService {
         });
     });
   }
+
+  async resetRidderAccessTokenById(id: string) {
+    return await this.db.update(RidderTable).set({
+      accessToken: "LOGGED_OUT", 
+    }).where(eq(RidderTable.id, id))
+      .returning({
+        accessToken: RidderTable.accessToken, 
+      });
+  }
+
   // note that we don't need to modify the collection
   /* ================================= Update operations ================================= */
 
