@@ -70,6 +70,50 @@ export class RidderAuthService {
 			}];
 		});
 	}
+
+	async sendAuthenticationCodeByEmail(email: string, title: string) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingRidder = await tx.select({
+				id: RidderTable.id, 
+				userName: RidderTable.userName, 
+				email: RidderTable.email, 
+			}).from(RidderTable)
+			  .where(eq(RidderTable.email, email))
+			  .limit(1);
+			if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+				throw ClientRidderNotFoundException;
+			}
+
+			const responseOfUpdatingAuthCode = await tx.update(RidderAuthTable).set({
+				authCode: this._generateAuthCode(), 
+				authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000), 	
+			}).where(eq(RidderAuthTable.userId, responseOfSelectingRidder[0].id))
+			  .returning({
+				authCode: RidderAuthTable.authCode, 
+				authCodeExpiredAt: RidderAuthTable.authCodeExpiredAt, 
+			  });
+			if (!responseOfUpdatingAuthCode || responseOfUpdatingAuthCode.length === 0) {
+				throw ApiGenerateAuthCodeException;
+			}
+
+			const responseOfSendingEamil = await this.email.sendValidationEamil(
+				responseOfSelectingRidder[0].email, 
+				{
+					title: title, 
+					userName: responseOfSelectingRidder[0].userName, 
+					validationCode: responseOfUpdatingAuthCode[0].authCode, 
+				}
+			)
+			if (!responseOfSendingEamil || responseOfSendingEamil.length === 0) {
+				throw ApiSendEmailForValidationException;
+			}
+
+			return [{
+				email: responseOfSelectingRidder[0].email, 
+				authCodeExpiredAt: responseOfUpdatingAuthCode[0].authCodeExpiredAt, 
+			}];
+		});
+	}
 	/* ================================= AuthCode Generator & Sender ================================= */
 
 	

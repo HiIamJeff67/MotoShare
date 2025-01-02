@@ -50,7 +50,10 @@ export class RidderController {
     @Res() response: Response,
   ) {
     try {
-      response.status(HttpStatusCode.Ok).send(ridder);
+      response.status(HttpStatusCode.Ok).send({
+        userName: ridder.userName, 
+        email: ridder.email, 
+      });
     } catch (error) {
       if (!(error instanceof UnauthorizedException)) {
         error = ClientUnknownException;

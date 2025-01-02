@@ -7,6 +7,7 @@ import { Response } from 'express';
 import { ClientRidderAuthNotFoundException, ClientRidderNotFoundException, ClientUnknownException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
 import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
+import { SendAuthCodeByEmailDto } from './dto/create-ridderAuth.dto';
 
 @Controller('ridderAuth')
 export class RidderAuthController {
@@ -41,15 +42,13 @@ export class RidderAuthController {
       }
   }
 
-  @UseGuards(JwtRidderGuard)
-  @Get('sendAuthCodeToResetForgottenPassword')
   async sendAuthCodeToResetForgottenPassword(
-      @Ridder() ridder: RidderType, 
+      @Body() sendAuthCodeByEmailDto: SendAuthCodeByEmailDto, 
       @Res() response: Response, 
   ) {
       try {
           const res = await this.ridderAuthService.sendAuthenticationCodeById(
-              ridder.id, 
+                sendAuthCodeByEmailDto.email, 
               "Reset Your Password", 
           );
           

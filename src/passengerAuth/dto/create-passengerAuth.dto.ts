@@ -1,5 +1,11 @@
 import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
+export class SendAuthCodeByEmailDto {
+    @IsNotEmpty()
+    @IsEmail()
+    email: string
+}
+
 export class CreatePassengerEmailPasswordDto {
     @IsNotEmpty()
     @IsEmail(

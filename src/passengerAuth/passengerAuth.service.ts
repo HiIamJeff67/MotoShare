@@ -70,6 +70,50 @@ export class PassengerAuthService {
 			}];
 		});
 	}
+
+	async sendAuthenticationCodeByEmail(email: string, title: string) {
+		return await this.db.transaction(async (tx) => {
+			const responseOfSelectingPassenger = await tx.select({
+				id: PassengerTable.id, 
+				userName: PassengerTable.userName, 
+				email: PassengerTable.email, 
+			}).from(PassengerTable)
+			  .where(eq(PassengerTable.email, email))
+			  .limit(1);
+			if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+				throw ClientPassengerNotFoundException;
+			}
+
+			const responseOfUpdatingAuthCode = await tx.update(PassengerAuthTable).set({
+				authCode: this._generateAuthCode(), 
+				authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000), 
+			}).where(eq(PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
+			  .returning({
+				authCode: PassengerAuthTable.authCode, 
+				authCodeExpiredAt: PassengerAuthTable.authCodeExpiredAt, 
+			  });
+			if (!responseOfUpdatingAuthCode || responseOfUpdatingAuthCode.length === 0) {
+				throw ApiGenerateAuthCodeException;
+			}
+
+			const responseOfSendingEmail = await this.email.sendValidationEamil(
+				responseOfSelectingPassenger[0].email, 
+				{
+					title: title, 
+					userName: responseOfSelectingPassenger[0].userName, 
+					validationCode: responseOfUpdatingAuthCode[0].authCode, 
+				}
+			)
+			if (!responseOfSendingEmail || responseOfSendingEmail.length === 0) {
+				throw ApiSendEmailForValidationException;
+			}
+
+			return [{
+				email: responseOfSelectingPassenger[0].email, 
+				authCodeExpiredAt: responseOfUpdatingAuthCode[0].authCodeExpiredAt, 
+			}];
+		});
+	}
 	/* ================================= AuthCode Generator & Sender ================================= */
 
 

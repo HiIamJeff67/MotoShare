@@ -51,7 +51,10 @@ export class PassengerController {
   ) {  
     // will throw "401, unauthorized" if the bearer token is invalid or expired
     try {
-      response.status(HttpStatusCode.Ok).send(passenger);
+      response.status(HttpStatusCode.Ok).send({
+        userName: passenger.userName, 
+        email: passenger.email, 
+      });
     } catch (error) {
       if (!(error instanceof UnauthorizedException)) {
         error = ClientUnknownException;
