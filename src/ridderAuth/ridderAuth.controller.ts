@@ -42,6 +42,7 @@ export class RidderAuthController {
       }
   }
 
+  @Get('sendAuthCodeToResetForgottenPassword')
   async sendAuthCodeToResetForgottenPassword(
       @Body() sendAuthCodeByEmailDto: SendAuthCodeByEmailDto, 
       @Res() response: Response, 
