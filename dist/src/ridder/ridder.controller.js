@@ -33,7 +33,10 @@ let RidderController = class RidderController {
     }
     async getMe(ridder, response) {
         try {
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(ridder);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                userName: ridder.userName,
+                email: ridder.email,
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException)) {

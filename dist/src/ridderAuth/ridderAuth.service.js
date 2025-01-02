@@ -72,6 +72,43 @@ let RidderAuthService = class RidderAuthService {
                 }];
         });
     }
+    async sendAuthenticationCodeByEmail(email, title) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingRidder = await tx.select({
+                id: ridder_schema_1.RidderTable.id,
+                userName: ridder_schema_1.RidderTable.userName,
+                email: ridder_schema_1.RidderTable.email,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, email))
+                .limit(1);
+            if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            const responseOfUpdatingAuthCode = await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
+                authCode: this._generateAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, responseOfSelectingRidder[0].id))
+                .returning({
+                authCode: ridderAuth_schema_1.RidderAuthTable.authCode,
+                authCodeExpiredAt: ridderAuth_schema_1.RidderAuthTable.authCodeExpiredAt,
+            });
+            if (!responseOfUpdatingAuthCode || responseOfUpdatingAuthCode.length === 0) {
+                throw exceptions_1.ApiGenerateAuthCodeException;
+            }
+            const responseOfSendingEamil = await this.email.sendValidationEamil(responseOfSelectingRidder[0].email, {
+                title: title,
+                userName: responseOfSelectingRidder[0].userName,
+                validationCode: responseOfUpdatingAuthCode[0].authCode,
+            });
+            if (!responseOfSendingEamil || responseOfSendingEamil.length === 0) {
+                throw exceptions_1.ApiSendEmailForValidationException;
+            }
+            return [{
+                    email: responseOfSelectingRidder[0].email,
+                    authCodeExpiredAt: responseOfUpdatingAuthCode[0].authCodeExpiredAt,
+                }];
+        });
+    }
     async getRidderAuthByUserId(userId) {
         const responseOfSelectingRidderAuth = await this.db.select({
             isEmailAuthenticated: ridderAuth_schema_1.RidderAuthTable.isEmailAuthenticated,
@@ -114,13 +151,22 @@ let RidderAuthService = class RidderAuthService {
             });
         });
     }
-    async validateAuthCodeToResetForgottenPassword(id, resetRidderPasswordDto) {
+    async validateAuthCodeToResetForgottenPassword(resetRidderPasswordDto) {
         return await this.db.transaction(async (tx) => {
+            const responseOfSelectingRidder = await tx.select({
+                id: ridder_schema_1.RidderTable.id,
+                hash: ridder_schema_1.RidderTable.password,
+            }).from(ridder_schema_1.RidderTable)
+                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.email, resetRidderPasswordDto.email))
+                .limit(1);
+            if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
             const responseOfSelectingRidderAuth = await tx.select({
                 authCode: ridderAuth_schema_1.RidderAuthTable.authCode,
                 authCodeExpiredAt: ridderAuth_schema_1.RidderAuthTable.authCodeExpiredAt,
             }).from(ridderAuth_schema_1.RidderAuthTable)
-                .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id))
+                .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, responseOfSelectingRidder[0].id))
                 .limit(1);
             if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
@@ -134,16 +180,7 @@ let RidderAuthService = class RidderAuthService {
             await tx.update(ridderAuth_schema_1.RidderAuthTable).set({
                 authCode: "USED",
                 authCodeExpiredAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id));
-            const responseOfSelectingRidder = await tx.select({
-                id: ridder_schema_1.RidderTable.id,
-                hash: ridder_schema_1.RidderTable.password,
-            }).from(ridder_schema_1.RidderTable)
-                .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-                .limit(1);
-            if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
-                throw exceptions_1.ClientRidderNotFoundException;
-            }
+            }).where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, responseOfSelectingRidder[0].id));
             const pwMatches = await bcrypt.compare(resetRidderPasswordDto.password, responseOfSelectingRidder[0].hash);
             if (pwMatches)
                 throw exceptions_1.ClientNoChangeOnPasswordException;
@@ -151,7 +188,7 @@ let RidderAuthService = class RidderAuthService {
             return await tx.update(ridder_schema_1.RidderTable).set({
                 password: hash,
                 accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
-            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, responseOfSelectingRidder[0].id))
                 .returning({
                 userName: ridder_schema_1.RidderTable.userName,
                 email: ridder_schema_1.RidderTable.email,

@@ -26,6 +26,11 @@ class ResetPassengerPasswordDto {
 exports.ResetPassengerPasswordDto = ResetPassengerPasswordDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], ResetPassengerPasswordDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ResetPassengerPasswordDto.prototype, "authCode", void 0);

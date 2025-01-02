@@ -12,6 +12,10 @@ export declare class PassengerAuthService {
         email: string;
         authCodeExpiredAt: Date;
     }[]>;
+    sendAuthenticationCodeByEmail(email: string, title: string): Promise<{
+        email: string;
+        authCodeExpiredAt: Date;
+    }[]>;
     getPassengerAuthByUserId(userId: string): Promise<{
         isEmailAuthenticated: boolean;
         isPhoneAuthenticated: boolean;
@@ -21,20 +25,20 @@ export declare class PassengerAuthService {
     validateAuthCodeForEmail(id: string, validatePassengerInfoDto: ValidatePassengerInfoDto): Promise<{
         isEmailAuthenticated: boolean;
     }[]>;
-    validateAuthCodeToResetForgottenPassword(id: string, resetPassengerPasswordDto: ResetPassengerPasswordDto): Promise<{
-        userName: string;
+    validateAuthCodeToResetForgottenPassword(resetPassengerPasswordDto: ResetPassengerPasswordDto): Promise<{
         email: string;
+        userName: string;
     }[]>;
     validateAuthCodeToResetEmailOrPassword(id: string, updatePassengerEmailPasswordDto: UpdatePassengerEmailPasswordDto): Promise<{
-        userName: string;
         email: string;
+        userName: string;
     }[]>;
     bindDefaultAuth(id: string, bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto): Promise<{
-        userName: string;
         email: string;
+        userName: string;
     }[]>;
     bindGoogleAuth(id: string, bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto): Promise<{
-        userName: string;
         email: string;
+        userName: string;
     }[]>;
 }

@@ -21,6 +21,7 @@ const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
 const enums_1 = require("../enums");
 const update_passengerAuth_dto_1 = require("./dto/update-passengerAuth.dto");
+const create_passengerAuth_dto_1 = require("./dto/create-passengerAuth.dto");
 let PassengerAuthController = class PassengerAuthController {
     constructor(passengerAuthService) {
         this.passengerAuthService = passengerAuthService;
@@ -43,16 +44,15 @@ let PassengerAuthController = class PassengerAuthController {
             });
         }
     }
-    async sendAuthCodeToResetForgottenPassword(passenger, response) {
+    async sendAuthCodeToResetForgottenPassword(sendAuthCodeByEmailDto, response) {
         try {
-            const res = await this.passengerAuthService.sendAuthenticationCodeById(passenger.id, "Reset Your Password");
+            const res = await this.passengerAuthService.sendAuthenticationCodeByEmail(sendAuthCodeByEmailDto.email, "Reset Your Password");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException
+            if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.InternalServerErrorException)) {
                 error = exceptions_1.ClientUnknownException;
             }
@@ -115,16 +115,15 @@ let PassengerAuthController = class PassengerAuthController {
             });
         }
     }
-    async validateAuthCodeToResetForgottenPassword(passenger, resetPassengerPasswordDto, response) {
+    async validateAuthCodeToResetForgottenPassword(resetPassengerPasswordDto, response) {
         try {
-            const res = await this.passengerAuthService.validateAuthCodeToResetForgottenPassword(passenger.id, resetPassengerPasswordDto);
+            const res = await this.passengerAuthService.validateAuthCodeToResetForgottenPassword(resetPassengerPasswordDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientPassengerNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException
+            if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException
                 || error instanceof common_1.ConflictException)) {
                 error = exceptions_1.ClientUnknownException;
@@ -204,12 +203,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "sendAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
-    (0, common_1.Get)('sendAuthCodeToResetForgottenPassword'),
-    __param(0, (0, decorator_1.Passenger)()),
+    (0, common_1.Post)('sendAuthCodeToResetForgottenPassword'),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:paramtypes", [create_passengerAuth_dto_1.SendAuthCodeByEmailDto, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "sendAuthCodeToResetForgottenPassword", null);
 __decorate([
@@ -242,14 +240,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "validateAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Post)('validateAuthCodeToResetForgottenPassword'),
-    __param(0, (0, decorator_1.Passenger)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Res)()),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.PassengerType,
-        update_passengerAuth_dto_1.ResetPassengerPasswordDto, Object]),
+    __metadata("design:paramtypes", [update_passengerAuth_dto_1.ResetPassengerPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerAuthController.prototype, "validateAuthCodeToResetForgottenPassword", null);
 __decorate([

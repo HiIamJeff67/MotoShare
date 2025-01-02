@@ -12,6 +12,10 @@ export declare class RidderAuthService {
         email: string;
         authCodeExpiredAt: Date;
     }[]>;
+    sendAuthenticationCodeByEmail(email: string, title: string): Promise<{
+        email: string;
+        authCodeExpiredAt: Date;
+    }[]>;
     getRidderAuthByUserId(userId: string): Promise<{
         isEmailAuthenticated: boolean;
         isPhoneAuthenticated: boolean;
@@ -21,7 +25,7 @@ export declare class RidderAuthService {
     validateAuthCodeForEmail(id: string, validateRidderInfoDto: ValidateRidderInfoDto): Promise<{
         isEmailAuthenticated: boolean;
     }[]>;
-    validateAuthCodeToResetForgottenPassword(id: string, resetRidderPasswordDto: ResetRidderPasswordDto): Promise<{
+    validateAuthCodeToResetForgottenPassword(resetRidderPasswordDto: ResetRidderPasswordDto): Promise<{
         userName: string;
         email: string;
     }[]>;

@@ -17,7 +17,7 @@ export class ResetPassengerPasswordDto {
     @IsString()
     authCode: string
 
-     @IsNotEmpty()
+    @IsNotEmpty()
     @IsStrongPassword(
         undefined,
         { message: "E-C-007" }

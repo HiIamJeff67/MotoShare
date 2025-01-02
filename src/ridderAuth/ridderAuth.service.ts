@@ -71,7 +71,10 @@ export class RidderAuthService {
 		});
 	}
 
-	async sendAuthenticationCodeByEmail(email: string, title: string) {
+	async sendAuthenticationCodeByEmail(
+		email: string, 
+		title: string
+	) {
 		return await this.db.transaction(async (tx) => {
 			const responseOfSelectingRidder = await tx.select({
 				id: RidderTable.id, 

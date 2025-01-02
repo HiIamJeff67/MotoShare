@@ -72,6 +72,43 @@ let PassengerAuthService = class PassengerAuthService {
                 }];
         });
     }
+    async sendAuthenticationCodeByEmail(email, title) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassenger = await tx.select({
+                id: passenger_schema_1.PassengerTable.id,
+                userName: passenger_schema_1.PassengerTable.userName,
+                email: passenger_schema_1.PassengerTable.email,
+            }).from(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, email))
+                .limit(1);
+            if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            const responseOfUpdatingAuthCode = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                authCode: this._generateAuthCode(),
+                authCodeExpiredAt: new Date((new Date()).getTime() + Number(this.config.get("AUTH_CODE_EXPIRED_IN")) * 60000),
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
+                .returning({
+                authCode: passengerAuth_schema_1.PassengerAuthTable.authCode,
+                authCodeExpiredAt: passengerAuth_schema_1.PassengerAuthTable.authCodeExpiredAt,
+            });
+            if (!responseOfUpdatingAuthCode || responseOfUpdatingAuthCode.length === 0) {
+                throw exceptions_1.ApiGenerateAuthCodeException;
+            }
+            const responseOfSendingEmail = await this.email.sendValidationEamil(responseOfSelectingPassenger[0].email, {
+                title: title,
+                userName: responseOfSelectingPassenger[0].userName,
+                validationCode: responseOfUpdatingAuthCode[0].authCode,
+            });
+            if (!responseOfSendingEmail || responseOfSendingEmail.length === 0) {
+                throw exceptions_1.ApiSendEmailForValidationException;
+            }
+            return [{
+                    email: responseOfSelectingPassenger[0].email,
+                    authCodeExpiredAt: responseOfUpdatingAuthCode[0].authCodeExpiredAt,
+                }];
+        });
+    }
     async getPassengerAuthByUserId(userId) {
         const responseOfSelectingPassengerAuth = await this.db.select({
             isEmailAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isEmailAuthenticated,
@@ -114,13 +151,22 @@ let PassengerAuthService = class PassengerAuthService {
             });
         });
     }
-    async validateAuthCodeToResetForgottenPassword(id, resetPassengerPasswordDto) {
+    async validateAuthCodeToResetForgottenPassword(resetPassengerPasswordDto) {
         return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassenger = await tx.select({
+                id: passenger_schema_1.PassengerTable.id,
+                hash: passenger_schema_1.PassengerTable.password,
+            }).from(passenger_schema_1.PassengerTable)
+                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.email, resetPassengerPasswordDto.email))
+                .limit(1);
+            if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
             const responseOfSelectingPassengerAuth = await tx.select({
                 authCode: passengerAuth_schema_1.PassengerAuthTable.authCode,
                 authCodeExpiredAt: passengerAuth_schema_1.PassengerAuthTable.authCodeExpiredAt,
             }).from(passengerAuth_schema_1.PassengerAuthTable)
-                .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id))
+                .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
                 .limit(1);
             if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
@@ -131,27 +177,18 @@ let PassengerAuthService = class PassengerAuthService {
             if (responseOfSelectingPassengerAuth[0].authCodeExpiredAt <= new Date()) {
                 throw exceptions_1.ClientAuthCodeExpiredException;
             }
-            await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
-                authCode: "USED",
-                authCodeExpiredAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id));
-            const responseOfSelectingPassenger = await tx.select({
-                id: passenger_schema_1.PassengerTable.id,
-                hash: passenger_schema_1.PassengerTable.password,
-            }).from(passenger_schema_1.PassengerTable)
-                .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
-                .limit(1);
-            if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
-                throw exceptions_1.ClientPassengerNotFoundException;
-            }
             const pwMatches = await bcrypt.compare(resetPassengerPasswordDto.password, responseOfSelectingPassenger[0].hash);
             if (pwMatches)
                 throw exceptions_1.ClientNoChangeOnPasswordException;
+            await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
+                authCode: "USED",
+                authCodeExpiredAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, responseOfSelectingPassenger[0].id));
             const hash = await bcrypt.hash(resetPassengerPasswordDto.password, Number(this.config.get("SALT_OR_ROUND")));
             return await tx.update(passenger_schema_1.PassengerTable).set({
                 password: hash,
                 accessToken: auth_constant_1.TEMP_ACCESS_TOKEN,
-            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, responseOfSelectingPassenger[0].id))
                 .returning({
                 userName: passenger_schema_1.PassengerTable.userName,
                 email: passenger_schema_1.PassengerTable.email,

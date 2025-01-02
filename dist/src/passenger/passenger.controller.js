@@ -34,7 +34,10 @@ let PassengerController = class PassengerController {
     }
     getMe(passenger, response) {
         try {
-            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(passenger);
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                userName: passenger.userName,
+                email: passenger.email,
+            });
         }
         catch (error) {
             if (!(error instanceof common_1.UnauthorizedException)) {

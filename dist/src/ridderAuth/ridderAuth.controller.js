@@ -21,6 +21,7 @@ const interfaces_1 = require("../interfaces");
 const exceptions_1 = require("../exceptions");
 const enums_1 = require("../enums");
 const update_ridderAuth_dto_1 = require("./dto/update-ridderAuth.dto");
+const create_ridderAuth_dto_1 = require("./dto/create-ridderAuth.dto");
 let RidderAuthController = class RidderAuthController {
     constructor(ridderAuthService) {
         this.ridderAuthService = ridderAuthService;
@@ -43,16 +44,16 @@ let RidderAuthController = class RidderAuthController {
             });
         }
     }
-    async sendAuthCodeToResetForgottenPassword(ridder, response) {
+    async sendAuthCodeToResetForgottenPassword(sendAuthCodeByEmailDto, response) {
         try {
-            const res = await this.ridderAuthService.sendAuthenticationCodeById(ridder.id, "Reset Your Password");
+            const res = await this.ridderAuthService.sendAuthenticationCodeByEmail(sendAuthCodeByEmailDto.email, "Reset Your Password");
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException
+            console.log(error);
+            if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.InternalServerErrorException)) {
                 error = exceptions_1.ClientUnknownException;
             }
@@ -115,16 +116,15 @@ let RidderAuthController = class RidderAuthController {
             });
         }
     }
-    async validateAuthCodeToResetForgottenPassword(ridder, resetRidderPasswordDto, response) {
+    async validateAuthCodeToResetForgottenPassword(resetRidderPasswordDto, response) {
         try {
-            const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(ridder.id, resetRidderPasswordDto);
+            const res = await this.ridderAuthService.validateAuthCodeToResetForgottenPassword(resetRidderPasswordDto);
             if (!res || res.length === 0)
                 throw exceptions_1.ClientRidderNotFoundException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
-            if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.NotFoundException
+            if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException
                 || error instanceof common_1.ConflictException)) {
                 error = exceptions_1.ClientUnknownException;
@@ -204,12 +204,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RidderAuthController.prototype, "sendAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('sendAuthCodeToResetForgottenPassword'),
-    __param(0, (0, decorator_1.Ridder)()),
+    (0, common_1.Post)('sendAuthCodeToResetForgottenPassword'),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.RidderType, Object]),
+    __metadata("design:paramtypes", [create_ridderAuth_dto_1.SendAuthCodeByEmailDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderAuthController.prototype, "sendAuthCodeToResetForgottenPassword", null);
 __decorate([
@@ -242,14 +241,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RidderAuthController.prototype, "validateAuthCodeForEmail", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Post)('validateAuthCodeToResetForgottenPassword'),
-    __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Res)()),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.RidderType,
-        update_ridderAuth_dto_1.ResetRidderPasswordDto, Object]),
+    __metadata("design:paramtypes", [update_ridderAuth_dto_1.ResetRidderPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderAuthController.prototype, "validateAuthCodeToResetForgottenPassword", null);
 __decorate([

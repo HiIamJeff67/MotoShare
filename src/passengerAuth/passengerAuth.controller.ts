@@ -42,7 +42,7 @@ export class PassengerAuthController {
         }
     }
 
-    @Get('sendAuthCodeToResetForgottenPassword')
+    @Post('sendAuthCodeToResetForgottenPassword')
     async sendAuthCodeToResetForgottenPassword(
         @Body() sendAuthCodeByEmailDto: SendAuthCodeByEmailDto, 
         @Res() response: Response, 

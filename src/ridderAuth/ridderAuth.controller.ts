@@ -42,21 +42,22 @@ export class RidderAuthController {
       }
   }
 
-  @Get('sendAuthCodeToResetForgottenPassword')
+  @Post('sendAuthCodeToResetForgottenPassword')
   async sendAuthCodeToResetForgottenPassword(
       @Body() sendAuthCodeByEmailDto: SendAuthCodeByEmailDto, 
       @Res() response: Response, 
   ) {
       try {
-          const res = await this.ridderAuthService.sendAuthenticationCodeById(
-                sendAuthCodeByEmailDto.email, 
+          const res = await this.ridderAuthService.sendAuthenticationCodeByEmail(
+              sendAuthCodeByEmailDto.email, 
               "Reset Your Password", 
           );
-          
+        
           if (!res || res.length === 0) throw ClientRidderNotFoundException;
 
           response.status(HttpStatusCode.Ok).send(res[0]);
       } catch (error) {
+          console.log(error)
           if (!(error instanceof NotFoundException
               || error instanceof InternalServerErrorException)) {
                   error = ClientUnknownException;

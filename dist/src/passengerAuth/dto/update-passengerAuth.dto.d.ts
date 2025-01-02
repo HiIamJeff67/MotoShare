@@ -3,6 +3,7 @@ export declare class ValidatePassengerInfoDto {
     authCode: string;
 }
 export declare class ResetPassengerPasswordDto {
+    email: string;
     authCode: string;
     password: string;
 }
