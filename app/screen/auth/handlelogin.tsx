@@ -13,15 +13,14 @@ GoogleSignin.configure({
   scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
   iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
 });
-
 // Validation schemas
 const usernameSchema = z
   .string()
-  .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers and underscores")
-  .min(4, "Username must be at least 4 characters")
-  .max(20, "Username cannot exceed 20 characters");
+  .regex(/^[a-zA-Z0-9_]+$/, ("Username can only contain letters, numbers and underscores"))
+  .min(4, ("Username must be at least 4 characters"))
+  .max(20, ("Username cannot exceed 20 characters"));
 
-const emailSchema = z.string().email("Please enter a valid email address");
+const emailSchema = z.string().email(("Please enter a valid email address"));
 
 const passwordSchema = z
   .string()

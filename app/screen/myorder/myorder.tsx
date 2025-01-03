@@ -16,6 +16,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -44,12 +45,13 @@ const MyOrder = () => {
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
   let roleText = "載入中...";
 
   if (user.role === "Ridder") {
-    roleText = "乘客";
+    roleText = t("passenger");
   } else if (user.role === "Passenger") {
-    roleText = "車主";
+    roleText = t("rider");
   }
 
   const getToken = async () => {
@@ -153,13 +155,13 @@ const MyOrder = () => {
                 <View key={item.id} style={styles.container}>
                   <Pressable
                     onPress={() =>
-                      navigation.navigate("myorderde", { orderid: item.id })
+                      navigation.navigate(...["myorderde", { orderid: item.id }] as never)
                     }
                   >
                     <View style={styles.card}>
                       <View style={styles.header}>
                         <Text style={styles.orderNumber}>
-                          我的訂單編號: {item?.id}
+                          {t("my order id")}: {item?.id}
                         </Text>
                       </View>
                       <View style={styles.body}>
@@ -170,19 +172,19 @@ const MyOrder = () => {
                             : item.passengerName}
                         </Text>
                         <Text style={styles.title}>
-                          起點：{item.finalStartAddress}
+                          {t("starting point")}：{item.finalStartAddress}
                         </Text>
                         <Text style={styles.title}>
-                          終點：{item.finalEndAddress}
+                          {t("destination")}：{item.finalEndAddress}
                         </Text>
                         <Text style={styles.title}>
-                          開車時間:{" "}
+                          {t("start driving")}:{" "}
                           {new Date(item.startAfter).toLocaleString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })}
                         </Text>
                         <Text style={styles.title}>
-                          更新時間:{" "}
+                          {t("update time")}:{" "}
                           {new Date(item.updatedAt).toLocaleString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })}

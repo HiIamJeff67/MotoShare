@@ -12,6 +12,8 @@ import React, { useEffect, useState } from "react";
 import { HomeScreenStyles, mapStyle } from "./home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
 import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
+import { getUserTheme, ThemeType } from "@/theme";
+import { useTranslation } from "react-i18next";
 import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
 import MapView from "react-native-maps";
 
@@ -28,6 +30,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [userRecords, setUserRecords] = useState<SearchRecordInterface[]>([]);
+  const { t } = useTranslation();
 
   const insets = useSafeAreaInsets();
   const [styles, setStyles] = useState<any>(null);
@@ -86,7 +89,7 @@ const Home = () => {
       ) : (
         <View style={styles.container}>
           <Text style={styles.welcomeText}>
-            歡迎{roleText}, {user.userName}
+            {t("welcome",{roleText})}, {user.userName}
           </Text>
 
           <Pressable style={styles.mapContainer} onPress={() => navigation.navigate("map" as never)}>
@@ -109,33 +112,33 @@ const Home = () => {
           </View>
 
           <View>
-            <Text style={styles.MainText}>建議</Text>
+            <Text style={styles.MainText}>{t("recommended")}</Text>
             <View style={{ marginTop: verticalScale(20) }} className="flex flex-row justify-between items-center">
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("map" as never)}>
                 <View className="items-center">
                   <FontAwesome6 color={styles.cardIcon.color} name="motorcycle" size={moderateScale(24)} />
-                  <Text style={styles.cardText}>建立訂單</Text>
+                  <Text style={styles.cardText}>{t("make an order")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("order" as never)}>
                 <View className="items-center">
                   <FontAwesome6 color={styles.cardIcon.color} name="list" size={moderateScale(24)} />
-                  <Text style={styles.cardText}>查看訂單</Text>
+                  <Text style={styles.cardText}>{t("check order")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myinvite" as never)}>
                 <View className="items-center">
                   <Ionicons color={styles.cardIcon.color} name="people" size={moderateScale(24)} />
-                  <Text style={styles.cardText}>查看邀請</Text>
+                  <Text style={styles.cardText}>{t("invite details")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myorder" as never)}>
                 <View className="items-center">
                   <FontAwesome6 color={styles.cardIcon.color} name="edit" size={moderateScale(24)} />
-                  <Text style={styles.cardText}>訂單管理</Text>
+                  <Text style={styles.cardText}>{t("order manage")}</Text>
                 </View>
               </TouchableOpacity>
             </View>

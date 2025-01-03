@@ -12,5 +12,5 @@
     "**/*.ts",
     "**/*.tsx",
     "nativewind-env.d.ts"
-  ]
+, "app/screen/auth/locales/languageProvider.js"  ]
 }
