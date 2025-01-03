@@ -194,6 +194,22 @@ export declare const RidderInfoTable: import("drizzle-orm/pg-core").PgTableWithC
             baseColumn: never;
             generated: undefined;
         }, {}, {}>;
+        avgStarRating: import("drizzle-orm/pg-core").PgColumn<{
+            name: "averageStarRating";
+            tableName: "ridderInfo";
+            dataType: "number";
+            columnType: "PgDoublePrecision";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "createdAt";
             tableName: "ridderInfo";

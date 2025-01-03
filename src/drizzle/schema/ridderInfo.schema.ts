@@ -1,4 +1,4 @@
-import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { RidderTable } from "./schema";
@@ -19,6 +19,7 @@ export const RidderInfoTable = pgTable("ridderInfo", {
     motocycleLicense: text("motocycleLicense").unique(),
     motocycleType: text("motocycleType"),
     motocyclePhotoUrl: text("motocyclePhotoUrl"),
+    avgStarRating: doublePrecision("averageStarRating").notNull().default(0), 
     createdAt: timestamp("createdAt").notNull().defaultNow(), 
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 }, (table) => {

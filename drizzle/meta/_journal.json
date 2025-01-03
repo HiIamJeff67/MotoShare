@@ -281,6 +281,13 @@
       "when": 1735568840031,
       "tag": "0039_brave_the_spike",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1735900219211,
+      "tag": "0040_fearless_falcon",
+      "breakpoints": true
     }
   ]
 }

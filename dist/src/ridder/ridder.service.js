@@ -59,6 +59,7 @@ let RidderService = class RidderService {
                         motocyclePhotoUrl: true,
                         createdAt: true,
                         updatedAt: true,
+                        avgStarRating: true,
                     }
                 },
             }
@@ -77,6 +78,7 @@ let RidderService = class RidderService {
                 motocyclePhotoUrl: true,
                 createdAt: true,
                 updatedAt: true,
+                avgStarRating: true,
             },
             with: {
                 user: {
@@ -110,6 +112,7 @@ let RidderService = class RidderService {
                         motocyclePhotoUrl: true,
                         createdAt: true,
                         updatedAt: true,
+                        avgStarRating: true,
                     }
                 },
             }
@@ -163,6 +166,7 @@ let RidderService = class RidderService {
                         avatorUrl: true,
                         isOnline: true,
                         motocycleType: true,
+                        avgStarRating: true,
                     }
                 }
             },

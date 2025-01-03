@@ -202,6 +202,17 @@ let HistoryController = class HistoryController {
             });
         }
     }
+    async updateAverageStarRatingByPassengerId(passenger, response) {
+        try {
+            const res = await this.historyService._updateAverageStarRatingByPassengerId(passenger.id);
+            if (!res)
+                throw exceptions_1.ClientCalculatePassengerAverageStarRatingException;
+            response.status(enums_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 };
 exports.HistoryController = HistoryController;
 __decorate([
@@ -288,6 +299,15 @@ __decorate([
     __metadata("design:paramtypes", [interfaces_1.RidderType, String, Object]),
     __metadata("design:returntype", Promise)
 ], HistoryController.prototype, "delinkHistoryForRidderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('updateAverageStarRatingByPassengerId'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, Object]),
+    __metadata("design:returntype", Promise)
+], HistoryController.prototype, "updateAverageStarRatingByPassengerId", null);
 exports.HistoryController = HistoryController = __decorate([
     (0, common_1.Controller)('history'),
     __metadata("design:paramtypes", [history_service_1.HistoryService])

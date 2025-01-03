@@ -64,6 +64,7 @@ export class RidderService {
             motocyclePhotoUrl: true,
             createdAt: true, 
             updatedAt: true,
+            avgStarRating: true, 
           }
         },
       }
@@ -84,6 +85,7 @@ export class RidderService {
         motocyclePhotoUrl: true,
         createdAt: true, 
         updatedAt: true,
+        avgStarRating: true, 
       },
       with: {
         user: {
@@ -118,6 +120,7 @@ export class RidderService {
             motocyclePhotoUrl: true,
             createdAt: true, 
             updatedAt: true,
+            avgStarRating: true, 
           }
         },
       }
@@ -178,6 +181,7 @@ export class RidderService {
             avatorUrl: true,
             isOnline: true,
             motocycleType: true,
+            avgStarRating: true, 
           }
         }
       },

@@ -1,0 +1,2 @@
+ALTER TABLE "passengerInfo" ADD COLUMN "averageStarRating" double precision DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "ridderInfo" ADD COLUMN "averageStarRating" double precision DEFAULT 0 NOT NULL;

@@ -352,6 +352,18 @@ export const ClientMaintainSearchRecordsException = new ForbiddenException({
     message: "Failed to maintain searchRecords", 
 });
 
+// E-C-227
+export const ClientCalculatePassengerAverageStarRatingException = new ForbiddenException({
+    case: "E-C-227", 
+    message: "Failed to calculate the average starRating of some passenger", 
+});
+
+// E-C-228
+export const ClientCalculateRidderAverageStarRatingException = new ForbiddenException({
+    case: "E-C-228", 
+    message: "Failed to calculate the average starRating of some ridder", 
+});
+
 /* ============================== Error about create operation ============================== */
 
 

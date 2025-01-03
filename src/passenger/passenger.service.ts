@@ -65,6 +65,7 @@ export class PassengerService {
             avatorUrl: true,
             createdAt: true, 
             updatedAt: true,
+            avgStarRating: true, 
           }
         },
       }
@@ -82,6 +83,7 @@ export class PassengerService {
         avatorUrl: true,
         createdAt: true, 
         updatedAt: true,
+        avgStarRating: true, 
       },
       with: {
         user: {
@@ -113,6 +115,7 @@ export class PassengerService {
             avatorUrl: true, 
             createdAt: true, 
             updatedAt: true, 
+            avgStarRating: true, 
           }
         },
       }
@@ -172,6 +175,7 @@ export class PassengerService {
           columns: {
             avatorUrl: true,
             isOnline: true,
+            avgStarRating: true,
           }
         }
       },

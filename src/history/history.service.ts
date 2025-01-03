@@ -4,7 +4,7 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { HistoryTable } from '../drizzle/schema/history.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
-import { and, desc, eq, isNull, ne, or } from 'drizzle-orm';
+import { and, avg, desc, eq, isNull, ne, or, sql } from 'drizzle-orm';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 import { RidderInfoTable } from '../drizzle/schema/ridderInfo.schema';
@@ -12,6 +12,8 @@ import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 import { StarRatingType } from '../types';
 import { 
+  ClientCalculatePassengerAverageStarRatingException,
+  ClientCalculateRidderAverageStarRatingException,
   ClientCreatePassengerNotificationException,
   ClientCreateRidderNotificationException,
   ClientHistoryNotFoundException, 
@@ -30,6 +32,55 @@ export class HistoryService {
     private ridderNotification: RidderNotificationService, 
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
+
+  /* ================================= Count Average StarRating operations ================================= */
+  async _updateAverageStarRatingByPassengerId(userId: string) {
+    return await this.db.transaction(async (tx) => {
+      const response = await tx.select({ // note that the starRating to passenger is from ridder
+        avgStarRating: avg(sql<number>`cast(${HistoryTable.starRatingByRidder}::text as int)`),
+      }).from(HistoryTable)
+        .where(eq(HistoryTable.passengerId, userId)) as { avgStarRating: number | null }[];
+      if (!response || response.length === 0) {
+        throw ClientCalculatePassengerAverageStarRatingException;
+      }
+
+      if (response[0].avgStarRating === null) {
+        return [null];
+      } else {
+        return await tx.update(PassengerInfoTable).set({
+          avgStarRating: response[0].avgStarRating, 
+        }).where(eq(PassengerInfoTable.userId, userId))
+          .returning({
+            avgStarRating: PassengerInfoTable.avgStarRating, 
+          });
+      }
+    });    
+  }
+
+  async _updateAverageStarRatingByRidderId(userId: string) {
+    return await this.db.transaction(async (tx) => {
+      const respone = await tx.select({ // note that the starRating to ridder is from passenger
+        avgStarRating: avg(sql<number>`cast(${HistoryTable.starRatingByRidder})::text as int`), 
+      }).from(HistoryTable)
+        .where(eq(HistoryTable.ridderId, userId)) as { avgStarRating: number | null }[];
+      if (!respone || respone.length === 0) {
+        throw ClientCalculateRidderAverageStarRatingException;
+      }
+
+      if (respone[0].avgStarRating === null) {
+        return [null];
+      } else {
+        return await tx.update(RidderInfoTable).set({
+          avgStarRating: respone[0].avgStarRating as number, 
+        }).where(eq(RidderInfoTable.userId, userId))
+          .returning({
+            avgStarRating: RidderInfoTable.avgStarRating, 
+          });
+      }
+    })
+  }
+  /* ================================= Count Average StarRating operations ================================= */
+
 
   /* ================================= Get operations ================================= */
   async getHistoryById(id: string, userId: string) {
@@ -141,51 +192,56 @@ export class HistoryService {
     passengerName: string, 
     rateAndCommentHistoryDto: RateAndCommentHistoryDto, 
   ) {
-    const passenger = await this.db.select({
-      isEmailAuthenticated: PassengerAuthTable.isEmailAuthenticated, 
-    }).from(PassengerAuthTable)
-      .where(eq(PassengerAuthTable.userId, passengerId));
-
-    if (!passenger || passenger.length === 0) throw ClientPassengerNotFoundException;
-    if (!passenger[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
-
-    const responseOfUpdatingHistory = await this.db.update(HistoryTable).set({
-      starRatingByPassenger: rateAndCommentHistoryDto.starRating,
-      commentByPassenger: rateAndCommentHistoryDto.comment,
-      updatedAt: new Date(),
-    }).where(and(
-      eq(HistoryTable.id, id),
-      eq(HistoryTable.passengerId, passengerId),
-    )).returning({
-      id: HistoryTable.id, 
-      ridderId: HistoryTable.ridderId, 
-      starRatingByPassenger: HistoryTable.starRatingByPassenger, 
-      commentByPassenger: HistoryTable.commentByPassenger, 
-      status: HistoryTable.status,
-    });
-    if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
-      throw ClientHistoryNotFoundException;
-    }
-
-    if (responseOfUpdatingHistory[0].ridderId) {
-      const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
-        NotificationTemplateOfRatingAndCommentingHistory(
-          passengerName, 
-          responseOfUpdatingHistory[0].ridderId as string, 
-          responseOfUpdatingHistory[0].id as string, 
-          responseOfUpdatingHistory[0].starRatingByPassenger as StarRatingType, 
-          responseOfUpdatingHistory[0].commentByPassenger ?? "", 
-        )
-      );
-      if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
-        throw ClientCreateRidderNotificationException;
+    return await this.db.transaction(async (tx) => {
+      const passenger = await tx.select({
+        isEmailAuthenticated: PassengerAuthTable.isEmailAuthenticated, 
+      }).from(PassengerAuthTable)
+        .where(eq(PassengerAuthTable.userId, passengerId));
+  
+      if (!passenger || passenger.length === 0) throw ClientPassengerNotFoundException;
+      if (!passenger[0].isEmailAuthenticated) throw ClientWithoutAdvanceAuthorizedUserException;
+  
+      const responseOfUpdatingHistory = await tx.update(HistoryTable).set({
+        starRatingByPassenger: rateAndCommentHistoryDto.starRating,
+        commentByPassenger: rateAndCommentHistoryDto.comment,
+        updatedAt: new Date(),
+      }).where(and(
+        eq(HistoryTable.id, id),
+        eq(HistoryTable.passengerId, passengerId),
+      )).returning({
+        id: HistoryTable.id, 
+        ridderId: HistoryTable.ridderId, 
+        starRatingByPassenger: HistoryTable.starRatingByPassenger, 
+        commentByPassenger: HistoryTable.commentByPassenger, 
+        status: HistoryTable.status,
+      });
+      if (!responseOfUpdatingHistory || responseOfUpdatingHistory.length === 0) {
+        throw ClientHistoryNotFoundException;
       }
-    }
+  
+      if (responseOfUpdatingHistory[0].ridderId) {
+        const responseOfCreatingNotification = await this.ridderNotification.createRidderNotificationByUserId(
+          NotificationTemplateOfRatingAndCommentingHistory(
+            passengerName, 
+            responseOfUpdatingHistory[0].ridderId as string, 
+            responseOfUpdatingHistory[0].id as string, 
+            responseOfUpdatingHistory[0].starRatingByPassenger as StarRatingType, 
+            responseOfUpdatingHistory[0].commentByPassenger ?? "", 
+          )
+        );
+        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
+          throw ClientCreateRidderNotificationException;
+        }
 
-    return [{
-      id: responseOfUpdatingHistory[0].id, 
-      status: responseOfUpdatingHistory[0].status, 
-    }];
+        this._updateAverageStarRatingByRidderId(responseOfUpdatingHistory[0].ridderId);
+      }
+
+  
+      return [{
+        id: responseOfUpdatingHistory[0].id, 
+        status: responseOfUpdatingHistory[0].status, 
+      }];
+    });
   }
 
   async rateAndCommentHistoryForRidderById(
@@ -233,6 +289,8 @@ export class HistoryService {
       if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
         throw ClientCreatePassengerNotificationException;
       }
+
+      this._updateAverageStarRatingByPassengerId(responseOfUpdatingHistory[0].passengerId);
     }
 
     return [{

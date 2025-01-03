@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientCreateRidderPreferenceException = exports.ClientCreatePassengerPreferenceException = exports.ClientCreateRidderNotificationException = exports.ClientCreatePassengerNotificationException = exports.ClientCreateRidderAuthException = exports.ClientCreatePassengerAuthException = exports.ClientCreateHistoryException = exports.ClientCreateRidderCollectionException = exports.ClientCreatePassengerCollectionException = exports.ClientCreateRidderInfoException = exports.ClientCreatePassengerInfoException = exports.ClientCreateOrderException = exports.ClientCreateRidderInviteException = exports.ClientCreatePassengerInviteException = exports.ClientCreateSupplyOrderException = exports.ClientCreatePurchaseOrderException = exports.ClientDuplicateFieldDetectedException = exports.ClientSignUpUserException = exports.ClientSignInPasswordNotMatchException = exports.ClientSignInUserException = exports.ClientRidderAuthNotFoundException = exports.ClientPassengerAuthNotFoundException = exports.ClientRidderRecordNotFoundException = exports.ClientPassengerRecordNotFoundException = exports.ClientPeriodicSupplyOrderNotFoundException = exports.ClientPeriodicPurchaseOrderNotFoundException = exports.ClientRidderPreferenceNotFoundException = exports.ClientPassengerPreferenceNotFoundException = exports.ClientRidderNotificationNotFoundException = exports.ClientPassengerNotificationNotFoundException = exports.ClientHistoryNotFoundException = exports.ClientSignInEmailNotFoundException = exports.ClientSignInUserNameNotFoundException = exports.ClientCollectionNotFoundException = exports.ClientOrderNotFoundException = exports.ClientSupplyOrderNotFoundException = exports.ClientPurchaseOrderNotFoundException = exports.ClientInviteNotFoundException = exports.ClientRidderNotFoundException = exports.ClientPassengerNotFoundException = exports.ClientInvalidGoogleIdTokenException = exports.ClientUserAuthenticatedMethodNotAllowedException = exports.ClientWithoutAdvanceAuthorizedUserException = exports.ClientDeleteAccountPasswordNotMatchException = exports.ClientOldPasswordNotMatchException = exports.ClientAuthCodeExpiredException = exports.ClientAuthCodeNotPairException = exports.ClientUserHasNoAccessException = exports.ClientTokenExpiredException = exports.ClientInvalidTokenException = void 0;
-exports.ClientUnknownException = exports.ClientUploadFileMimeTypeException = exports.ClientUploadFileExceedException = exports.ClientEndBeforeStartException = exports.ClientUserGoogleAuthAlreadyBoundException = exports.ClientUserDefaultAuthAlreadyBoundException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientMaintainSearchRecordsException = exports.ClientStoreSearchRecordsException = exports.ClientCreateRidderRecordException = exports.ClientCreatePassengerRecordException = exports.ClientCreatePeriodicSupplyOrderException = exports.ClientCreatePeriodicPurchaseOrderException = void 0;
+exports.ClientUnknownException = exports.ClientUploadFileMimeTypeException = exports.ClientUploadFileExceedException = exports.ClientEndBeforeStartException = exports.ClientUserGoogleAuthAlreadyBoundException = exports.ClientUserDefaultAuthAlreadyBoundException = exports.ClientNoChangeOnPasswordException = exports.ClientNoChangeOnEmailException = exports.ClientNoChangeOnUserNameException = exports.ClientCalculateRidderAverageStarRatingException = exports.ClientCalculatePassengerAverageStarRatingException = exports.ClientMaintainSearchRecordsException = exports.ClientStoreSearchRecordsException = exports.ClientCreateRidderRecordException = exports.ClientCreatePassengerRecordException = exports.ClientCreatePeriodicSupplyOrderException = exports.ClientCreatePeriodicPurchaseOrderException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ClientInvalidTokenException = new common_1.UnauthorizedException({
     case: "E-C-001",
@@ -228,6 +228,14 @@ exports.ClientStoreSearchRecordsException = new common_1.ForbiddenException({
 exports.ClientMaintainSearchRecordsException = new common_1.ForbiddenException({
     case: "E-C-226",
     message: "Failed to maintain searchRecords",
+});
+exports.ClientCalculatePassengerAverageStarRatingException = new common_1.ForbiddenException({
+    case: "E-C-227",
+    message: "Failed to calculate the average starRating of some passenger",
+});
+exports.ClientCalculateRidderAverageStarRatingException = new common_1.ForbiddenException({
+    case: "E-C-228",
+    message: "Failed to calculate the average starRating of some ridder",
 });
 exports.ClientNoChangeOnUserNameException = new common_1.ConflictException({
     case: "E-C-300",

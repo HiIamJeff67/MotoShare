@@ -57,6 +57,7 @@ let PassengerService = class PassengerService {
                         avatorUrl: true,
                         createdAt: true,
                         updatedAt: true,
+                        avgStarRating: true,
                     }
                 },
             }
@@ -72,6 +73,7 @@ let PassengerService = class PassengerService {
                 avatorUrl: true,
                 createdAt: true,
                 updatedAt: true,
+                avgStarRating: true,
             },
             with: {
                 user: {
@@ -102,6 +104,7 @@ let PassengerService = class PassengerService {
                         avatorUrl: true,
                         createdAt: true,
                         updatedAt: true,
+                        avgStarRating: true,
                     }
                 },
             }
@@ -154,6 +157,7 @@ let PassengerService = class PassengerService {
                     columns: {
                         avatorUrl: true,
                         isOnline: true,
+                        avgStarRating: true,
                     }
                 }
             },

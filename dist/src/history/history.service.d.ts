@@ -7,6 +7,12 @@ export declare class HistoryService {
     private ridderNotification;
     private db;
     constructor(passengerNotification: PassengerNotificationService, ridderNotification: RidderNotificationService, db: DrizzleDB);
+    _updateAverageStarRatingByPassengerId(userId: string): Promise<null[] | {
+        avgStarRating: number;
+    }[]>;
+    _updateAverageStarRatingByRidderId(userId: string): Promise<null[] | {
+        avgStarRating: number;
+    }[]>;
     getHistoryById(id: string, userId: string): Promise<{
         id: string;
         passengerName: string | null;

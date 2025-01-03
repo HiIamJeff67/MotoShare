@@ -14,20 +14,22 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
-            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            avgStarRating: number;
+            createdAt: Date;
             updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithInfoByPhoneNumber(phoneNumber: string): Promise<{
-        createdAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
+        avgStarRating: number;
+        createdAt: Date;
         updatedAt: Date;
         user: {
             userName: string;
@@ -38,7 +40,6 @@ export declare class PassengerService {
         userName: string;
         email: string;
         info: {
-            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
@@ -46,6 +47,8 @@ export declare class PassengerService {
             emergencyPhoneNumber: string | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
+            avgStarRating: number;
+            createdAt: Date;
             updatedAt: Date;
         } | null;
     } | undefined>;
@@ -70,7 +73,7 @@ export declare class PassengerService {
                 };
                 startAfter: Date;
                 tolerableRDV: number;
-                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
+                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
                 creator: {
                     userName: string;
                 };
@@ -83,6 +86,7 @@ export declare class PassengerService {
         info: {
             isOnline: boolean;
             avatorUrl: string | null;
+            avgStarRating: number;
         } | null;
     }[]>;
     updatePassengerById(id: string, updatePassengerDto: UpdatePassengerDto): Promise<{

@@ -56,6 +56,8 @@ export declare const ClientCreatePassengerRecordException: ForbiddenException;
 export declare const ClientCreateRidderRecordException: ForbiddenException;
 export declare const ClientStoreSearchRecordsException: ForbiddenException;
 export declare const ClientMaintainSearchRecordsException: ForbiddenException;
+export declare const ClientCalculatePassengerAverageStarRatingException: ForbiddenException;
+export declare const ClientCalculateRidderAverageStarRatingException: ForbiddenException;
 export declare const ClientNoChangeOnUserNameException: ConflictException;
 export declare const ClientNoChangeOnEmailException: ConflictException;
 export declare const ClientNoChangeOnPasswordException: ConflictException;

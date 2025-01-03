@@ -1,4 +1,4 @@
-import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { integer, boolean, pgTable, text, uuid, timestamp, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 import { PassengerTable } from "./schema";
@@ -9,13 +9,14 @@ export const PassengerInfoTable = pgTable("passengerInfo", {
     userId: uuid("userId").references(() => PassengerTable.id, {
         onDelete: 'cascade',
     }).notNull().unique(), // one-to-one
-    isOnline: boolean("isOnline").notNull().default(true),
-    age: integer("age"),
-    phoneNumber: text("phoneNumber").unique(),
+    isOnline: boolean("isOnline").notNull().default(true), 
+    age: integer("age"), 
+    phoneNumber: text("phoneNumber").unique(), 
     emergencyUserRole: userRoleEnum(), 
     emergencyPhoneNumber: text("emergencyPhoneNumber"), 
-    selfIntroduction: text("selfIntroduction"),
-    avatorUrl: text("avatorUrl"),
+    selfIntroduction: text("selfIntroduction"), 
+    avatorUrl: text("avatorUrl"), 
+    avgStarRating: doublePrecision("averageStarRating").notNull().default(0), 
     createdAt: timestamp("createdAt").notNull().defaultNow(), 
     updatedAt: timestamp("updatedAt").notNull().defaultNow(), 
 }, (table) => {

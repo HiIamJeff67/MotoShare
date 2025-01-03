@@ -9,6 +9,7 @@ import {
   ApiMissingParameterException, 
   ApiSearchingLimitLessThanZeroException, 
   ApiSearchingLimitTooLargeException, 
+  ClientCalculatePassengerAverageStarRatingException, 
   ClientHistoryNotFoundException, 
   ClientUnknownException 
 } from '../exceptions';
@@ -299,4 +300,22 @@ export class HistoryController {
     }
   }
   /* ================================= Delete operations ================================= */
+
+
+  /* ================================= Other operations ================================= */
+  @UseGuards(JwtPassengerGuard)
+  @Patch('updateAverageStarRatingByPassengerId')
+  async updateAverageStarRatingByPassengerId(
+    @Passenger() passenger: PassengerType, 
+    @Res() response: Response, 
+  ) {
+    try {
+      const res = await this.historyService._updateAverageStarRatingByPassengerId(passenger.id);
+      if (!res) throw ClientCalculatePassengerAverageStarRatingException;
+      response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  /* ================================= Other operations ================================= */
 }
