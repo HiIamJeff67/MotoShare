@@ -292,12 +292,22 @@ export class PassengerService {
   }
 
   async resetPassengerAccessTokenById(id: string) { // use for user logout
-    return await this.db.update(PassengerTable).set({
-      accessToken: "LOGGED_OUT", 
-    }).where(eq(PassengerTable.id, id))
-      .returning({
-        accessToken: PassengerTable.accessToken, 
-      });
+    return await this.db.transaction(async (tx) => {
+      const responseOfUpdatingPassengerOnlineStatus = await tx.update(PassengerInfoTable).set({
+        isOnline: false, 
+      }).where(eq(PassengerInfoTable.userId, id))
+        .returning();
+      if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
+        throw ClientPassengerNotFoundException;
+      }
+
+      return await tx.update(PassengerTable).set({
+        accessToken: "LOGGED_OUT", 
+      }).where(eq(PassengerTable.id, id))
+        .returning({
+          accessToken: PassengerTable.accessToken, 
+        });
+    });
   }
   
   // note that we don't need to modify the collection

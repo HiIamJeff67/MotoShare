@@ -63,6 +63,7 @@ export class AuthService {
 
             const responseOfCreatingPassengerInfo = await tx.insert(PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                isOnline: true, 
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
@@ -130,6 +131,7 @@ export class AuthService {
 
             const responseOfCreatingPassengerInfo = await tx.insert(PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                isOnline: true, 
                 avatorUrl: parseDataFromGoogleToken["picture"], 
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
@@ -192,7 +194,8 @@ export class AuthService {
             }
 
             const responseOfCreatingRidderInfo = await tx.insert(RidderInfoTable).values({
-                userId: responseOfCreatingRidder[0].id,
+                userId: responseOfCreatingRidder[0].id, 
+                isOnline: true, 
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
@@ -260,6 +263,7 @@ export class AuthService {
 
             const responseOfCreatingRidderInfo = await tx.insert(RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id, 
+                isOnline: true, 
                 avatorUrl: parseDataFromGoogleToken["picture"], 
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
@@ -358,6 +362,14 @@ export class AuthService {
                 throw ClientSignInUserException;
             }
 
+            const responseOfUpdatingPassengerOnlineStatus = await tx.update(PassengerInfoTable).set({
+                isOnline: true, 
+            }).where(eq(PassengerInfoTable.userId, user.id))
+              .returning();
+            if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
+                throw ClientSignInUserException;
+            }
+
             return result;
         })
     }
@@ -403,6 +415,14 @@ export class AuthService {
                 throw ClientSignInUserException;
             }
 
+            const responseOfUpdatingPassengerOnlineStatus = await tx.update(PassengerInfoTable).set({
+                isOnline: true, 
+            }).where(eq(PassengerInfoTable.userId, user.id))
+              .returning();
+            if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
+                throw ClientSignInUserException;
+            }
+
             return result;
         });
     }
@@ -412,7 +432,7 @@ export class AuthService {
     /* ================================= Sign In Ridder operations ================================= */
     async signInRidderWithAccountAndPassword(signInDto: SignInDto): Promise<AuthTokenType> {
         return await this.db.transaction(async (tx) => {
-            let userResponse: any = null
+            let userResponse: any = null;
     
             if (signInDto.userName) {
                 // find the user by userName
@@ -466,6 +486,14 @@ export class AuthService {
                 throw ClientSignUpUserException;
             }
 
+            const responseOfUpdatingRidderOnlineStatus = await tx.update(RidderInfoTable).set({
+                isOnline: true, 
+            }).where(eq(RidderInfoTable.userId, user.id))
+              .returning();
+            if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
+                throw ClientSignInUserException;
+            }
+
             return result;
         });
     }
@@ -507,6 +535,14 @@ export class AuthService {
             }).where(eq(RidderTable.id, user.id))
               .returning();
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw ClientSignInUserException;
+            }
+
+            const responseOfUpdatingRidderOnlineStatus = await tx.update(RidderInfoTable).set({
+                isOnline: true, 
+            }).where(eq(RidderInfoTable.userId, user.id))
+              .returning();
+            if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
                 throw ClientSignInUserException;
             }
 

@@ -313,12 +313,22 @@ export class RidderService {
   }
 
   async resetRidderAccessTokenById(id: string) {
-    return await this.db.update(RidderTable).set({
-      accessToken: "LOGGED_OUT", 
-    }).where(eq(RidderTable.id, id))
-      .returning({
-        accessToken: RidderTable.accessToken, 
-      });
+    return await this.db.transaction(async (tx) => {
+      const responseOfUpdatingRidderOnlineStatus = await tx.update(RidderInfoTable).set({
+        isOnline: false, 
+      }).where(eq(RidderInfoTable.userId, id))
+        .returning();
+      if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
+        throw ClientRidderNotFoundException;
+      }
+
+      return await tx.update(RidderTable).set({
+        accessToken: "LOGGED_OUT", 
+      }).where(eq(RidderTable.id, id))
+        .returning({
+          accessToken: RidderTable.accessToken, 
+        });
+    })
   }
 
   // note that we don't need to modify the collection
