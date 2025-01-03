@@ -336,8 +336,10 @@ export class RidderService {
         throw ClientRidderNotFoundException;
       }
 
-      const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
-      if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+      if (responseOfSelectingRidder[0].hash && responseOfSelectingRidder[0].hash.length !== 0) {
+        const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
+        if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+      }
 
       return await tx.delete(RidderTable)
         .where(eq(RidderTable.id, id))

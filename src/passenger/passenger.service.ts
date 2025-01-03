@@ -315,8 +315,10 @@ export class PassengerService {
         throw ClientPassengerNotFoundException;
       }
 
-      const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
-      if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+      if (responseOfSelectingPassenger[0].hash && responseOfSelectingPassenger[0].hash.length !== 0) {
+        const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
+        if (!pwMatches) throw ClientDeleteAccountPasswordNotMatchException;
+      }
 
       return await tx.delete(PassengerTable)
         .where(eq(PassengerTable.id, id))
