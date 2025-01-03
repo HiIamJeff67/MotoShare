@@ -63,7 +63,7 @@ const Service = () => {
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("usersearch" as never)}>
           <View className="items-center">
             <FontAwesome6 name="motorcycle" size={24} color="black" />
-            <Text style={{ marginTop: verticalScale(5) }}>搜尋用戶</Text>
+            <Text style={{ marginTop: verticalScale(5) }}>{t("Search User")}</Text>
           </View>
         </TouchableOpacity>
       </View>

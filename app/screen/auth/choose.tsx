@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { scale, verticalScale } from "react-native-size-matters";
 import * as Localization from 'expo-localization';
-import i18n from './i18next';
+import i18n from '../../locales/i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
 

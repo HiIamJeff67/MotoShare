@@ -161,7 +161,7 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{role === "Passenger" ? "乘客登入" : "車主登入"}</Text>
+          <Text style={styles.headerText}>{role === "Passenger" ? t("passengerLogin") : t("riderLogin")}</Text>
         </View>
 
         <View style={styles.inputWrapper}>

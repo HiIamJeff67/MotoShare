@@ -4,10 +4,8 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { Theme } from "../../../theme/theme"; // 引入自定義的主題類型
-import * as Localization from "expo-localization";
-import i18n from "./i18next";
-import { initReactI18next, useTranslation } from "react-i18next";
-import { useLanguage } from "./locales/languageProvider";
+import i18n from "../../locales/i18next";
+import { useTranslation } from "react-i18next";
 
 const WelcomeScreen = () => {
   const navigation = useNavigation();
@@ -37,12 +35,12 @@ const WelcomeScreen = () => {
           i18n.changeLanguage(newLanguage); // 同步更新 i18n 的語言
         }}
         style={{
-          position: "absolute",
-          top: insets.top + verticalScale(10),
-          right: scale(10),
-          padding: scale(10),
           backgroundColor: "#3498db",
           borderRadius: moderateScale(5),
+          height: verticalScale(50),
+          width: scale(60),
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Text
@@ -84,7 +82,7 @@ const WelcomeScreen = () => {
             fontWeight: "bold",
           }}
         >
-          {t('welcomeMessage')}
+          {t("welcomeMessage")}
         </Text>
         <Text
           style={{
@@ -92,7 +90,7 @@ const WelcomeScreen = () => {
             fontSize: moderateScale(15), // Equivalent to "text-base"
           }}
         >
-          {t('subTitle')}
+          {t("subTitle")}
         </Text>
       </View>
 
@@ -121,7 +119,7 @@ const WelcomeScreen = () => {
               fontSize: moderateScale(18), // Equivalent to "text-xl"
             }}
           >
-            {t('joinUs')}
+            {t("joinUs")}
           </Text>
         </Pressable>
       </View>
@@ -135,7 +133,7 @@ const WelcomeScreen = () => {
               fontSize: moderateScale(16), // Equivalent to "text-lg"
             }}
           >
-            {t('alreadyHaveAccount')}
+            {t("alreadyHaveAccount")}
           </Text>
         </Pressable>
       </View>

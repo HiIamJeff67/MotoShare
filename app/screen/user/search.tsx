@@ -10,6 +10,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 import { Styles } from "./search.style";
+import { useTranslation } from "react-i18next";
 
 interface OrderType {
   id: string;
@@ -38,6 +39,7 @@ const SearchUser = () => {
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
   let roleText = "載入中...";
 
   useEffect(() => {
@@ -47,9 +49,9 @@ const SearchUser = () => {
   }, [theme]);
 
   if (user.role == "Ridder") {
-    roleText = "乘客";
+    roleText = t("passenger");
   } else if (user.role == "Passenger") {
-    roleText = "車主";
+    roleText = t("rider");
   }
 
   const getToken = async () => {
@@ -105,7 +107,7 @@ const SearchUser = () => {
     const token = await getToken();
 
     if (!token) {
-      Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+      Alert.alert(t("Token failed"), t("unable to get token"));
       return;
     }
 
@@ -159,7 +161,7 @@ const SearchUser = () => {
               <View style={styles.searchBox}>
                 <Feather name="search" size={moderateScale(24)} color="black" />
                 <TextInput
-                  placeholder="使用者"
+                  placeholder={t("userName")}
                   style={styles.searchInput}
                   placeholderTextColor="gray"
                   value={searchInput}
@@ -185,10 +187,10 @@ const SearchUser = () => {
                       <Text style={styles.title}>
                         {roleText}：{userInfo.userName}
                       </Text>
-                      <Text style={styles.title}>年齡：{userInfo.info.age}</Text>
-                      <Text style={styles.title}>機車類型：{userInfo.info.motocycleType}</Text>
-                      <Text style={styles.title}>線上狀態：{userInfo.info.isOnline ? "線上" : "離線"}</Text>
-                      <Text style={styles.title}>自我介紹：{userInfo.info.selfIntroduction}</Text>
+                      <Text style={styles.title}>{t("Age")}：{userInfo.info.age}</Text>
+                      <Text style={styles.title}>{t("Motorcycle Type")}：{userInfo.info.motocycleType}</Text>
+                      <Text style={styles.title}>{t("Online Status")}：{userInfo.info.isOnline ? t("Online") : t("Offline")}</Text>
+                      <Text style={styles.title}>{t("Introduction")}：{userInfo.info.selfIntroduction}</Text>
                     </View>
                   </View>
 

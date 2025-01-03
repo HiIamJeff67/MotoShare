@@ -41,8 +41,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "./(store)/";
 import { getUserTheme, ThemeType } from "@/theme";
 import { setUserSettings } from "./(store)/userSlice";
-import { LanguageProvider } from "./screen/auth/locales/languageProvider";
-import { useTranslation } from 'react-i18next';
+import { LanguageProvider } from "@/app/locales/languageProvider";
+import { useTranslation } from "react-i18next";
 import LoadingWrapper from "./component/LoadingWrapper/LoadingWrapper";
 
 const Stack = createStackNavigator();
@@ -86,7 +86,7 @@ const TopTabNavigator2 = () => {
 const TabNavigator = () => {
   const navigation = useNavigation();
   const [alertShown, setAlertShown] = useState(false);
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user);
   const { t } = useTranslation();
   const theme = user.theme;
   const [colors, setColors] = useState(theme?.colors);
@@ -264,7 +264,6 @@ function AppContent() {
   return (
     <NavigationContainer theme={theme}>
       <SafeAreaProvider>
-
         {/* 根據平台條件設置 StatusBar */}
         {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
         <Stack.Navigator>
@@ -300,7 +299,7 @@ function AppContent() {
             options={{
               headerShown: true,
               headerShadowVisible: false,
-              title:t("myorder"),
+              title: t("myorder"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -331,7 +330,7 @@ function AppContent() {
             component={MyOrderHisDeScreen}
             options={{
               headerShown: true,
-              title:t("detail"),
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
