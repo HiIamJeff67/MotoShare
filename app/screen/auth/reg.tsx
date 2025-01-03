@@ -20,6 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { handleRegister, handleGoogleReg } from "./handlereg";
+import { useTranslation } from 'react-i18next';
 
 const PassengerReg = () => {
   const navigation = useNavigation();
@@ -34,6 +35,7 @@ const PassengerReg = () => {
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
   const route = useRoute();
   const { role } = route.params as { role: number };
+  const { t } = useTranslation();
 
   const handleRegisterClick = () => {
     handleRegister({
@@ -154,7 +156,7 @@ const PassengerReg = () => {
           <Image source={require("../../../assets/images/motorbike.jpg")} style={styles.image} resizeMode="contain" />
         </View>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{role == 1 ? "乘客註冊" : "車主註冊"}</Text>
+          <Text style={styles.headerText}>{role == 1 ? t("passengerRegister") : t("riderRegister")}</Text>
         </View>
         <View style={styles.inputWrapper}>
           <Image
@@ -164,7 +166,7 @@ const PassengerReg = () => {
           <TextInput
             style={styles.textInput}
             className="rounded-lg bg-[#f1f4ff]"
-            placeholder="使用者名稱"
+            placeholder={t("userName")}
             value={username}
             onChangeText={setUsername}
             placeholderTextColor="#626262"
@@ -179,7 +181,7 @@ const PassengerReg = () => {
           <TextInput
             style={styles.textInput}
             className="rounded-lg bg-[#f1f4ff]"
-            placeholder="電子郵件"
+            placeholder={t("email")}
             value={email}
             onChangeText={setEmail}
             placeholderTextColor="#626262"
@@ -195,7 +197,7 @@ const PassengerReg = () => {
           <TextInput
             style={styles.textInput}
             className="rounded-lg bg-[#f1f4ff]"
-            placeholder="密碼"
+            placeholder={t("password")}
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
@@ -211,7 +213,7 @@ const PassengerReg = () => {
           <TextInput
             style={styles.textInput}
             className="rounded-lg bg-[#f1f4ff]"
-            placeholder="確認密碼"
+            placeholder={t("confirmPassword")}
             secureTextEntry={true}
             value={conPassword}
             onChangeText={setConPassword}
@@ -221,12 +223,12 @@ const PassengerReg = () => {
 
         <View style={styles.centerAlign}>
           <Pressable style={styles.registerButton} onPress={handleRegisterClick} disabled={isGoogleInProgress || loading || lockButton}>
-            <Text style={styles.registerButtonText}>{loading ? <ActivityIndicator size="large" /> : "註冊"}</Text>
+            <Text style={styles.registerButtonText}>{loading ? <ActivityIndicator size="large" /> : t("register")}</Text>
           </Pressable>
         </View>
 
         <View style={styles.centerAlign}>
-          <Text style={styles.otherRegisterText}>使用其他方式</Text>
+          <Text style={styles.otherRegisterText}>{t("LoginWithThirdParty")}</Text>
         </View>
         <View style={styles.socialContainer}>
           <TouchableWithoutFeedback

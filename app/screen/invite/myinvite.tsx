@@ -9,6 +9,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -35,6 +36,7 @@ const MyInvite = () => {
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const getToken = async () => {
     try {
@@ -133,15 +135,15 @@ const MyInvite = () => {
               <Pressable onPress={() => navigation.navigate("myinvitede", { orderid: item.id })}>
                 <View style={styles.card}>
                   <View style={styles.header}>
-                    <Text style={styles.orderNumber}>邀請編號: {item.id}</Text>
+                    <Text style={styles.orderNumber}>{t("invite id")}: {item.id}</Text>
                   </View>
 
                   <View style={styles.body}>
-                    <Text style={styles.title}>你邀請了：{item.receiverName}</Text>
-                    <Text style={styles.title}>推薦起點：{item.suggestStartAddress}</Text>
-                    <Text style={styles.title}>推薦終點：{item.suggestEndAddress}</Text>
+                    <Text style={styles.title}>{t("You invited")}：{item.receiverName}</Text>
+                    <Text style={styles.title}>{t("recommened starting point")}：{item.suggestStartAddress}</Text>
+                    <Text style={styles.title}>{t("recommened destination")}：{item.suggestEndAddress}</Text>
                     <Text style={styles.title}>
-                      更新時間:{" "}
+                      {t("update time")}:{" "}
                       {new Date(item.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}

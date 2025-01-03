@@ -8,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { scale, verticalScale } from "react-native-size-matters";
 import { Theme } from "../../theme/theme";
 import { styles } from "./service.style";
+import { useTranslation } from 'react-i18next';
 
 const Service = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -15,6 +16,7 @@ const Service = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme() as Theme;
   const { colors } = theme;
+  const {t} = useTranslation();
 
   return (
     <View
@@ -26,7 +28,7 @@ const Service = () => {
         paddingVertical: verticalScale(20), // 設置垂直間距
       }}
     >
-      <Text style={{...styles.MainText, color: colors.text}}>服務</Text>
+      <Text style={{...styles.MainText, color: colors.text}}>{t("service")}</Text>
       <View
         style={{ marginTop: verticalScale(20) }}
         className="flex flex-row justify-between items-center"
@@ -37,7 +39,7 @@ const Service = () => {
         >
           <View className="items-center">
             <FontAwesome6 name="motorcycle" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>建立訂單</Text>
+            <Text style={{ marginTop: 5 }}>{t("make an order")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -47,7 +49,7 @@ const Service = () => {
         >
           <View className="items-center">
             <FontAwesome6 name="list" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>查看訂單</Text>
+            <Text style={{ marginTop: 5 }}>{t("check order")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -57,7 +59,7 @@ const Service = () => {
         >
           <View className="items-center">
             <Ionicons name="people" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>查看邀請</Text>
+            <Text style={{ marginTop: 5 }}>{t("invite details")}</Text>
           </View>
         </TouchableOpacity>
 
@@ -67,7 +69,7 @@ const Service = () => {
         >
           <View className="items-center">
             <FontAwesome6 name="edit" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>訂單管理</Text>
+            <Text style={{ marginTop: 5 }}>{t("order manage")}</Text>
           </View>
         </TouchableOpacity>
       </View>

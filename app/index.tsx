@@ -39,6 +39,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "./(store)/";
 import { getUserTheme, ThemeType } from "@/theme";
 import { setUserSettings } from "./(store)/userSlice";
+import { LanguageProvider } from "./screen/auth/locales/languageProvider";
+import { useTranslation } from 'react-i18next';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -59,19 +61,21 @@ const CustomBackHeader = ({ navigation }: { navigation: any }) => (
 );
 
 const TopTabNavigator = () => {
+  const { t } = useTranslation();
   return (
     <TopTab.Navigator>
-      <TopTab.Screen name="進行中" component={MyOrderScreen} />
-      <TopTab.Screen name="已結束" component={MyOrderHisScreen} />
+      <TopTab.Screen name={t("inprogress")} component={MyOrderScreen} />
+      <TopTab.Screen name={t("end")} component={MyOrderHisScreen} />
     </TopTab.Navigator>
   );
 };
 
 const TopTabNavigator2 = () => {
+  const { t } = useTranslation();
   return (
     <TopTab.Navigator>
-      <TopTab.Screen name="我的邀請" component={MyInviteScreen} />
-      <TopTab.Screen name="別人邀請" component={OtherInviteScreen} />
+      <TopTab.Screen name={t("myinvite")} component={MyInviteScreen} />
+      <TopTab.Screen name={t("Invited by others")} component={OtherInviteScreen} />
     </TopTab.Navigator>
   );
 };
@@ -82,6 +86,7 @@ const TabNavigator = () => {
   const user = useSelector((state: RootState) => state.user);
   const [themeName, setThemeName] = useState<ThemeType>(user.theme ?? "DarkTheme");
   const colors = getUserTheme(themeName).colors;
+  const { t } = useTranslation();
 
   // 異步函數：獲取 token
   const getToken = async () => {
@@ -206,7 +211,7 @@ const TabNavigator = () => {
         name="Home Page"
         component={HomeScreen}
         options={{
-          title: "主頁",
+          title: t("home"),
           headerShown: false,
           tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
         }}
@@ -215,7 +220,7 @@ const TabNavigator = () => {
         name="service"
         component={ServiceScreen}
         options={{
-          title: "服務",
+          title: t("service"),
           headerShown: false,
           tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
         }}
@@ -224,7 +229,7 @@ const TabNavigator = () => {
         name="profile"
         component={ProfileScreen}
         options={{
-          title: "我的",
+          title: t("my"),
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
@@ -239,6 +244,7 @@ function AppContent() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
   const systemTheme = useColorScheme();
+  const { t } = useTranslation();
   if (user.theme === null) {
     dispatch(setUserSettings({ theme: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
@@ -246,6 +252,7 @@ function AppContent() {
   return (
     <NavigationContainer theme={systemTheme === "dark" ? DarkTheme : LightTheme}>
       <SafeAreaProvider>
+
         {/* 根據平台條件設置 StatusBar */}
         {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
         <Stack.Navigator>
@@ -275,7 +282,7 @@ function AppContent() {
             options={{
               headerShown: true,
               headerShadowVisible: false,
-              title: "我的訂單",
+              title:t("myorder"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -286,7 +293,7 @@ function AppContent() {
             options={{
               headerShown: true,
               headerShadowVisible: false,
-              title: "邀請",
+              title: t("invite"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -296,7 +303,7 @@ function AppContent() {
             component={MyOrderDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -306,7 +313,7 @@ function AppContent() {
             component={MyOrderHisDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title:t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -316,7 +323,7 @@ function AppContent() {
             component={MyInviteDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -326,7 +333,7 @@ function AppContent() {
             component={OtherInviteDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -336,7 +343,7 @@ function AppContent() {
             component={OrderScreen}
             options={{
               headerShown: true,
-              title: "訂單",
+              title: t("order"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -346,7 +353,7 @@ function AppContent() {
             component={OrderDetailScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -373,7 +380,9 @@ function AppContent() {
 export default function App() {
   return (
     <Provider store={store}>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </Provider>
   );
 }

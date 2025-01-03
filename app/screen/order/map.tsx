@@ -34,6 +34,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 
 interface DataType {
   id: string;
@@ -86,7 +87,7 @@ const MapWithBottomSheet = () => {
   const anyLoadingTrue = Object.values(loading).some((value) => value === true);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(true);
   const toggleSwitch = () => setIsSwitchEnabled((previousState) => !previousState);
-
+  const { t } = useTranslation();
   const toggleLoading = (key: string, value: boolean) => {
     setLoading((prev) => ({ ...prev, [key]: value }));
   };
@@ -367,7 +368,7 @@ const MapWithBottomSheet = () => {
       toggleLoading("inviteNow", false);
       toggleLoading("makeRequest", false);
       setLockButton(true);
-      Alert.alert("成功", "送出訂單成功");
+      Alert.alert(t("success"), t("Ordersentsuccessfully"));
       //console.log("Update Response:", response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -461,8 +462,8 @@ const MapWithBottomSheet = () => {
   }, [origin, destination]);
 
   const dropDownData = [
-    { label: "相似路徑", value: "1" },
-    { label: "相似時間", value: "2" },
+    { label: t("Similar paths"), value: "1" },
+    { label: t("Similar time"), value: "2" },
   ];
 
   return (
@@ -529,11 +530,11 @@ const MapWithBottomSheet = () => {
                     paddingVertical: verticalScale(20), // 設置垂直間距
                   }}
                 >
-                  <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
-                  <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
-                  <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                  <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
+                  <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
+                  <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
                   <View style={styles.dateContainer}>
-                    <Text style={styles.bottomSheetText}>開始時間：</Text>
+                    <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
                     <Text style={styles.bottomSheetText}>
                       {selectedDate
                         ? selectedDate.toLocaleString("en-GB", {
@@ -547,14 +548,14 @@ const MapWithBottomSheet = () => {
                   </View>
                   <BottomSheetTextInput
                     style={styles.input}
-                    placeholder="初始價格"
+                    placeholder={t("Initial price")}
                     value={initialPrice}
                     onChangeText={setinitialPrice}
                     placeholderTextColor="gray"
                   />
                   <BottomSheetTextInput
                     style={styles.input}
-                    placeholder="訂單描述"
+                    placeholder={t("Order Description")}
                     value={orderDescription}
                     onChangeText={setorderDescription}
                     placeholderTextColor="gray"
@@ -567,7 +568,7 @@ const MapWithBottomSheet = () => {
                       onValueChange={toggleSwitch}
                       value={isSwitchEnabled}
                     />
-                    <Text style={styles.bottomSheetText}>可直接開始</Text>
+                    <Text style={styles.bottomSheetText}>{t("start directly")}</Text>
                   </View>
                   <DateTimePickerModal
                     date={selectedDate}
@@ -590,7 +591,7 @@ const MapWithBottomSheet = () => {
                       }}
                       disabled={loading.fetchData}
                     >
-                      <Text style={styles.buttonText}>返回</Text>
+                      <Text style={styles.buttonText}>{t("back")}</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.button, { backgroundColor: "#228B22" }]}
@@ -599,7 +600,7 @@ const MapWithBottomSheet = () => {
                       }}
                       disabled={loading.fetchData}
                     >
-                      <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : "搜尋訂單"}</Text>
+                      <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : t("search order")}</Text>
                     </Pressable>
                   </View>
                 </BottomSheetView>
@@ -664,11 +665,11 @@ const MapWithBottomSheet = () => {
                                   <View style={styles.cardContent}>
                                     <View style={styles.cardLeftSection}>
                                       <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
-                                        <Text style={styles.cardSubtitle}>出發地：{item.startAddress}</Text>
-                                        <Text style={styles.cardSubtitle}>目的地：{item.endAddress}</Text>
+                                        <Text style={styles.cardTitle}>{t("userName")}:{item.creatorName}</Text>
+                                        <Text style={styles.cardSubtitle}>{t("starting point")}:{item.startAddress}</Text>
+                                        <Text style={styles.cardSubtitle}>{t("destination")}:{item.endAddress}</Text>
                                         <Text style={styles.cardSubtitle}>
-                                          開車時間：
+                                          {t("start driving")}:
                                           {new Date(item.startAfter).toLocaleString("en-GB", {
                                             timeZone: "Asia/Taipei",
                                           })}
@@ -688,7 +689,7 @@ const MapWithBottomSheet = () => {
                                         onPress={() => createOrderData(3, item.id)}
                                       >
                                         <Text style={styles.inviteButtonText}>
-                                          {loading.makeRequest ? <ActivityIndicator size="large" /> : "提出要求"}
+                                          {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
                                         </Text>
                                       </Pressable>
                                       <Pressable
@@ -697,7 +698,7 @@ const MapWithBottomSheet = () => {
                                         onPress={() => createOrderData(2, item.id)}
                                       >
                                         <Text style={styles.inviteButtonText}>
-                                          {loading.inviteNow ? <ActivityIndicator size="large" /> : "接受訂單"}
+                                          {loading.inviteNow ? <ActivityIndicator size="large" /> : t("accept order")}
                                         </Text>
                                       </Pressable>
                                     </View>
@@ -708,7 +709,7 @@ const MapWithBottomSheet = () => {
                                       onPress={() => createOrderData(3, item.id)}
                                     >
                                       <Text style={styles.inviteButtonText}>
-                                        {loading.makeRequest ? <ActivityIndicator size="large" /> : "提出要求"}
+                                        {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
                                       </Text>
                                     </Pressable>
                                   )}
@@ -723,9 +724,9 @@ const MapWithBottomSheet = () => {
                                         <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
                                       )}
                                       <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>使用者：{item.creatorName}</Text>
+                                        <Text style={styles.cardTitle}>{t("userName")}：{item.creatorName}</Text>
                                         <Text style={styles.cardSubtitle}>
-                                          開車時間：
+                                          {t("start driving")}：
                                           {new Date(item.startAfter).toLocaleString("en-GB", {
                                             timeZone: "Asia/Taipei",
                                           })}
@@ -746,7 +747,7 @@ const MapWithBottomSheet = () => {
                   </ScrollView>
                   <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
                     <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
-                      <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : "自行建立"}</Text>
+                      <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}</Text>
                     </Pressable>
                   </View>
                 </>
@@ -766,7 +767,7 @@ const MapWithBottomSheet = () => {
                 }}
               >
                 <GooglePlacesAutocomplete
-                  placeholder="搜尋起始位置"
+                  placeholder={t('search starting point')}
                   textInputProps={{
                     placeholderTextColor: "#626262",
                     onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
@@ -796,7 +797,7 @@ const MapWithBottomSheet = () => {
                 }}
               >
                 <GooglePlacesAutocomplete
-                  placeholder="搜尋目的地"
+                  placeholder={t("search destination")}
                   textInputProps={{
                     placeholderTextColor: "#626262",
                     onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)

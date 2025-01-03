@@ -1,13 +1,18 @@
-import React from "react";
-import { Text, View, Image, Pressable, Platform, StatusBar } from "react-native";
+import React, { useState } from "react";
+import { Text, View, Image, Pressable, Platform, StatusBar, TouchableOpacity  } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { scale, verticalScale } from "react-native-size-matters";
+import * as Localization from 'expo-localization';
+import i18n from './i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
+
 
 const ChooseScreen = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-
+  const {t} = useTranslation();
+ 
   return (
     <View
       style={{
@@ -26,7 +31,7 @@ const ChooseScreen = () => {
           marginTop: verticalScale(20),
         }}
       >
-        <Text className="text-white text-4xl pb-5 font-bold">選擇你的身份</Text>
+        <Text className="text-white text-4xl pb-5 font-bold">{t('chooseYourIdentity')}</Text>
       </View>
 
       <View className="justify-center items-center">
@@ -53,7 +58,7 @@ const ChooseScreen = () => {
           className="rounded-lg bg-white shadow-lg"
           onPress={() => navigation.navigate("login", { role: 1 })}
         >
-          <Text className="font-semibold text-black text-lg">我是乘客</Text>
+          <Text className="font-semibold text-black text-lg">{t('passenger')}</Text>
         </Pressable>
 
         <Pressable
@@ -67,7 +72,7 @@ const ChooseScreen = () => {
           className="rounded-lg bg-white shadow-lg"
           onPress={() => navigation.navigate("login", { role: 2 })}
         >
-          <Text className="font-semibold text-black text-lg">我是車主</Text>
+          <Text className="font-semibold text-black text-lg">{t('rider')}</Text>
         </Pressable>
       </View>
     </View>
