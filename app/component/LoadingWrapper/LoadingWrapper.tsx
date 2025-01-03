@@ -27,4 +27,4 @@ const LoadingWrapper = () => {
   )
 }
 
-export default LoadingWrapper
+export default LoadingWrapper;

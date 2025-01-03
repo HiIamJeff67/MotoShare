@@ -21,12 +21,12 @@ const Profile = () => {
   const user = useSelector((state: RootState) => state.user);
   const theme = user.theme;
   const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL, 
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }, 
+    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
   const insets = useSafeAreaInsets();
-  
-  const [isLoading, setIsLoading] = useState<boolean>(true);  // default loading
+
+  const [isLoading, setIsLoading] = useState<boolean>(true); // default loading
   const [token, setToken] = useState<string | null>(null);
   const [styles, setStyles] = useState<any>(null);
   const clickLogoutAnim = useState(new Animated.Value(0))[0];
@@ -110,7 +110,7 @@ const Profile = () => {
     const fetchToken = async () => {
       const userToken = await SecureStore.getItemAsync("userToken");
       setToken(userToken);
-    }
+    };
 
     fetchToken();
   }, []);
@@ -135,17 +135,19 @@ const Profile = () => {
 
         if (response && response.data) {
           const info = response.data.info;
-          dispatch(setUserInfos({
-            isOnline: info.isOnline, 
-            age: info.age, 
-            phoneNumber: info.phoneNumber, 
-            emergencyPhoneNumber: info.emergencyPhoneNumber, 
-            emergencyUserRole: info.emergencyUserRole, 
-            selfIntroduction: info.selfIntroduction, 
-            avatorUrl: info.avatorUrl, 
-            createdAt: info.createdAt, 
-            updatedAt: info.updatedAt, 
-          }));
+          dispatch(
+            setUserInfos({
+              isOnline: info.isOnline,
+              age: info.age,
+              phoneNumber: info.phoneNumber,
+              emergencyPhoneNumber: info.emergencyPhoneNumber,
+              emergencyUserRole: info.emergencyUserRole,
+              selfIntroduction: info.selfIntroduction,
+              avatorUrl: info.avatorUrl,
+              createdAt: info.createdAt,
+              updatedAt: info.updatedAt,
+            })
+          );
         }
       } catch (error) {
         console.log(error);
@@ -231,7 +233,7 @@ const Profile = () => {
     { id: "2", icon: "notifications", label: "消息通知", badge: 24 },
     { id: "3", icon: "person", label: "更新個人資料", page: "editprofile" },
     { id: "4", icon: "bindings", label: "綁定門戶", extra: "未綁定" },
-    { id: "5", icon: "settings", label: "系統設置", page: "settings"},
+    { id: "5", icon: "settings", label: "系統設置", page: "settings" },
     { id: "6", icon: "report", label: "回報" },
   ];
 
@@ -257,19 +259,19 @@ const Profile = () => {
               <Text style={styles.description}>加入Motoshare的第240天</Text>
             </View>
 
-            {/* 積分和回收部分 */}
-            <View style={styles.infoRow}>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoTitle}>帳戶餘額</Text>
-                <Text style={styles.infoValue}>680.00</Text>
-                <Text style={styles.infoHint}>帳戶餘額用於直接交易</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoTitle}>回收總量</Text>
-                <Text style={styles.infoValue}>24.0 公斤</Text>
-                <Text style={styles.infoHint}>感謝您為環保貢獻的力量</Text>
-              </View>
-            </View>
+        {/* 積分和回收部分 */}
+        <View style={styles.infoRow}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>帳戶餘額</Text>
+            <Text style={styles.infoValue}>680.00</Text>
+            <Text style={styles.infoHint}>帳戶餘額用於直接交易</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>回收總量</Text>
+            <Text style={styles.infoValue}>24.0 公斤</Text>
+            <Text style={styles.infoHint}>感謝您為環保貢獻的力量</Text>
+          </View>
+        </View>
 
             {/* 功能列表 */}
             <FlashList 
@@ -282,6 +284,8 @@ const Profile = () => {
                   theme={theme}
                   callback={() => navigation.navigate(item.page as never)}
                 />)} 
+              showsVerticalScrollIndicator={false} // 關閉垂直滾動條
+              showsHorizontalScrollIndicator={false} // 關閉水平滾動條（如需水平滾動）
               keyExtractor={(item) => item.id} 
               estimatedItemSize={282} 
             />

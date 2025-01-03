@@ -23,6 +23,7 @@ import {
 } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import { FlashList } from "@shopify/flash-list";
+import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 interface OrderType {
@@ -44,12 +45,13 @@ const Order = () => {
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
   let roleText = "載入中...";
 
   if (user.role == "Ridder") {
-    roleText = "車主";
+    roleText = t("rider");
   } else if (user.role == "Passenger") {
-    roleText = "乘客";
+    roleText = t("passenger");
   }
 
   const dismissKeyboard = () => {
@@ -140,13 +142,13 @@ const Order = () => {
               <View key={item.id} style={styles.container}>
                 <Pressable
                   onPress={() =>
-                    navigation.navigate("orderdetail", { orderid: item.id })
+                    navigation.navigate(...["orderdetail", { orderid: item.id }] as never)
                   }
                 >
                   <View style={styles.card}>
                     <View style={styles.header}>
                       <Text style={styles.orderNumber}>
-                        訂單編號: {item.id}
+                        {t("order id")}: {item.id}
                       </Text>
                     </View>
                     <View style={styles.body}>
@@ -154,11 +156,11 @@ const Order = () => {
                         {roleText}：{item.creatorName}
                       </Text>
                       <Text style={styles.title}>
-                        起點：{item.startAddress}
+                        {t("starting point")}：{item.startAddress}
                       </Text>
-                      <Text style={styles.title}>終點：{item.endAddress}</Text>
+                      <Text style={styles.title}>{t("destination")}：{item.endAddress}</Text>
                       <Text style={styles.title}>
-                        更新時間:{" "}
+                        {t("update time")}:{" "}
                         {new Date(item.updatedAt).toLocaleString("en-GB", {
                           timeZone: "Asia/Taipei",
                         })}
@@ -183,7 +185,7 @@ const Order = () => {
                     color="black"
                   />
                   <TextInput
-                    placeholder="使用者"
+                    placeholder={t("userName")}
                     style={styles.searchInput}
                     placeholderTextColor="gray"
                     value={searchInput}

@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -35,7 +35,8 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.845286501383-juhc485p1hrsgoegjvk0irl96vb3281d"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "extra": {
       "eas": {

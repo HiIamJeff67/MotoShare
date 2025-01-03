@@ -18,6 +18,7 @@ import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -56,13 +57,14 @@ const MyOrderHistoryDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
+  const { t } = useTranslation();
   let roleText = "載入中...";
 
-  if (user.role == 2) {
+  if (user.role === "Ridder") {
     //home.tsx才正確
-    roleText = "乘客";
-  } else if (user.role == 1) {
-    roleText = "車主";
+    roleText = t("passenger");
+  } else if (user.role === "Passenger") {
+    roleText = t("rider");
   }
 
   const getToken = async () => {
@@ -128,9 +130,9 @@ const MyOrderHistoryDetail = () => {
         let response,
           url = "";
 
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/history/passenger/getHistoryById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/history/ridder/getHistoryById`;
         }
 
@@ -175,9 +177,9 @@ const MyOrderHistoryDetail = () => {
       let response,
         url = "";
 
-      if (user.role == 1) {
+      if (user.role === "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/history/passenger/rateAndCommentHistoryById`;
-      } else if (user.role == 2) {
+      } else if (user.role === "Ridder") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/history/ridder/rateAndCommentHistoryById`;
       }
 
@@ -191,7 +193,7 @@ const MyOrderHistoryDetail = () => {
         return;
       }
 
-      response = await axios.post(
+      response = await axios.patch(
         url,
         {
           starRating: inputValue, // 這裡是 body 的部分，應該放在第二個參數
@@ -210,7 +212,7 @@ const MyOrderHistoryDetail = () => {
       console.log(response.data);
       setLockButton(true);
       setLoading(false);
-      Alert.alert("成功", "評分成功");
+      Alert.alert(t("success"), t("Rating Success"));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -237,7 +239,7 @@ const MyOrderHistoryDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>歷史編號: {order?.id}</Text>
+                <Text style={styles.orderNumber}>{t("Historical id")}: {order?.id}</Text>
               </View>
 
               <View style={styles.body}>
@@ -245,37 +247,37 @@ const MyOrderHistoryDetail = () => {
                   <>
                     <Text style={styles.title}>
                       {roleText}：
-                      {user.role == 1 ? order.ridderName : order.passengerName}
+                      {user.role === "Passenger" ? order.ridderName : order.passengerName}
                     </Text>
                     <Text style={styles.title}>
-                      起點：{order.finalStartAddress}
+                      {t("starting point")}：{order.finalStartAddress}
                     </Text>
                     <Text style={styles.title}>
-                      終點：{order.finalEndAddress}
+                      {t("destination")}：{order.finalEndAddress}
                     </Text>
                     <Text style={styles.title}>
-                      開始時間:{" "}
+                      {t("start time")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
                     <Text style={styles.title}>
-                      最終價格: {order.finalPrice}
+                      {t("final price")}: {order.finalPrice}
                     </Text>
                     <Text style={styles.title}>
-                      最後更新:{" "}
+                      {t("Last Update")}:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role == 1 && order.starRatingByPassenger == 0) ||
-                    (user.role == 2 && order.starRatingByRidder == 0) ? (
+                    {(user.role === "Passenger" && order.starRatingByPassenger == 0) ||
+                    (user.role === "Ridder" && order.starRatingByRidder == 0) ? (
                       <Pressable
                         style={[styles.rateButton]}
                         onPress={() => setModalVisible(true)}
                         disabled={loading || lockButton}
                       >
-                        <Text style={styles.rateButtonText}>評分</Text>
+                        <Text style={styles.rateButtonText}>{t("rating")}</Text>
                       </Pressable>
                     ) : null}
                   </>
@@ -285,19 +287,19 @@ const MyOrderHistoryDetail = () => {
             {order ? (
               <>
                 <View style={{ marginTop: verticalScale(15) }} />
-                {(user.role == 1 && order.starRatingByRidder > 0) ||
-                (user.role == 2 && order.starRatingByPassenger > 0) ? (
+                {(user.role === "Passenger" && order.starRatingByRidder > 0) ||
+                (user.role === "Ridder" && order.starRatingByPassenger > 0) ? (
                   <View style={styles.card}>
                     <View style={styles.body}>
                       <Text style={styles.title}>
-                        對方給你的評分：
-                        {user.role == 1
+                      {t("The rating given to you by others")}：
+                        {user.role === "Passenger"
                           ? order?.starRatingByRidder
                           : order?.starRatingByPassenger}
                       </Text>
                       <Text style={styles.title}>
-                        對方給你的留言：
-                        {user.role == 1
+                      {t("The message from the other")}：
+                        {user.role === "Passenger"
                           ? order?.commentByRidder
                           : order?.commentByPassenger}
                       </Text>
@@ -317,18 +319,18 @@ const MyOrderHistoryDetail = () => {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <Text style={styles.modalText}>請輸入評分(1-5):</Text>
+                  <Text style={styles.modalText}>{t("Please enter your rating")}(1-5):</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="評分"
+                    placeholder={t("rating")}
                     value={inputValue}
                     onChangeText={setInputValue}
                     placeholderTextColor="gray"
                   />
-                  <Text style={styles.modalText}>請輸入留言:</Text>
+                  <Text style={styles.modalText}>{t("Please enter your message")}:</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="留言"
+                    placeholder={t("comment")}
                     value={inputText}
                     onChangeText={setInputText}
                     placeholderTextColor="gray"
@@ -339,7 +341,7 @@ const MyOrderHistoryDetail = () => {
                       onPress={() => setModalVisible(!modalVisible)}
                       disabled={loading || lockButton}
                     >
-                      <Text style={styles.textStyle}>返回</Text>
+                      <Text style={styles.textStyle}>{t("back")}</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.button, styles.buttonClose]}
@@ -349,7 +351,7 @@ const MyOrderHistoryDetail = () => {
                       }}
                       disabled={loading || lockButton}
                     >
-                      <Text style={styles.textStyle}>確認</Text>
+                      <Text style={styles.textStyle}>{t("confirm")}</Text>
                     </Pressable>
                   </View>
                 </View>

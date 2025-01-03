@@ -7,6 +7,7 @@ import { RootState } from "../../(store)/";
 import * as SecureStore from "expo-secure-store";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 // 定義 Creator 的資料結構
@@ -43,12 +44,13 @@ const OrderDetail = () => {
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
+  const {t} = useTranslation();
   let roleText = "載入中...";
 
   if (user.role == "Ridder") {
-    roleText = "車主";
+    roleText = t("rider");
   } else if (user.role == "Passenger") {
-    roleText = "乘客";
+    roleText = t("passenger");
   }
 
   const getToken = async () => {
@@ -120,7 +122,7 @@ const OrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>訂單編號: {order?.id}</Text>
+                <Text style={styles.orderNumber}>{t("order id")}: {order?.id}</Text>
               </View>
 
               <View style={styles.body}>
@@ -129,28 +131,28 @@ const OrderDetail = () => {
                     <Text style={styles.title}>
                       {roleText}：{order.creator.userName}
                     </Text>
-                    <Text style={styles.title}>起點：{order.startAddress}</Text>
-                    <Text style={styles.title}>終點：{order.endAddress}</Text>
+                    <Text style={styles.title}>{t("starting point")}：{order.startAddress}</Text>
+                    <Text style={styles.title}>{t("destination")}：{order.endAddress}</Text>
                     <Text style={styles.title}>
-                      開車時間:{" "}
+                      {("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
                     <Text style={styles.title}>
-                      初始價格: {order.initPrice}
+                    {("Initial price")}: {order.initPrice}
                     </Text>
                     {user.role == "Ridder" 
-                      ? <Text style={styles.title}>路徑偏差距離: {order.tolerableRDV}</Text>
+                      ? <Text style={styles.title}>{t("Path deviation")}: {order.tolerableRDV}</Text>
                       : null
                     }
                     <Text style={styles.title}>
-                      更新時間:{" "}
+                      {t("update time")}:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>備註: {order.description}</Text>
+                    <Text style={styles.title}>{t("remark")}: {order.description}</Text>
                     <Pressable
                       style={[styles.inviteButton]}
                       onPress={() =>
@@ -163,7 +165,7 @@ const OrderDetail = () => {
                         }] as never)
                       }
                     >
-                      <Text style={styles.inviteButtonText}>建立邀請</Text>
+                      <Text style={styles.inviteButtonText}>{t("Create invitation")}</Text>
                     </Pressable>
                   </>
                 ) : null}

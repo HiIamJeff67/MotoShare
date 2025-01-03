@@ -16,6 +16,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -44,6 +45,7 @@ const MyOrderHistory = () => {
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const getToken = async () => {
     try {
@@ -62,9 +64,9 @@ const MyOrderHistory = () => {
     let response: { data: OrderType[] },
       url: string = "";
 
-    if (user.role == 1) {
+    if (user.role === "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/history/passenger/searchPaginationHistories`;
-    } else if (user.role == 2) {
+    } else if (user.role === "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/history/ridder/searchPaginationHistories`;
     }
 
@@ -150,18 +152,18 @@ const MyOrderHistory = () => {
                   <View style={styles.card}>
                     <View style={styles.header}>
                       <Text style={styles.orderNumber}>
-                        歷史編號: {item?.id}
+                        {t("Historical id")}: {item?.id}
                       </Text>
                     </View>
                     <View style={styles.body}>
                       <Text style={styles.title}>
-                        起點：{item.finalStartAddress}
+                        {t("starting point")}：{item.finalStartAddress}
                       </Text>
                       <Text style={styles.title}>
-                        終點：{item.finalEndAddress}
+                        {t("destination")}：{item.finalEndAddress}
                       </Text>
                       <Text style={styles.title}>
-                        更新時間:{" "}
+                        {t("update time")}:{" "}
                         {new Date(item.updatedAt).toLocaleString("en-GB", {
                           timeZone: "Asia/Taipei",
                         })}

@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -39,13 +40,14 @@ const MyOrderDetail = () => {
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
+  const { t } = useTranslation(); 
   let roleText = "載入中...";
 
-  if (user.role == 2) {
+  if (user.role === "Ridder") {
     //home.tsx才正確
-    roleText = "乘客";
-  } else if (user.role == 1) {
-    roleText = "車主";
+    roleText = t("passenger");
+  } else if (user.role === "Passenger") {
+    roleText = t("rider");
   }
 
   const getToken = async () => {
@@ -111,9 +113,9 @@ const MyOrderDetail = () => {
         let response,
           url = "";
 
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/getOrderById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/getOrderById`;
         }
 
@@ -121,7 +123,7 @@ const MyOrderDetail = () => {
         const token = await getToken();
 
         if (!token) {
-          Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。");
+          Alert.alert(t("Token failed"), t("unable to get token"));
           return;
         }
 
@@ -162,38 +164,38 @@ const MyOrderDetail = () => {
         message = "";
 
       if (status == 1) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toFinishedStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toFinishedStatusById`;
         }
 
-        message = "完成訂單成功";
+        message = t("Completed the order successfully");
       } else if (status == 2) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toStartedStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toStartedStatusById`;
         }
       } else if (status == 3) {
-        if (user.role == 1) {
+        if (user.role === "Passenger") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/passenger/toUnpaidStatusById`;
-        } else if (user.role == 2) {
+        } else if (user.role === "Ridder") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/order/ridder/toUnpaidStatusById`;
         }
 
-        message = "付款成功";
+        message = t("paymentSuccess");
       }
 
       // 獲取 Token
       const token = await getToken();
 
       if (!token) {
-        Alert.alert("Token 獲取失敗", "無法取得 Token，請重新登入。", [{ onPress: () => setLoading(false) }]);
+        Alert.alert(t("Token failed"), t("unable to get token。"), [{ onPress: () => setLoading(false) }]);
         return;
       }
 
-      response = await axios.post(
+      response = await axios.patch(
         url,
         null, // No body, so use `null` as the second argument
         {
@@ -211,20 +213,20 @@ const MyOrderDetail = () => {
       if (status != 2) {
         setLockButton(true);
         setLoading(false);
-        Alert.alert("成功", message);
+        Alert.alert(t("success"), message);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
 
         if (status != 2) {
-          Alert.alert("錯誤", JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
+          Alert.alert(t("error"), JSON.stringify(error.response?.data.message), [{ onPress: () => setLoading(false) }]);
         }
       } else {
         console.log("An unexpected error occurred:", error);
 
         if (status != 2) {
-          Alert.alert("錯誤", "發生未知錯誤", [{ onPress: () => setLoading(false) }]);
+          Alert.alert(t("error"), t("An unknown error occurred"), [{ onPress: () => setLoading(false) }]);
         }
       }
     }
@@ -235,12 +237,12 @@ const MyOrderDetail = () => {
       console.log(order.ridderStatus);
       console.log(order.passengerStatus);
 
-      if (user.role == 1 && order.passengerStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
+      if (user.role === "Passenger" && order.passengerStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單1");
         OrderStatus(2);
       }
 
-      if (user.role == 2 && order.ridderStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
+      if (user.role === "Ridder" && order.ridderStatus == "UNSTARTED" && new Date(order.startAfter) <= new Date()) {
         console.log("set訂單2");
         OrderStatus(2);
       }
@@ -258,40 +260,40 @@ const MyOrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>我的訂單編號: {order?.id}</Text>
+                <Text style={styles.orderNumber}>{t("my order id")}: {order?.id}</Text>
               </View>
 
               <View style={styles.body}>
                 {order ? (
                   <>
                     <Text style={styles.title}>
-                      {roleText}：{user.role == 1 ? order.ridderName : order.passengerName}
+                      {roleText}：{user.role === "Passenger" ? order.ridderName : order.passengerName}
                     </Text>
-                    <Text style={styles.title}>起點：{order.finalStartAddress}</Text>
-                    <Text style={styles.title}>終點：{order.finalEndAddress}</Text>
+                    <Text style={styles.title}>{t("starting point")}：{order.finalStartAddress}</Text>
+                    <Text style={styles.title}>{t("destination")}：{order.finalEndAddress}</Text>
                     <Text style={styles.title}>
-                      開車時間:{" "}
+                      {t("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>最終價格: {order.finalPrice}</Text>
-                    <Text style={styles.title}>我的備註: {user.role == 1 ? order.passengerDescription : order.ridderDescription}</Text>
-                    <Text style={styles.title}>對方備註: {user.role == 1 ? order.ridderDescription : order.passengerDescription}</Text>
+                    <Text style={styles.title}>{t("final price")}: {order.finalPrice}</Text>
+                    <Text style={styles.title}>{t("my remark")}: {user.role === "Passenger" ? order.passengerDescription : order.ridderDescription}</Text>
+                    <Text style={styles.title}>{t("other remark")}: {user.role === "Passenger" ? order.ridderDescription : order.passengerDescription}</Text>
                     <Text style={styles.title}>
-                      更新時間:{" "}
+                      {t("update time")}:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role == 1 && order.passengerStatus == "STARTED") || (user.role == 2 && order.ridderStatus == "STARTED") ? (
+                    {(user.role === "Passenger" && order.passengerStatus == "STARTED") || (user.role === "Ridder" && order.ridderStatus == "STARTED") ? (
                       <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
-                        <Text style={styles.actionButtonText}>付款</Text>
+                        <Text style={styles.actionButtonText}>{t("payment")}</Text>
                       </Pressable>
                     ) : null}
-                    {(user.role == 1 && order.passengerStatus == "UNPAID") || (user.role == 2 && order.ridderStatus == "UNPAID") ? (
+                    {(user.role === "Passenger" && order.passengerStatus == "UNPAID") || (user.role === "Ridder" && order.ridderStatus == "UNPAID") ? (
                       <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(1)} disabled={loading || lockButton}>
-                        <Text style={styles.actionButtonText}>完成</Text>
+                        <Text style={styles.actionButtonText}>{t("done")}</Text>
                       </Pressable>
                     ) : null}
                   </>

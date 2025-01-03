@@ -13,15 +13,14 @@ GoogleSignin.configure({
   iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
   scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
 });
-
 // Validation schemas
 const usernameSchema = z
   .string()
-  .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers and underscores")
-  .min(4, "Username must be at least 4 characters")
-  .max(20, "Username cannot exceed 20 characters");
+  .regex(/^[a-zA-Z0-9_]+$/, ("Username can only contain letters, numbers and underscores"))
+  .min(4, ("Username must be at least 4 characters"))
+  .max(20, ("Username cannot exceed 20 characters"));
 
-const emailSchema = z.string().email("Please enter a valid email address");
+const emailSchema = z.string().email(("Please enter a valid email address"));
 
 const passwordSchema = z
   .string()
@@ -110,9 +109,9 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 
       if (response?.data) {
         await saveToken(response.data.accessToken);
-        dispatch(setUser({ userName: usernameOrEmail, role: role, email: response.data.email }));
+        dispatch(setUser({ userName: response.data.userName, email: response.data.email, role: role }));
         onSignInSuccess?.();
-        Alert.alert("Success", `Logged in successfully as: ${usernameOrEmail}`);
+        Alert.alert("Success", `Logged in successfully as: ${response.data.userName}`);
       } else {
         throw new Error("Server request failed");
       }
@@ -136,7 +135,7 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSignInSuccess }: GoogleSignInProps) => {
   const dispatch = useDispatch();
 
-  const handleSignInResult = async (response: GoogleSignInResponse) => {
+  const handleSignInResult = async (googleResponse: GoogleSignInResponse) => {
     try {
       let url = "";
 
@@ -147,7 +146,7 @@ const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSig
       }
 
       const data = {
-        idToken: response.data.idToken,
+        idToken: googleResponse.data.idToken,
       };
 
       const axiosResponse = await axios.post(url, data, {
@@ -155,11 +154,10 @@ const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSig
       });
 
       if (axiosResponse?.data) {
-        console.log(response.data);
         await saveToken(axiosResponse.data.accessToken);
-        dispatch(setUser({ userName: axiosResponse.data.userName, role: role, email: response.data.user.email }));
+        dispatch(setUser({ userName: axiosResponse.data.userName, email: googleResponse.data.user.email, role: role }));
         onSignInSuccess?.();
-        Alert.alert("Success", `Logged in successfully as: ${response.data.user.email}`);
+        Alert.alert("Success", `Logged in successfully as: ${googleResponse.data.user.email}`);
       } else {
         throw new Error("Server request failed");
       }

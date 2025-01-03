@@ -23,7 +23,7 @@ import OtherInviteDeScreen from "./screen/invite/otherinvitede";
 import InviteMap from "./screen/invite/invitemap";
 import EditProfile from "./screen/setting/editprofile";
 import Settings from "./screen/setting/settings";
-
+import UserSearch from "./screen/user/search";
 import store from "./(store)/";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -41,6 +41,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "./(store)/";
 import { getUserTheme, ThemeType } from "@/theme";
 import { setUserSettings } from "./(store)/userSlice";
+import { LanguageProvider } from "@/app/locales/languageProvider";
+import { useTranslation } from "react-i18next";
 import LoadingWrapper from "./component/LoadingWrapper/LoadingWrapper";
 
 const Stack = createStackNavigator();
@@ -62,19 +64,21 @@ const CustomBackHeader = ({ navigation }: { navigation: any }) => (
 );
 
 const TopTabNavigator = () => {
+  const { t } = useTranslation();
   return (
     <TopTab.Navigator>
-      <TopTab.Screen name="進行中" component={MyOrderScreen} />
-      <TopTab.Screen name="已結束" component={MyOrderHisScreen} />
+      <TopTab.Screen name={t("inprogress")} component={MyOrderScreen} />
+      <TopTab.Screen name={t("end")} component={MyOrderHisScreen} />
     </TopTab.Navigator>
   );
 };
 
 const TopTabNavigator2 = () => {
+  const { t } = useTranslation();
   return (
     <TopTab.Navigator>
-      <TopTab.Screen name="我的邀請" component={MyInviteScreen} />
-      <TopTab.Screen name="別人邀請" component={OtherInviteScreen} />
+      <TopTab.Screen name={t("myinvite")} component={MyInviteScreen} />
+      <TopTab.Screen name={t("Invited by others")} component={OtherInviteScreen} />
     </TopTab.Navigator>
   );
 };
@@ -83,6 +87,7 @@ const TabNavigator = () => {
   const navigation = useNavigation();
   const [alertShown, setAlertShown] = useState(false);
   const user = useSelector((state: RootState) => state.user);
+  const { t } = useTranslation();
   const theme = user.theme;
   const [colors, setColors] = useState(theme?.colors);
 
@@ -195,52 +200,54 @@ const TabNavigator = () => {
     };
   }, [user.role]);
 
-  return (
-    !colors
-    ? <LoadingWrapper />
-    : (<Tab.Navigator screenOptions={{
+  return !colors ? (
+    <LoadingWrapper />
+  ) : (
+    <Tab.Navigator
+      screenOptions={{
         tabBarStyle: {
-          paddingTop: verticalScale(Platform.OS === "ios" ? 5 : 0), 
-          borderColor: colors.border, 
-          backgroundColor: colors.card, 
-          shadowColor: "#000", 
-          shadowOpacity: 0.25, 
+          paddingTop: verticalScale(Platform.OS === "ios" ? 5 : 0),
+          borderColor: colors.border,
+          backgroundColor: colors.card,
+          shadowColor: "#000",
+          shadowOpacity: 0.25,
           shadowOffset: {
             width: scale(0),
             height: verticalScale(-5),
           },
-        }
-      }}>
-        <Tab.Screen
-          name="Home Page"
-          component={HomeScreen}
-          options={{
-            title: "主頁",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
-          }}
-        />
-        <Tab.Screen
-          name="service"
-          component={ServiceScreen}
-          options={{
-            title: "服務",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
-          }}
-        />
-        <Tab.Screen
-          name="profile"
-          component={ProfileScreen}
-          options={{
-            title: "我的",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => (
-              <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
-            ),
-          }}
-        />
-      </Tab.Navigator>)
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home Page"
+        component={HomeScreen}
+        options={{
+          title: t("home"),
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
+        }}
+      />
+      <Tab.Screen
+        name="service"
+        component={ServiceScreen}
+        options={{
+          title: t("service"),
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
+        }}
+      />
+      <Tab.Screen
+        name="profile"
+        component={ProfileScreen}
+        options={{
+          title: t("my"),
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
@@ -248,10 +255,11 @@ function AppContent() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
   const systemTheme = useColorScheme();
+  const { t } = useTranslation();
   if (user.theme === undefined || user.theme === null) {
-    dispatch(setUserSettings({ themeName: (systemTheme === "dark" ? "DarkTheme" : "LightTheme")}));
+    dispatch(setUserSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
-  const theme = user.theme as Theme;  // since we have make sure that it is Theme Type
+  const theme = user.theme as Theme; // since we have make sure that it is Theme Type
 
   return (
     <NavigationContainer theme={theme}>
@@ -265,8 +273,13 @@ function AppContent() {
           <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="editprofile" component={EditProfile} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }} />
+          <Stack.Screen
+            name="editprofile"
+            component={EditProfile}
+            options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }}
+          />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
+          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
           <Stack.Screen
             name="invitemap"
             component={InviteMap}
@@ -286,7 +299,7 @@ function AppContent() {
             options={{
               headerShown: true,
               headerShadowVisible: false,
-              title: "我的訂單",
+              title: t("myorder"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -297,7 +310,7 @@ function AppContent() {
             options={{
               headerShown: true,
               headerShadowVisible: false,
-              title: "邀請",
+              title: t("invite"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -307,7 +320,7 @@ function AppContent() {
             component={MyOrderDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -317,7 +330,7 @@ function AppContent() {
             component={MyOrderHisDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -327,7 +340,7 @@ function AppContent() {
             component={MyInviteDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -337,7 +350,7 @@ function AppContent() {
             component={OtherInviteDeScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -347,7 +360,7 @@ function AppContent() {
             component={OrderScreen}
             options={{
               headerShown: true,
-              title: "訂單",
+              title: t("order"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -357,7 +370,7 @@ function AppContent() {
             component={OrderDetailScreen}
             options={{
               headerShown: true,
-              title: "詳情",
+              title: t("detail"),
               headerTitleAlign: "center",
               headerBackTitle: "",
             }}
@@ -384,7 +397,9 @@ function AppContent() {
 export default function App() {
   return (
     <Provider store={store}>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </Provider>
   );
 }

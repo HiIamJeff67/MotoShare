@@ -20,6 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { HandleGoogleSignIn, HandleLogin } from "./handlelogin";
+import { useTranslation } from 'react-i18next';
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 
 const PassengerLogin = () => {
@@ -33,6 +34,7 @@ const PassengerLogin = () => {
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
   const route = useRoute();
   const { role } = route.params as { role: UserRoleType };
+  const { t } = useTranslation();
 
   // Regular login handler
   const { handleLoginSubmit } = HandleLogin({
@@ -159,14 +161,14 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{role == "Passenger" ? "乘客登入" : "車主登入"}</Text>
+          <Text style={styles.headerText}>{role === "Passenger" ? t("passengerLogin") : t("riderLogin")}</Text>
         </View>
 
         <View style={styles.inputWrapper}>
           <Image source={require("../../../assets/images/user.png")} style={styles.icon} />
           <TextInput
             style={styles.textInput}
-            placeholder="使用者名稱或電子郵件"
+            placeholder={t("user")}
             value={usernameOrEmail}
             onChangeText={setUsernameOrEmail}
             placeholderTextColor="#626262"
@@ -177,7 +179,7 @@ const PassengerLogin = () => {
           <Image source={require("../../../assets/images/password.png")} style={styles.icon} />
           <TextInput
             style={styles.textInput}
-            placeholder="密碼"
+            placeholder={(t("password"))}
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
@@ -186,16 +188,24 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.centerAlign}>
-          <Pressable style={styles.loginButton} onPress={handleLoginSubmit} disabled={isGoogleInProgress || loading || lockButton}>
-            <Text style={styles.loginButtonText}>{loading ? <ActivityIndicator size="large" /> : "登入"}</Text>
-          </Pressable>
+        <Pressable
+            style={styles.loginButton}
+            onPress={handleLoginSubmit}
+            disabled={isGoogleInProgress || loading || lockButton}
+          >
+            {loading ? (
+              <ActivityIndicator size="large" color="#ffffff" />
+            ) : (
+              <Text style={styles.loginButtonText}>{t("login")}</Text>
+            )}
+        </Pressable>
         </View>
 
         <View style={styles.centerAlign}>
-          <Text style={styles.forgotPasswordText}>忘記密碼?</Text>
+          <Text style={styles.forgotPasswordText}>{t("forgotPassword")}</Text>
         </View>
         <View style={styles.centerAlign}>
-          <Text style={styles.otherLoginText}>使用其他方式</Text>
+          <Text style={styles.otherLoginText}>{t("LoginWithThirdParty")}</Text>
         </View>
         <View style={styles.socialContainer}>
           <TouchableWithoutFeedback
