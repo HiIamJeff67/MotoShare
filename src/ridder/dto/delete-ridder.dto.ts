@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class DeleteRidderDto {
-    @IsNotEmpty()
+    @IsOptional()   // other authentication user may not have a password
     @IsString()
     password: string;
 }
