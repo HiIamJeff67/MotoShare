@@ -24,6 +24,7 @@ const exceptions_1 = require("../exceptions");
 const email_service_1 = require("../email/email.service");
 const auth_constant_1 = require("../constants/auth.constant");
 const utils_1 = require("../utils");
+const passengerInfo_schema_1 = require("../drizzle/schema/passengerInfo.schema");
 let PassengerAuthService = class PassengerAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -328,22 +329,43 @@ let PassengerAuthService = class PassengerAuthService {
             const responseOfSelectingPassenger = await tx.select({
                 userName: passenger_schema_1.PassengerTable.userName,
                 email: passenger_schema_1.PassengerTable.email,
+                avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
             }).from(passenger_schema_1.PassengerTable)
                 .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, passenger_schema_1.PassengerTable.id))
                 .limit(1);
             if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
             }
+            let responseOfUpdatingAvatorUrl = null, responseOfUpdatingEmail = null;
+            if (responseOfSelectingPassenger[0].avatorUrl === null) {
+                responseOfUpdatingAvatorUrl = await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
+                    avatorUrl: parseDataFromGoogleToken["picture"],
+                }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, id))
+                    .returning({
+                    avatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+                });
+                if (!responseOfUpdatingAvatorUrl || responseOfUpdatingAvatorUrl.length === 0) {
+                    throw exceptions_1.ClientPassengerNotFoundException;
+                }
+            }
             if ((0, utils_1.isTempEmail)(responseOfSelectingPassenger[0].email)) {
-                return await tx.update(passenger_schema_1.PassengerTable).set({
+                responseOfUpdatingEmail = await tx.update(passenger_schema_1.PassengerTable).set({
                     email: parseDataFromGoogleToken["email"],
                 }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
                     .returning({
                     userName: passenger_schema_1.PassengerTable.userName,
                     email: passenger_schema_1.PassengerTable.email,
                 });
+                if (!responseOfUpdatingEmail || responseOfUpdatingEmail.length === 0) {
+                    throw exceptions_1.ClientPassengerNotFoundException;
+                }
             }
-            return responseOfSelectingPassenger;
+            return [{
+                    ...responseOfSelectingPassenger[0],
+                    ...(responseOfUpdatingAvatorUrl === null ? {} : responseOfUpdatingAvatorUrl[0]),
+                    ...(responseOfUpdatingEmail === null ? {} : responseOfUpdatingEmail[0]),
+                }];
         });
     }
 };

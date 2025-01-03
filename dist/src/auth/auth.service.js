@@ -94,7 +94,8 @@ let AuthService = class AuthService {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
             const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
-            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const userName = parseDataFromGoogleToken["name"]
+                ?? await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
             const responseOfCreatingPassenger = await tx.insert(passenger_schema_1.PassengerTable).values({
                 userName: userName,
@@ -110,6 +111,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingPassengerInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                avatorUrl: parseDataFromGoogleToken["picture"],
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
@@ -202,7 +204,8 @@ let AuthService = class AuthService {
                 throw exceptions_1.ClientInvalidGoogleIdTokenException;
             }
             const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
-            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const userName = parseDataFromGoogleToken["name"]
+                ?? await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
             const responseOfCreatingRidder = await tx.insert(ridder_schema_1.RidderTable).values({
                 userName: userName,
@@ -218,6 +221,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingRidderInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
+                avatorUrl: parseDataFromGoogleToken["picture"],
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;

@@ -13,5 +13,4 @@ export declare class HistoryController {
     rateAndCommentHistoryForRidderById(ridder: RidderType, id: string, rateAndCommentHistoryDto: RateAndCommentHistoryDto, response: Response): Promise<void>;
     delinkHistoryForPassengerById(passenger: PassengerType, id: string, response: Response): Promise<void>;
     delinkHistoryForRidderById(ridder: RidderType, id: string, response: Response): Promise<void>;
-    updateAverageStarRatingByPassengerId(passenger: PassengerType, response: Response): Promise<void>;
 }

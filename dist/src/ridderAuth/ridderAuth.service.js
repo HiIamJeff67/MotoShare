@@ -24,6 +24,7 @@ const ridderAuth_schema_1 = require("../drizzle/schema/ridderAuth.schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const auth_constant_1 = require("../constants/auth.constant");
 const utils_1 = require("../utils");
+const ridderInfo_schema_1 = require("../drizzle/schema/ridderInfo.schema");
 let RidderAuthService = class RidderAuthService {
     constructor(config, email, db) {
         this.config = config;
@@ -328,22 +329,43 @@ let RidderAuthService = class RidderAuthService {
             const responseOfSelectingRidder = await tx.select({
                 userName: ridder_schema_1.RidderTable.userName,
                 email: ridder_schema_1.RidderTable.email,
+                avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
             }).from(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
                 .limit(1);
             if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
             }
+            let responseOfUpdatingAvatorUrl = null, responseOfUpdatingEmail = null;
+            if (responseOfSelectingRidder[0].avatorUrl === null) {
+                responseOfUpdatingAvatorUrl = await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
+                    avatorUrl: parseDataFromGoogleToken["picture"],
+                }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, id))
+                    .returning({
+                    avatorUrl: ridderInfo_schema_1.RidderInfoTable.avatorUrl,
+                });
+                if (!responseOfUpdatingAvatorUrl || responseOfUpdatingAvatorUrl.length === 0) {
+                    throw exceptions_1.ClientRidderNotFoundException;
+                }
+            }
             if ((0, utils_1.isTempEmail)(responseOfSelectingRidder[0].email)) {
-                return await tx.update(ridder_schema_1.RidderTable).set({
+                responseOfUpdatingEmail = await tx.update(ridder_schema_1.RidderTable).set({
                     email: parseDataFromGoogleToken["email"],
                 }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
                     .returning({
                     userName: ridder_schema_1.RidderTable.userName,
                     email: ridder_schema_1.RidderTable.email,
                 });
+                if (!responseOfUpdatingEmail || responseOfUpdatingEmail.length === 0) {
+                    throw exceptions_1.ClientRidderNotFoundException;
+                }
             }
-            return responseOfSelectingRidder;
+            return [{
+                    ...responseOfSelectingRidder[0],
+                    ...(responseOfUpdatingAvatorUrl === null ? {} : responseOfUpdatingAvatorUrl[0]),
+                    ...(responseOfUpdatingEmail === null ? {} : responseOfUpdatingEmail[0]),
+                }];
         });
     }
 };

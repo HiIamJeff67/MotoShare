@@ -14,24 +14,24 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
-            createdAt: Date;
             updatedAt: Date;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
     getRidderWithInfoByPhoneNumber(phoneNumber: string): Promise<{
+        createdAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
         avgStarRating: number;
-        createdAt: Date;
         updatedAt: Date;
         motocycleLicense: string | null;
         motocycleType: string | null;
@@ -45,6 +45,7 @@ export declare class RidderService {
         userName: string;
         email: string;
         info: {
+            createdAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
@@ -53,7 +54,6 @@ export declare class RidderService {
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
-            createdAt: Date;
             updatedAt: Date;
             motocycleLicense: string | null;
             motocycleType: string | null;
@@ -80,7 +80,7 @@ export declare class RidderService {
                     y: number;
                 };
                 startAfter: Date;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 isUrgent: boolean;
                 creator: {
                     userName: string;

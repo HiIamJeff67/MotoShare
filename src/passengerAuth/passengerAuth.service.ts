@@ -11,6 +11,7 @@ import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSen
 import { EmailService } from '../email/email.service';
 import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
 import { isTempEmail } from "../utils";
+import { PassengerInfoTable } from "../drizzle/schema/passengerInfo.schema";
 
 @Injectable()
 export class PassengerAuthService {
@@ -394,24 +395,45 @@ export class PassengerAuthService {
 			const responseOfSelectingPassenger = await tx.select({
 				userName: PassengerTable.userName, 
 				email: PassengerTable.email, 
+				avatorUrl: PassengerInfoTable.avatorUrl, 
 			}).from(PassengerTable)
 		      .where(eq(PassengerTable.id, id))
+			  .leftJoin(PassengerInfoTable, eq(PassengerInfoTable.userId, PassengerTable.id))
 			  .limit(1);
 			if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
 				throw ClientPassengerNotFoundException;
 			}
 
+			let responseOfUpdatingAvatorUrl: any = null, responseOfUpdatingEmail: any = null;
+			if (responseOfSelectingPassenger[0].avatorUrl === null) {
+				responseOfUpdatingAvatorUrl = await tx.update(PassengerInfoTable).set({
+					avatorUrl: parseDataFromGoogleToken["picture"], 
+				}).where(eq(PassengerInfoTable.userId, id))
+				  .returning({
+					avatorUrl: PassengerInfoTable.avatorUrl, 
+				  });
+				if (!responseOfUpdatingAvatorUrl || responseOfUpdatingAvatorUrl.length === 0) {
+					throw ClientPassengerNotFoundException;
+				}
+			}
 			if (isTempEmail(responseOfSelectingPassenger[0].email)) {
-				return await tx.update(PassengerTable).set({
+				responseOfUpdatingEmail = await tx.update(PassengerTable).set({
 					email: parseDataFromGoogleToken["email"], 
 				}).where(eq(PassengerTable.id, id))
 				  .returning({
 					userName: PassengerTable.userName, 
 					email: PassengerTable.email, 
 				});
+				if (!responseOfUpdatingEmail || responseOfUpdatingEmail.length === 0) {
+					throw ClientPassengerNotFoundException;
+				}
 			}
 
-			return responseOfSelectingPassenger;
+			return [{
+				...responseOfSelectingPassenger[0], 
+				...(responseOfUpdatingAvatorUrl === null ? {} : responseOfUpdatingAvatorUrl[0]), 
+				...(responseOfUpdatingEmail === null ? {} : responseOfUpdatingEmail[0]), 
+			}];
 		});
 	}
     /* ================================= Binding Operations ================================= */

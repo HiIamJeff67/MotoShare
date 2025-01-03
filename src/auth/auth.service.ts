@@ -111,7 +111,8 @@ export class AuthService {
             }
             const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
-            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const userName = parseDataFromGoogleToken["name"] 
+                ?? await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
 
             const responseOfCreatingPassenger = await tx.insert(PassengerTable).values({
@@ -129,6 +130,7 @@ export class AuthService {
 
             const responseOfCreatingPassengerInfo = await tx.insert(PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                avatorUrl: parseDataFromGoogleToken["picture"], 
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;
@@ -239,7 +241,8 @@ export class AuthService {
             }
             const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
 
-            const userName = await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
+            const userName = parseDataFromGoogleToken["name"]
+                ?? await bcrypt.hash(googleSignUpDto.email.split('@')[0], Number(this.config.get("SALT_OR_ROUND_GOOGLE_USER_NAME")));
             const tempAccessToken = await this._tempSignToken(userName, googleSignUpDto.email);
 
             const responseOfCreatingRidder = await tx.insert(RidderTable).values({
@@ -256,7 +259,8 @@ export class AuthService {
             }
 
             const responseOfCreatingRidderInfo = await tx.insert(RidderInfoTable).values({
-                userId: responseOfCreatingRidder[0].id,
+                userId: responseOfCreatingRidder[0].id, 
+                avatorUrl: parseDataFromGoogleToken["picture"], 
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw ClientCreatePassengerInfoException;

@@ -37,8 +37,5 @@ export declare class PassengerAuthService {
         userName: string;
         email: string;
     }[]>;
-    bindGoogleAuth(id: string, bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto): Promise<{
-        userName: string;
-        email: string;
-    }[]>;
+    bindGoogleAuth(id: string, bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto): Promise<any[]>;
 }

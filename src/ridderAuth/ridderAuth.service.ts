@@ -11,6 +11,7 @@ import { eq } from 'drizzle-orm';
 import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
 import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
 import { isTempEmail } from "../utils";
+import { RidderInfoTable } from "../drizzle/schema/ridderInfo.schema";
 
 @Injectable()
 export class RidderAuthService {
@@ -388,24 +389,45 @@ export class RidderAuthService {
 			const responseOfSelectingRidder = await tx.select({
 				userName: RidderTable.userName, 
 				email: RidderTable.email, 
+				avatorUrl: RidderInfoTable.avatorUrl, 
 			}).from(RidderTable)
-				.where(eq(RidderTable.id, id))
-				.limit(1);
+			  .where(eq(RidderTable.id, id))
+			  .leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
+			  .limit(1);
 			if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
 				throw ClientRidderNotFoundException;
 			}
 
+			let responseOfUpdatingAvatorUrl: any = null, responseOfUpdatingEmail: any = null;
+			if (responseOfSelectingRidder[0].avatorUrl === null) {
+				responseOfUpdatingAvatorUrl = await tx.update(RidderInfoTable).set({
+					avatorUrl: parseDataFromGoogleToken["picture"], 
+				}).where(eq(RidderInfoTable.userId, id))
+					.returning({
+					avatorUrl: RidderInfoTable.avatorUrl, 
+					});
+				if (!responseOfUpdatingAvatorUrl || responseOfUpdatingAvatorUrl.length === 0) {
+					throw ClientRidderNotFoundException;
+				}
+			}
 			if (isTempEmail(responseOfSelectingRidder[0].email)) {
-				return await tx.update(RidderTable).set({
+				responseOfUpdatingEmail = await tx.update(RidderTable).set({
 					email: parseDataFromGoogleToken["email"], 
 				}).where(eq(RidderTable.id, id))
 					.returning({
 					userName: RidderTable.userName, 
 					email: RidderTable.email, 
 				});
+				if (!responseOfUpdatingEmail || responseOfUpdatingEmail.length === 0) {
+					throw ClientRidderNotFoundException;
+				}
 			}
 
-			return responseOfSelectingRidder;
+			return [{
+				...responseOfSelectingRidder[0], 
+				...(responseOfUpdatingAvatorUrl === null ? {} : responseOfUpdatingAvatorUrl[0]), 
+				...(responseOfUpdatingEmail === null ? {} : responseOfUpdatingEmail[0]), 
+			}];
 		});
 	}
 	/* ================================= Binding Operations ================================= */

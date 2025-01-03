@@ -37,8 +37,5 @@ export declare class RidderAuthService {
         userName: string;
         email: string;
     }[]>;
-    bindGoogleAuth(id: string, bindRidderGoogleAuthDto: BindRidderGoogleAuthDto): Promise<{
-        userName: string;
-        email: string;
-    }[]>;
+    bindGoogleAuth(id: string, bindRidderGoogleAuthDto: BindRidderGoogleAuthDto): Promise<any[]>;
 }
