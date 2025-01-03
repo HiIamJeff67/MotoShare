@@ -47,9 +47,9 @@ const Order = () => {
   let roleText = "載入中...";
 
   if (user.role == "Ridder") {
-    roleText = "車主";
-  } else if (user.role == "Passenger") {
     roleText = "乘客";
+  } else if (user.role == "Passenger") {
+    roleText = "車主";
   }
 
   const dismissKeyboard = () => {

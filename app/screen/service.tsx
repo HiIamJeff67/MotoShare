@@ -23,51 +23,45 @@ const Service = () => {
         paddingTop: verticalScale(insets.top),
         paddingBottom: verticalScale(insets.bottom),
         paddingHorizontal: scale(20), // 設置水平間距
-        paddingVertical: verticalScale(20), // 設置垂直間距
       }}
     >
-      <Text style={{...styles.MainText, color: colors.text}}>服務</Text>
-      <View
-        style={{ marginTop: verticalScale(20) }}
-        className="flex flex-row justify-between items-center"
-      >
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("map" as never)}
-        >
+      <Text style={{ ...styles.MainText, color: colors.text }}>服務</Text>
+
+      <View style={{ marginTop: verticalScale(20) }} className="flex flex-row justify-between items-center">
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("map" as never)}>
           <View className="items-center">
             <FontAwesome6 name="motorcycle" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>建立訂單</Text>
+            <Text style={{ marginTop: verticalScale(5) }}>建立訂單</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("order" as never)}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("order" as never)}>
           <View className="items-center">
             <FontAwesome6 name="list" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>查看訂單</Text>
+            <Text style={{ marginTop: verticalScale(5) }}>查看訂單</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("myinvite" as never)}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myinvite" as never)}>
           <View className="items-center">
             <Ionicons name="people" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>查看邀請</Text>
+            <Text style={{ marginTop: verticalScale(5) }}>查看邀請</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("myorder" as never)}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myorder" as never)}>
           <View className="items-center">
             <FontAwesome6 name="edit" size={24} color="black" />
-            <Text style={{ marginTop: 5 }}>訂單管理</Text>
+            <Text style={{ marginTop: verticalScale(5) }}>訂單管理</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ marginTop: verticalScale(20) }} className="flex flex-row justify-between items-center">
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("usersearch" as never)}>
+          <View className="items-center">
+            <FontAwesome6 name="motorcycle" size={24} color="black" />
+            <Text style={{ marginTop: verticalScale(5) }}>搜尋用戶</Text>
           </View>
         </TouchableOpacity>
       </View>

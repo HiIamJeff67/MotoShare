@@ -23,7 +23,7 @@ import OtherInviteDeScreen from "./screen/invite/otherinvitede";
 import InviteMap from "./screen/invite/invitemap";
 import EditProfile from "./screen/setting/editprofile";
 import Settings from "./screen/setting/settings";
-
+import UserSearch from "./screen/user/search";
 import store from "./(store)/";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -195,52 +195,54 @@ const TabNavigator = () => {
     };
   }, [user.role]);
 
-  return (
-    !colors
-    ? <LoadingWrapper />
-    : (<Tab.Navigator screenOptions={{
+  return !colors ? (
+    <LoadingWrapper />
+  ) : (
+    <Tab.Navigator
+      screenOptions={{
         tabBarStyle: {
-          paddingTop: verticalScale(Platform.OS === "ios" ? 5 : 0), 
-          borderColor: colors.border, 
-          backgroundColor: colors.card, 
-          shadowColor: "#000", 
-          shadowOpacity: 0.25, 
+          paddingTop: verticalScale(Platform.OS === "ios" ? 5 : 0),
+          borderColor: colors.border,
+          backgroundColor: colors.card,
+          shadowColor: "#000",
+          shadowOpacity: 0.25,
           shadowOffset: {
             width: scale(0),
             height: verticalScale(-5),
           },
-        }
-      }}>
-        <Tab.Screen
-          name="Home Page"
-          component={HomeScreen}
-          options={{
-            title: "主頁",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
-          }}
-        />
-        <Tab.Screen
-          name="service"
-          component={ServiceScreen}
-          options={{
-            title: "服務",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
-          }}
-        />
-        <Tab.Screen
-          name="profile"
-          component={ProfileScreen}
-          options={{
-            title: "我的",
-            headerShown: false,
-            tabBarIcon: ({ focused }) => (
-              <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
-            ),
-          }}
-        />
-      </Tab.Navigator>)
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home Page"
+        component={HomeScreen}
+        options={{
+          title: "主頁",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <FontAwesome name="home" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
+        }}
+      />
+      <Tab.Screen
+        name="service"
+        component={ServiceScreen}
+        options={{
+          title: "服務",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <FontAwesome name="shopping-cart" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />,
+        }}
+      />
+      <Tab.Screen
+        name="profile"
+        component={ProfileScreen}
+        options={{
+          title: "我的",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons name="account" size={moderateScale(24)} color={focused ? colors.primary : colors.text} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
@@ -249,9 +251,9 @@ function AppContent() {
   const user = useSelector((state: RootState) => state.user);
   const systemTheme = useColorScheme();
   if (user.theme === undefined || user.theme === null) {
-    dispatch(setUserSettings({ themeName: (systemTheme === "dark" ? "DarkTheme" : "LightTheme")}));
+    dispatch(setUserSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
-  const theme = user.theme as Theme;  // since we have make sure that it is Theme Type
+  const theme = user.theme as Theme; // since we have make sure that it is Theme Type
 
   return (
     <NavigationContainer theme={theme}>
@@ -265,8 +267,13 @@ function AppContent() {
           <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="editprofile" component={EditProfile} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }} />
+          <Stack.Screen
+            name="editprofile"
+            component={EditProfile}
+            options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }}
+          />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
+          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
           <Stack.Screen
             name="invitemap"
             component={InviteMap}
