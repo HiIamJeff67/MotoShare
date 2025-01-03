@@ -1,10 +1,10 @@
 import { Theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
 import { EdgeInsets } from "react-native-safe-area-context";
-import { scale, verticalScale } from "react-native-size-matters";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
 export const SettingsStyles = (theme: Theme, insets?: EdgeInsets) => {
-    const [_colors, _fonts] = [theme.colors, theme.fonts];
+    const [_isDark, _colors, _fonts] = [theme.dark, theme.colors, theme.fonts];
 
     return StyleSheet.create({
         container: {
@@ -14,30 +14,6 @@ export const SettingsStyles = (theme: Theme, insets?: EdgeInsets) => {
             paddingLeft: scale(10), 
             paddingRight: scale(10), 
             backgroundColor: _colors.background, 
-        }, 
-        itmes: {
-            flexDirection: "row",
-            justifyContent: "space-around", 
-            alignItems: "center",
-            paddingVertical: verticalScale(12),
-            borderBottomWidth: scale(1),
-            borderBottomColor: _colors.border,
-        }, 
-        itemTitle: {
-            flex: 1, 
-            color: _colors.text, 
-            marginLeft: scale(15), 
-            fontSize: scale(14), 
-            fontWeight: _fonts.bold.fontWeight,
-        }, 
-        goToButtonContainer: {
-            
-        }, 
-        goToButton: {
-            tintColor: _colors.text, 
-            width: scale(7), 
-            height: verticalScale(7), 
-            marginRight: scale(15), 
         }, 
         switcher: {
             marginRight: scale(15), 

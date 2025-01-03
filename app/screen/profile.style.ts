@@ -9,9 +9,6 @@ export const ProfileScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      ...(insets && {
-        paddingBottom: verticalScale(insets.bottom),
-      }),
     },
     profileHeader: {
       alignItems: "center",
@@ -61,45 +58,35 @@ export const ProfileScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
       fontSize: moderateScale(10),
       color: "#999",
       fontWeight: _fonts.regular.fontWeight, 
-    },
-    listItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: verticalScale(12),
-      borderBottomWidth: scale(1),
-      borderBottomColor: _colors.border,
-    },
-    iconContainer: {
-      width: moderateScale(40),
+    }, 
+    bottomButtonContainer: {
+      gap: verticalScale(8), 
+    }, 
+    logoutButton: {
+      height: verticalScale(34), 
+      borderRadius: scale(10), 
+      borderWidth: scale(1), 
+      borderStyle: "solid", 
+      borderColor: "rgba(225, 0, 0, 1)", 
       justifyContent: "center",
-      alignItems: "center",
-    },
-    textContainer: {
-      flex: 1,
-      marginLeft: scale(8),
-    },
-    label: {
-      fontSize: moderateScale(14),
-      color: _colors.text,
+      alignItems: "center", 
+    }, 
+    logoutText: {
+      color: "red", 
+      fontSize: scale(14), 
       fontWeight: _fonts.bold.fontWeight, 
-    },
-    extra: {
-      fontSize: moderateScale(12),
-      color: _isDark ? "#777777" : "#999999",
-      fontWeight: _fonts.heavy.fontWeight, 
-    },
-    badge: {
-      backgroundColor: _colors.notification,
-      color: _colors.text,
-      fontSize: moderateScale(12),
-      paddingHorizontal: scale(8),
-      paddingVertical: verticalScale(2),
-      borderRadius: moderateScale(8),
-      overflow: "hidden",
-    },
+    }, 
+    deleteAccountButton: {
+      height: verticalScale(36), 
+      borderRadius: scale(10), 
+      justifyContent: "center",
+      alignItems: "center", 
+    }, 
+    deleteMeText: {
+      fontSize: scale(14), 
+      fontWeight: _fonts.bold.fontWeight, 
+    }, 
   });
 }
 
-export const __styles = StyleSheet.create({
-
-});
+export const __styles = StyleSheet.create({});

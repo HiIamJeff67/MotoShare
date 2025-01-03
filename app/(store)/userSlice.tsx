@@ -46,6 +46,8 @@ const userSlice = createSlice({
     clearUser: (state) => {
       state.userName = '';
       state.role = null;
+      state.email = '';
+      state.info = null;
     }
   }
 });

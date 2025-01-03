@@ -17,6 +17,9 @@ import { setUserSettings } from '@/app/(store)/userSlice';
 import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnimatedRadioOption from '@/app/component/RadioOption/AnimatedRadioOption';
+import SettingButton from '@/app/component/SettingButton/SettingButton';
+
+
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -79,18 +82,18 @@ const Settings = () => {
   };
 
   return (
-    !styles
+    !styles || !theme
       ? <LoadingWrapper />
       : (<View style={styles.container}>
-          <Pressable style={styles.itmes} onPress={showModal}>
-            <Text style={styles.itemTitle}>外觀</Text>
-            <View style={styles.goToButtonContainer}>
-              <Image
-                style={styles.goToButton}
-                source={require('../../../assets/images/forward.png')}
-              />
-            </View>
-          </Pressable>
+          <SettingButton 
+            title='外觀'
+            theme={theme}
+            callback={showModal} 
+          />
+          <SettingButton 
+            title='更改語言' 
+            theme={theme}
+          />
 
           <Modal
             animationType="none"

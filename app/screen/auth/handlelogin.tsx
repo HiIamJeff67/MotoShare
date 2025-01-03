@@ -10,8 +10,8 @@ import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 
 GoogleSignin.configure({
   webClientId: "845286501383-anaskssv4t2mn71hddrdll74uamcgne2.apps.googleusercontent.com", // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
-  scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
   iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
+  scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
 });
 
 // Validation schemas
@@ -96,7 +96,7 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 
     try {
       let url = "";
-      const data = usernameOrEmail.includes("@") ? { email: usernameOrEmail, password } : { userName: usernameOrEmail, password };
+      const data = usernameOrEmail.includes("@") ? { email: usernameOrEmail, password: password } : { userName: usernameOrEmail, password: password };
 
       if (role === "Passenger") {
         url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithAccountAndPassword`;
@@ -110,7 +110,7 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
 
       if (response?.data) {
         await saveToken(response.data.accessToken);
-        dispatch(setUser({ userName: usernameOrEmail, role: role, email: response.data.user.email }));
+        dispatch(setUser({ userName: usernameOrEmail, role: role, email: response.data.email }));
         onSignInSuccess?.();
         Alert.alert("Success", `Logged in successfully as: ${usernameOrEmail}`);
       } else {
@@ -121,7 +121,7 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
         console.log(JSON.stringify(error.response?.data.message));
         Alert.alert("Error", JSON.stringify(error.response?.data.message));
       } else {
-        console.log("An unexpected error occurred:", JSON.stringify(error));
+        console.log("An unexpected error occurred:", error);
         Alert.alert("Error", "An unexpected error occurred");
       }
       onSignInError?.(error);

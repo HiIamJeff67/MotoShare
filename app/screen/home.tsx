@@ -23,6 +23,7 @@ import { HomeScreenStyles } from "./home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
 import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
 import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
+import AnimatedCheckMessage from "../component/CheckMessage/AnimatedCheckMessage";
 
 const Home = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -89,10 +90,9 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <LoadingWrapper />
-      ) : (
-        <View style={styles.container}>
+      {isLoading || !styles || !theme
+      ? <LoadingWrapper />
+      : (<View style={styles.container}>
           <Text style={styles.welcomeText}>
             歡迎{roleText}, {user.userName}
           </Text>

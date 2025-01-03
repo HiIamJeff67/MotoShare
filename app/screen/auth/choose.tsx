@@ -51,7 +51,7 @@ const ChooseScreen = () => {
             alignItems: "center",
           }}
           className="rounded-lg bg-white shadow-lg"
-          onPress={() => navigation.navigate(...["login", { role: 1 }] as never)}
+          onPress={() => navigation.navigate(...["login", { role: "Passenger" }] as never)}
         >
           <Text className="font-semibold text-black text-lg">我是乘客</Text>
         </Pressable>
@@ -65,7 +65,7 @@ const ChooseScreen = () => {
             alignItems: "center",
           }}
           className="rounded-lg bg-white shadow-lg"
-          onPress={() => navigation.navigate(...["login", { role: 2 }] as never)}
+          onPress={() => navigation.navigate(...["login", { role: "Ridder" }] as never)}
         >
           <Text className="font-semibold text-black text-lg">我是車主</Text>
         </Pressable>
