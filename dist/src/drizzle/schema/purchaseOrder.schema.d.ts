@@ -205,7 +205,7 @@ export declare const PurchaseOrderTable: import("drizzle-orm/pg-core").PgTableWi
             tableName: "purchaseOrder";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+            data: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
             driverParam: string;
             notNull: true;
             hasDefault: true;

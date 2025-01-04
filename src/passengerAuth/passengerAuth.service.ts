@@ -7,7 +7,7 @@ import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerAuthTable } from '../drizzle/schema/passengerAuth.schema';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { eq } from 'drizzle-orm';
-import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientPassengerNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
+import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientPassengerNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ClientWithoutDefaultAuthenticatedException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
 import { EmailService } from '../email/email.service';
 import { TEMP_ACCESS_TOKEN } from "../constants/auth.constant";
 import { isTempEmail } from "../utils";
@@ -200,11 +200,16 @@ export class PassengerAuthService {
 			const responseOfSelectingPassengerAuth = await tx.select({
 				authCode: PassengerAuthTable.authCode, 
 				authCodeExpiredAt: PassengerAuthTable.authCodeExpiredAt, 
+				isDefaultAuthenticated: PassengerAuthTable.isDefaultAuthenticated, 
 			}).from(PassengerAuthTable)
 			  .where(eq(PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
 			  .limit(1);
 			if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
 				throw ClientPassengerNotFoundException;
+			}
+
+			if (!responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+				throw ClientWithoutDefaultAuthenticatedException;
 			}
 			if (responseOfSelectingPassengerAuth[0].authCode !== resetPassengerPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
@@ -244,6 +249,7 @@ export class PassengerAuthService {
 			const responseOfSelectingPassengerAuth = await tx.select({
 				authCode: PassengerAuthTable.authCode, 
 				authCodeExpiredAt: PassengerAuthTable.authCodeExpiredAt, 
+				isDefaultAuthenticated: PassengerAuthTable.isDefaultAuthenticated, 
 			}).from(PassengerAuthTable)
 			  .where(eq(PassengerAuthTable.userId, id))
 			  .limit(1);
@@ -251,6 +257,9 @@ export class PassengerAuthService {
 				throw ClientPassengerNotFoundException;
 			}
 
+			if (!responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+				throw ClientWithoutDefaultAuthenticatedException;
+			}
 			if (responseOfSelectingPassengerAuth[0].authCode !== updatePassengerEmailPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
 			}

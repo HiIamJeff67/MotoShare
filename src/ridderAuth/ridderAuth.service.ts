@@ -5,7 +5,7 @@ import { EmailService } from '../email/email.service';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { RidderTable } from '../drizzle/schema/ridder.schema';
-import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientRidderNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
+import { ApiGenerateAuthCodeException, ApiMissingBodyOrWrongDtoException, ApiSendEmailForValidationException, ClientAuthCodeExpiredException, ClientAuthCodeNotPairException, ClientInvalidGoogleIdTokenException, ClientNoChangeOnEmailException, ClientNoChangeOnPasswordException, ClientOldPasswordNotMatchException, ClientRidderNotFoundException, ClientUserDefaultAuthAlreadyBoundException, ClientUserGoogleAuthAlreadyBoundException, ClientWithoutDefaultAuthenticatedException, ServerExtractGoogleAuthUrlEnvVariableException } from '../exceptions';
 import { RidderAuthTable } from '../drizzle/schema/ridderAuth.schema';
 import { eq } from 'drizzle-orm';
 import { BindRidderDefaultAuthDto, BindRidderGoogleAuthDto, ResetRidderPasswordDto, UpdateRidderEmailPasswordDto, ValidateRidderInfoDto } from './dto/update-ridderAuth.dto';
@@ -194,11 +194,16 @@ export class RidderAuthService {
 			const responseOfSelectingRidderAuth = await tx.select({
 				authCode: RidderAuthTable.authCode, 
 				authCodeExpiredAt: RidderAuthTable.authCodeExpiredAt, 
+				isDefaultAuthenticated: RidderAuthTable.isDefaultAuthenticated, 
 			}).from(RidderAuthTable)
 			  .where(eq(RidderAuthTable.userId, responseOfSelectingRidder[0].id))
 			  .limit(1);
 			if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
 				throw ClientRidderNotFoundException;
+			}
+
+			if (!responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+				throw ClientWithoutDefaultAuthenticatedException;
 			}
 			if (responseOfSelectingRidderAuth[0].authCode !== resetRidderPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
@@ -237,6 +242,7 @@ export class RidderAuthService {
 			const responseOfSelectingRidderAuth = await tx.select({
 				authCode: RidderAuthTable.authCode, 
 				authCodeExpiredAt: RidderAuthTable.authCodeExpiredAt, 
+				isDefaultAuthenticated: RidderAuthTable.isDefaultAuthenticated, 
 			}).from(RidderAuthTable)
 			  .where(eq(RidderAuthTable.userId, id))
 			  .limit(1);
@@ -244,6 +250,9 @@ export class RidderAuthService {
 				throw ClientRidderNotFoundException;
 			}
 
+			if (!responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+				throw ClientWithoutDefaultAuthenticatedException;
+			}
 			if (responseOfSelectingRidderAuth[0].authCode !== updateRidderEmailPasswordDto.authCode) {
 				throw ClientAuthCodeNotPairException;
 			}

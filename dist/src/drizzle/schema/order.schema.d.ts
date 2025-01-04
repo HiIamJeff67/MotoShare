@@ -221,7 +221,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             tableName: "order";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+            data: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
             driverParam: string;
             notNull: true;
             hasDefault: true;
@@ -237,7 +237,7 @@ export declare const OrderTable: import("drizzle-orm/pg-core").PgTableWithColumn
             tableName: "order";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+            data: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
             driverParam: string;
             notNull: true;
             hasDefault: true;

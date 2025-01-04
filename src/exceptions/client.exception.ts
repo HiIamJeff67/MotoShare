@@ -65,6 +65,18 @@ export const ClientInvalidGoogleIdTokenException = new UnauthorizedException({
     message: "Invalid google id token detected", 
 })
 
+// E-C-017
+export const ClientWithoutDefaultAuthenticatedException = new UnauthorizedException({
+    case: "E-C-017", 
+    message: "The user cannot continue the services without default authenticated", 
+});
+
+// E-C-018
+export const ClientWithoutGoogleAuthenticatedException = new UnauthorizedException({
+    case: "E-C-018", 
+    message: "The user cannot continue the services without google authenticated", 
+});
+
 /* ============================== Error about authorization ============================== */
 
 
