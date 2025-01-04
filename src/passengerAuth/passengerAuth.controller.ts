@@ -170,6 +170,7 @@ export class PassengerAuthController {
 
             response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
+            console.log(error);
             if (!(error instanceof NotFoundException
                 || error instanceof NotAcceptableException
                 || error instanceof ConflictException)) {

@@ -246,11 +246,20 @@ let PassengerService = class PassengerService {
         });
     }
     async resetPassengerAccessTokenById(id) {
-        return await this.db.update(passenger_schema_1.PassengerTable).set({
-            accessToken: "LOGGED_OUT",
-        }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
-            .returning({
-            accessToken: passenger_schema_1.PassengerTable.accessToken,
+        return await this.db.transaction(async (tx) => {
+            const responseOfUpdatingPassengerOnlineStatus = await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
+                isOnline: false,
+            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, id))
+                .returning();
+            if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
+                throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            return await tx.update(passenger_schema_1.PassengerTable).set({
+                accessToken: "LOGGED_OUT",
+            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+                .returning({
+                accessToken: passenger_schema_1.PassengerTable.accessToken,
+            });
         });
     }
     async deletePassengerById(id, deletePassengerDto) {
@@ -262,9 +271,11 @@ let PassengerService = class PassengerService {
             if (!responseOfSelectingPassenger || responseOfSelectingPassenger.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
             }
-            const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
-            if (!pwMatches)
-                throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            if (responseOfSelectingPassenger[0].hash && responseOfSelectingPassenger[0].hash.length !== 0) {
+                const pwMatches = await bcrypt.compare(deletePassengerDto.password, responseOfSelectingPassenger[0].hash);
+                if (!pwMatches)
+                    throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            }
             return await tx.delete(passenger_schema_1.PassengerTable)
                 .where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
                 .returning({

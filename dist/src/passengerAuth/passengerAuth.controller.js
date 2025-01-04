@@ -123,6 +123,7 @@ let PassengerAuthController = class PassengerAuthController {
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException
                 || error instanceof common_1.ConflictException)) {

@@ -19,7 +19,7 @@ export const RidderTable = pgTable("ridder", {
     userName: text("userName").notNull().unique(), 
     email: text("email").notNull().unique(), 
     password: text("password").notNull(), 
-    accessToken: text("accessToken").notNull().unique(), 
+    accessToken: text("accessToken").notNull(), 
 }, (table) => {
     return {
         userNameIndex: uniqueIndex("ridder_userNameIndex").on(table.userName), 

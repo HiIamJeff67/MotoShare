@@ -52,6 +52,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingPassengerInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                isOnline: true,
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
@@ -111,6 +112,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingPassengerInfo = await tx.insert(passengerInfo_schema_1.PassengerInfoTable).values({
                 userId: responseOfCreatingPassenger[0].id,
+                isOnline: true,
                 avatorUrl: parseDataFromGoogleToken["picture"],
             }).returning();
             if (!responseOfCreatingPassengerInfo || responseOfCreatingPassengerInfo.length === 0) {
@@ -162,6 +164,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingRidderInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
+                isOnline: true,
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
                 throw exceptions_1.ClientCreatePassengerInfoException;
@@ -221,6 +224,7 @@ let AuthService = class AuthService {
             }
             const responseOfCreatingRidderInfo = await tx.insert(ridderInfo_schema_1.RidderInfoTable).values({
                 userId: responseOfCreatingRidder[0].id,
+                isOnline: true,
                 avatorUrl: parseDataFromGoogleToken["picture"],
             }).returning();
             if (!responseOfCreatingRidderInfo || responseOfCreatingRidderInfo.length === 0) {
@@ -303,6 +307,13 @@ let AuthService = class AuthService {
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
                 throw exceptions_1.ClientSignInUserException;
             }
+            const responseOfUpdatingPassengerOnlineStatus = await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
+                isOnline: true,
+            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, user.id))
+                .returning();
+            if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
             return result;
         });
     }
@@ -339,6 +350,13 @@ let AuthService = class AuthService {
             }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, user.id))
                 .returning();
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
+            const responseOfUpdatingPassengerOnlineStatus = await tx.update(passengerInfo_schema_1.PassengerInfoTable).set({
+                isOnline: true,
+            }).where((0, drizzle_orm_1.eq)(passengerInfo_schema_1.PassengerInfoTable.userId, user.id))
+                .returning();
+            if (!responseOfUpdatingPassengerOnlineStatus || responseOfUpdatingPassengerOnlineStatus.length === 0) {
                 throw exceptions_1.ClientSignInUserException;
             }
             return result;
@@ -393,6 +411,13 @@ let AuthService = class AuthService {
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
                 throw exceptions_1.ClientSignUpUserException;
             }
+            const responseOfUpdatingRidderOnlineStatus = await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
+                isOnline: true,
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, user.id))
+                .returning();
+            if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
             return result;
         });
     }
@@ -429,6 +454,13 @@ let AuthService = class AuthService {
             }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, user.id))
                 .returning();
             if (!responseOfUpdatingAccessToken || responseOfUpdatingAccessToken.length === 0) {
+                throw exceptions_1.ClientSignInUserException;
+            }
+            const responseOfUpdatingRidderOnlineStatus = await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
+                isOnline: true,
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, user.id))
+                .returning();
+            if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
                 throw exceptions_1.ClientSignInUserException;
             }
             return result;

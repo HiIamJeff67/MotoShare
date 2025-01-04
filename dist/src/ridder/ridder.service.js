@@ -264,11 +264,20 @@ let RidderService = class RidderService {
         });
     }
     async resetRidderAccessTokenById(id) {
-        return await this.db.update(ridder_schema_1.RidderTable).set({
-            accessToken: "LOGGED_OUT",
-        }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
-            .returning({
-            accessToken: ridder_schema_1.RidderTable.accessToken,
+        return await this.db.transaction(async (tx) => {
+            const responseOfUpdatingRidderOnlineStatus = await tx.update(ridderInfo_schema_1.RidderInfoTable).set({
+                isOnline: false,
+            }).where((0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, id))
+                .returning();
+            if (!responseOfUpdatingRidderOnlineStatus || responseOfUpdatingRidderOnlineStatus.length === 0) {
+                throw exceptions_1.ClientRidderNotFoundException;
+            }
+            return await tx.update(ridder_schema_1.RidderTable).set({
+                accessToken: "LOGGED_OUT",
+            }).where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
+                .returning({
+                accessToken: ridder_schema_1.RidderTable.accessToken,
+            });
         });
     }
     async deleteRiddderById(id, deleteRidderDto) {
@@ -280,9 +289,11 @@ let RidderService = class RidderService {
             if (!responseOfSelectingRidder || responseOfSelectingRidder.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
             }
-            const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
-            if (!pwMatches)
-                throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            if (responseOfSelectingRidder[0].hash && responseOfSelectingRidder[0].hash.length !== 0) {
+                const pwMatches = await bcrypt.compare(deleteRidderDto.password, responseOfSelectingRidder[0].hash);
+                if (!pwMatches)
+                    throw exceptions_1.ClientDeleteAccountPasswordNotMatchException;
+            }
             return await tx.delete(ridder_schema_1.RidderTable)
                 .where((0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, id))
                 .returning({
