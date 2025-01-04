@@ -346,7 +346,7 @@ export class PassengerAuthService {
 
 			const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
 				isDefaultAuthenticated: true, 
-			}).where(eq(PassengerTable.id, id))
+			}).where(eq(PassengerAuthTable.id, id))
 			  .returning();
 			if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
 				throw ClientPassengerNotFoundException;
@@ -395,7 +395,7 @@ export class PassengerAuthService {
 
 			const responseOfUpdatingPassengerAuth = await tx.update(PassengerAuthTable).set({
 				googleId: parseDataFromGoogleToken["sub"], 
-			}).where(eq(PassengerTable.id, id))
+			}).where(eq(PassengerAuthTable.id, id))
 			  .returning();
 			if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
 				throw ClientPassengerNotFoundException;

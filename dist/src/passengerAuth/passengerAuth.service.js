@@ -166,11 +166,15 @@ let PassengerAuthService = class PassengerAuthService {
             const responseOfSelectingPassengerAuth = await tx.select({
                 authCode: passengerAuth_schema_1.PassengerAuthTable.authCode,
                 authCodeExpiredAt: passengerAuth_schema_1.PassengerAuthTable.authCodeExpiredAt,
+                isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
             }).from(passengerAuth_schema_1.PassengerAuthTable)
                 .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, responseOfSelectingPassenger[0].id))
                 .limit(1);
             if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            if (!responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientWithoutDefaultAuthenticatedException;
             }
             if (responseOfSelectingPassengerAuth[0].authCode !== resetPassengerPasswordDto.authCode) {
                 throw exceptions_1.ClientAuthCodeNotPairException;
@@ -201,11 +205,15 @@ let PassengerAuthService = class PassengerAuthService {
             const responseOfSelectingPassengerAuth = await tx.select({
                 authCode: passengerAuth_schema_1.PassengerAuthTable.authCode,
                 authCodeExpiredAt: passengerAuth_schema_1.PassengerAuthTable.authCodeExpiredAt,
+                isDefaultAuthenticated: passengerAuth_schema_1.PassengerAuthTable.isDefaultAuthenticated,
             }).from(passengerAuth_schema_1.PassengerAuthTable)
                 .where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.userId, id))
                 .limit(1);
             if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
+            }
+            if (!responseOfSelectingPassengerAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientWithoutDefaultAuthenticatedException;
             }
             if (responseOfSelectingPassengerAuth[0].authCode !== updatePassengerEmailPasswordDto.authCode) {
                 throw exceptions_1.ClientAuthCodeNotPairException;
@@ -280,7 +288,7 @@ let PassengerAuthService = class PassengerAuthService {
             }
             const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
                 isDefaultAuthenticated: true,
-            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.id, id))
                 .returning();
             if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
@@ -321,7 +329,7 @@ let PassengerAuthService = class PassengerAuthService {
             const parseDataFromGoogleToken = await parseDataFromGoogleTokenResponse.json();
             const responseOfUpdatingPassengerAuth = await tx.update(passengerAuth_schema_1.PassengerAuthTable).set({
                 googleId: parseDataFromGoogleToken["sub"],
-            }).where((0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, id))
+            }).where((0, drizzle_orm_1.eq)(passengerAuth_schema_1.PassengerAuthTable.id, id))
                 .returning();
             if (!responseOfUpdatingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;

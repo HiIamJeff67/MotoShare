@@ -221,7 +221,7 @@ export class PassengerAuthController {
     @Put('bindDefaultAuth')
     async bindDefaultAuth(
         @Passenger() passenger: PassengerType, 
-        bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto, 
+        @Body() bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto, 
         @Res() response: Response, 
     ) {
         try {
@@ -251,7 +251,7 @@ export class PassengerAuthController {
     @Put('bindGoogleAuth')
     async bindGoogleAuth(
         @Passenger() passenger: PassengerType, 
-        bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto, 
+        @Body() bindPassengerGoogleAuthDto: BindPassengerGoogleAuthDto, 
         @Res() response: Response, 
     ) {
         try {
@@ -264,6 +264,7 @@ export class PassengerAuthController {
 
             response.status(HttpStatusCode.Ok).send(res[0]);
         } catch (error) {
+            console.log(error);
             if (!(error instanceof UnauthorizedException
                 || error instanceof NotFoundException
                 || error instanceof NotAcceptableException
@@ -277,4 +278,36 @@ export class PassengerAuthController {
         }
     }
     /* ================================= Binding Operations ================================= */
+
+
+    /* ================================= Other Operations ================================= */
+    // @Put('testBindDefaultAuth')
+    // async testBindDefaultAuth(
+    //     @Body() bindPassengerDefaultAuthDto: BindPassengerDefaultAuthDto, 
+    //     @Res() response: Response, 
+    // ) {
+    //     try {
+    //         const res = await this.passengerAuthService.bindDefaultAuth(
+    //             "e711fedc-6d68-4e61-b1e4-eace4294b321", 
+    //             bindPassengerDefaultAuthDto, 
+    //         );
+
+    //         if (!res || res.length === 0) throw ClientPassengerNotFoundException;
+
+    //         response.status(HttpStatusCode.Ok).send(res[0]);
+    //     } catch (error) {
+    //         console.log(error)
+    //         if (!(error instanceof UnauthorizedException
+    //             || error instanceof NotFoundException
+    //             || error instanceof NotAcceptableException
+    //             || error instanceof ConflictException)) {
+    //                 error = ClientUnknownException;
+    //         }
+
+    //         response.status(error.status).send({
+    //             ...error.response, 
+    //         });
+    //     }
+    // }
+    /* ================================= Other Operations ================================= */
 }

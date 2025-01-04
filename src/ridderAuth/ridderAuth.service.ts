@@ -340,7 +340,7 @@ export class RidderAuthService {
 
 			const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
 				isDefaultAuthenticated: true, 
-			}).where(eq(RidderTable.id, id))
+			}).where(eq(RidderAuthTable.id, id))
 				.returning();
 			if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
 				throw ClientRidderNotFoundException;
@@ -389,7 +389,7 @@ export class RidderAuthService {
 
 			const responseOfUpdatingRidderAuth = await tx.update(RidderAuthTable).set({
 				googleId: parseDataFromGoogleToken["sub"], 
-			}).where(eq(RidderTable.id, id))
+			}).where(eq(RidderAuthTable.id, id))
 				.returning();
 			if (!responseOfUpdatingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
 				throw ClientRidderNotFoundException;

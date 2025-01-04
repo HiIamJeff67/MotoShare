@@ -166,11 +166,15 @@ let RidderAuthService = class RidderAuthService {
             const responseOfSelectingRidderAuth = await tx.select({
                 authCode: ridderAuth_schema_1.RidderAuthTable.authCode,
                 authCodeExpiredAt: ridderAuth_schema_1.RidderAuthTable.authCodeExpiredAt,
+                isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
             }).from(ridderAuth_schema_1.RidderAuthTable)
                 .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, responseOfSelectingRidder[0].id))
                 .limit(1);
             if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
+            }
+            if (!responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientWithoutDefaultAuthenticatedException;
             }
             if (responseOfSelectingRidderAuth[0].authCode !== resetRidderPasswordDto.authCode) {
                 throw exceptions_1.ClientAuthCodeNotPairException;
@@ -201,11 +205,15 @@ let RidderAuthService = class RidderAuthService {
             const responseOfSelectingRidderAuth = await tx.select({
                 authCode: ridderAuth_schema_1.RidderAuthTable.authCode,
                 authCodeExpiredAt: ridderAuth_schema_1.RidderAuthTable.authCodeExpiredAt,
+                isDefaultAuthenticated: ridderAuth_schema_1.RidderAuthTable.isDefaultAuthenticated,
             }).from(ridderAuth_schema_1.RidderAuthTable)
                 .where((0, drizzle_orm_1.eq)(ridderAuth_schema_1.RidderAuthTable.userId, id))
                 .limit(1);
             if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
+            }
+            if (!responseOfSelectingRidderAuth[0].isDefaultAuthenticated) {
+                throw exceptions_1.ClientWithoutDefaultAuthenticatedException;
             }
             if (responseOfSelectingRidderAuth[0].authCode !== updateRidderEmailPasswordDto.authCode) {
                 throw exceptions_1.ClientAuthCodeNotPairException;

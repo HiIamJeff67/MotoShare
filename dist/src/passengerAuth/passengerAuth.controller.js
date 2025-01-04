@@ -181,6 +181,7 @@ let PassengerAuthController = class PassengerAuthController {
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
+            console.log(error);
             if (!(error instanceof common_1.UnauthorizedException
                 || error instanceof common_1.NotFoundException
                 || error instanceof common_1.NotAcceptableException
@@ -263,6 +264,7 @@ __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Put)('bindDefaultAuth'),
     __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [interfaces_1.PassengerType,
@@ -273,6 +275,7 @@ __decorate([
     (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
     (0, common_1.Put)('bindGoogleAuth'),
     __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [interfaces_1.PassengerType,
