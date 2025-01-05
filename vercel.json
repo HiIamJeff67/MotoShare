@@ -22,13 +22,6 @@
             ]
         }
     ], 
-    "functions": {
-        "api/**/*.js": {
-        "maxDuration": 60,
-        "memory": 1024,
-        "maxPayloadSize": "10mb"
-        }
-    }, 
     "crons": [
         {
             "path": "/api/cron/mainCronJobWorkflowDaily", 
