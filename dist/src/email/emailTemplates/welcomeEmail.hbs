@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to MotoShare</title>
+</head>
+<style>
+    body {
+        line-height: 1.6;
+        background-color: #242424;
+        color: white;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-items: center;
+    }
+
+    table {
+        width: 100%;
+        max-width: 600px;
+        height: 100%;
+        background-color: rgb(36, 36, 36);
+        color: rgb(255, 255, 255);
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .title, table h1 {
+        width: 100%;
+        margin: 0;
+        font-size: 46px;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgb(255, 255, 255);
+    }
+
+    table td {
+        width: 100%;
+        padding: 20px;
+    }
+
+    table img {
+        max-width: 80%;
+        height: auto;
+    }
+
+    table p {
+        width: 100%;
+        margin: 0;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 1.5;
+        color: rgb(255, 255, 255);
+    }
+
+    .content-header {
+        width: 95%;
+        font-weight: bold;
+        font-size: 22px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-top: 2px rgb(79, 79, 79) solid;
+        border-bottom: 2px rgb(79, 79, 79) solid;
+    }
+
+    table .info {
+        width: 100%;
+        margin: 0;
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        color: rgb(255, 255, 255);
+    }
+
+    table .guide {
+        width: 100%;
+        margin: 0;
+        font-weight: 500;
+        color: rgb(255, 255, 255);
+    }
+
+    table ul {
+        width: 100%;
+        margin: 10px 0 0;
+        padding-left: 20px;
+        color: rgb(255, 255, 255);
+    }
+
+    table ul li {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    table .footer {
+        width: 100%;
+        margin: 0;
+        padding-top: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: rgb(255, 255, 255);
+    }
+
+    table .footer a {
+        width: 100%;
+        color: rgb(147, 112, 219);
+        text-decoration: none;
+    }
+
+    table .copyright {
+        width: 100%;
+        margin: 0;
+        font-size: 12px;
+        color: rgb(119, 119, 119);
+    }
+
+    .table-row-dark td {
+        background-color: rgb(41, 41, 41);
+        border-radius: 15px 15px 0 0;
+    }
+
+    .table-row-light td {
+        background-color: rgb(41, 41, 41);
+        border-radius: 0 0 15px 15px;
+    }
+</style>
+<body bgcolor="#242424">
+    <table align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center" class="title">
+                <h1>Welcome to MotoShare</h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <img src="{{motorbikeImageUrl}}" alt="Motorbike">
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <p class="content-header">
+                    Hi, I'm Jeff, I represent our team to welcome you, {{userName}}, joining our motorcycle ride sharing app.
+                </p>
+            </td>
+        </tr>
+
+        <tr class="table-row-dark">
+            <td>
+                <p class="info">
+                    If you haven't authenticated your account with email or phone number, please do so in the setting page.
+                </p>
+                <p class="guide">A quick guide to start your travel:</p>
+                <ul>
+                    <li>Select your start position and end position on built-in Google Map.</li>
+                    <li>Provide some extra information such as payment, descriptions.</li>
+                    <li>Select existing orders to directly start your travel.</li>
+                    <li>Or create your custom purchase orders to let riders know what you want.</li>
+                    <li>Once the riders invite you, the app will send a notification to you.</li>
+                    <li>Then you can accept it if it meets your demand, or reject it if it doesn't.</li>
+                    <li>Now, you can enjoy your travel! Don't forget to leave a comment once done.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr class="table-row-light">
+            <td class="footer">
+                <p>
+                    At the end, I want to thank you again for your participation. Since the app is still not in the official version, if there's any problem with the app, please contact me with this email:
+                    <a href="mailto:motoshare767@gmail.com">motoshare767@gmail.com</a>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <p class="copyright">© {{currentYear}} MotoShare Inc.</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

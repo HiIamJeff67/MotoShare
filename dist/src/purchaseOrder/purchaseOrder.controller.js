@@ -1,0 +1,530 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PurchaseOrderController = void 0;
+const common_1 = require("@nestjs/common");
+const purchaseOrder_service_1 = require("./purchaseOrder.service");
+const HttpStatusCode_enum_1 = require("../enums/HttpStatusCode.enum");
+const exceptions_1 = require("../exceptions");
+const guard_1 = require("../auth/guard");
+const auth_interface_1 = require("../interfaces/auth.interface");
+const decorator_1 = require("../auth/decorator");
+const create_purchaseOrder_dto_1 = require("./dto/create-purchaseOrder.dto");
+const update_purchaseOrder_dto_1 = require("./dto/update-purchaseOrder.dto");
+const get_purchaseOrder_dto_1 = require("./dto/get-purchaseOrder.dto");
+const constants_1 = require("../constants");
+const stringParser_1 = require("../utils/stringParser");
+const accept_purchaseOrder_dto_1 = require("./dto/accept-purchaseOrder-dto");
+const types_1 = require("../types");
+let PurchaseOrderController = class PurchaseOrderController {
+    constructor(purchaseOrderService) {
+        this.purchaseOrderService = purchaseOrderService;
+    }
+    async createPurchaseOrder(passenger, createPurchaseOrderDto, response) {
+        try {
+            const res = await this.purchaseOrderService.createPurchaseOrderByCreatorId(passenger.id, createPurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreatePurchaseOrderException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.ForbiddenException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async getPurchaseOrderById(ridder, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.getPurchaseOrderById(id);
+            if (!res)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchMyPurchaseOrders(passenger, limit = "10", offset = "0", isAutoAccept = "false", response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchPurchaseOrdersByCreatorId(passenger.id, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchPaginationPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchPaginationPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchAboutToStartPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchAboutToStartPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept));
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchSimliarTimePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarTimePurchaseOrderDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchSimliarTimePurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarTimePurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchCurAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchCurAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchDestAdjacentPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getAdjacentPurchaseOrdersDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchDestAdjacentPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getAdjacentPurchaseOrdersDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchSimilarRoutePurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", getSimilarRoutePurchaseOrdersDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            const res = await this.purchaseOrderService.searchSimilarRoutePurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getSimilarRoutePurchaseOrdersDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async searchBetterFirstPurchaseOrders(creatorName = undefined, limit = "10", offset = "0", isAutoAccept = "false", searchPriorities = "RTSDU", getBetterPurchaseOrderDto, response) {
+        try {
+            if ((0, stringParser_1.toNumber)(limit, true) > constants_1.MAX_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitTooLargeException)(constants_1.MAX_SEARCH_LIMIT);
+            }
+            if ((0, stringParser_1.toNumber)(limit, true) < constants_1.MIN_SEARCH_LIMIT) {
+                throw (0, exceptions_1.ApiSearchingLimitLessThanZeroException)(constants_1.MIN_SEARCH_LIMIT);
+            }
+            if (!types_1.SearchPriorityTypes.includes(searchPriorities)) {
+                throw exceptions_1.ApiWrongSearchPriorityTypeException;
+            }
+            const res = await this.purchaseOrderService.searchBetterFirstPurchaseOrders(creatorName, (0, stringParser_1.toNumber)(limit, true), (0, stringParser_1.toNumber)(offset, true), (0, stringParser_1.toBoolean)(isAutoAccept), getBetterPurchaseOrderDto, searchPriorities);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send(res);
+        }
+        catch (error) {
+            if (!(error instanceof common_1.NotFoundException
+                || error instanceof common_1.NotAcceptableException
+                || error instanceof common_1.BadRequestException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async updateMyPurchaseOrderById(passenger, id, updatePurchaseOrderDto, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.updatePurchaseOrderById(id, passenger.id, updatePurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                updatedAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async startPurchaseOrderWithoutInvite(ridder, id, acceptAutoAcceptPurchaseOrderDto, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.startPurchaseOrderWithoutInvite(id, ridder.id, ridder.userName, acceptAutoAcceptPurchaseOrderDto);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientCreateOrderException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                createdAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            console.log(error);
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async cancelMyPurchaseOrderById(passenger, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.cancelPurchaseOrderById(id, passenger.id, passenger.userName);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                canceled: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException
+                || error instanceof common_1.ForbiddenException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+    async deleteMyPurchaseOrderById(passenger, id, response) {
+        try {
+            if (!id) {
+                throw exceptions_1.ApiMissingParameterException;
+            }
+            const res = await this.purchaseOrderService.deletePurchaseOrderById(id, passenger.id);
+            if (!res || res.length === 0)
+                throw exceptions_1.ClientPurchaseOrderNotFoundException;
+            response.status(HttpStatusCode_enum_1.HttpStatusCode.Ok).send({
+                deletedAt: new Date(),
+                ...res[0],
+            });
+        }
+        catch (error) {
+            if (!(error instanceof common_1.BadRequestException
+                || error instanceof common_1.UnauthorizedException
+                || error instanceof common_1.NotFoundException)) {
+                error = exceptions_1.ClientUnknownException;
+            }
+            response.status(error.status).send({
+                ...error.response,
+            });
+        }
+    }
+};
+exports.PurchaseOrderController = PurchaseOrderController;
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Post)('createPurchaseOrder'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType,
+        create_purchaseOrder_dto_1.CreatePurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "createPurchaseOrder", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Get)('getPurchaseOrderById'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Get)('searchMyPurchaseOrders'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchMyPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('searchPaginationPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchPaginationPurchaseOrders", null);
+__decorate([
+    (0, common_1.Get)('searchAboutToStartPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchAboutToStartPurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchSimliarTimePurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetSimilarTimePurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchSimliarTimePurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchCurAdjacentPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchCurAdjacentPurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchDestAdjacentPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetAdjacentPurchaseOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchDestAdjacentPurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchSimilarRoutePurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Body)()),
+    __param(5, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, get_purchaseOrder_dto_1.GetSimilarRoutePurchaseOrdersDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchSimilarRoutePurchaseOrders", null);
+__decorate([
+    (0, common_1.Post)('searchBetterFirstPurchaseOrders'),
+    __param(0, (0, common_1.Query)('creatorName')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('offset')),
+    __param(3, (0, common_1.Query)('isAutoAccept')),
+    __param(4, (0, common_1.Query)('searchPriorities')),
+    __param(5, (0, common_1.Body)()),
+    __param(6, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, String, get_purchaseOrder_dto_1.GetBetterPurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "searchBetterFirstPurchaseOrders", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Patch)('updateMyPurchaseOrderById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, update_purchaseOrder_dto_1.UpdatePurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "updateMyPurchaseOrderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.Post)('startPurchaseOrderWithoutInvite'),
+    __param(0, (0, decorator_1.Ridder)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, accept_purchaseOrder_dto_1.AcceptAutoAcceptPurchaseOrderDto, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "startPurchaseOrderWithoutInvite", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Delete)('cancelMyPurchaseOrderById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "cancelMyPurchaseOrderById", null);
+__decorate([
+    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.Delete)('deleteMyPurchaseOrderById'),
+    __param(0, (0, decorator_1.Passenger)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:returntype", Promise)
+], PurchaseOrderController.prototype, "deleteMyPurchaseOrderById", null);
+exports.PurchaseOrderController = PurchaseOrderController = __decorate([
+    (0, common_1.Controller)('purchaseOrder'),
+    __metadata("design:paramtypes", [purchaseOrder_service_1.PurchaseOrderService])
+], PurchaseOrderController);
+//# sourceMappingURL=purchaseOrder.controller.js.map

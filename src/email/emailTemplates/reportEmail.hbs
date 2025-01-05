@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MotoShare User Feedback</title>
+</head>
+<style>
+    body {
+        line-height: 1.6;
+        background-color: #242424;
+        color: white;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    table {
+        width: 100%;
+        max-width: 600px;
+        height: 100%;
+        background-color: rgb(36, 36, 36);
+        color: rgb(255, 255, 255);
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .title, table h1 {
+        width: 100%;
+        margin: 0;
+        font-size: 32px;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgb(255, 255, 255);
+    }
+
+    table td {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .content-header {
+        width: 95%;
+        font-weight: bold;
+        font-size: 22px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-top: 2px rgb(79, 79, 79) solid;
+        border-bottom: 2px rgb(79, 79, 79) solid;
+    }
+
+    .feedback-info {
+        width: 100%;
+        margin: 0;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 1.5;
+        color: rgb(255, 255, 255);
+    }
+
+    .feedback-content {
+        width: 100%;
+        margin: 15px 0;
+        padding: 15px;
+        background-color: rgb(41, 41, 41);
+        border-radius: 8px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: rgb(255, 255, 255);
+    }
+
+    .user-info {
+        width: 100%;
+        margin: 15px 0;
+        font-size: 14px;
+        color: rgb(180, 180, 180);
+    }
+
+    .copyright {
+        width: 100%;
+        margin: 0;
+        font-size: 12px;
+        color: rgb(119, 119, 119);
+    }
+
+    .table-row-dark td {
+        background-color: rgb(41, 41, 41);
+        border-radius: 15px 15px 0 0;
+    }
+
+    .table-row-light td {
+        background-color: rgb(41, 41, 41);
+        border-radius: 0 0 15px 15px;
+    }
+</style>
+<body bgcolor="#242424">
+    <table align="center" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center" class="title">
+                <h1>MotoShare 用戶回饋</h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <p class="content-header">
+                    收到來自用戶 {{userName}} 的回饋
+                </p>
+            </td>
+        </tr>
+
+        <tr class="table-row-dark">
+            <td>
+                <p class="feedback-info">
+                    <strong>主旨：</strong>{{subject}}
+                </p>
+                <div class="feedback-content">
+                    {{content}}
+                </div>
+                <div class="user-info">
+                    <p><strong>用戶名稱：</strong>{{userName}}</p>
+                    <p><strong>用戶信箱：</strong>{{userEmail}}</p>
+                    <p><strong>提交時間：</strong>{{submitTime}}</p>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <p class="copyright">© {{currentYear}} MotoShare Inc.</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
