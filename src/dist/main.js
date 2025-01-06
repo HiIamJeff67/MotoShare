@@ -40,7 +40,6 @@ require("dotenv/config");
 var core_1 = require("@nestjs/core");
 var app_module_1 = require("./app.module");
 var common_1 = require("@nestjs/common");
-var raw_body_1 = require("raw-body");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
         var app;
@@ -53,27 +52,6 @@ function bootstrap() {
                         origin: 'http://localhost:8081',
                         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
                         credentials: true
-                    });
-                    app.use('/webhook', function (req, res, next) {
-                        var _a;
-                        var stripeSignature = req.headers['stripe-signature'];
-                        if (stripeSignature) {
-                            req.setEncoding('utf8'); // 確保正確的字元編碼
-                            raw_body_1["default"](req, {
-                                length: req.headers['content-length'],
-                                encoding: ((_a = req.headers['content-type']) === null || _a === void 0 ? void 0 : _a.includes('text/plain')) ? 'utf-8' : null
-                            }, function (err, body) {
-                                if (err) {
-                                    console.error('Error parsing raw body:', err);
-                                    return res.status(400).send('Invalid Webhook Body');
-                                }
-                                req.body = body; // 保存原始 body
-                                next();
-                            });
-                        }
-                        else {
-                            next();
-                        }
                     });
                     app.useGlobalPipes(new common_1.ValidationPipe());
                     return [4 /*yield*/, app.listen(process.env.PORT || 3333)];

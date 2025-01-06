@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { WebhookService } from './webhook.service';
 import { ApiWrongWebhookSignatureException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
+import * as rawbody from "raw-body";
 
 @Controller('webhook')
 export class WebhookController {
@@ -10,15 +11,21 @@ export class WebhookController {
 
   @Patch('stripePaymentIntent')
   async handleStripeWebhook(
-    @Body() buffer: Buffer, // 使用 Buffer 來接收原始請求主體
+    @Body() body, // 使用 Buffer 來接收原始請求主體
+    @Req() req: Request, 
     @Res() response: Response, 
     @Headers('stripe-signature') signature: string,
   ) {
     if (!signature) throw ApiWrongWebhookSignatureException;
 
+    if (!req.readable) throw new Error("Not readable!");
+
     try {
+      const raw = await rawbody(req);
+      const text = raw.toString().trim();
+
       const res = await this.webhookService.handleStripeWebhook(
-        buffer, 
+        text, 
         signature, 
       );
 

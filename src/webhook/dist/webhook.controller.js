@@ -49,36 +49,43 @@ exports.WebhookController = void 0;
 var common_1 = require("@nestjs/common");
 var exceptions_1 = require("../exceptions");
 var enums_1 = require("../enums");
+var rawbody = require("raw-body");
 var WebhookController = /** @class */ (function () {
     function WebhookController(webhookService) {
         this.webhookService = webhookService;
     }
-    WebhookController.prototype.handleStripeWebhook = function (buffer, // 使用 Buffer 來接收原始請求主體
-    response, signature) {
+    WebhookController.prototype.handleStripeWebhook = function (body, // 使用 Buffer 來接收原始請求主體
+    req, response, signature) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var res, error_1;
+            var raw, text, res, error_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!signature)
                             throw exceptions_1.ApiWrongWebhookSignatureException;
+                        if (!req.readable)
+                            throw new Error("Not readable!");
                         _b.label = 1;
                     case 1:
-                        _b.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, this.webhookService.handleStripeWebhook(buffer, signature)];
+                        _b.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, rawbody(req)];
                     case 2:
+                        raw = _b.sent();
+                        text = raw.toString().trim();
+                        return [4 /*yield*/, this.webhookService.handleStripeWebhook(text, signature)];
+                    case 3:
                         res = _b.sent();
                         response.status(enums_1.HttpStatusCode.Ok).send(res);
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [3 /*break*/, 5];
+                    case 4:
                         error_1 = _b.sent();
                         response.status((_a = error_1.status) !== null && _a !== void 0 ? _a : enums_1.HttpStatusCode.InternalServerError).send({
                             "case": error_1["case"],
                             message: error_1.message
                         });
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -86,8 +93,9 @@ var WebhookController = /** @class */ (function () {
     __decorate([
         common_1.Patch('stripePaymentIntent'),
         __param(0, common_1.Body()),
-        __param(1, common_1.Res()),
-        __param(2, common_1.Headers('stripe-signature'))
+        __param(1, common_1.Req()),
+        __param(2, common_1.Res()),
+        __param(3, common_1.Headers('stripe-signature'))
     ], WebhookController.prototype, "handleStripeWebhook");
     WebhookController = __decorate([
         common_1.Controller('webhook')
