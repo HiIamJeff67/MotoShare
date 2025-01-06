@@ -9,7 +9,7 @@ import * as rawbody from "raw-body";
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Patch('stripePaymentIntent')
+  @Post('stripePaymentIntent')
   async handleStripeWebhook(
     @Body() body, // 使用 Buffer 來接收原始請求主體
     @Req() req: Request, 
