@@ -12,14 +12,13 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/(store)';
 import { ThemeType } from '@/theme';
-import { SettingsStyles } from './settings.style';
+import { SettingsStyles } from './Settings.style';
 import { setUserSettings } from '@/app/(store)/userSlice';
 import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnimatedRadioOption from '@/app/component/RadioOption/AnimatedRadioOption';
 import SettingButton from '@/app/component/SettingButton/SettingButton';
-
-
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -30,8 +29,11 @@ const Settings = () => {
   const fadeAnim = useState(new Animated.Value(0))[0];
   const slideAnim = useState(new Animated.Value(0))[0];
 
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isThemeModalVisible, setThemeModalVisible] = useState(false);
+  const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
   const [styles, setStyles] = useState<any>(null);
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language); // 當前語言
 
   useEffect(() => {
     if (theme) {
@@ -39,8 +41,24 @@ const Settings = () => {
     }
   }, [theme]);
 
-  const showModal = () => {
-    setModalVisible(true);
+  const showThemeModal = () => {
+    setThemeModalVisible(true);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const showLanguageModal = () => {
+    setLanguageModalVisible(true);
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -68,16 +86,23 @@ const Settings = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setModalVisible(false);
+      setThemeModalVisible(false);
+      setLanguageModalVisible(false);
     });
   };
 
   const handleThemeSelection = (inputThemeName: ThemeType | null) => {
     if (inputThemeName) {
-      dispatch(setUserSettings({ themeName: inputThemeName}));
+      dispatch(setUserSettings({ themeName: inputThemeName }));
     } else if (inputThemeName === null) {
       dispatch(setUserSettings({ themeName: systemTheme === 'dark' ? "DarkTheme" : "LightTheme" }));
     }
+    hideModal();
+  };
+
+  const handleLanguageSelection = (selectedLanguage: string) => {
+    i18n.changeLanguage(selectedLanguage);
+    setLanguage(selectedLanguage);
     hideModal();
   };
 
@@ -86,19 +111,21 @@ const Settings = () => {
       ? <LoadingWrapper />
       : (<View style={styles.container}>
           <SettingButton 
-            title='外觀'
+            title={t("theme")}
             theme={theme}
-            callback={showModal} 
+            callback={showThemeModal} 
           />
           <SettingButton 
-            title='更改語言' 
+            title={t("language")} 
             theme={theme}
+            callback={showLanguageModal}
           />
 
+          {/* Theme Selection Modal */}
           <Modal
             animationType="none"
             transparent={true}
-            visible={isModalVisible}
+            visible={isThemeModalVisible}
             onRequestClose={hideModal}
           >
             <Animated.View 
@@ -124,12 +151,12 @@ const Settings = () => {
                 ]}
                 onTouchEnd={(e) => e.stopPropagation()}
               >
-                <Text style={styles.modalTitle}>選擇主題</Text>
+                <Text style={styles.modalTitle}>{t("choose theme")}</Text>
                 <TouchableOpacity
                   style={styles.optionButton}
                   onPress={() => handleThemeSelection('DarkTheme')}
                 >
-                  <Text style={styles.optionText}>深色主題</Text>
+                  <Text style={styles.optionText}>{t("dark")}</Text>
                     <AnimatedRadioOption 
                       isSelected={user.themeName === "DarkTheme"}
                       outCircleColor={theme?.colors.border}
@@ -142,7 +169,7 @@ const Settings = () => {
                   style={styles.optionButton}
                   onPress={() => handleThemeSelection('LightTheme')}
                 >
-                  <Text style={styles.optionText}>淺色主題</Text>
+                  <Text style={styles.optionText}>{t("light")}</Text>
                     <AnimatedRadioOption 
                       isSelected={user.themeName === "LightTheme"}
                       outCircleColor={theme?.colors.border}
@@ -155,13 +182,80 @@ const Settings = () => {
                   style={styles.optionButton}
                   onPress={() => handleThemeSelection(null)}
                 >
-                  <Text style={styles.optionText}>依照系統預設</Text>
+                  <Text style={styles.optionText}>{t("Follow system default")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={hideModal}
                 >
-                  <Text style={styles.cancelText}>取消</Text>
+                  <Text style={styles.cancelText}>{t("cancel")}</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </Animated.View>
+          </Modal>
+
+          {/* Language Selection Modal */}
+          <Modal
+            animationType="none"
+            transparent={true}
+            visible={isLanguageModalVisible}
+            onRequestClose={hideModal}
+          >
+            <Animated.View 
+              style={[
+                styles.modalOverlay,
+                {
+                  opacity: fadeAnim
+                }
+              ]} 
+              onTouchEnd={hideModal}
+            >
+              <Animated.View 
+                style={[
+                  styles.modalContainer,
+                  {
+                    transform: [{
+                      translateY: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [300, 0],
+                      })
+                    }]
+                  }
+                ]}
+                onTouchEnd={(e) => e.stopPropagation()}
+              >
+                <Text style={styles.modalTitle}>{t("choose language")}</Text>
+                <TouchableOpacity
+                  style={styles.optionButton}
+                  onPress={() => handleLanguageSelection('zh')}
+                >
+                  <Text style={styles.optionText}>{t("Chinese")}</Text>
+                    <AnimatedRadioOption 
+                      isSelected={language === "zh"}
+                      outCircleColor={theme?.colors.border}
+                      innerCircleColor={theme?.colors.primary}
+                      innerCircleWidth={10}
+                      innerCircleHeight={10}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.optionButton}
+                  onPress={() => handleLanguageSelection('en')}
+                >
+                  <Text style={styles.optionText}>{t("English")}</Text>
+                    <AnimatedRadioOption 
+                      isSelected={language === "en"}
+                      outCircleColor={theme?.colors.border}
+                      innerCircleColor={theme?.colors.primary}
+                      innerCircleWidth={10}
+                      innerCircleHeight={10}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={hideModal}
+                >
+                  <Text style={styles.cancelText}>{t("cancel")}</Text>
                 </TouchableOpacity>
               </Animated.View>
             </Animated.View>

@@ -1,19 +1,20 @@
 import { Text, Image, View, Pressable, Animated, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../(store)/";
+import { RootState } from "../(store)";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { scale, verticalScale } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import { clearUser, setUserInfos } from "../(store)/userSlice";
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import { ProfileScreenStyles } from "./profile.style";
+import { ProfileScreenStyles } from "./Profile.style";
 import { useEffect, useState } from "react";
 import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
 import SettingButton from "../component/SettingButton/SettingButton";
 import AnimatedCheckMessage from "../component/CheckMessage/AnimatedCheckMessage";
 import AnimatedInputMessage from "../component/InputMessage/AnimatedInputMessage";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const Profile = () => {
   const [lockButton, setLockButton] = useState(false);
   const [checkLogoutMessageDisplay, setCheckLogoutMessageDisplay] = useState<boolean>(false);
   const [checkDeleteMeMessageDisplay, setCheckDeleteMeMessageDisplay] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -185,11 +187,11 @@ const Profile = () => {
   const handleDeleteMeButtonOnClick = async (inputValues: string[]) => {
     const showAlertMessage = () => {
       Alert.alert(
-        "密碼錯誤",
-        "你必須輸入正確密碼才能繼續",
+        t("wrong password"),
+        t("enter correct password"),
         [
           {
-            text: "確認",
+            text: t("confirm"),
             onPress: () => {},
             style: "cancel", 
           },
@@ -229,12 +231,12 @@ const Profile = () => {
   }
 
   const listData = [
-    { id: "1", icon: "shopping-cart", label: "我的訂單" },
-    { id: "2", icon: "notifications", label: "消息通知", badge: 24 },
-    { id: "3", icon: "person", label: "更新個人資料", page: "editprofile" },
-    { id: "4", icon: "bindings", label: "綁定門戶", extra: "未綁定" },
-    { id: "5", icon: "settings", label: "系統設置", page: "settings" },
-    { id: "6", icon: "report", label: "回報" },
+    { id: "1", icon: "shopping-cart", label: t("myorder") },
+    { id: "2", icon: "notifications", label: t("notification"), badge: 24 },
+    { id: "3", icon: "person", label: t("Update Profile"), page: "editprofile" },
+    { id: "4", icon: "bindings", label: t("Binding portal"), extra: t("Not bound") },
+    { id: "5", icon: "settings", label: t("System Settings"), page: "settings" },
+    { id: "6", icon: "report", label: t("feedback") },
   ];
 
   return (
@@ -309,18 +311,18 @@ const Profile = () => {
                     }),
                   }}
                 >
-                  <Text style={styles.logoutText}>登出</Text>
+                  <Text style={styles.logoutText}>{t("logout")}</Text>
                 </Animated.View>
               </Pressable>
 
               {checkLogoutMessageDisplay && 
                 <AnimatedCheckMessage 
-                  title={"確認登出帳號"} 
-                  content={"你確定要登出帳號？登出後需要再登入才能繼續使用本軟體"} 
+                  title={t("Confirm to log out account")} 
+                  content={t("confirm logout info")} 
                   theme={theme} 
-                  leftOptionTitle={"確認"}
+                  leftOptionTitle={t("confirm")}
                   leftOptionCallBack={handleLogoutButtonOnClick}
-                  rightOptionTitle={"取消"}
+                  rightOptionTitle={t("cancel")}
                   rightOptionCallBack={() => setCheckLogoutMessageDisplay(false)}
                 />
               }
@@ -351,22 +353,22 @@ const Profile = () => {
                         outputRange: [theme.colors.background, theme.colors.text], 
                       })
                     }}>
-                      刪除帳號
+                      {t("delete account")}
                     </Animated.Text>
                 </Animated.View>
               </Pressable>
 
               {checkDeleteMeMessageDisplay &&
                 <AnimatedInputMessage 
-                  title={"確認刪除帳號"} 
-                  content={"你確定要刪除帳號？請提供您目前的密碼已繼續刪除帳號，刪除後將無法再透過本帳號登入"} 
+                  title={t("confirm delete account")} 
+                  content={t("confirm delete info")} 
                   theme={theme} 
                   inputAttributes={[
-                    { placeholder: "密碼", isSecureText: true }, 
+                    { placeholder: ("password"), isSecureText: true }, 
                   ]}
-                  leftOptionTitle={"確認"}
+                  leftOptionTitle={("confirm")}
                   leftOptionCallBack={handleDeleteMeButtonOnClick}
-                  rightOptionTitle={"取消"}
+                  rightOptionTitle={t("cancel")}
                   rightOptionCallBack={() => setCheckDeleteMeMessageDisplay(false)}
                 />
               }

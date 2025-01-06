@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -38,6 +39,7 @@ const MyInviteDetail = () => {
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const getToken = async () => {
     try {
@@ -181,7 +183,7 @@ const MyInviteDetail = () => {
 
       setLockButton(true);
       setLoading(false);
-      Alert.alert("成功", "取消邀請成功");
+      Alert.alert(t("success"), t("cancel invite success"));
       //console.log(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -205,32 +207,32 @@ const MyInviteDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>邀請編號: {invite?.id}</Text>
+                <Text style={styles.orderNumber}>{t("invite id")}: {invite?.id}</Text>
               </View>
 
               <View style={styles.body}>
                 {invite ? (
                   <>
-                    <Text style={styles.maintitle}>我的推薦</Text>
-                    <Text style={styles.title}>起點：{invite.suggestStartAddress}</Text>
-                    <Text style={styles.title}>終點：{invite.suggestEndAddress}</Text>
+                    <Text style={styles.maintitle}>{t("my recommend")}</Text>
+                    <Text style={styles.title}>{t("starting point")}：{invite.suggestStartAddress}</Text>
+                    <Text style={styles.title}>{t("destination")}：{invite.suggestEndAddress}</Text>
                     <Text style={styles.title}>
-                      開車時間:{" "}
+                      {t("start driving")}:{" "}
                       {new Date(invite.suggestStartAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>價格: {invite.suggestPrice}</Text>
+                    <Text style={styles.title}>{("price")}: {invite.suggestPrice}</Text>
                     <Text style={styles.title}>
-                      更新時間:{" "}
+                      {t("update time")}:{" "}
                       {new Date(invite.inviteUdpatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>備註: {invite.inviteBriefDescription}</Text>
+                    <Text style={styles.title}>{t("remark")}: {invite.inviteBriefDescription}</Text>
                     {invite.inviteStatus == "CHECKING" && (
                       <Pressable style={[styles.inviteButton]} onPress={() => setModalVisible(true)} disabled={loading || lockButton}>
-                        <Text style={styles.inviteButtonText}>取消邀請</Text>
+                        <Text style={styles.inviteButtonText}>{("cancel invite")}</Text>
                       </Pressable>
                     )}
                   </>
@@ -241,17 +243,17 @@ const MyInviteDetail = () => {
               <View style={styles.body}>
                 {invite ? (
                   <>
-                    <Text style={styles.maintitle}>原本訂單</Text>
-                    <Text style={styles.title}>起點：{invite.startAddress}</Text>
-                    <Text style={styles.title}>終點：{invite.endAddress}</Text>
+                    <Text style={styles.maintitle}>{t("original order")}</Text>
+                    <Text style={styles.title}>{t("starting point")}：{invite.startAddress}</Text>
+                    <Text style={styles.title}>{t("destination")}：{invite.endAddress}</Text>
                     <Text style={styles.title}>
-                      開車時間:{" "}
+                      {t("start driving")}:{" "}
                       {new Date(invite.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>價格: {invite.initPrice}</Text>
-                    <Text style={styles.title}>備註: {invite.description}</Text>
+                    <Text style={styles.title}>{("price")}: {invite.initPrice}</Text>
+                    <Text style={styles.title}>{("remark")}: {invite.description}</Text>
                   </>
                 ) : null}
               </View>
@@ -268,10 +270,10 @@ const MyInviteDetail = () => {
               >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-                    <Text style={styles.modalText}>請輸入取消原因:</Text>
+                    <Text style={styles.modalText}>{("Please enter the reason for cancellation")}:</Text>
                     <TextInput
                       style={styles.input}
-                      placeholder="取消原因"
+                      placeholder={t("reason for cancellation")}
                       value={inputValue}
                       onChangeText={setInputValue}
                       placeholderTextColor="gray"
@@ -282,7 +284,7 @@ const MyInviteDetail = () => {
                         onPress={() => setModalVisible(!modalVisible)}
                         disabled={loading || lockButton}
                       >
-                        <Text style={styles.textStyle}>返回</Text>
+                        <Text style={styles.textStyle}>{t("back")}</Text>
                       </Pressable>
                       <Pressable
                         style={[styles.button, styles.buttonClose]}
@@ -292,7 +294,7 @@ const MyInviteDetail = () => {
                         }}
                         disabled={loading || lockButton}
                       >
-                        <Text style={styles.textStyle}>{loading ? "確認中..." : "確認"}</Text>
+                        <Text style={styles.textStyle}>{loading ? t("confirmation") : t("confirm")}</Text>
                       </Pressable>
                     </View>
                   </View>

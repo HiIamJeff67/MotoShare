@@ -1,30 +1,30 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import WelcomeScreen from "./screen/auth/welcome";
-import LoginScreen from "./screen/auth/login";
-import ChooseScreen from "./screen/auth/choose";
-import Choose2Screen from "./screen/auth/choose2";
-import RegScreen from "./screen/auth/reg";
-import HomeScreen from "./screen/home";
-import ProfileScreen from "./screen/profile";
-import ServiceScreen from "./screen/service";
-import MapScreen from "./screen/order/map";
-import OrderScreen from "./screen/order/order";
-import OrderDetailScreen from "./screen/order/orderdetail";
-import MyOrderScreen from "./screen/myorder/myorder";
-import MyOrderDeScreen from "./screen/myorder/myorderde";
-import MyOrderHisScreen from "./screen/myorder/myorderhis";
-import MyOrderHisDeScreen from "./screen/myorder/myorderhisde";
-import MyInviteScreen from "./screen/invite/myinvite";
-import MyInviteDeScreen from "./screen/invite/myinvitede";
-import OtherInviteScreen from "./screen/invite/otherinvite";
-import OtherInviteDeScreen from "./screen/invite/otherinvitede";
-import InviteMap from "./screen/invite/invitemap";
-import EditProfile from "./screen/setting/editprofile";
-import Settings from "./screen/setting/settings";
-import UserSearch from "./screen/user/search";
-import store from "./(store)/";
+import WelcomeScreen from "./screen/auth/Welcome";
+import LoginScreen from "./screen/auth/Login";
+import ChooseScreen from "./screen/auth/Choose";
+import Choose2Screen from "./screen/auth/Choose2";
+import RegScreen from "./screen/auth/Reg";
+import HomeScreen from "./screen/Home";
+import ProfileScreen from "./screen/Profile";
+import ServiceScreen from "./screen/Service";
+import MapScreen from "./screen/order/Map";
+import OrderScreen from "./screen/order/Order";
+import OrderDetailScreen from "./screen/order/OrderDetail";
+import MyOrderScreen from "./screen/myorder/MyOrder";
+import MyOrderDeScreen from "./screen/myorder/MyOrderDe";
+import MyOrderHisScreen from "./screen/myorder/MyOrderHis";
+import MyOrderHisDeScreen from "./screen/myorder/MyOrderHisDe";
+import MyInviteScreen from "./screen/invite/MyInvite";
+import MyInviteDeScreen from "./screen/invite/MyInviteDe";
+import OtherInviteScreen from "./screen/invite/OtherInvite";
+import OtherInviteDeScreen from "./screen/invite/OtherInvitede";
+import InviteMap from "./screen/invite/InviteMap";
+import EditProfile from "./screen/setting/EditProfile";
+import Settings from "./screen/setting/Settings";
+import UserSearch from "./screen/user/Search";
+import store from "./(store)";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -38,12 +38,13 @@ import { LightTheme, DarkTheme, Theme } from "../theme/theme";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useSelector } from "react-redux";
-import { RootState } from "./(store)/";
+import { RootState } from "./(store)";
 import { getUserTheme, ThemeType } from "@/theme";
 import { setUserSettings } from "./(store)/userSlice";
 import { LanguageProvider } from "@/app/locales/languageProvider";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "./component/LoadingWrapper/LoadingWrapper";
+import ResetPasswordScreen from "./screen/auth/ForgetPasswordScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -273,13 +274,14 @@ function AppContent() {
           <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="forgetPassword" component={ResetPasswordScreen} options={{ headerShown: false }}/>
           <Stack.Screen
             name="editprofile"
             component={EditProfile}
-            options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }}
+            options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Update Profile") }}
           />
-          <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
-          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
+          <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }} />
+          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }} />
           <Stack.Screen
             name="invitemap"
             component={InviteMap}

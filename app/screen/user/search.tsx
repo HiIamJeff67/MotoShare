@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableWithoutFeedback, Pressable, TextInput, Platform, Keyboard, Alert, Image, InteractionManager } from "react-native";
+import {
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  Pressable,
+  TextInput,
+  Platform,
+  Keyboard,
+  Alert,
+  Image,
+} from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)";
@@ -9,26 +20,23 @@ import * as SecureStore from "expo-secure-store";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
-import { Styles } from "./search.style";
+import { Styles } from "./Search.style";
 import { useTranslation } from "react-i18next";
 
 interface UserType {
-  id: string;
   userName: string;
 }
 
 interface UserInfoType {
   userName: string;
-  info: UserMoreInfo;
-}
-
-interface UserMoreInfo {
-  age: number | null;
-  avatorUrl: string | null;
-  isOnline: boolean;
-  motocyclePhotoUrl: string | null;
-  motocycleType: string | null;
-  selfIntroduction: string | null;
+  info: {
+    avatorUrl: string | null;
+    age: number;
+    motocycleType: string;
+    isOnline: boolean;
+    selfIntroduction: string;
+    motocyclePhotoUrl: string | null;
+  };
 }
 
 const SearchUser = () => {
@@ -40,6 +48,8 @@ const SearchUser = () => {
   const [userInfo, setUserInfo] = useState<UserInfoType>();
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [likedUsers, setLikedUsers] = useState<string[]>([]); // 存储被喜欢的用户
+
   const navigation = useNavigation();
   const { t } = useTranslation();
   let roleText = "載入中...";
@@ -65,11 +75,20 @@ const SearchUser = () => {
     fetchToken();
   }, []);
 
-
   const dismissKeyboard = () => {
     if (Platform.OS !== "web") {
       Keyboard.dismiss();
     }
+  };
+
+  const toggleLike = (userName: string) => {
+    setLikedUsers((prev) => {
+      if (prev.includes(userName)) {
+        return prev.filter((name) => name !== userName);
+      } else {
+        return [...prev, userName];
+      }
+    });
   };
 
   const SearchOrder = async () => {
@@ -85,8 +104,8 @@ const SearchUser = () => {
     try {
       response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }, 
+          Authorization: `Bearer ${token}`,
+        },
         params: {
           userName: searchInput,
           limit: 10,
@@ -151,7 +170,13 @@ const SearchUser = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={{ flex: 1, paddingHorizontal: scale(20), paddingVertical: verticalScale(15) }}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: scale(20),
+          paddingVertical: verticalScale(15),
+        }}
+      >
         {styles === null ? (
           <LoadingWrapper />
         ) : (
@@ -174,29 +199,70 @@ const SearchUser = () => {
               <LoadingWrapper />
             ) : (
               <View style={styles.container}>
-                <Pressable onPress={() => navigation.navigate(...(["orderdetail", { item: "123" }] as never))}>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate(
+                      ...(["orderdetail", { item: "123" }] as never)
+                    )
+                  }
+                >
                   <View style={styles.card}>
                     <View style={styles.photoContainer}>
                       <Image
-                        source={{ uri: userInfo.info.avatorUrl ?? "https://via.placeholder.com/100" }} // 替換為你的頭像 URL
+                        source={{
+                          uri:
+                            userInfo.info.avatorUrl ??
+                            "https://via.placeholder.com/100",
+                        }}
                         style={styles.avatar}
                       />
+                      {/* 愛心圖標 */}
+                      <Pressable
+                        style={styles.heartIconContainer}
+                        onPress={() => toggleLike(userInfo.userName)}
+                      >
+                        <MaterialIcons
+                          name={
+                            likedUsers.includes(userInfo.userName)
+                              ? "favorite"
+                              : "favorite-border"
+                          }
+                          size={moderateScale(24)}
+                          color={
+                            likedUsers.includes(userInfo.userName)
+                              ? "red"
+                              : "gray"
+                          }
+                        />
+                      </Pressable>
                     </View>
                     <View style={styles.body}>
                       <Text style={styles.title}>
                         {roleText}：{userInfo.userName}
                       </Text>
-                      <Text style={styles.title}>{t("Age")}：{userInfo.info.age}</Text>
-                      <Text style={styles.title}>{t("Motorcycle Type")}：{userInfo.info.motocycleType}</Text>
-                      <Text style={styles.title}>{t("Online Status")}：{userInfo.info.isOnline ? t("Online") : t("Offline")}</Text>
-                      <Text style={styles.title}>{t("Introduction")}：{userInfo.info.selfIntroduction}</Text>
+                      <Text style={styles.title}>
+                        {t("Age")}：{userInfo.info.age}
+                      </Text>
+                      <Text style={styles.title}>
+                        {t("Motorcycle Type")}：{userInfo.info.motocycleType}
+                      </Text>
+                      <Text style={styles.title}>
+                        {t("Online Status")}：
+                        {userInfo.info.isOnline ? t("Online") : t("Offline")}
+                      </Text>
+                      <Text style={styles.title}>
+                        {t("Introduction")}：{userInfo.info.selfIntroduction}
+                      </Text>
                     </View>
                   </View>
 
                   {userInfo.info.motocyclePhotoUrl && (
                     <View style={styles.card}>
                       <View style={styles.photoContainer}>
-                        <Image source={{ uri: userInfo.info.motocyclePhotoUrl }} style={styles.motoPhoto} />
+                        <Image
+                          source={{ uri: userInfo.info.motocyclePhotoUrl }}
+                          style={styles.motoPhoto}
+                        />
                       </View>
                     </View>
                   )}

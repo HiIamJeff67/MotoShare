@@ -19,12 +19,18 @@ export const Styles = (theme: Theme) => {
       shadowOpacity: 0.2,
       shadowRadius: moderateScale(4),
       elevation: 5,
+      position: 'relative', // 確保愛心圖標可以相對於此容器定位
     },
     photoContainer: {
       marginTop: verticalScale(20),
       marginBottom: verticalScale(15),
       alignItems: "center",
       justifyContent: "center",
+      position: 'relative',
+      width: '100%',
+      height: moderateScale(120),
+      borderWidth: 1, // 檢查範圍
+      borderColor: 'red',
     },
     avatar: {
       width: 100,
@@ -65,6 +71,14 @@ export const Styles = (theme: Theme) => {
       marginLeft: scale(8),
       flex: 1,
       fontSize: moderateScale(15),
+    },
+    heartIconContainer: {
+      position: 'absolute',
+      top: verticalScale(10),
+      right: scale(20),
+      zIndex: 1,
+      borderWidth: 1,
+      borderColor: 'blue',
     },
   });
 };

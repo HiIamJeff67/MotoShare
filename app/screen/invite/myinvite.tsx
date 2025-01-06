@@ -132,7 +132,7 @@ const MyInvite = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View key={item.id} style={styles.container}>
-              <Pressable onPress={() => navigation.navigate("myinvitede", { orderid: item.id })}>
+              <Pressable onPress={() => navigation.navigate(...["myinvitede", { orderid: item.id }] as never)}>
                 <View style={styles.card}>
                   <View style={styles.header}>
                     <Text style={styles.orderNumber}>{t("invite id")}: {item.id}</Text>

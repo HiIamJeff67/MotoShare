@@ -3,13 +3,13 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/";
+import { RootState } from "../(store)";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 import React, { useEffect, useState } from "react";
-import { HomeScreenStyles, mapStyle } from "./home.style";
+import { HomeScreenStyles, mapStyle } from "./Home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
 import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
 import { useTranslation } from "react-i18next";
@@ -41,9 +41,9 @@ const Home = () => {
   }, [theme]);
 
   if (user.role == "Passenger") {
-    roleText = "乘客";
+    roleText = t("passenger");
   } else if (user.role == "Ridder") {
-    roleText = "車主";
+    roleText = t("rider");
   }
 
   useEffect(() => {
@@ -114,28 +114,28 @@ const Home = () => {
             <View style={{ marginTop: verticalScale(20) }} className="flex flex-row justify-between items-center">
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("map" as never)}>
                 <View className="items-center">
-                  <FontAwesome6 color={styles.cardIcon.color} name="motorcycle" size={moderateScale(24)} />
+                  <FontAwesome6 color={theme.colors.primary} name="motorcycle" size={moderateScale(24)} />
                   <Text style={styles.cardText}>{t("make an order")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("order" as never)}>
                 <View className="items-center">
-                  <FontAwesome6 color={styles.cardIcon.color} name="list" size={moderateScale(24)} />
+                  <FontAwesome6 color={theme.colors.primary} name="list" size={moderateScale(24)} />
                   <Text style={styles.cardText}>{t("check order")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myinvite" as never)}>
                 <View className="items-center">
-                  <Ionicons color={styles.cardIcon.color} name="people" size={moderateScale(24)} />
+                  <Ionicons color={theme.colors.primary} name="people" size={moderateScale(24)} />
                   <Text style={styles.cardText}>{t("invite details")}</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("myorder" as never)}>
                 <View className="items-center">
-                  <FontAwesome6 color={styles.cardIcon.color} name="edit" size={moderateScale(24)} />
+                  <FontAwesome6 color={theme.colors.primary} name="edit" size={moderateScale(24)} />
                   <Text style={styles.cardText}>{t("order manage")}</Text>
                 </View>
               </TouchableOpacity>
