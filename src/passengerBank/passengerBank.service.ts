@@ -34,7 +34,11 @@ export class PassengerBankService {
         .limit(1);
       let customerId: string | null = null;
       if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-        const customer = await this.stripe.customers.create();
+        const customer = await this.stripe.customers.create({
+          metadata: {
+            userRole: "Passenger", 
+          }
+        });
         customerId = customer.id;
 
         const responseOfCreatingPassengerBank = await tx.insert(PassengerBankTable).values({
