@@ -34,11 +34,7 @@ export class PassengerBankService {
         .limit(1);
       let customerId: string | null = null;
       if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-        const customer = await this.stripe.customers.create({
-          metadata: {
-            userRole: "Passenger", 
-          }
-        });
+        const customer = await this.stripe.customers.create({});
         customerId = customer.id;
 
         const responseOfCreatingPassengerBank = await tx.insert(PassengerBankTable).values({
@@ -65,6 +61,9 @@ export class PassengerBankService {
         automatic_payment_methods: {
           enabled: true,
         },
+        metadata: {
+          userRole: "Passenger", 
+        }
       });
 
       return {

@@ -83,11 +83,7 @@ var PassengerBankService = /** @class */ (function () {
                                         responseOfSelectingPassengerBank = _a.sent();
                                         customerId = null;
                                         if (!(!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0)) return [3 /*break*/, 4];
-                                        return [4 /*yield*/, this.stripe.customers.create({
-                                                metadata: {
-                                                    userRole: "Passenger"
-                                                }
-                                            })];
+                                        return [4 /*yield*/, this.stripe.customers.create({})];
                                     case 2:
                                         customer = _a.sent();
                                         customerId = customer.id;
@@ -115,6 +111,9 @@ var PassengerBankService = /** @class */ (function () {
                                                 customer: customerId,
                                                 automatic_payment_methods: {
                                                     enabled: true
+                                                },
+                                                metadata: {
+                                                    userRole: "Passenger"
                                                 }
                                             })];
                                     case 7:
