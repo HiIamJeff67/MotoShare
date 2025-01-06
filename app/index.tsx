@@ -5,7 +5,7 @@ import WelcomeScreen from "./screen/auth/Welcome";
 import LoginScreen from "./screen/auth/Login";
 import ChooseScreen from "./screen/auth/Choose";
 import Choose2Screen from "./screen/auth/Choose2";
-import RegScreen from "./screen/auth/Reg";
+import RegScreen from "./screen/auth/Register";
 import HomeScreen from "./screen/Home";
 import ProfileScreen from "./screen/Profile";
 import ServiceScreen from "./screen/Service";
