@@ -19,6 +19,7 @@ import { RootState } from '@/app/(store)';
 import { ReportStyles } from './Report.style';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
+import { useTranslation } from 'react-i18next';
 
 const Report = () => {
     const navigation = useNavigation();
@@ -30,6 +31,7 @@ const Report = () => {
     const [subject, setSubject] = useState('');
     const [content, setContent] = useState('');
     const [styles, setStyles] = useState<any>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (theme) {
@@ -39,7 +41,7 @@ const Report = () => {
 
     const handleSubmit = async () => {
         if (!subject.trim() || !content.trim()) {
-            Alert.alert('錯誤', '請填寫主旨和內容');
+            Alert.alert(t('error'), t('Please fill in the subject and content'));
             return;
         }
 
@@ -66,18 +68,18 @@ const Report = () => {
 
             if (response.status === 200) {
                 Alert.alert(
-                    '成功',
-                    '感謝您的回饋！',
+                    t('success'),
+                    t('thank you for your feedback'),
                     [
                         {
-                            text: '確定',
+                            text: t('confirm'),
                             onPress: () => navigation.goBack()
                         }
                     ]
                 );
             }
         } catch (error) {
-            Alert.alert('錯誤', '發送失敗，請稍後再試');
+            Alert.alert(t('error'), t("sending error"));
         } finally {
             setIsLoading(false);
         }
@@ -97,7 +99,7 @@ const Report = () => {
                     >
                         <TextInput
                             style={styles.input}
-                            placeholder="主旨"
+                            placeholder={t("subject")}
                             value={subject}
                             onChangeText={setSubject}
                             placeholderTextColor="#666"
@@ -106,7 +108,7 @@ const Report = () => {
                         />
                         <TextInput
                             style={styles.textArea}
-                            placeholder="請描述您的問題或反饋..."
+                            placeholder={t("please describe you problem or feedback")}
                             value={content}
                             onChangeText={setContent}
                             multiline
@@ -121,12 +123,12 @@ const Report = () => {
                             disabled={isLoading}
                         >
                             <Text style={styles.submitButtonText}>
-                                {isLoading ? '發送中...' : '發送'}
+                                {isLoading ? t('sending') : t('send')}
                             </Text>
                         </Pressable>
 
                         <Text style={styles.note}>
-                            {`感謝您的耐心撰寫，您的回報（反饋）將作為信件寄給我們的開發人員，請耐心等待後續，我們會在必要時回信至您目前的信箱（${user.email}）。`}
+                            {`${t("feedback sentence")} (${user.email})。`}
                         </Text>
                     </ScrollView>
                 </KeyboardAvoidingView>

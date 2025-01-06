@@ -16,6 +16,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { hideAbsoluteLoading, showAbsoluteLoading } from '@/app/(store)/loadingSlice';
 import { clearUser } from '@/app/(store)/userSlice';
 import { isExist } from '@/app/methods/isExist';
+import { useTranslation } from 'react-i18next';
 
 const ResetEmailPassword = () => {
     const navigation = useNavigation();
@@ -38,6 +39,7 @@ const ResetEmailPassword = () => {
     const [editableInputItems, setEditableInputItems] = useState<any[]>([]);
     const [focusedRequiresOffset, setFocusedRequiresOffset] = useState(false);
     const [styles, setStyles] = useState<any>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (theme) {
@@ -54,40 +56,40 @@ const ResetEmailPassword = () => {
         fetchToken();
         setEditableInputItems([
             {
-              label: "電子郵件",
+              label: t("email"),
               value: user.email,
               setValue: setEmail,
-              placeholder: "電子郵件",
+              placeholder: t("email"),
               keyboardType: "email-address", 
               requiresKeyboardOffset: false,
               setRequiresKeyBoardOffset: setFocusedRequiresOffset, 
               isSecureText: false, 
             },
             {
-              label: "舊密碼",
+              label: t("old password"),
               value: oldPassword,
               setValue: setOldPassword,
-              placeholder: "舊密碼",
+              placeholder: t("old password"),
               keyboardType: "default", 
               requiresKeyboardOffset: false,
               setRequiresKeyBoardOffset: setFocusedRequiresOffset, 
               isSecureText: true, 
             },
             {
-              label: "新密碼",
+              label: t("new password"),
               value: newPassword,
               setValue: setNewPassword,
-              placeholder: "新密碼",
+              placeholder: t("new password"),
               keyboardType: "default",
               requiresKeyboardOffset: false,
               setRequiresKeyBoardOffset: setFocusedRequiresOffset, 
               isSecureText: true, 
             },
             {
-              label: "確認新密碼",
+              label: t("confirm new password"),
               value: confirmPassword,
               setValue: setConfirmPassword,
-              placeholder: "確認新密碼",
+              placeholder: t("confirm new password"),
               keyboardType: "default",
               requiresKeyboardOffset: true,
               setRequiresKeyBoardOffset: setFocusedRequiresOffset, 
@@ -114,7 +116,7 @@ const ResetEmailPassword = () => {
                 if (axios.isAxiosError(error)) {
                     console.log(error.response?.data);
                 }
-                Alert.alert("寄送驗證碼至此電子信箱失敗");
+                Alert.alert(t("The verification code sent to this email failed"));
             }
         }
     }
@@ -162,14 +164,14 @@ const ResetEmailPassword = () => {
 
         if (token && token.length !== 0) {
             if (newPassword.length === 0) {
-                showAlertMessage("請輸入新的密碼", "新密碼欄位不能為空");
+                showAlertMessage(t("Please enter a new password"), t("The new password field cannot be empty"));
                 return;
             } else if (newPassword !== confirmPassword) {
-                showAlertMessage("密碼不符", "請確保新密碼與確認新密碼相同");
+                showAlertMessage(t("Passwords do not match"), t("Please make sure your new password is the same as your confirm new password"));
                 return;
             }
             if (!isAuthCode(authCode)) {
-                showAlertMessage("驗證碼格式錯誤", "你必須輸入正確的驗證碼才能繼續");
+                showAlertMessage(t("Verification code format error"), t("You must enter the correct verification code to continue"));
                 return;
             }
 
@@ -196,14 +198,14 @@ const ResetEmailPassword = () => {
                 );
 
                 if (response && response.status === 200) {
-                    showAlertMessage("更新信箱或密碼成功", "請重新登入");
+                    showAlertMessage(t("Updated email or password successfully"), t("please login again"));
                     handleLogout();
                 }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     showAlertMessage(error.response?.data.case, error.response?.data.message);
                 } else {
-                    showAlertMessage("未知錯誤", "請聯繫我們（我的頁面 -> 回報）");
+                    showAlertMessage(t("unknow error"), ("please contact us"));
                 }
             } finally {
                 setIsLoading(false);
@@ -307,10 +309,10 @@ const ResetEmailPassword = () => {
                                 />
                             ))} 
                             <Animated.View style={styles.authCodeContainer}>
-                                <Animated.Text style={styles.authCodeLabel}>驗證碼</Animated.Text>
+                                <Animated.Text style={styles.authCodeLabel}>{t("verification code")}</Animated.Text>
                                 <TextInput 
                                     style={{ ...styles.authCodeInput, ...(onFocus && styles.authCodeInputOnFocus) }}
-                                    placeholder='驗證碼'
+                                    placeholder={t("verification code")}
                                     defaultValue={authCode}
                                     onChangeText={setAuthCode}
                                     keyboardType="number-pad"
@@ -323,9 +325,9 @@ const ResetEmailPassword = () => {
                                     onPress={handleSendAuthCodeButtonOnClick} 
                                     disabled={countdown > 0}
                                 >
-                                    <Animated.Text style={styles.sendAuthCodeButtonTitle}>{countdown > 0 ? countdown : `發送驗證碼`}</Animated.Text>
+                                    <Animated.Text style={styles.sendAuthCodeButtonTitle}>{countdown > 0 ? countdown : `${t("code")}`}</Animated.Text>
                                 </TouchableOpacity>
-                                {countdown > 0 && <Text style={styles.sendAuthCodeButtonExtra}>{`＊已發送驗證信至: ${user.email}`}</Text>}
+                                {countdown > 0 && <Text style={styles.sendAuthCodeButtonExtra}>{`${t("Verification letter has been sent to")} ${user.email}`}</Text>}
                             </Animated.View>
 
                             <TouchableOpacity 
@@ -334,7 +336,7 @@ const ResetEmailPassword = () => {
                                 onPress={validateAuthCodeToResetEmailOrPassword}
                             >
                                 <Text style={styles.saveButtonTitle}>
-                                    {isUploadLoading ? <ActivityIndicator size="large" /> : "儲存變更"}
+                                    {isUploadLoading ? <ActivityIndicator size="large" /> : t("Save changes")}
                                 </Text>
                             </TouchableOpacity>
                         </View>

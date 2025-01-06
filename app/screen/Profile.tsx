@@ -17,6 +17,7 @@ import AnimatedInputMessage from "../component/InputMessage/AnimatedInputMessage
 import AbsoluteLoadingWrapper from "../component/AbsoluteLoadingWrapper/AbsoluteLoadingWrapper";
 import { hideAbsoluteLoading, showAbsoluteLoading } from "../(store)/loadingSlice";
 import { numberOfAuths } from "../(store)/interfaces/userAuths.interface";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const Profile = () => {
   const [styles, setStyles] = useState<any>(null);
   const clickLogoutAnim = useState(new Animated.Value(0))[0];
   const clickDeleteMeAnim = useState(new Animated.Value(0))[0];
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (theme) {
@@ -192,21 +194,21 @@ const Profile = () => {
   }
 
   const listData = [
-    { id: "1", label: "我的訂單", callback: () => navigation.navigate("mycreateorder" as never) }, 
-    { id: "2", label: "週期性訂單" }, 
-    { id: "3", label: `偏好${user.role === "Passenger" ? "車主" : "乘客"}`, callback: () => navigation.navigate("mypreferences" as never) }, 
-    { id: "4", label: "收藏" }, 
-    { id: "5", label: "消息通知", badge: 24 },
-    { id: "6", label: "更新個人資料", callback: () => navigation.navigate("editprofile" as never) },
-    { id: "7", label: "綁定與驗證", 
-      ...(user.auth && {extra: `${Object.values(user.auth).filter(value => value === true).length} / ${numberOfAuths} 已綁定`}), 
+    { id: "1", label: t("myorder"), callback: () => navigation.navigate("mycreateorder" as never) }, 
+    { id: "2", label: t("Recurring Orders") }, 
+    { id: "3", label: `${t("preference")} ${user.role === "Passenger" ? t("rider") : t("passenger")}`, callback: () => navigation.navigate("mypreferences" as never) }, 
+    { id: "4", label: t("collection") }, 
+    { id: "5", label: t("notification"), badge: 24 },
+    { id: "6", label: t("Update Profile"), callback: () => navigation.navigate("editprofile" as never) },
+    { id: "7", label: t("Binding portal"), 
+      ...(user.auth && {extra: `${Object.values(user.auth).filter(value => value === true).length} / ${numberOfAuths} ${t("bounded")}`}), 
       ...(user.auth && {badge: `${Math.max(0, numberOfAuths - Object.values(user.auth).filter(value => value === true).length)}`}), 
       callback: () => navigation.navigate("bindings"  as never), 
     }, 
-    { id: "8", label: "儲值帳戶餘額", callback: () => navigation.navigate("payment" as never) }, 
-    { id: "9", label: "系統設置", callback: () => navigation.navigate("settings" as never) },
-    { id: "10", label: "重設信箱與密碼", callback: () => navigation.navigate("resetemailpassword" as never) }, 
-    { id: "11", label: "回報", callback: () => navigation.navigate("report" as never) }, 
+    { id: "8", label: t("Account Balance"),  }, 
+    { id: "9", label: t("System Settings"), callback: () => navigation.navigate("settings" as never) },
+    { id: "10", label: t("Reset email and password"), callback: () => navigation.navigate("resetemailpassword" as never) }, 
+    { id: "11", label: t("feedback"), callback: () => navigation.navigate("report" as never) }, 
   ];
 
   return (
@@ -230,7 +232,7 @@ const Profile = () => {
               <Text style={styles.name}>{user.userName}</Text>
               {user.info?.createdAt && 
                 <Text style={styles.description}>
-                  {`加入Motoshare的第 ${Math.ceil(((new Date()).getTime() - (new Date(user.info?.createdAt)).getTime()) / 86400000)} 天`}
+                  {`${t("join MotoShare")} ${Math.ceil(((new Date()).getTime() - (new Date(user.info?.createdAt)).getTime()) / 86400000)} ${t("day")}`}
                 </Text>
               }
             </View>
@@ -238,14 +240,14 @@ const Profile = () => {
         {/* 積分和回收部分 */}
         <View style={styles.infoRow}>
           <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>帳戶餘額</Text>
+            <Text style={styles.infoTitle}>{t("Account Balance")}</Text>
             <Text style={styles.infoValue}>680.00</Text>
-            <Text style={styles.infoHint}>帳戶餘額用於直接交易</Text>
+            <Text style={styles.infoHint}>{t("Account balance for direct trading")}</Text>
           </View>
           <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>平均評價</Text>
+            <Text style={styles.infoTitle}>{t("average rating")}</Text>
             <Text style={styles.infoValue}>{`${Math.round(user.info?.avgStarRating ?? 0 * 10) / 10} ⭐`}</Text>
-            <Text style={styles.infoHint}>由所有歷史訂單統計</Text>
+            <Text style={styles.infoHint}>{t("Statistics from all historical orders")}</Text>
           </View>
         </View>
 
@@ -285,18 +287,18 @@ const Profile = () => {
                     }),
                   }}
                 >
-                  <Text style={styles.logoutText}>登出</Text>
+                  <Text style={styles.logoutText}>{t("logout")}</Text>
                 </Animated.View>
               </Pressable>
 
               {checkLogoutMessageDisplay && 
                 <AnimatedCheckMessage 
-                  title={"確認登出帳號"} 
-                  content={"你確定要登出帳號？登出後需要再登入才能繼續使用本軟體"} 
+                  title={t("Confirm to log out account")} 
+                  content={t("confirm logout info")} 
                   theme={theme} 
-                  leftOptionTitle={"確認"}
+                  leftOptionTitle={t("confirm")}
                   leftOptionCallBack={handleLogoutButtonOnClick}
-                  rightOptionTitle={"取消"}
+                  rightOptionTitle={t("cancel")}
                   rightOptionCallBack={() => setCheckLogoutMessageDisplay(false)}
                 />
               }
@@ -327,22 +329,22 @@ const Profile = () => {
                         outputRange: [theme.colors.background, theme.colors.text], 
                       })
                     }}>
-                      刪除帳號
+                      {t("delete account")}
                     </Animated.Text>
                 </Animated.View>
               </Pressable>
 
               {checkDeleteMeMessageDisplay &&
                 <AnimatedInputMessage 
-                  title={"確認刪除帳號"} 
-                  content={"你確定要刪除帳號？請提供您目前的密碼已繼續刪除帳號，刪除後將無法再透過本帳號登入（注：若為Google登入，且未提供過密碼，請直接按確認）"} 
+                  title={t("confirm delete account")} 
+                  content={t("confirm delete info")} 
                   theme={theme} 
                   inputAttributes={[
-                    { placeholder: "密碼", isSecureText: true }, 
+                    { placeholder: t("password"), isSecureText: true }, 
                   ]}
-                  leftOptionTitle={"確認"}
+                  leftOptionTitle={t("confirm")}
                   leftOptionCallBack={handleDeleteMeButtonOnClick}
-                  rightOptionTitle={"取消"}
+                  rightOptionTitle={t("cancel")}
                   rightOptionCallBack={() => setCheckDeleteMeMessageDisplay(false)}
                 />
               }
