@@ -1,39 +1,30 @@
-import { Controller, Post, Req, Res, Headers, Body, Patch } from '@nestjs/common';
+import { Controller, Post, Req, Res, Headers, Body } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WebhookService } from './webhook.service';
 import { ApiWrongWebhookSignatureException } from '../exceptions';
 import { HttpStatusCode } from '../enums';
-import * as rawbody from "raw-body";
 
 @Controller('webhook')
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Post('stripePaymentIntent')
+  @Post('stripe')
   async handleStripeWebhook(
-    @Req() req: Request, 
-    @Res() response: Response, 
     @Headers('stripe-signature') signature: string,
+    @Body() body: Buffer,
+    @Res() res: Response,
   ) {
     if (!signature) throw ApiWrongWebhookSignatureException;
 
-    if (!req.readable) throw new Error("Not readable!");
-
     try {
-      const raw = await rawbody(req);
-      const text = raw.toString().trim();
-
-      const res = await this.webhookService.handleStripeWebhook(
-        text, 
-        signature, 
+      const response = await this.webhookService.handleStripeWebhook(
+        body,
+        signature,
       );
-
-      response.status(HttpStatusCode.Ok).send(res);
-    } catch (error) {
-      response.status(error.status ?? HttpStatusCode.InternalServerError).send({
-        case: error.case, 
-        message: error.message, 
-      });
+      res.status(HttpStatusCode.Ok).send(response);
+    } catch (err) {
+      console.error('Webhook Error:', err.message);
+      res.status(400).send(`Webhook Error: ${err.message}`);
     }
   }
 }
