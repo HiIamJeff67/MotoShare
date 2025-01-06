@@ -1,17 +1,22 @@
 import { Theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
+import { EdgeInsets } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
-export const Styles = (theme: Theme) => {
-  const [_colors, _fonts] = [theme.colors, theme.fonts];
+export const MyCreateOrderStyles = (theme: Theme, insets?: EdgeInsets) => {
+  const [_isDark, _colors, _fonts] = [theme.dark, theme.colors, theme.fonts];
 
   return StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     container: {
       flex: 1,
       paddingBottom: verticalScale(15),
     },
     card: {
-      marginBottom: verticalScale(15),
       backgroundColor: "white",
       borderRadius: moderateScale(10),
       shadowColor: "#000",
@@ -20,21 +25,16 @@ export const Styles = (theme: Theme) => {
       shadowRadius: moderateScale(4),
       elevation: 5,
     },
-    photoContainer: {
-      marginTop: verticalScale(20),
-      marginBottom: verticalScale(15),
-      alignItems: "center",
-      justifyContent: "center",
+    header: {
+      borderBottomWidth: scale(2),
+      borderBottomColor: "#ddd",
+      paddingVertical: verticalScale(10),
+      paddingHorizontal: scale(16),
     },
-    avatar: {
-      width: 100,
-      height: 100,
-      borderRadius: moderateScale(40),
-      marginBottom: moderateScale(8),
-    },
-    motoPhoto: {
-      width: 300,
-      height: 300,
+    orderNumber: {
+      color: "#333",
+      fontWeight: "bold",
+      fontSize: moderateScale(16),
     },
     body: {
       padding: moderateScale(16),
@@ -66,18 +66,13 @@ export const Styles = (theme: Theme) => {
       flex: 1,
       fontSize: moderateScale(15),
     },
-    button: {
-      marginTop: verticalScale(10),
-      height: verticalScale(40),
-      backgroundColor: "#000",
-      borderRadius: scale(5),
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    buttonText: {
-      color: "#fff",
-      fontSize: moderateScale(16),
-      fontWeight: "bold",
+    addButtonContainer: {
+      padding: moderateScale(10),
+      backgroundColor: "gray",
+      borderRadius: moderateScale(50),
+      marginLeft: scale(10),
     },
   });
 };
+
+export const __style = StyleSheet.create({});

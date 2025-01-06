@@ -112,5 +112,8 @@
   "Online Status": "Online Status",
   "Introduction": "Introduction",
   "Offline": "Offline",
-  "Online": "Online"
+  "Online": "Online",
+
+  "Add To Preference": "Add To Preference",
+  "Add To Preference Success": "Add To Preference Success"
 }

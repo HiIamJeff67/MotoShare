@@ -112,5 +112,8 @@
   "Online Status" : "線上狀態",
   "Introduction": "簡介",
   "Offline": "離線",
-  "Online": "線上"
+  "Online": "線上",
+
+  "Add To Preference": "加入偏好",
+  "Add To Preference Success": "加入偏好成功"
 }

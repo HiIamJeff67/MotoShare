@@ -229,7 +229,7 @@ const Profile = () => {
   }
 
   const listData = [
-    { id: "1", icon: "shopping-cart", label: "我的訂單" },
+    { id: "1", icon: "shopping-cart", label: "我的訂單", page: "mycreateorder" },
     { id: "2", icon: "notifications", label: "消息通知", badge: 24 },
     { id: "3", icon: "person", label: "更新個人資料", page: "editprofile" },
     { id: "4", icon: "bindings", label: "綁定門戶", extra: "未綁定" },

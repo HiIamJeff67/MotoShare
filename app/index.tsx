@@ -24,6 +24,8 @@ import InviteMap from "./screen/invite/invitemap";
 import EditProfile from "./screen/setting/editprofile";
 import Settings from "./screen/setting/settings";
 import UserSearch from "./screen/user/search";
+import MyCreateOrder from "./screen/setting/MyCreateOrder";
+import MyCreateOrderDe from "./screen/setting/MyCreateOrderDe";
 import store from "./(store)/";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -280,6 +282,16 @@ function AppContent() {
           />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
+          <Stack.Screen
+            name="mycreateorder"
+            component={MyCreateOrder}
+            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單" }}
+          />
+          <Stack.Screen
+            name="mycreateorderde"
+            component={MyCreateOrderDe}
+            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單詳情" }}
+          />
           <Stack.Screen
             name="invitemap"
             component={InviteMap}
