@@ -3,7 +3,7 @@ import { Text, View, ScrollView, Alert, Pressable, ActivityIndicator } from "rea
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { RootState } from "../../(store)/";
+import { RootState } from "../../(store)";
 import * as SecureStore from "expo-secure-store";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";

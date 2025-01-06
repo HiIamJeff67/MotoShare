@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { Text, View, Pressable, ActivityIndicator, RefreshControl, Alert } from "react-native";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
@@ -16,19 +9,25 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
+import { useTranslation } from "react-i18next";
 
 // 定義每個訂單的資料結構
 interface OrderType {
   id: string;
+  description: string;
+  startAfter: Date;
+  initPrice: number;
+  suggestPrice: number;
   suggestStartAddress: string;
   suggestEndAddress: string;
   updatedAt: Date;
   suggestStartAfter: Date;
-  status: String;
-  inviterName: string;
+  endedAt: Date;
+  status: string;
+  receiverName: string;
 }
 
-const OtherOrder = () => {
+const MyInvite = () => {
   const user = useSelector((state: RootState) => state.user);
   const [isLoading, setIsLoading] = useState(true);
   const [invites, setInvites] = useState<OrderType[]>([]);
@@ -37,6 +36,7 @@ const OtherOrder = () => {
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const getToken = async () => {
     try {
@@ -56,9 +56,9 @@ const OtherOrder = () => {
       url: string = "";
 
     if (user.role === "Passenger") {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/passenger/searchMyPaginationRidderInvites`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/passenger/searchMyPaginationPassengerInvites`;
     } else if (user.role === "Ridder") {
-      url = `${process.env.EXPO_PUBLIC_API_URL}/passengerInvite/ridder/searchMyPaginationPasssengerInvites`;
+      url = `${process.env.EXPO_PUBLIC_API_URL}/ridderInvite/ridder/searchMyPaginationRidderInvites`;
     }
 
     try {
@@ -82,9 +82,7 @@ const OtherOrder = () => {
         },
       });
 
-      setInvites((prevOrders) =>
-        newOffset === 0 ? response.data : [...prevOrders, ...response.data]
-      );
+      setInvites((prevOrders) => (newOffset === 0 ? response.data : [...prevOrders, ...response.data]));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -129,71 +127,53 @@ const OtherOrder = () => {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-          <FlashList
-            data={invites}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) =>
-              item.status == "CHECKING" ? (
-                <View key={item.id} style={styles.container}>
-                  <Pressable
-                    onPress={() =>
-                      navigation.navigate("otherinvitede", {
-                        orderid: item.id,
-                      })
-                    }
-                  >
-                    <View style={styles.card}>
-                      <View style={styles.header}>
-                        <Text style={styles.orderNumber}>
-                          邀請編號: {item.id}
-                        </Text>
-                      </View>
+        <FlashList
+          data={invites}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View key={item.id} style={styles.container}>
+              <Pressable onPress={() => navigation.navigate(...["myinvitede", { orderid: item.id }] as never)}>
+                <View style={styles.card}>
+                  <View style={styles.header}>
+                    <Text style={styles.orderNumber}>{t("invite id")}: {item.id}</Text>
+                  </View>
 
-                      <View style={styles.body}>
-                        <Text style={styles.title}>
-                          邀請人：{item.inviterName}
-                        </Text>
-                        <Text style={styles.title}>
-                          推薦起點：{item.suggestStartAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          推薦終點：{item.suggestEndAddress}
-                        </Text>
-                        <Text style={styles.title}>
-                          更新時間:{" "}
-                          {new Date(item.updatedAt).toLocaleString("en-GB", {
-                            timeZone: "Asia/Taipei",
-                          })}
-                        </Text>
-                      </View>
-                    </View>
-                  </Pressable>
+                  <View style={styles.body}>
+                    <Text style={styles.title}>{t("You invited")}：{item.receiverName}</Text>
+                    <Text style={styles.title}>{t("recommened starting point")}：{item.suggestStartAddress}</Text>
+                    <Text style={styles.title}>{t("recommened destination")}：{item.suggestEndAddress}</Text>
+                    <Text style={styles.title}>
+                      {t("update time")}:{" "}
+                      {new Date(item.updatedAt).toLocaleString("en-GB", {
+                        timeZone: "Asia/Taipei",
+                      })}
+                    </Text>
+                  </View>
                 </View>
-              ) : null
-            }
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            estimatedItemSize={282}
-            onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
-            onEndReachedThreshold={0.2}
-            ListFooterComponent={
-              isFetchingMore && invites.length >= 10 ? (
-                <View
-                  style={{
-                    marginTop: verticalScale(10),
-                    marginBottom: verticalScale(25),
-                  }}
-                >
-                  <ActivityIndicator size="large" color="black" />
-                </View>
-              ) : null
-            }
-            contentContainerStyle={{
-              paddingHorizontal: scale(20),
-              paddingVertical: verticalScale(15),
-            }}
-          />
+              </Pressable>
+            </View>
+          )}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          estimatedItemSize={282}
+          onEndReached={!isMax && !isFetchingMore ? loadMoreOrders : null}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={
+            isFetchingMore && invites.length >= 10 ? (
+              <View
+                style={{
+                  marginTop: verticalScale(10),
+                  marginBottom: verticalScale(25),
+                }}
+              >
+                <ActivityIndicator size="large" color="black" />
+              </View>
+            ) : null
+          }
+          contentContainerStyle={{
+            paddingHorizontal: scale(20),
+            paddingVertical: verticalScale(15),
+          }}
+        />
       )}
     </View>
   );
@@ -240,4 +220,4 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default OtherOrder;
+export default MyInvite;

@@ -37,7 +37,7 @@ const WelcomeScreen = () => {
         style={{
           backgroundColor: "#3498db",
           borderRadius: moderateScale(5),
-          height: verticalScale(50),
+          height: verticalScale(40),
           width: scale(60),
           justifyContent: "center",
           alignItems: "center",
@@ -80,6 +80,7 @@ const WelcomeScreen = () => {
             fontSize: moderateScale(32), // Equivalent to "text-4xl"
             paddingBottom: verticalScale(10),
             fontWeight: "bold",
+            textAlign: "center",
           }}
         >
           {t("welcomeMessage")}
@@ -100,7 +101,7 @@ const WelcomeScreen = () => {
           style={{
             width: "100%",
             height: verticalScale(40),
-            marginTop: verticalScale(100),
+            marginTop: verticalScale(40),
             justifyContent: "center",
             alignItems: "center",
             borderRadius: moderateScale(10), // Adjusting for rounded corners

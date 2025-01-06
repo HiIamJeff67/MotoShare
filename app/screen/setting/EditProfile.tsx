@@ -22,8 +22,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
-import { RootState } from "../../(store)/";
+import { RootState } from "../../(store)";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import { useTranslation } from "react-i18next";
 
 const EditableInput = ({
   label,
@@ -77,6 +78,7 @@ const EditProfile = () => {
   const [avatar, setAvatar] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.user);
   const translateY = useRef(new Animated.Value(0)).current;
+  const {t} = useTranslation();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -108,7 +110,7 @@ const EditProfile = () => {
     setIsUploadLoading(true);
 
     if (!image) {
-      Alert.alert("失敗", "請先選擇一張圖片！", [
+      Alert.alert(t("failed"), t("choose picture"), [
         {
           onPress: () => {
             setIsUploadLoading(false);
@@ -251,7 +253,7 @@ const EditProfile = () => {
             keyboardShouldPersistTaps="handled"
           >
             <View style={styles.headerContainer}>
-              <Text style={styles.headerText}>更新個人資料</Text>
+              <Text style={styles.headerText}>{t("update profile")}</Text>
             </View>
 
             <View style={styles.profileHeader}>
@@ -260,18 +262,18 @@ const EditProfile = () => {
 
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
               <Pressable style={styles.imageButton} onPress={pickImage} disabled={isUploadLoading}>
-                <Text style={styles.imageButtonText}>選擇圖片</Text>
+                <Text style={styles.imageButtonText}>{t("choose image")}</Text>
               </Pressable>
               <Pressable style={styles.imageButton} onPress={uploadImage} disabled={isUploadLoading}>
-                <Text style={styles.imageButtonText}>{isUploadLoading ? <ActivityIndicator size="large" /> : "上傳圖片"}</Text>
+                <Text style={styles.imageButtonText}>{isUploadLoading ? <ActivityIndicator size="large" /> : t("upload image")}</Text>
               </Pressable>
             </View>
 
-            <EditableInput label="使用者名稱" value={username} setValue={setUsername} placeholder="使用者名稱" isEditable={false} />
-            <EditableInput label="電子郵件" value={email} setValue={setEmail} placeholder="電子郵件" />
-            <EditableInput label="手機" value={phone} setValue={setPhone} placeholder="手機" />
-            <EditableInput label="年齡" value={age} setValue={setAge} placeholder="年齡" />
-            <EditableInput label="自我介紹" value={description} setValue={setDescription} placeholder="自我介紹" />
+            <EditableInput label={t("userName")} value={username} setValue={setUsername} placeholder={t("userName")} isEditable={false} />
+            <EditableInput label={t("email")} value={email} setValue={setEmail} placeholder={t("email")} />
+            <EditableInput label={t("phone number")} value={phone} setValue={setPhone} placeholder={t("phone number")} />
+            <EditableInput label={t("Age")} value={age} setValue={setAge} placeholder={t("Age")} />
+            <EditableInput label={t("Introduction")} value={description} setValue={setDescription} placeholder={t("Introduction")} />
           </ScrollView>
         </Animated.View>
       )}

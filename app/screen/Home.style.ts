@@ -25,12 +25,12 @@ export const HomeScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
       overflow: "hidden",
       shadowColor: "#000",
       shadowOffset: {
-        width: scale(2),
-        height: verticalScale(2),
+        width: scale(0),
+        height: verticalScale(10),
       },
-      shadowOpacity: 0.15,
+      shadowOpacity: 1,
       shadowRadius: moderateScale(3.84),
-      elevation: 5,
+      elevation:10,
     },
     map: {
       width: "100%",

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef, useMemo } from "react"
 import { View, StyleSheet, Alert, Text, Platform, Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
-import { RootState } from "../../(store)/";
+import { RootState } from "../../(store)";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
