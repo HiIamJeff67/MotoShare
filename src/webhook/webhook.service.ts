@@ -43,16 +43,19 @@ export class WebhookService {
     amount: number, 
   ) {
     return await this.db.transaction(async (tx) => {
-      let responseOfSelectingPassengerBank: any = await tx.select({
+      const responseOfSelectingPassengerBank: any = await tx.select({
         balance: PassengerBankTable.balance, 
       }).from(PassengerBankTable)
         .where(eq(PassengerBankTable.customerId, customerId));
+
       if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
         throw ClientPassengerBankNotFoundException;
       }
 
+      const currentBalance = responseOfSelectingPassengerBank[0].balance;
+
       return await tx.update(PassengerBankTable).set({
-        balance: sql`${responseOfSelectingPassengerBank[0].balance} + ${amount}`, 
+        balance: sql`${currentBalance} + ${amount}`,
         updatedAt: new Date(), 
       }).where(eq(PassengerBankTable.customerId, customerId))
         .returning({
@@ -66,16 +69,19 @@ export class WebhookService {
     amount: number, 
   ) {
     return await this.db.transaction(async (tx) => {
-      let responseOfSelectingRidderBank: any = await tx.select({
+      const responseOfSelectingRidderBank: any = await tx.select({
         balance: RidderBankTable.balance, 
       }).from(RidderBankTable)
         .where(eq(RidderBankTable.customerId, customerId));
+
       if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
-          throw ClientRidderBankNotFoundException;
+        throw ClientRidderBankNotFoundException;
       }
 
+      const currentBalance = responseOfSelectingRidderBank[0].balance;
+
       return await tx.update(RidderBankTable).set({
-        balance: responseOfSelectingRidderBank[0].balance + amount, 
+        balance: sql`${currentBalance} + ${amount}`,
         updatedAt: new Date(), 
       }).where(eq(RidderBankTable.customerId, customerId))
         .returning({
