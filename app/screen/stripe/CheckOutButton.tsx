@@ -1,8 +1,7 @@
 import { Text, TouchableHighlight } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
-export default function CheckoutButton(
-  props: React.ComponentProps<typeof TouchableHighlight> & { title: string }
-) {
+export default function CheckOutButton(props: React.ComponentProps<typeof TouchableHighlight> & { title: string }) {
   return (
     <TouchableHighlight
       underlayColor={"#18191E"}
@@ -11,8 +10,8 @@ export default function CheckoutButton(
         {
           backgroundColor: "#000",
           justifyContent: "center",
-          padding: 12,
-          borderRadius: 8,
+          padding: moderateScale(12),
+          borderRadius: moderateScale(8),
         },
         props.style,
       ]}
@@ -21,7 +20,7 @@ export default function CheckoutButton(
         style={{
           color: "white",
           fontWeight: "600",
-          fontSize: 20,
+          fontSize: moderateScale(20),
           textAlign: "center",
         }}
       >

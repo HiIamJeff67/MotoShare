@@ -26,6 +26,7 @@ import Settings from "./screen/setting/Settings";
 import UserSearch from "./screen/user/Search";
 import MyCreateOrder from "./screen/setting/MyCreateOrder";
 import MyCreateOrderDe from "./screen/setting/MyCreateOrderDe";
+import PaymentScreen from "./screen/stripe/Payment";
 import store from "./(store)";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -51,6 +52,7 @@ import ResetEmailPassword from "./screen/setting/ResetEmailPassword";
 import Report from "./screen/setting/Report";
 import MyPreferences from "./screen/setting/MyPreferences";
 import ResetPasswordScreen from "./screen/auth/ForgetPasswordScreen";
+import StripeProvider from "@/app/component/Stripe/StripeProvider";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -270,148 +272,171 @@ function AppContent() {
 
   return (
     <NavigationContainer theme={theme}>
-      <SafeAreaProvider>
-        {/* 根據平台條件設置 StatusBar */}
-        {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
-        <Stack.Navigator>
-          <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="home" component={TabNavigator} options={{ headerShown: false }} />
-          <Stack.Screen name="choose" component={ChooseScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
-          <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="forgetPassword" component={ResetPasswordScreen} options={{ headerShown: false }}/>
-          <Stack.Screen
-            name="editprofile"
-            component={EditProfile}
-            options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Update Profile") }}
-          />
-          <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}/>
-          <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }} />
-          <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
-          <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
-          <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }} />
-          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }} />
-          <Stack.Screen
-            name="mycreateorder"
-            component={MyCreateOrder}
-            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單" }}
-          />
-          <Stack.Screen
-            name="mycreateorderde"
-            component={MyCreateOrderDe}
-            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單詳情" }}
-          />
-          <Stack.Screen
-            name="invitemap"
-            component={InviteMap}
-            options={({ navigation }) => ({
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: "transparent", // 設定 header 背景透明
-              },
-              headerTransparent: true, // 確保背景完全透明
-              headerTitle: "", // 移除標題文字
-              headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
-            })}
-          />
-          <Stack.Screen
-            name="myorder"
-            component={TopTabNavigator}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              title: t("myorder"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="myinvite"
-            component={TopTabNavigator2}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              title: t("invite"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="myorderde"
-            component={MyOrderDeScreen}
-            options={{
-              headerShown: true,
-              title: t("detail"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="myorderhisde"
-            component={MyOrderHisDeScreen}
-            options={{
-              headerShown: true,
-              title: t("detail"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="myinvitede"
-            component={MyInviteDeScreen}
-            options={{
-              headerShown: true,
-              title: t("detail"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="otherinvitede"
-            component={OtherInviteDeScreen}
-            options={{
-              headerShown: true,
-              title: t("detail"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="order"
-            component={OrderScreen}
-            options={{
-              headerShown: true,
-              title: t("order"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="orderdetail"
-            component={OrderDetailScreen}
-            options={{
-              headerShown: true,
-              title: t("detail"),
-              headerTitleAlign: "center",
-              headerBackTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="map"
-            component={MapScreen}
-            options={({ navigation }) => ({
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: "transparent", // 設定 header 背景透明
-              },
-              headerTransparent: true,
-              headerTitle: "",
-              headerLeft: () => <CustomBackHeader navigation={navigation} />,
-            })}
-          />
-        </Stack.Navigator>
-      </SafeAreaProvider>
+      <StripeProvider>
+        <SafeAreaProvider>
+          {/* 根據平台條件設置 StatusBar */}
+          {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : <StatusBar barStyle="light-content" hidden={true} />}
+          <Stack.Navigator>
+            <Stack.Screen name="welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="home" component={TabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="choose" component={ChooseScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
+            <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="payment" component={PaymentScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="forgetPassword" component={ResetPasswordScreen} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="editprofile"
+              component={EditProfile}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Update Profile") }}
+            />
+            <Stack.Screen
+              name="mypreferences"
+              component={MyPreferences}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}
+            />
+            <Stack.Screen
+              name="bindings"
+              component={Bindings}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }}
+            />
+            <Stack.Screen
+              name="resetemailpassword"
+              component={ResetEmailPassword}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }}
+            />
+            <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
+            <Stack.Screen
+              name="settings"
+              component={Settings}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }}
+            />
+            <Stack.Screen
+              name="usersearch"
+              component={UserSearch}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }}
+            />
+            <Stack.Screen
+              name="mycreateorder"
+              component={MyCreateOrder}
+              options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單" }}
+            />
+            <Stack.Screen
+              name="mycreateorderde"
+              component={MyCreateOrderDe}
+              options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單詳情" }}
+            />
+            <Stack.Screen
+              name="invitemap"
+              component={InviteMap}
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "transparent", // 設定 header 背景透明
+                },
+                headerTransparent: true, // 確保背景完全透明
+                headerTitle: "", // 移除標題文字
+                headerLeft: () => <CustomBackHeader navigation={navigation} />, // 傳遞 navigation
+              })}
+            />
+            <Stack.Screen
+              name="myorder"
+              component={TopTabNavigator}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                title: t("myorder"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="myinvite"
+              component={TopTabNavigator2}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                title: t("invite"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="myorderde"
+              component={MyOrderDeScreen}
+              options={{
+                headerShown: true,
+                title: t("detail"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="myorderhisde"
+              component={MyOrderHisDeScreen}
+              options={{
+                headerShown: true,
+                title: t("detail"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="myinvitede"
+              component={MyInviteDeScreen}
+              options={{
+                headerShown: true,
+                title: t("detail"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="otherinvitede"
+              component={OtherInviteDeScreen}
+              options={{
+                headerShown: true,
+                title: t("detail"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="order"
+              component={OrderScreen}
+              options={{
+                headerShown: true,
+                title: t("order"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="orderdetail"
+              component={OrderDetailScreen}
+              options={{
+                headerShown: true,
+                title: t("detail"),
+                headerTitleAlign: "center",
+                headerBackTitle: "",
+              }}
+            />
+            <Stack.Screen
+              name="map"
+              component={MapScreen}
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "transparent", // 設定 header 背景透明
+                },
+                headerTransparent: true,
+                headerTitle: "",
+                headerLeft: () => <CustomBackHeader navigation={navigation} />,
+              })}
+            />
+          </Stack.Navigator>
+        </SafeAreaProvider>
+      </StripeProvider>
     </NavigationContainer>
   );
 }

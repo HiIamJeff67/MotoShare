@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 import * as Linking from "expo-linking";
 import { useEffect, useState } from "react";
 import { useStripe } from "@stripe/stripe-react-native";
-import CheckoutButton from "./checkout-button";
+import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
@@ -27,10 +27,10 @@ async function fetchPaymentSheetParams() {
     throw new Error("Unable to get token");
   }
 
-  let url: string = `${process.env.EXPO_PUBLIC_API_URL}/api/payment-sheet`;
+  let url: string = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/getCustomerId`;
 
   try {
-    const response = await axios.post(url, null, {
+    const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`, // 放在 headers 中
       },
@@ -55,11 +55,12 @@ export default function CheckoutScreen() {
   const [loading, setLoading] = useState(false);
 
   const initializePaymentSheet = async () => {
-    const { paymentIntent, ephemeralKey, customer } = await fetchPaymentSheetParams();
+    const paymentSheetParams = await fetchPaymentSheetParams();
+    const { paymentIntent, ephemeralKey, customer } = paymentSheetParams;
 
     // Use Mock payment data: https://docs.stripe.com/payments/accept-a-payment?platform=react-native&ui=payment-sheet#react-native-test
     const { error } = await initPaymentSheet({
-      merchantDisplayName: "Expo, Inc.",
+      merchantDisplayName: "MotoShare, Inc.",
 
       customerId: customer,
       customerEphemeralKeySecret: ephemeralKey,
@@ -68,9 +69,9 @@ export default function CheckoutScreen() {
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
       allowsDelayedPaymentMethods: true,
       defaultBillingDetails: {
-        name: "Jane Doe",
-        email: "jenny.rosen@example.com",
-        phone: "888-888-8888",
+        name: "MotoShare, Inc.",
+        email: "motoshare767@gmail.com",
+        phone: "0958123456",
       },
       returnURL: Linking.createURL("stripe-redirect"),
 
@@ -78,6 +79,10 @@ export default function CheckoutScreen() {
       // https://docs.stripe.com/payments/accept-a-payment?platform=react-native&ui=payment-sheet#add-apple-pay
       applePay: {
         merchantCountryCode: "US",
+      },
+      googlePay: {
+        merchantCountryCode: "US",
+        testEnv: true, // use test environment
       },
     });
     if (!error) {
@@ -89,7 +94,7 @@ export default function CheckoutScreen() {
     const { error } = await presentPaymentSheet();
 
     if (error) {
-      // Alert.alert(`Error code: ${error.code}`, error.message);
+      Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert("Success", "Your order is confirmed!");
     }
@@ -99,5 +104,5 @@ export default function CheckoutScreen() {
     initializePaymentSheet();
   }, []);
 
-  return <CheckoutButton style={{}} onPress={openPaymentSheet} disabled={!loading} title="Checkout" />;
+  return <CheckOutButton style={{}} onPress={openPaymentSheet} disabled={!loading} title="Checkout" />;
 }

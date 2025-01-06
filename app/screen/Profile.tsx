@@ -203,7 +203,7 @@ const Profile = () => {
       ...(user.auth && {badge: `${Math.max(0, numberOfAuths - Object.values(user.auth).filter(value => value === true).length)}`}), 
       callback: () => navigation.navigate("bindings"  as never), 
     }, 
-    { id: "8", label: "儲值帳戶餘額",  }, 
+    { id: "8", label: "儲值帳戶餘額", callback: () => navigation.navigate("payment" as never) }, 
     { id: "9", label: "系統設置", callback: () => navigation.navigate("settings" as never) },
     { id: "10", label: "重設信箱與密碼", callback: () => navigation.navigate("resetemailpassword" as never) }, 
     { id: "11", label: "回報", callback: () => navigation.navigate("report" as never) }, 
