@@ -53,9 +53,10 @@ export class WebhookService {
       }
 
       const currentBalance = responseOfSelectingPassengerBank[0].balance;
+      const newBalance = currentBalance + amount;
 
       return await tx.update(PassengerBankTable).set({
-        balance: sql`${currentBalance} + ${amount}`,
+        balance: newBalance,
         updatedAt: new Date(), 
       }).where(eq(PassengerBankTable.customerId, customerId))
         .returning({
@@ -79,9 +80,10 @@ export class WebhookService {
       }
 
       const currentBalance = responseOfSelectingRidderBank[0].balance;
+      const newBalance = currentBalance + amount;
 
       return await tx.update(RidderBankTable).set({
-        balance: sql`${currentBalance} + ${amount}`,
+        balance: newBalance,
         updatedAt: new Date(), 
       }).where(eq(RidderBankTable.customerId, customerId))
         .returning({
@@ -114,7 +116,6 @@ export class WebhookService {
         response = await this.receiveSucceededStripePaymentIntent(event.data.object as Stripe.PaymentIntent);
         break;
       default:
-        throw new Error(event.type + "\n" + String(event));
         throw ApiStripeWebhookUnhandleExcpetion;
     }
 

@@ -1,8 +1,4 @@
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -99,7 +95,7 @@ var WebhookService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingPassengerBank;
+                            var responseOfSelectingPassengerBank, currentBalance, newBalance;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
@@ -111,8 +107,10 @@ var WebhookService = /** @class */ (function () {
                                         if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
                                             throw exceptions_1.ClientPassengerBankNotFoundException;
                                         }
+                                        currentBalance = responseOfSelectingPassengerBank[0].balance;
+                                        newBalance = currentBalance + amount;
                                         return [4 /*yield*/, tx.update(passengerBank_schema_1.PassengerBankTable).set({
-                                                balance: drizzle_orm_1.sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["", " + ", ""], ["", " + ", ""])), responseOfSelectingPassengerBank[0].balance, amount),
+                                                balance: newBalance,
                                                 updatedAt: new Date()
                                             }).where(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.customerId, customerId))
                                                 .returning({
@@ -133,7 +131,7 @@ var WebhookService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingRidderBank;
+                            var responseOfSelectingRidderBank, currentBalance, newBalance;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
@@ -145,8 +143,10 @@ var WebhookService = /** @class */ (function () {
                                         if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
                                             throw exceptions_1.ClientRidderBankNotFoundException;
                                         }
+                                        currentBalance = responseOfSelectingRidderBank[0].balance;
+                                        newBalance = currentBalance + amount;
                                         return [4 /*yield*/, tx.update(ridderBank_schema_1.RidderBankTable).set({
-                                                balance: responseOfSelectingRidderBank[0].balance + amount,
+                                                balance: newBalance,
                                                 updatedAt: new Date()
                                             }).where(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.customerId, customerId))
                                                 .returning({
@@ -185,7 +185,7 @@ var WebhookService = /** @class */ (function () {
                     case 2:
                         response = _b.sent();
                         return [3 /*break*/, 4];
-                    case 3: throw new Error(event.type + "\n" + String(event));
+                    case 3: throw exceptions_1.ApiStripeWebhookUnhandleExcpetion;
                     case 4: return [2 /*return*/, response];
                 }
             });
@@ -199,4 +199,3 @@ var WebhookService = /** @class */ (function () {
     return WebhookService;
 }());
 exports.WebhookService = WebhookService;
-var templateObject_1;
