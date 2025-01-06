@@ -1,4 +1,4 @@
-import { BadRequestException, InternalServerErrorException, NotAcceptableException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, InternalServerErrorException, NotAcceptableException, NotFoundException } from "@nestjs/common";
 export declare const ApiMissingParameterException: BadRequestException;
 export declare const ApiMissingBodyOrWrongDtoException: BadRequestException;
 export declare const ApiWrongSearchPriorityTypeException: BadRequestException;
@@ -6,6 +6,9 @@ export declare const ApiSearchingLimitTooLargeException: (maxLimit: number) => N
 export declare const ApiSearchingLimitLessThanZeroException: (minLimit: number) => NotAcceptableException;
 export declare const ApiPrevOrderIdFormException: NotAcceptableException;
 export declare const ApiISOStringFormException: NotAcceptableException;
+export declare const ApiWrongWebhookSignatureException: NotAcceptableException;
+export declare const ApiEndpointEnvVarNotFoundException: NotFoundException;
+export declare const ApiStripeWebhookUnhandleExcpetion: ForbiddenException;
 export declare const ApiGeneratingBearerTokenException: InternalServerErrorException;
 export declare const ApiGenerateAuthCodeException: InternalServerErrorException;
 export declare const ApiSendEmailForValidationException: InternalServerErrorException;

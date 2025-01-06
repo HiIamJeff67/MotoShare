@@ -97,4 +97,5 @@ export declare const PassengerRelation: import("drizzle-orm").Relations<"passeng
     preferencedBy: import("drizzle-orm").Many<"ridderPreferences">;
     periodicPurchaseOrders: import("drizzle-orm").Many<"periodicPurchaseOrder">;
     record: import("drizzle-orm").One<"passengerRecord", false>;
+    bank: import("drizzle-orm").One<"passengerBank", false>;
 }>;

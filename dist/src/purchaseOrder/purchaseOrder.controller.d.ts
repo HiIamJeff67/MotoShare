@@ -10,7 +10,7 @@ export declare class PurchaseOrderController {
     private readonly purchaseOrderService;
     constructor(purchaseOrderService: PurchaseOrderService);
     createPurchaseOrder(passenger: PassengerType, createPurchaseOrderDto: CreatePurchaseOrderDto, response: Response): Promise<void>;
-    getPurchaseOrderById(ridder: RidderType, id: string, response: Response): Promise<void>;
+    getPurchaseOrderById(id: string, response: Response): Promise<void>;
     searchMyPurchaseOrders(passenger: PassengerType, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchPaginationPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;
     searchAboutToStartPurchaseOrders(creatorName: string | undefined, limit: string | undefined, offset: string | undefined, isAutoAccept: string | undefined, response: Response): Promise<void>;

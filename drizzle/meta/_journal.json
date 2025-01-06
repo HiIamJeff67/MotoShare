@@ -316,6 +316,13 @@
       "when": 1736179942895,
       "tag": "0044_windy_bloodstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1736184267807,
+      "tag": "0045_sticky_darkstar",
+      "breakpoints": true
     }
   ]
 }

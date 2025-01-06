@@ -40,6 +40,7 @@ const ridderRecord_module_1 = require("./ridderRecord/ridderRecord.module");
 const stripe_module_1 = require("./stripe/stripe.module");
 const passengerBank_module_1 = require("./passengerBank/passengerBank.module");
 const ridderBank_module_1 = require("./ridderBank/ridderBank.module");
+const webhook_module_1 = require("./webhook/webhook.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -89,6 +90,7 @@ exports.AppModule = AppModule = __decorate([
             ridderRecord_module_1.RidderRecordModule,
             passengerBank_module_1.PassengerBankModule,
             ridderBank_module_1.RidderBankModule,
+            webhook_module_1.WebhookModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -96,4 +96,6 @@ export declare const RidderRelation: import("drizzle-orm").Relations<"ridder", {
     preferences: import("drizzle-orm").Many<"ridderPreferences">;
     preferencedBy: import("drizzle-orm").Many<"passengerPreferences">;
     periodicSupplyOrders: import("drizzle-orm").Many<"periodicSupplyOrder">;
+    record: import("drizzle-orm").One<"ridderRecord", false>;
+    bank: import("drizzle-orm").One<"ridderBank", false>;
 }>;

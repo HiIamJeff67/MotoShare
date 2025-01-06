@@ -1,9 +1,9 @@
-import { doublePrecision, index, pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { doublePrecision, index, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { PassengerTable } from "./passenger.schema";
 import { relations } from "drizzle-orm";
 
 export const PassengerBankTable = pgTable("passengerBank", {
-    customerId: uuid("customerId").primaryKey(), // WITHOUT default value
+    customerId: text("customerId").primaryKey(), // WITHOUT default value
     userId: uuid("userId").references(() => PassengerTable.id, {
         onDelete: 'cascade', 
     }).notNull().unique(), 

@@ -80,7 +80,7 @@ export declare class RidderService {
                     y: number;
                 };
                 startAfter: Date;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 isUrgent: boolean;
                 creator: {
                     userName: string;

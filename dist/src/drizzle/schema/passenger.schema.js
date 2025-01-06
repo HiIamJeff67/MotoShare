@@ -29,5 +29,6 @@ exports.PassengerRelation = (0, drizzle_orm_1.relations)(exports.PassengerTable,
     preferencedBy: many(schema_1.RidderPreferences),
     periodicPurchaseOrders: many(schema_1.PeriodicPurchaseOrderTable),
     record: one(schema_1.PassengerRecordTable),
+    bank: one(schema_1.PassengerBankTable),
 }));
 //# sourceMappingURL=passenger.schema.js.map

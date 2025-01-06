@@ -18,7 +18,7 @@ export class PassengerBankController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Post('/getCustomerId')
+  @Get('/getCustomerId')
   async getCustomerId(
     @Passenger() passenger: PassengerType, 
     @Res() response: Response, 
@@ -28,6 +28,7 @@ export class PassengerBankController {
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
+      console.log(error);
       response.status(error.status).send({
         case: error.case, 
         message: error.message, 

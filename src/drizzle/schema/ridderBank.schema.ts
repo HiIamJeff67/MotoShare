@@ -1,9 +1,9 @@
-import { doublePrecision, index, pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { doublePrecision, index, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { RidderTable } from "./ridder.schema";
 import { relations } from "drizzle-orm";
 
 export const RidderBankTable = pgTable("ridderBank", {
-    customerId: uuid("customerId").primaryKey(), // WITHOUT default value
+    customerId: text("customerId").primaryKey(), // WITHOUT default value
     userId: uuid("userId").references(() => RidderTable.id, {
         onDelete: 'cascade', 
     }).notNull().unique(), 

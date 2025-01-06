@@ -39,7 +39,7 @@ export class PassengerBankService {
           { apiVersion: '2024-12-18.acacia' }
         );
         const paymentIntent = await this.stripe.paymentIntents.create({
-          amount: 0,
+          amount: 100 * 100,
           currency: 'usd',
           customer: customer.id,
           automatic_payment_methods: {

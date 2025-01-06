@@ -52,7 +52,7 @@ let PurchaseOrderController = class PurchaseOrderController {
             });
         }
     }
-    async getPurchaseOrderById(ridder, id, response) {
+    async getPurchaseOrderById(id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -377,13 +377,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "createPurchaseOrder", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
     (0, common_1.Get)('getPurchaseOrderById'),
-    __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Query)('id')),
-    __param(2, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.RidderType, String, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PurchaseOrderController.prototype, "getPurchaseOrderById", null);
 __decorate([

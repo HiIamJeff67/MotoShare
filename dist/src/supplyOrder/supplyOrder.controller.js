@@ -51,7 +51,7 @@ let SupplyOrderController = class SupplyOrderController {
             });
         }
     }
-    async getSupplyOrderById(passenger, id, response) {
+    async getSupplyOrderById(id, response) {
         try {
             if (!id) {
                 throw exceptions_1.ApiMissingParameterException;
@@ -373,13 +373,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "createSupplyOrder", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtPassengerGuard, guard_1.JwtRidderGuard])),
     (0, common_1.Get)('getSupplyOrderById'),
-    __param(0, (0, decorator_1.Passenger)()),
-    __param(1, (0, common_1.Query)('id')),
-    __param(2, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_interface_1.PassengerType, String, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], SupplyOrderController.prototype, "getSupplyOrderById", null);
 __decorate([

@@ -17,20 +17,63 @@ const common_1 = require("@nestjs/common");
 const constants_1 = require("../stripe/constants");
 const stripe_1 = require("stripe");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const passengerBank_schema_1 = require("../drizzle/schema/passengerBank.schema");
+const config_1 = require("@nestjs/config");
+const exceptions_1 = require("../exceptions");
+const drizzle_orm_1 = require("drizzle-orm");
 let PassengerBankService = class PassengerBankService {
-    constructor(stripe, db) {
+    constructor(config, stripe, db) {
+        this.config = config;
         this.stripe = stripe;
         this.db = db;
     }
     async listStripeCostomers() {
         return this.stripe.customers.list();
     }
+    async getPassengerBankByUserId(userId) {
+        return await this.db.transaction(async (tx) => {
+            const responseOfSelectingPassengerBank = await tx.select({
+                customerId: passengerBank_schema_1.PassengerBankTable.customerId,
+            }).from(passengerBank_schema_1.PassengerBankTable)
+                .where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId))
+                .limit(1);
+            if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
+                const customer = await this.stripe.customers.create();
+                const ephemeralKey = await this.stripe.ephemeralKeys.create({ customer: customer.id }, { apiVersion: '2024-12-18.acacia' });
+                const paymentIntent = await this.stripe.paymentIntents.create({
+                    amount: 100 * 100,
+                    currency: 'usd',
+                    customer: customer.id,
+                    automatic_payment_methods: {
+                        enabled: true,
+                    },
+                });
+                const responseOfCreatingPassengerBank = await tx.insert(passengerBank_schema_1.PassengerBankTable).values({
+                    customerId: customer.id,
+                    userId: userId,
+                }).returning({
+                    balance: passengerBank_schema_1.PassengerBankTable.balance,
+                });
+                if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
+                    throw exceptions_1.ClientCreatePassengerBankException;
+                }
+                return {
+                    paymentIntent: paymentIntent.client_secret,
+                    ephemeralKey: ephemeralKey.secret,
+                    customer: customer.id,
+                    publishableKey: this.config.get("STRIPE_PK_API_KEY"),
+                };
+            }
+            return responseOfSelectingPassengerBank;
+        });
+    }
 };
 exports.PassengerBankService = PassengerBankService;
 exports.PassengerBankService = PassengerBankService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(constants_1.STRIPE_CLIENT)),
-    __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
-    __metadata("design:paramtypes", [stripe_1.default, Object])
+    __param(1, (0, common_1.Inject)(constants_1.STRIPE_CLIENT)),
+    __param(2, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        stripe_1.default, Object])
 ], PassengerBankService);
 //# sourceMappingURL=passengerBank.service.js.map

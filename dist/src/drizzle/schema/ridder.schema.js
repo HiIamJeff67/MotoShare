@@ -28,5 +28,7 @@ exports.RidderRelation = (0, drizzle_orm_1.relations)(exports.RidderTable, ({ on
     preferences: many(schema_1.RidderPreferences),
     preferencedBy: many(schema_1.PassengerPreferences),
     periodicSupplyOrders: many(schema_1.PeriodicSupplyOrderTable),
+    record: one(schema_1.RidderRecordTable),
+    bank: one(schema_1.RidderBankTable),
 }));
 //# sourceMappingURL=ridder.schema.js.map

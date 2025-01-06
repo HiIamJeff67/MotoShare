@@ -1,6 +1,90 @@
-export declare const PassengerBank: import("drizzle-orm/pg-core").PgTableWithColumns<{
+export declare const PassengerBankTable: import("drizzle-orm/pg-core").PgTableWithColumns<{
     name: "passengerBank";
     schema: undefined;
-    columns: {};
+    columns: {
+        customerId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "customerId";
+            tableName: "passengerBank";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        userId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "userId";
+            tableName: "passengerBank";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        balance: import("drizzle-orm/pg-core").PgColumn<{
+            name: "balance";
+            tableName: "passengerBank";
+            dataType: "number";
+            columnType: "PgDoublePrecision";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "createdAt";
+            tableName: "passengerBank";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "updatedAt";
+            tableName: "passengerBank";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            generated: undefined;
+        }, {}, {}>;
+    };
     dialect: "pg";
+}>;
+export declare const PassengerBankRelation: import("drizzle-orm").Relations<"passengerBank", {
+    user: import("drizzle-orm").One<"passenger", true>;
 }>;
