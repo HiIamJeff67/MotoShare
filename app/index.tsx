@@ -17,7 +17,7 @@ import MyOrderDeScreen from "./screen/myorder/MyOrderDe";
 import MyOrderHisScreen from "./screen/myorder/MyOrderHis";
 import MyOrderHisDeScreen from "./screen/myorder/MyOrderHisDe";
 import MyInviteScreen from "./screen/invite/MyInvite";
-import MyInviteDeScreen from "./screen/invite/MyInvitede";
+import MyInviteDeScreen from "./screen/invite/MyInviteDe";
 import OtherInviteScreen from "./screen/invite/OtherInvite";
 import OtherInviteDeScreen from "./screen/invite/OtherInviteDe";
 import InviteMap from "./screen/invite/InviteMap";
