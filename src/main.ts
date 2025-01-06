@@ -2,7 +2,6 @@ import "dotenv/config"
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from "@nestjs/common";
-import rawBody from 'raw-body';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +12,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.use('/webhook', (req, res, next) => {
+  app.use('/webhook', async (req, res, next) => {
+    const rawBody = await req.text()
     const stripeSignature = req.headers['stripe-signature'];
     if (stripeSignature) {
       req.setEncoding('utf8'); // 確保正確的字元編碼
