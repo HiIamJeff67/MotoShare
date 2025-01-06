@@ -65,12 +65,11 @@ var WebhookService = /** @class */ (function () {
     /* ================================= Receive Stripe operation ================================= */
     WebhookService.prototype.receiveSucceededStripePaymentIntent = function (paymentIntent) {
         return __awaiter(this, void 0, void 0, function () {
-            var userRole, userId, amount, customerId, response, _a;
+            var userRole, amount, customerId, response, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         userRole = paymentIntent.metadata.userRole;
-                        userId = paymentIntent.metadata.userId;
                         amount = paymentIntent.amount;
                         customerId = paymentIntent.customer;
                         response = undefined;
@@ -80,12 +79,12 @@ var WebhookService = /** @class */ (function () {
                             case "Ridder": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 4];
-                    case 1: return [4 /*yield*/, this._updatePassengerBank(customerId, userId, amount)];
+                    case 1: return [4 /*yield*/, this._updatePassengerBank(customerId, amount)];
                     case 2:
                         response = _b.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        response = this._updateRidderBank(customerId, userId, amount);
+                        response = this._updateRidderBank(customerId, amount);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];
                 }
@@ -94,44 +93,32 @@ var WebhookService = /** @class */ (function () {
     };
     /* ================================= Receive Stripe operation ================================= */
     /* ================================= Update Database operation ================================= */
-    WebhookService.prototype._updatePassengerBank = function (customerId, userId, amount) {
+    WebhookService.prototype._updatePassengerBank = function (customerId, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingPassengerBank, responseOfCreatingPassengerBank;
+                            var responseOfSelectingPassengerBank;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
                                             balance: passengerBank_schema_1.PassengerBankTable.balance
                                         }).from(passengerBank_schema_1.PassengerBankTable)
-                                            .where(drizzle_orm_1.and(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.customerId, customerId), drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.userId, userId)))];
+                                            .where(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.customerId, customerId))];
                                     case 1:
                                         responseOfSelectingPassengerBank = _a.sent();
-                                        if (!(!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0)) return [3 /*break*/, 3];
-                                        return [4 /*yield*/, tx.insert(passengerBank_schema_1.PassengerBankTable).values({
-                                                customerId: customerId,
-                                                userId: userId,
-                                                balance: amount
-                                            }).returning({
+                                        if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
+                                            throw exceptions_1.ClientPassengerBankNotFoundException;
+                                        }
+                                        return [4 /*yield*/, tx.update(passengerBank_schema_1.PassengerBankTable).set({
+                                                balance: drizzle_orm_1.sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["", " + ", ""], ["", " + ", ""])), responseOfSelectingPassengerBank[0].balance, amount),
+                                                updatedAt: new Date()
+                                            }).where(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.customerId, customerId))
+                                                .returning({
                                                 balance: passengerBank_schema_1.PassengerBankTable.balance
                                             })];
-                                    case 2:
-                                        responseOfCreatingPassengerBank = _a.sent();
-                                        if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
-                                            throw exceptions_1.ClientCreatePassengerBankException;
-                                        }
-                                        responseOfSelectingPassengerBank = responseOfCreatingPassengerBank;
-                                        _a.label = 3;
-                                    case 3: return [4 /*yield*/, tx.update(passengerBank_schema_1.PassengerBankTable).set({
-                                            balance: drizzle_orm_1.sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["", " + ", ""], ["", " + ", ""])), responseOfSelectingPassengerBank[0].balance, amount),
-                                            updatedAt: new Date()
-                                        }).where(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.customerId, customerId))
-                                            .returning({
-                                            balance: passengerBank_schema_1.PassengerBankTable.balance
-                                        })];
-                                    case 4: return [2 /*return*/, _a.sent()];
+                                    case 2: return [2 /*return*/, _a.sent()];
                                 }
                             });
                         }); })];
@@ -140,44 +127,32 @@ var WebhookService = /** @class */ (function () {
             });
         });
     };
-    WebhookService.prototype._updateRidderBank = function (customerId, userId, amount) {
+    WebhookService.prototype._updateRidderBank = function (customerId, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingRidderBank, responseOfCreatingRidderBank;
+                            var responseOfSelectingRidderBank;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
                                             balance: ridderBank_schema_1.RidderBankTable.balance
                                         }).from(ridderBank_schema_1.RidderBankTable)
-                                            .where(drizzle_orm_1.and(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.customerId, customerId), drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.userId, userId)))];
+                                            .where(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.customerId, customerId))];
                                     case 1:
                                         responseOfSelectingRidderBank = _a.sent();
-                                        if (!(!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0)) return [3 /*break*/, 3];
-                                        return [4 /*yield*/, tx.insert(ridderBank_schema_1.RidderBankTable).values({
-                                                customerId: customerId,
-                                                userId: userId,
-                                                balance: amount
-                                            }).returning({
+                                        if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
+                                            throw exceptions_1.ClientRidderBankNotFoundException;
+                                        }
+                                        return [4 /*yield*/, tx.update(ridderBank_schema_1.RidderBankTable).set({
+                                                balance: responseOfSelectingRidderBank[0].balance + amount,
+                                                updatedAt: new Date()
+                                            }).where(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.customerId, customerId))
+                                                .returning({
                                                 balance: ridderBank_schema_1.RidderBankTable.balance
                                             })];
-                                    case 2:
-                                        responseOfCreatingRidderBank = _a.sent();
-                                        if (!responseOfCreatingRidderBank || responseOfCreatingRidderBank.length === 0) {
-                                            throw exceptions_1.ClientCreateRidderBankException;
-                                        }
-                                        responseOfSelectingRidderBank = responseOfCreatingRidderBank;
-                                        _a.label = 3;
-                                    case 3: return [4 /*yield*/, tx.update(ridderBank_schema_1.RidderBankTable).set({
-                                            balance: responseOfSelectingRidderBank[0].balance + amount,
-                                            updatedAt: new Date()
-                                        }).where(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.customerId, customerId))
-                                            .returning({
-                                            balance: ridderBank_schema_1.RidderBankTable.balance
-                                        })];
-                                    case 4: return [2 /*return*/, _a.sent()];
+                                    case 2: return [2 /*return*/, _a.sent()];
                                 }
                             });
                         }); })];
