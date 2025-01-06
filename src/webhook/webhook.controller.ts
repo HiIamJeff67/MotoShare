@@ -18,7 +18,7 @@ export class WebhookController {
 
     try {
       const res = await this.webhookService.handleStripeWebhook(
-        request.body, 
+        request, 
         signature, 
       );
 
