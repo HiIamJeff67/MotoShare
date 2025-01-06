@@ -9,6 +9,7 @@ import { PassengerBankTable } from '../drizzle/schema/passengerBank.schema';
 import { ConfigService } from '@nestjs/config';
 import { ClientCreatePassengerBankException, ClientPassengerBankNotFoundException } from '../exceptions';
 import { eq } from 'drizzle-orm';
+import { el } from '@faker-js/faker/.';
 
 @Injectable()
 export class PassengerBankService {
@@ -31,21 +32,10 @@ export class PassengerBankService {
       }).from(PassengerBankTable)
         .where(eq(PassengerBankTable.userId, userId))
         .limit(1);
+      let customerId: string | null = null;
       if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-
         const customer = await this.stripe.customers.create();
-        const ephemeralKey = await this.stripe.ephemeralKeys.create(
-          { customer: customer.id },
-          { apiVersion: '2024-12-18.acacia' }
-        );
-        const paymentIntent = await this.stripe.paymentIntents.create({
-          amount: 100 * 100,
-          currency: 'usd',
-          customer: customer.id,
-          automatic_payment_methods: {
-            enabled: true,
-          },
-        });
+        customerId = customer.id;
 
         const responseOfCreatingPassengerBank = await tx.insert(PassengerBankTable).values({
           customerId: customer.id, 
@@ -56,16 +46,29 @@ export class PassengerBankService {
         if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
           throw ClientCreatePassengerBankException;
         }
-
-        return {
-          paymentIntent: paymentIntent.client_secret,
-          ephemeralKey: ephemeralKey.secret,
-          customer: customer.id,
-          publishableKey: this.config.get("STRIPE_PK_API_KEY"), 
-        };
+      } else {
+        customerId = responseOfSelectingPassengerBank[0].customerId;
       }
 
-      return responseOfSelectingPassengerBank;
+      const ephemeralKey = await this.stripe.ephemeralKeys.create(
+        { customer: customerId },
+        { apiVersion: '2024-12-18.acacia' }
+      );
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: 100 * 100,
+        currency: 'usd',
+        customer: customerId,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      return {
+        paymentIntent: paymentIntent.client_secret,
+        ephemeralKey: ephemeralKey.secret,
+        customer: customerId,
+        publishableKey: this.config.get("STRIPE_PK_API_KEY"), 
+      };
     });
   }
 }

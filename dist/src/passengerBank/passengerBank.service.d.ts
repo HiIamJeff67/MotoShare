@@ -8,8 +8,6 @@ export declare class PassengerBankService {
     constructor(config: ConfigService, stripe: Stripe, db: DrizzleDB);
     listStripeCostomers(): Promise<Stripe.Response<Stripe.ApiList<Stripe.Customer>>>;
     getPassengerBankByUserId(userId: string): Promise<{
-        customerId: string;
-    }[] | {
         paymentIntent: string | null;
         ephemeralKey: string | undefined;
         customer: string;

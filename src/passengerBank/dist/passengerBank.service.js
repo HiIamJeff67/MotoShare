@@ -71,7 +71,7 @@ var PassengerBankService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingPassengerBank, customer, ephemeralKey, paymentIntent, responseOfCreatingPassengerBank;
+                            var responseOfSelectingPassengerBank, customerId, customer, responseOfCreatingPassengerBank, ephemeralKey, paymentIntent;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
@@ -81,41 +81,46 @@ var PassengerBankService = /** @class */ (function () {
                                             .limit(1)];
                                     case 1:
                                         responseOfSelectingPassengerBank = _a.sent();
-                                        if (!(!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0)) return [3 /*break*/, 6];
+                                        customerId = null;
+                                        if (!(!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0)) return [3 /*break*/, 4];
                                         return [4 /*yield*/, this.stripe.customers.create()];
                                     case 2:
                                         customer = _a.sent();
-                                        return [4 /*yield*/, this.stripe.ephemeralKeys.create({ customer: customer.id }, { apiVersion: '2024-12-18.acacia' })];
-                                    case 3:
-                                        ephemeralKey = _a.sent();
-                                        return [4 /*yield*/, this.stripe.paymentIntents.create({
-                                                amount: 100 * 100,
-                                                currency: 'usd',
-                                                customer: customer.id,
-                                                automatic_payment_methods: {
-                                                    enabled: true
-                                                }
-                                            })];
-                                    case 4:
-                                        paymentIntent = _a.sent();
+                                        customerId = customer.id;
                                         return [4 /*yield*/, tx.insert(passengerBank_schema_1.PassengerBankTable).values({
                                                 customerId: customer.id,
                                                 userId: userId
                                             }).returning({
                                                 balance: passengerBank_schema_1.PassengerBankTable.balance
                                             })];
-                                    case 5:
+                                    case 3:
                                         responseOfCreatingPassengerBank = _a.sent();
                                         if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
                                             throw exceptions_1.ClientCreatePassengerBankException;
                                         }
+                                        return [3 /*break*/, 5];
+                                    case 4:
+                                        customerId = responseOfSelectingPassengerBank[0].customerId;
+                                        _a.label = 5;
+                                    case 5: return [4 /*yield*/, this.stripe.ephemeralKeys.create({ customer: customerId }, { apiVersion: '2024-12-18.acacia' })];
+                                    case 6:
+                                        ephemeralKey = _a.sent();
+                                        return [4 /*yield*/, this.stripe.paymentIntents.create({
+                                                amount: 100 * 100,
+                                                currency: 'usd',
+                                                customer: customerId,
+                                                automatic_payment_methods: {
+                                                    enabled: true
+                                                }
+                                            })];
+                                    case 7:
+                                        paymentIntent = _a.sent();
                                         return [2 /*return*/, {
                                                 paymentIntent: paymentIntent.client_secret,
                                                 ephemeralKey: ephemeralKey.secret,
-                                                customer: customer.id,
+                                                customer: customerId,
                                                 publishableKey: this.config.get("STRIPE_PK_API_KEY")
                                             }];
-                                    case 6: return [2 /*return*/, responseOfSelectingPassengerBank];
                                 }
                             });
                         }); })];
