@@ -2,7 +2,7 @@ import "dotenv/config"
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from "@nestjs/common";
-import * as rawBodyMiddleware from 'raw-body';
+import rawbody from 'raw-body';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +15,7 @@ async function bootstrap() {
 
   app.use('/webhook', (req, res, next) => {
     if (req.headers['stripe-signature']) {
-      rawBodyMiddleware(req, {
+      rawbody(req, {
         length: req.headers['content-length'],
         encoding: req.headers['content-encoding'] || 'utf-8',
       }, (err, body) => {

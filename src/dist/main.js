@@ -40,7 +40,7 @@ require("dotenv/config");
 var core_1 = require("@nestjs/core");
 var app_module_1 = require("./app.module");
 var common_1 = require("@nestjs/common");
-var rawBodyMiddleware = require("raw-body");
+var raw_body_1 = require("raw-body");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
         var app;
@@ -56,7 +56,7 @@ function bootstrap() {
                     });
                     app.use('/webhook', function (req, res, next) {
                         if (req.headers['stripe-signature']) {
-                            rawBodyMiddleware(req, {
+                            raw_body_1["default"](req, {
                                 length: req.headers['content-length'],
                                 encoding: req.headers['content-encoding'] || 'utf-8'
                             }, function (err, body) {
