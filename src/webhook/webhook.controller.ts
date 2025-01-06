@@ -1,4 +1,4 @@
-import { Controller, Post, Req, Res, Headers } from '@nestjs/common';
+import { Controller, Post, Req, Res, Headers, Body } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WebhookService } from './webhook.service';
 import { ApiWrongWebhookSignatureException } from '../exceptions';
@@ -10,7 +10,7 @@ export class WebhookController {
 
   @Post('stripePaymentIntent')
   async handleStripeWebhook(
-    @Req() request: Request,  // we don't setup a dto, since stripe request maybe different for tons of types
+    @Body() body: Buffer, // 使用 Buffer 來接收原始請求主體
     @Res() response: Response, 
     @Headers('stripe-signature') signature: string,
   ) {
@@ -18,7 +18,7 @@ export class WebhookController {
 
     try {
       const res = await this.webhookService.handleStripeWebhook(
-        request, 
+        body, 
         signature, 
       );
 

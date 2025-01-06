@@ -10,8 +10,7 @@ import { PassengerBankTable } from '../drizzle/schema/passengerBank.schema';
 import { and, eq, sql } from 'drizzle-orm';
 import { ApiEndpointEnvVarNotFoundException, ApiStripeWebhookUnhandleExcpetion, ApiWrongWebhookSignatureException, ClientCreatePassengerBankException, ClientCreateRidderBankException, ClientPassengerBankNotFoundException, ClientRidderBankNotFoundException } from '../exceptions';
 import { RidderBankTable } from '../drizzle/schema/ridderBank.schema';
-import { Request, Response } from 'express';
-import { HttpStatusCode } from '../enums';
+import { Request } from 'express';
 
 @Injectable()
 export class WebhookService {
@@ -124,13 +123,13 @@ export class WebhookService {
 
 
   /* ================================= Handle Webhook operation ================================= */
-  async handleStripeWebhook(request: Request, signature: string) {
+  async handleStripeWebhook(body: Buffer, signature: string) {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!endpointSecret) throw ApiEndpointEnvVarNotFoundException;
 
     const event = this.stripe.webhooks.constructEvent(
-      request.body, 
+      body,  
       signature,
       endpointSecret,
     );
