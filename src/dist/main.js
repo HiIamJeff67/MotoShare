@@ -55,21 +55,17 @@ function bootstrap() {
                         credentials: true
                     });
                     app.use('/webhook', function (req, res, next) {
-                        if (req.headers['stripe-signature']) {
-                            raw_body_1["default"](req, {
-                                length: req.headers['content-length'],
-                                encoding: req.headers['content-encoding'] || 'utf-8'
-                            }, function (err, body) {
-                                if (err) {
-                                    return next(err);
-                                }
-                                req.body = body; // 將原始 body 賦值到請求中
-                                next();
-                            });
-                        }
-                        else {
+                        // 使用 raw-body 處理原始請求
+                        raw_body_1["default"](req, {
+                            length: req.headers['content-length'],
+                            encoding: req.headers['content-type']
+                        }, function (err, body) {
+                            if (err) {
+                                return next(err);
+                            }
+                            req.body = body; // 保存原始請求體
                             next();
-                        }
+                        });
                     });
                     app.useGlobalPipes(new common_1.ValidationPipe());
                     return [4 /*yield*/, app.listen(process.env.PORT || 3333)];
