@@ -8,7 +8,7 @@ import { HttpStatusCode } from '../enums';
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Post('stripe')
+  @Post('stripePaymentIntent')
   async handleStripeWebhook(
     @Headers('stripe-signature') signature: string,
     @Body() body: Buffer,
