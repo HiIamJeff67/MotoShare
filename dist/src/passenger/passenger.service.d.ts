@@ -15,22 +15,22 @@ export declare class PassengerService {
         email: string;
         info: {
             createdAt: Date;
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithInfoByPhoneNumber(phoneNumber: string): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
         avgStarRating: number;
+        updatedAt: Date;
         user: {
             userName: string;
             email: string;
@@ -41,7 +41,6 @@ export declare class PassengerService {
         email: string;
         info: {
             createdAt: Date;
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
@@ -50,6 +49,7 @@ export declare class PassengerService {
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
+            updatedAt: Date;
         } | null;
     } | undefined>;
     getPassengerWithCollectionByUserId(userId: string): Promise<{
@@ -59,6 +59,9 @@ export declare class PassengerService {
             orderId: string;
             order: {
                 id: string;
+                description: string | null;
+                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -70,10 +73,7 @@ export declare class PassengerService {
                 };
                 startAfter: Date;
                 tolerableRDV: number;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 creator: {
                     userName: string;
                 };

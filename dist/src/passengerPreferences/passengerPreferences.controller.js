@@ -39,15 +39,9 @@ let PassengerPreferencesController = class PassengerPreferencesController {
             });
         }
         catch (error) {
-            console.log(error);
-            if (!(error instanceof common_1.UnauthorizedException
-                || error instanceof common_1.BadRequestException
-                || error instanceof common_1.ForbiddenException
-                || error instanceof common_1.NotFoundException)) {
-                error = exceptions_1.ClientUnknownException;
-            }
-            response.status(error.status).send({
-                ...error.response,
+            response.status(error.status ?? 500).send({
+                case: error.case ?? "E-C-999",
+                message: error.message,
             });
         }
     }

@@ -11,6 +11,8 @@ export declare class PeriodicPurchaseOrderService {
     }[]>;
     getPeriodicPurchaseOrderById(id: string, creatorId: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         initPrice: number;
         startCord: {
             x: number;
@@ -24,11 +26,9 @@ export declare class PeriodicPurchaseOrderService {
         endAddress: string;
         startAfter: Date;
         endedAt: Date;
-        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
         autoAccept: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         isUrgent: boolean;
+        scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
     } | undefined>;
     searchPaginationPeriodicPurchaseOrders(creatorId: string, scheduledDay: DaysOfWeekType | undefined, limit: number, offset: number, isAutoAccept: boolean): Promise<{
         id: string;

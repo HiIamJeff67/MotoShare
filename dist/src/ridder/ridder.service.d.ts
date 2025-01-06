@@ -15,24 +15,24 @@ export declare class RidderService {
         email: string;
         info: {
             createdAt: Date;
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
+            updatedAt: Date;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
         } | null;
     } | undefined>;
     getRidderWithInfoByPhoneNumber(phoneNumber: string): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         isOnline: boolean;
         age: number | null;
         selfIntroduction: string | null;
         avatorUrl: string | null;
         avgStarRating: number;
+        updatedAt: Date;
         motocycleLicense: string | null;
         motocycleType: string | null;
         motocyclePhotoUrl: string | null;
@@ -46,7 +46,6 @@ export declare class RidderService {
         email: string;
         info: {
             createdAt: Date;
-            updatedAt: Date;
             isOnline: boolean;
             age: number | null;
             phoneNumber: string | null;
@@ -55,6 +54,7 @@ export declare class RidderService {
             selfIntroduction: string | null;
             avatorUrl: string | null;
             avgStarRating: number;
+            updatedAt: Date;
             motocycleLicense: string | null;
             motocycleType: string | null;
             motocyclePhotoUrl: string | null;
@@ -67,6 +67,9 @@ export declare class RidderService {
             orderId: string;
             order: {
                 id: string;
+                description: string | null;
+                createdAt: Date;
+                updatedAt: Date;
                 initPrice: number;
                 startCord: {
                     x: number;
@@ -77,10 +80,7 @@ export declare class RidderService {
                     y: number;
                 };
                 startAfter: Date;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                status: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
+                status: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
                 isUrgent: boolean;
                 creator: {
                     userName: string;

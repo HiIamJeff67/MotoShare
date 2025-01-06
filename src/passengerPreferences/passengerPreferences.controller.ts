@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res, BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, NotAcceptableException, ConflictException } from '@nestjs/common';
 import { PassengerPreferencesService } from './passengerPreferences.service';
 import { JwtPassengerGuard } from '../auth/guard';
 import { Passenger } from '../auth/decorator';
@@ -37,16 +37,9 @@ export class PassengerPreferencesController {
         createdAt: new Date(), 
       });
     } catch (error) {
-      console.log(error)
-      if (!(error instanceof UnauthorizedException
-        || error instanceof BadRequestException
-        || error instanceof ForbiddenException
-        || error instanceof NotFoundException)) {
-          error = ClientUnknownException;
-      }
-
-      response.status(error.status).send({
-        ...error.response, 
+      response.status(error.status ?? 500).send({
+        case: error.case ?? "E-C-999", 
+        message: error.message, 
       });
     }
   }
