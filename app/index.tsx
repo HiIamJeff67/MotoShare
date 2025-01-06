@@ -288,10 +288,8 @@ function AppContent() {
           />
           <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}/>
           <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }} />
-          <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
           <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
           <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
-          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }} />
           <Stack.Screen

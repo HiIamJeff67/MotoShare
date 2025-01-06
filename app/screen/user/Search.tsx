@@ -56,14 +56,18 @@ const SearchUser = () => {
     roleText = t("rider");
   }
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const userToken = await SecureStore.getItemAsync("userToken");
-      setToken(userToken);
-    };
-
-    fetchToken();
-  }, []);
+  const getToken = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("userToken");
+      if (token) {
+        return token;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  };
 
   const dismissKeyboard = () => {
     if (Platform.OS !== "web") {
@@ -72,6 +76,8 @@ const SearchUser = () => {
   };
 
   const SearchUser = async () => {
+    const token = await getToken();
+
     let response: { data: UserType[] },
       url: string = "";
 
@@ -83,17 +89,17 @@ const SearchUser = () => {
 
     try {
       response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         params: {
           userName: searchInput,
           limit: 1,
           offset: 0,
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      console.log(response.data)
+      console.log(response.data);
       SearchUserInfo(response.data[0].userName);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -105,6 +111,8 @@ const SearchUser = () => {
   };
 
   const SearchUserInfo = async (userName: string) => {
+    const token = await getToken();
+
     if (!token) {
       Alert.alert(t("Token failed"), t("unable to get token"));
       return;
@@ -142,6 +150,8 @@ const SearchUser = () => {
   };
 
   const createMyPreference = async (userName: string) => {
+    const token = await getToken();
+
     if (!token) {
       Alert.alert(t("Token failed"), t("unable to get token"));
       return;
