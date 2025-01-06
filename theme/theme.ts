@@ -17,7 +17,7 @@ export const LightTheme: Theme = {
     colors: {
         primary: '#3498db', 
         background: '#F7F9FC', 
-        card: '#FFFFFF', 
+        card: '#DCDCDC', 
         text: '#1C1C1E', 
         border: '#e3e1e1', 
         notification: '#FF5A5F', 

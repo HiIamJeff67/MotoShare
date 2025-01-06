@@ -19,7 +19,7 @@ import MyOrderHisDeScreen from "./screen/myorder/MyOrderHisDe";
 import MyInviteScreen from "./screen/invite/MyInvite";
 import MyInviteDeScreen from "./screen/invite/MyInviteDe";
 import OtherInviteScreen from "./screen/invite/OtherInvite";
-import OtherInviteDeScreen from "./screen/invite/OtherInvitede";
+import OtherInviteDeScreen from "./screen/invite/OtherInviteDe";
 import InviteMap from "./screen/invite/InviteMap";
 import EditProfile from "./screen/setting/EditProfile";
 import Settings from "./screen/setting/Settings";
@@ -36,16 +36,20 @@ import { View, Pressable, StatusBar, Platform, useColorScheme, Alert, AppState }
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer, CommonActions, useNavigation } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
-import { LightTheme, DarkTheme, Theme } from "../theme/theme";
+import { Theme } from "../theme/theme";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useSelector } from "react-redux";
 import { RootState } from "./(store)";
-import { getUserTheme, ThemeType } from "@/theme";
-import { setUserSettings } from "./(store)/userSlice";
+import { setUserThemeSettings } from "./(store)/userSlice";
 import { LanguageProvider } from "@/app/locales/languageProvider";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "./component/LoadingWrapper/LoadingWrapper";
+import Bindings from "./screen/setting/Bindings";
+import AbsoluteLoadingWrapper from "./component/AbsoluteLoadingWrapper/AbsoluteLoadingWrapper";
+import ResetEmailPassword from "./screen/setting/ResetEmailPassword";
+import Report from "./screen/setting/Report";
+import MyPreferences from "./screen/setting/MyPreferences";
 import ResetPasswordScreen from "./screen/auth/ForgetPasswordScreen";
 
 const Stack = createStackNavigator();
@@ -260,9 +264,9 @@ function AppContent() {
   const systemTheme = useColorScheme();
   const { t } = useTranslation();
   if (user.theme === undefined || user.theme === null) {
-    dispatch(setUserSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
+    dispatch(setUserThemeSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
-  const theme = user.theme as Theme; // since we have make sure that it is Theme Type
+  const theme = (user.theme ?? (systemTheme === "dark" ? "DarkTheme" : "LightTheme")) as Theme; // since we have make sure that it is Theme Type
 
   return (
     <NavigationContainer theme={theme}>
@@ -282,6 +286,12 @@ function AppContent() {
             component={EditProfile}
             options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Update Profile") }}
           />
+          <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}/>
+          <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }} />
+          <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
+          <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
+          <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
+          <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }} />
           <Stack.Screen
@@ -410,10 +420,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <LanguageProvider>
+    <LanguageProvider>
+      <Provider store={store}>
+        <AbsoluteLoadingWrapper />
         <AppContent />
-      </LanguageProvider>
-    </Provider>
+      </Provider>
+    </LanguageProvider>
   );
 }

@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/(store)';
 import { ThemeType } from '@/theme';
 import { SettingsStyles } from './Settings.style';
-import { setUserSettings } from '@/app/(store)/userSlice';
+import { setUserThemeSettings } from '@/app/(store)/userSlice';
 import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnimatedRadioOption from '@/app/component/RadioOption/AnimatedRadioOption';
@@ -93,9 +93,9 @@ const Settings = () => {
 
   const handleThemeSelection = (inputThemeName: ThemeType | null) => {
     if (inputThemeName) {
-      dispatch(setUserSettings({ themeName: inputThemeName }));
+      dispatch(setUserThemeSettings({ themeName: inputThemeName }));
     } else if (inputThemeName === null) {
-      dispatch(setUserSettings({ themeName: systemTheme === 'dark' ? "DarkTheme" : "LightTheme" }));
+      dispatch(setUserThemeSettings({ themeName: systemTheme === 'dark' ? "DarkTheme" : "LightTheme" }));
     }
     hideModal();
   };

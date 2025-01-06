@@ -93,6 +93,7 @@ const SearchUser = () => {
         },
       });
 
+      console.log(response.data)
       SearchUserInfo(response.data[0].userName);
     } catch (error) {
       if (axios.isAxiosError(error)) {
