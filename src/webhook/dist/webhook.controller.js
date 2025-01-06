@@ -84,7 +84,7 @@ var WebhookController = /** @class */ (function () {
         });
     };
     __decorate([
-        common_1.Post('stripePaymentIntent'),
+        common_1.Patch('stripePaymentIntent'),
         __param(0, common_1.Body()),
         __param(1, common_1.Res()),
         __param(2, common_1.Headers('stripe-signature'))

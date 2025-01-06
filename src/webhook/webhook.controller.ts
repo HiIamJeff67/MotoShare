@@ -1,4 +1,4 @@
-import { Controller, Post, Req, Res, Headers, Body } from '@nestjs/common';
+import { Controller, Post, Req, Res, Headers, Body, Patch } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WebhookService } from './webhook.service';
 import { ApiWrongWebhookSignatureException } from '../exceptions';
@@ -8,7 +8,7 @@ import { HttpStatusCode } from '../enums';
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Post('stripePaymentIntent')
+  @Patch('stripePaymentIntent')
   async handleStripeWebhook(
     @Body() buffer: Buffer, // 使用 Buffer 來接收原始請求主體
     @Res() response: Response, 

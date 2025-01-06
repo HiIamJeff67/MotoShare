@@ -55,17 +55,25 @@ function bootstrap() {
                         credentials: true
                     });
                     app.use('/webhook', function (req, res, next) {
-                        // 使用 raw-body 處理原始請求
-                        raw_body_1["default"](req, {
-                            length: req.headers['content-length'],
-                            encoding: req.headers['content-type']
-                        }, function (err, body) {
-                            if (err) {
-                                return next(err);
-                            }
-                            req.body = body; // 保存原始請求體
+                        var _a;
+                        var stripeSignature = req.headers['stripe-signature'];
+                        if (stripeSignature) {
+                            req.setEncoding('utf8'); // 確保正確的字元編碼
+                            raw_body_1["default"](req, {
+                                length: req.headers['content-length'],
+                                encoding: ((_a = req.headers['content-type']) === null || _a === void 0 ? void 0 : _a.includes('text/plain')) ? 'utf-8' : null
+                            }, function (err, body) {
+                                if (err) {
+                                    console.error('Error parsing raw body:', err);
+                                    return res.status(400).send('Invalid Webhook Body');
+                                }
+                                req.body = body; // 保存原始 body
+                                next();
+                            });
+                        }
+                        else {
                             next();
-                        });
+                        }
                     });
                     app.useGlobalPipes(new common_1.ValidationPipe());
                     return [4 /*yield*/, app.listen(process.env.PORT || 3333)];
