@@ -123,13 +123,13 @@ export class WebhookService {
 
 
   /* ================================= Handle Webhook operation ================================= */
-  async handleStripeWebhook(body: Buffer, signature: string) {
+  async handleStripeWebhook(buffer: Buffer, signature: string) {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!endpointSecret) throw ApiEndpointEnvVarNotFoundException;
 
     const event = this.stripe.webhooks.constructEvent(
-      body,  
+      buffer, 
       signature,
       endpointSecret,
     );

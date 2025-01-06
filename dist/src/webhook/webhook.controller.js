@@ -21,11 +21,11 @@ let WebhookController = class WebhookController {
     constructor(webhookService) {
         this.webhookService = webhookService;
     }
-    async handleStripeWebhook(request, response, signature) {
+    async handleStripeWebhook(buffer, response, signature) {
         if (!signature)
             throw exceptions_1.ApiWrongWebhookSignatureException;
         try {
-            const res = await this.webhookService.handleStripeWebhook(request.body, signature);
+            const res = await this.webhookService.handleStripeWebhook(buffer, signature);
             response.status(enums_1.HttpStatusCode.Ok).send(res);
         }
         catch (error) {
@@ -39,11 +39,11 @@ let WebhookController = class WebhookController {
 exports.WebhookController = WebhookController;
 __decorate([
     (0, common_1.Post)('stripePaymentIntent'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __param(2, (0, common_1.Headers)('stripe-signature')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:paramtypes", [Buffer, Object, String]),
     __metadata("design:returntype", Promise)
 ], WebhookController.prototype, "handleStripeWebhook", null);
 exports.WebhookController = WebhookController = __decorate([

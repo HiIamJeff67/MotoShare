@@ -10,7 +10,7 @@ export class WebhookController {
 
   @Post('stripePaymentIntent')
   async handleStripeWebhook(
-    @Body() body: Buffer, // 使用 Buffer 來接收原始請求主體
+    @Body() buffer: Buffer, // 使用 Buffer 來接收原始請求主體
     @Res() response: Response, 
     @Headers('stripe-signature') signature: string,
   ) {
@@ -18,7 +18,7 @@ export class WebhookController {
 
     try {
       const res = await this.webhookService.handleStripeWebhook(
-        body, 
+        buffer, 
         signature, 
       );
 

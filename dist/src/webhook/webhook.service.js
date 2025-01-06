@@ -98,11 +98,11 @@ let WebhookService = class WebhookService {
             });
         });
     }
-    async handleStripeWebhook(request, signature) {
+    async handleStripeWebhook(buffer, signature) {
         const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
         if (!endpointSecret)
             throw exceptions_1.ApiEndpointEnvVarNotFoundException;
-        const event = this.stripe.webhooks.constructEvent(request.body, signature, endpointSecret);
+        const event = this.stripe.webhooks.constructEvent(buffer, signature, endpointSecret);
         let response = undefined;
         switch (event.type) {
             case 'payment_intent.succeeded':
