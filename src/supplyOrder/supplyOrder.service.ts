@@ -4,7 +4,7 @@ import { UpdateSupplyOrderDto } from './dto/update-supplyOrder.dto';
 import { DRIZZLE } from '../../src/drizzle/drizzle.module';
 import { DrizzleDB } from '../../src/drizzle/types/drizzle';
 import { SupplyOrderTable } from '../../src/drizzle/schema/supplyOrder.schema';
-import { and, asc, desc, eq, gte, like, lt, lte, ne, not, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, like, lt, lte, ne, not, or, sql } from 'drizzle-orm';
 import { 
   GetAdjacentSupplyOrdersDto, 
   GetBetterSupplyOrderDto, 
@@ -227,7 +227,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
         .orderBy(desc(SupplyOrderTable.updatedAt))
         .limit(limit)
@@ -263,7 +266,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderInfoTable.userId, RidderTable.id))
         .orderBy(asc(SupplyOrderTable.startAfter))
         .limit(limit)
@@ -301,7 +307,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
         .orderBy(
           sql`ABS(EXTRACT(EPOCH FROM (${SupplyOrderTable.startAfter} - ${getSimilarTimeSupplyOrderDto.startAfter}))) + 
@@ -345,7 +354,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
         .orderBy(sql`ST_Distance(
           ${SupplyOrderTable.startCord}, 
@@ -390,7 +402,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
         .orderBy(sql`ST_Distance(
           ${SupplyOrderTable.endCord},
@@ -451,7 +466,10 @@ export class SupplyOrderService {
       .where(and(
         eq(SupplyOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+          (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
         .orderBy(sql`
           ST_Distance(
@@ -582,7 +600,10 @@ export class SupplyOrderService {
           .where(and(
             eq(SupplyOrderTable.status, "POSTED"),
             (isAutoAccept ? eq(SupplyOrderTable.autoAccept, true) : undefined),
-            (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined),
+            or(
+              (creatorName ? like(RidderTable.userName, creatorName + "%") : undefined), 
+              (creatorName ? like(RidderTable.email, creatorName + "%") : undefined)
+            ), 
           ))
           .leftJoin(RidderInfoTable, eq(RidderTable.id, RidderInfoTable.userId))
           .orderBy(...searchQueries)

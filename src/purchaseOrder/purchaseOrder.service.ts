@@ -230,7 +230,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined),
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(desc(PurchaseOrderTable.updatedAt))
         .limit(limit)
@@ -266,7 +269,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(asc(PurchaseOrderTable.startAfter))
         .limit(limit)
@@ -303,7 +309,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"), 
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(
           sql`ABS(EXTRACT(EPOCH FROM (${PurchaseOrderTable.startAfter} - ${getSimilarTimePurchaseOrderDto.startAfter}))) +
@@ -346,7 +355,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"), 
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(sql`ST_Distance(
           ${PurchaseOrderTable.startCord},
@@ -390,7 +402,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"),
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(sql`ST_Distance(
           ${PurchaseOrderTable.endCord},
@@ -450,7 +465,10 @@ export class PurchaseOrderService {
       .where(and(
         eq(PurchaseOrderTable.status, "POSTED"), 
         (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined), 
-        (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined), 
+        or(
+          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+        ), 
       )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(sql`
             ST_Distance(
@@ -586,7 +604,10 @@ export class PurchaseOrderService {
         .where(and(
           eq(PurchaseOrderTable.status, "POSTED"),
           (isAutoAccept ? eq(PurchaseOrderTable.autoAccept, true) : undefined),
-          (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+          or(
+            (creatorName ? like(PassengerTable.userName, creatorName + "%") : undefined),
+            (creatorName ? like(PassengerTable.email, creatorName + "%") : undefined)
+          ), 
         ))
         .leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
         .orderBy(...searchQueries)
