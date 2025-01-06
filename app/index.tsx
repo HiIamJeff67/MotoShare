@@ -286,21 +286,21 @@ function AppContent() {
             component={EditProfile}
             options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Update Profile") }}
           />
-          <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}/>
-          <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }} />
-          <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
-          <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
+          <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("preference rider") }}/>
+          <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Binding portal") }} />
+          <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Reset email and password") }} />
+          <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("feedback") }} />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("System Settings") }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("user search") }} />
           <Stack.Screen
             name="mycreateorder"
             component={MyCreateOrder}
-            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單" }}
+            options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("myorder")}}
           />
           <Stack.Screen
             name="mycreateorderde"
             component={MyCreateOrderDe}
-            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單詳情" }}
+            options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail")}}
           />
           <Stack.Screen
             name="invitemap"

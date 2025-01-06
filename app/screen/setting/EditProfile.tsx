@@ -30,6 +30,7 @@ import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 import { SAFE_MAX_FILE_SIZE } from "@/app/constants/maxFileSize";
 import { getFormDataTotalSize } from "@/app/methods/getFormDataSize";
 import { EditProfileStyles } from "./EditProfile.style";
+import { useTranslation } from "react-i18next";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ const EditProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [focusedRequiresOffset, setFocusedRequiresOffset] = useState(false);
   const [styles, setStyles] = useState<any>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (theme) {
@@ -101,56 +103,56 @@ const EditProfile = () => {
 
       setEditableInputItems([
         {
-          label: "使用者名稱",
+          label: t("userName"),
           value: newUserName,
           setValue: setUserName,
-          placeholder: "使用者名稱",
+          placeholder: t("userName"),
           keyboardType: "default", 
           requiresKeyboardOffset: false,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset
         },
         {
-          label: "電子郵件",
+          label: t("email"),
           value: newEmail,
           setValue: setEmail,
-          placeholder: "電子郵件",
+          placeholder: t("email"),
           keyboardType: "email-address", 
           requiresKeyboardOffset: false,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset, 
           editable: false, 
         },
         {
-          label: "手機號碼",
+          label: t("phone number"),
           value: newPhoneNumber,
           setValue: setPhoneNumber,
-          placeholder: "手機號碼",
+          placeholder: t("phone number"),
           keyboardType: "phone-pad", 
           requiresKeyboardOffset: false,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset
         },
         {
-          label: "年齡",
+          label: t("Age"),
           value: newAge,
           setValue: setAge,
-          placeholder: "年齡",
+          placeholder: t("Age"),
           keyboardType: "number-pad",
           requiresKeyboardOffset: true,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset
         },
         {
-          label: "自我介紹",
+          label: t("introduction yourself"),
           value: newselfIntroduction,
           setValue: setSelfIntroduction,
-          placeholder: "自我介紹",
+          placeholder: t("introduction yourself"),
           keyboardType: "default",
           requiresKeyboardOffset: true,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset
         },
         {
-          label: "緊急聯絡人電話號碼",
+          label: t("Emergency contact phone number"),
           value: newEmergencyPhoneNumber,
           setValue: setEmergencyPhoneNumber,
-          placeholder: "緊急聯絡人電話號碼",
+          placeholder: t("Emergency contact phone number"),
           keyboardType: "phone-pad", 
           requiresKeyboardOffset: true,
           setRequiresKeyBoardOffset: setFocusedRequiresOffset
@@ -159,7 +161,7 @@ const EditProfile = () => {
 
     } catch (error) {
       console.error("Error fetching profile data:", error);
-      Alert.alert("錯誤", "獲取個人資料時發生錯誤");
+      Alert.alert(t("error"), t("Error retrieving profile"));
     } finally {
       setIsLoading(false);
     }
@@ -177,7 +179,7 @@ const EditProfile = () => {
     if (!result.canceled) {
       console.log(result.assets[0]);
       if (result.assets[0].fileSize && result.assets[0].fileSize > SAFE_MAX_FILE_SIZE) {
-        Alert.alert("檔案錯誤", "您上傳的檔案太大，請重新選擇。");
+        Alert.alert(t("file error"), t("The file you uploaded is too large"));
         return;
       }
       setUploadedImage(result.assets[0]);
@@ -228,7 +230,7 @@ const EditProfile = () => {
     }
 
     if (getFormDataTotalSize(formData) > SAFE_MAX_FILE_SIZE) {
-      Alert.alert("檔案錯誤", "您上傳的檔案太大，請重新選擇。");
+      Alert.alert(t("file error"), t("The file you uploaded is too large"));
       return;
     }
 
@@ -283,7 +285,7 @@ const EditProfile = () => {
       } else {
         isUserInfoUpdated = true;
         showAlertMessage(
-          "更新個人資料成功", 
+          t("successfully update profile"), 
         );
       }
       if (token && (isUserNameUpdated || isUserInfoUpdated)) {
@@ -295,8 +297,8 @@ const EditProfile = () => {
         console.log(error.response);
         if (error.response?.data.code === "413") {
           showAlertMessage(
-            JSON.stringify("檔案錯誤"), 
-            JSON.stringify("您上傳的檔案太的，請重新選擇")
+            JSON.stringify(t("file error")), 
+            JSON.stringify(t("The file you uploaded is too large"))
           );
         }
         showAlertMessage(
@@ -383,7 +385,7 @@ const EditProfile = () => {
 
               <TouchableOpacity style={styles.saveButton} onPress={uploadUpdatedUserInfo} disabled={isLoading || isUploadLoading}>
                 <Text style={styles.saveButtonTitle}>
-                  {isUploadLoading ? <ActivityIndicator size="large" /> : "儲存變更"}
+                  {isUploadLoading ? <ActivityIndicator size="large" /> : t("Save changes")}
                 </Text>
               </TouchableOpacity>
             </Animated.ScrollView>
