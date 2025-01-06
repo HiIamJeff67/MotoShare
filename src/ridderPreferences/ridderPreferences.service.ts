@@ -3,7 +3,7 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerTable } from '../drizzle/schema/passenger.schema';
 import { ClientPassengerNotFoundException } from '../exceptions';
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, like, or } from 'drizzle-orm';
 import { RidderPreferences } from '../drizzle/schema/ridderPreferences.schema';
 import { PassengerInfoTable } from '../drizzle/schema/passengerInfo.schema';
 
@@ -46,12 +46,16 @@ export class RidderPreferencesService {
     return await this.db.select({
       preferenceUserName: PassengerTable.userName, 
       preferenceUserAvatorUrl: PassengerInfoTable.avatorUrl, 
+      preferenceUserSelfIntroduction: PassengerInfoTable.selfIntroduction, 
       isPreferenceUserOnline: PassengerInfoTable.isOnline, 
     }).from(RidderPreferences)
     .leftJoin(PassengerTable, eq(RidderPreferences.preferenceUserId, PassengerTable.id))
     .where(and(
       eq(RidderPreferences.userId, userId), 
-      like(PassengerTable.userName, preferenceUserName + "%"), 
+      or(
+        like(PassengerTable.userName, preferenceUserName + "%"), 
+        like(PassengerTable.email, preferenceUserName + "%"), 
+      ), 
     )).leftJoin(PassengerInfoTable, eq(PassengerTable.id, PassengerInfoTable.userId))
       .limit(limit)
       .offset(offset);
