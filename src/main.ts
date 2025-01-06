@@ -2,7 +2,7 @@ import "dotenv/config"
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from "@nestjs/common";
-import * as bodyParser from "body-parser";
+import * as rawBodyMiddleware from 'raw-body';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,15 +13,22 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.use(
-    bodyParser.json({
-      verify: (req: any, res, buf: Buffer) => {
-        if (req.originalUrl === '/webhook/stripePaymentIntent') {
-          req.rawBody = buf;
+  app.use('/webhook', (req, res, next) => {
+    if (req.headers['stripe-signature']) {
+      rawBodyMiddleware(req, {
+        length: req.headers['content-length'],
+        encoding: req.headers['content-encoding'] || 'utf-8',
+      }, (err, body) => {
+        if (err) {
+          return next(err);
         }
-      },
-    }),
-  );
+        req.body = body; // 將原始 body 賦值到請求中
+        next();
+      });
+    } else {
+      next();
+    }
+  });
 
   app.useGlobalPipes(new ValidationPipe());
 

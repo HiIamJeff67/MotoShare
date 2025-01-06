@@ -40,7 +40,7 @@ require("dotenv/config");
 var core_1 = require("@nestjs/core");
 var app_module_1 = require("./app.module");
 var common_1 = require("@nestjs/common");
-var bodyParser = require("body-parser");
+var rawBodyMiddleware = require("raw-body");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
         var app;
@@ -54,13 +54,23 @@ function bootstrap() {
                         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
                         credentials: true
                     });
-                    app.use(bodyParser.json({
-                        verify: function (req, res, buf) {
-                            if (req.originalUrl === '/webhook/stripePaymentIntent') {
-                                req.rawBody = buf;
-                            }
+                    app.use('/webhook', function (req, res, next) {
+                        if (req.headers['stripe-signature']) {
+                            rawBodyMiddleware(req, {
+                                length: req.headers['content-length'],
+                                encoding: req.headers['content-encoding'] || 'utf-8'
+                            }, function (err, body) {
+                                if (err) {
+                                    return next(err);
+                                }
+                                req.body = body; // 將原始 body 賦值到請求中
+                                next();
+                            });
                         }
-                    }));
+                        else {
+                            next();
+                        }
+                    });
                     app.useGlobalPipes(new common_1.ValidationPipe());
                     return [4 /*yield*/, app.listen(process.env.PORT || 3333)];
                 case 2:
