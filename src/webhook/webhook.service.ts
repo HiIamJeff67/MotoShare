@@ -108,6 +108,7 @@ export class WebhookService {
         response = await this.receiveSucceededStripePaymentIntent(event.data.object as Stripe.PaymentIntent);
         break;
       default:
+        throw new Error(event.type + "\n" + String(event));
         throw ApiStripeWebhookUnhandleExcpetion;
     }
 

@@ -165,7 +165,7 @@ var WebhookService = /** @class */ (function () {
     /* ================================= Refund back to Stripe operation ================================= */
     /* ================================= Refund back to Stripe operation ================================= */
     /* ================================= Handle Webhook operation ================================= */
-    WebhookService.prototype.handleStripeWebhook = function (text, signature) {
+    WebhookService.prototype.handleStripeWebhook = function (body, signature) {
         return __awaiter(this, void 0, void 0, function () {
             var endpointSecret, event, response, _a;
             return __generator(this, function (_b) {
@@ -174,7 +174,7 @@ var WebhookService = /** @class */ (function () {
                         endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
                         if (!endpointSecret)
                             throw exceptions_1.ApiEndpointEnvVarNotFoundException;
-                        event = this.stripe.webhooks.constructEvent(text, signature, endpointSecret);
+                        event = this.stripe.webhooks.constructEvent(body, signature, endpointSecret);
                         response = undefined;
                         _a = event.type;
                         switch (_a) {
@@ -185,7 +185,7 @@ var WebhookService = /** @class */ (function () {
                     case 2:
                         response = _b.sent();
                         return [3 /*break*/, 4];
-                    case 3: throw exceptions_1.ApiStripeWebhookUnhandleExcpetion;
+                    case 3: throw new Error(event.type + "\n" + String(event));
                     case 4: return [2 /*return*/, response];
                 }
             });
