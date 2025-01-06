@@ -37,6 +37,9 @@ const periodicPurchaseOrder_module_1 = require("./periodicPurchaseOrder/periodic
 const periodicSupplyOrder_module_1 = require("./periodicSupplyOrder/periodicSupplyOrder.module");
 const passengerRecord_module_1 = require("./passengerRecord/passengerRecord.module");
 const ridderRecord_module_1 = require("./ridderRecord/ridderRecord.module");
+const stripe_module_1 = require("./stripe/stripe.module");
+const passengerBank_module_1 = require("./passengerBank/passengerBank.module");
+const ridderBank_module_1 = require("./ridderBank/ridderBank.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -58,6 +61,9 @@ exports.AppModule = AppModule = __decorate([
                     dir: (0, path_1.join)(__dirname, 'email/emailTemplates'),
                     adapter: new handlebars_adapter_1.HandlebarsAdapter()
                 }
+            }),
+            stripe_module_1.StripeModule.forRoot(process.env.STRIPE_SK_API_KEY, {
+                apiVersion: '2024-12-18.acacia',
             }),
             drizzle_module_1.DrizzleModule,
             auth_module_1.AuthModule,
@@ -81,6 +87,8 @@ exports.AppModule = AppModule = __decorate([
             periodicSupplyOrder_module_1.PeriodicSupplyOrderModule,
             passengerRecord_module_1.PassengerRecordModule,
             ridderRecord_module_1.RidderRecordModule,
+            passengerBank_module_1.PassengerBankModule,
+            ridderBank_module_1.RidderBankModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

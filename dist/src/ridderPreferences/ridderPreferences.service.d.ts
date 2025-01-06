@@ -6,6 +6,7 @@ export declare class RidderPreferencesService {
     searchPaginationRidderPreferences(userId: string, preferenceUserName: string | undefined, limit: number, offset: number): Promise<{
         preferenceUserName: string | null;
         preferenceUserAvatorUrl: string | null;
+        preferenceUserSelfIntroduction: string | null;
         isPreferenceUserOnline: boolean | null;
     }[]>;
     deleteRidderPreferenceByUserIdAndPreferenceUserId(userId: string, preferenceUserName: string): Promise<{}[] | undefined>;

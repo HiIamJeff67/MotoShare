@@ -154,7 +154,7 @@ let SupplyOrderService = class SupplyOrderService {
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.desc)(supplyOrder_schema_1.SupplyOrderTable.updatedAt))
             .limit(limit)
             .offset(offset);
@@ -179,7 +179,7 @@ let SupplyOrderService = class SupplyOrderService {
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridderInfo_schema_1.RidderInfoTable.userId, ridder_schema_1.RidderTable.id))
             .orderBy((0, drizzle_orm_1.asc)(supplyOrder_schema_1.SupplyOrderTable.startAfter))
             .limit(limit)
             .offset(offset);
@@ -205,7 +205,7 @@ let SupplyOrderService = class SupplyOrderService {
             status: supplyOrder_schema_1.SupplyOrderTable.status,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${supplyOrder_schema_1.SupplyOrderTable.startAfter} - ${getSimilarTimeSupplyOrderDto.startAfter}))) + 
               ABS(EXTRACT(EPOCH FROM (${supplyOrder_schema_1.SupplyOrderTable.endedAt} - ${getSimilarTimeSupplyOrderDto.endedAt})))`).limit(limit)
             .offset(offset);
@@ -235,7 +235,7 @@ let SupplyOrderService = class SupplyOrderService {
       )`
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.startCord}, 
           ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
@@ -268,7 +268,7 @@ let SupplyOrderService = class SupplyOrderService {
       )`
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
           ${supplyOrder_schema_1.SupplyOrderTable.endCord},
           ST_SetSRID(ST_MakePoint(${getAdjacentSupplyOrdersDto.cordLongitude}, ${getAdjacentSupplyOrdersDto.cordLatitude}), 4326)
@@ -315,7 +315,7 @@ let SupplyOrderService = class SupplyOrderService {
       `,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, supplyOrder_schema_1.SupplyOrderTable.creatorId))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined)))).leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
           ST_Distance(
             ${supplyOrder_schema_1.SupplyOrderTable.startCord},
@@ -424,7 +424,7 @@ let SupplyOrderService = class SupplyOrderService {
             ...spaceResponseField,
         }).from(supplyOrder_schema_1.SupplyOrderTable)
             .leftJoin(ridder_schema_1.RidderTable, (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.creatorId, ridder_schema_1.RidderTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(ridder_schema_1.RidderTable.email, creatorName + "%") : undefined))))
             .leftJoin(ridderInfo_schema_1.RidderInfoTable, (0, drizzle_orm_1.eq)(ridder_schema_1.RidderTable.id, ridderInfo_schema_1.RidderInfoTable.userId))
             .orderBy(...searchQueries)
             .limit(limit)

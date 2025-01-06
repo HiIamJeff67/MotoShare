@@ -28,6 +28,9 @@ import { PeriodicPurchaseOrderModule } from './periodicPurchaseOrder/periodicPur
 import { PeriodicSupplyOrderModule } from './periodicSupplyOrder/periodicSupplyOrder.module';
 import { PassengerRecordModule } from './passengerRecord/passengerRecord.module';
 import { RidderRecordModule } from './ridderRecord/ridderRecord.module';
+import { StripeModule } from './stripe/stripe.module';
+import { PassengerBankModule } from './passengerBank/passengerBank.module';
+import { RidderBankModule } from './ridderBank/ridderBank.module';
 
 @Module({
   imports: [
@@ -47,6 +50,12 @@ import { RidderRecordModule } from './ridderRecord/ridderRecord.module';
         adapter: new HandlebarsAdapter()
       }
     }), 
+    StripeModule.forRoot(
+      process.env.STRIPE_SK_API_KEY as string, 
+      { 
+        apiVersion: '2024-12-18.acacia', 
+      }
+    ), 
     DrizzleModule, 
     AuthModule,
     PassengerModule,
@@ -68,7 +77,9 @@ import { RidderRecordModule } from './ridderRecord/ridderRecord.module';
     PeriodicPurchaseOrderModule,
     PeriodicSupplyOrderModule,
     PassengerRecordModule,
-    RidderRecordModule, 
+    RidderRecordModule,
+    PassengerBankModule,
+    RidderBankModule,
   ],
   controllers: [AppController],
   providers: [AppService],

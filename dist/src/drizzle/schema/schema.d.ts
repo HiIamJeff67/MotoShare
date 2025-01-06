@@ -20,4 +20,6 @@ export * from "./periodicPurchaseOrder.schema";
 export * from "./periodicSupplyOrder.schema";
 export * from "./passengerRecord.schema";
 export * from "./ridderRecord.schema";
+export * from "./passengerBank.schema";
+export * from "./ridderBank.schema";
 export * from "./enums";

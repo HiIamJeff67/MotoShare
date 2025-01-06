@@ -205,7 +205,7 @@ export declare const SupplyOrderTable: import("drizzle-orm/pg-core").PgTableWith
             tableName: "supplyOrder";
             dataType: "string";
             columnType: "PgEnumColumn";
-            data: "EXPIRED" | "CANCEL" | "POSTED" | "RESERVED";
+            data: "POSTED" | "EXPIRED" | "CANCEL" | "RESERVED";
             driverParam: string;
             notNull: true;
             hasDefault: true;

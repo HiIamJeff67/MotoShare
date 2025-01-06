@@ -21,7 +21,7 @@ import {
   ClientUnknownException, 
 } from '../exceptions';
 
-import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
+import { AnyGuard, JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { Passenger, Ridder } from '../auth/decorator';
 
@@ -77,10 +77,9 @@ export class PurchaseOrderController {
 
   /* ================================= Get operations ================================= */
   // use this route to get detail of a puchase order by the given purchaseOrderId
-  @UseGuards(JwtRidderGuard)
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('getPurchaseOrderById')
   async getPurchaseOrderById(
-    @Ridder() ridder: RidderType, // only the authenticated ridder can see the details of purchaseOrders
     @Query('id') id: string,
     @Res() response: Response,
   ) {

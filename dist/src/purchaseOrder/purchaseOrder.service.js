@@ -152,7 +152,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.desc)(purchaseOrder_schema_1.PurchaseOrderTable.updatedAt))
             .limit(limit)
             .offset(offset);
@@ -177,7 +177,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.asc)(purchaseOrder_schema_1.PurchaseOrderTable.startAfter))
             .limit(limit)
             .offset(offset);
@@ -202,7 +202,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             status: purchaseOrder_schema_1.PurchaseOrderTable.status,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.startAfter} - ${getSimilarTimePurchaseOrderDto.startAfter}))) +
               ABS(EXTRACT(EPOCH FROM (${purchaseOrder_schema_1.PurchaseOrderTable.endedAt} - ${getSimilarTimePurchaseOrderDto.endedAt}))) ASC`).limit(limit)
             .offset(offset);
@@ -231,7 +231,7 @@ let PurchaseOrderService = class PurchaseOrderService {
       )`
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
           ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
@@ -263,7 +263,7 @@ let PurchaseOrderService = class PurchaseOrderService {
       )`
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `ST_Distance(
           ${purchaseOrder_schema_1.PurchaseOrderTable.endCord},
           ST_SetSRID(ST_MakePoint(${getAdjacentPurchaseOrdersDto.cordLongitude}, ${getAdjacentPurchaseOrdersDto.cordLatitude}), 4326)
@@ -310,7 +310,7 @@ let PurchaseOrderService = class PurchaseOrderService {
       `,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined)))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy((0, drizzle_orm_1.sql) `
             ST_Distance(
               ${purchaseOrder_schema_1.PurchaseOrderTable.startCord},
@@ -422,7 +422,7 @@ let PurchaseOrderService = class PurchaseOrderService {
             ...spaceResponseField,
         }).from(purchaseOrder_schema_1.PurchaseOrderTable)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.creatorId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined)))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.status, "POSTED"), (isAutoAccept ? (0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.autoAccept, true) : undefined), (0, drizzle_orm_1.or)((creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, creatorName + "%") : undefined), (creatorName ? (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, creatorName + "%") : undefined))))
             .leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .orderBy(...searchQueries)
             .limit(limit)

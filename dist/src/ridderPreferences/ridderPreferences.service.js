@@ -44,10 +44,11 @@ let RidderPreferencesService = class RidderPreferencesService {
         return await this.db.select({
             preferenceUserName: passenger_schema_1.PassengerTable.userName,
             preferenceUserAvatorUrl: passengerInfo_schema_1.PassengerInfoTable.avatorUrl,
+            preferenceUserSelfIntroduction: passengerInfo_schema_1.PassengerInfoTable.selfIntroduction,
             isPreferenceUserOnline: passengerInfo_schema_1.PassengerInfoTable.isOnline,
         }).from(ridderPreferences_schema_1.RidderPreferences)
             .leftJoin(passenger_schema_1.PassengerTable, (0, drizzle_orm_1.eq)(ridderPreferences_schema_1.RidderPreferences.preferenceUserId, passenger_schema_1.PassengerTable.id))
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderPreferences_schema_1.RidderPreferences.userId, userId), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, preferenceUserName + "%"))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
+            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderPreferences_schema_1.RidderPreferences.userId, userId), (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.userName, preferenceUserName + "%"), (0, drizzle_orm_1.like)(passenger_schema_1.PassengerTable.email, preferenceUserName + "%")))).leftJoin(passengerInfo_schema_1.PassengerInfoTable, (0, drizzle_orm_1.eq)(passenger_schema_1.PassengerTable.id, passengerInfo_schema_1.PassengerInfoTable.userId))
             .limit(limit)
             .offset(offset);
     }

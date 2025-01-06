@@ -20,7 +20,7 @@ import {
   ClientUnknownException, 
 } from '../exceptions';
 
-import { JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
+import { AnyGuard, JwtPassengerGuard, JwtRidderGuard } from '../auth/guard';
 import { PassengerType, RidderType } from '../interfaces/auth.interface';
 import { Passenger, Ridder } from '../auth/decorator';
 
@@ -74,10 +74,9 @@ export class SupplyOrderController {
 
 
   /* ================================= Get operations ================================= */
-  @UseGuards(JwtPassengerGuard)
+  @UseGuards(new AnyGuard([JwtPassengerGuard, JwtRidderGuard]))
   @Get('getSupplyOrderById')
   async getSupplyOrderById(
-    @Passenger() passenger: PassengerType,  // only the authenticated passenger can see the details of supplyOrders
     @Query('id') id: string,
     @Res() response: Response,
   ) {

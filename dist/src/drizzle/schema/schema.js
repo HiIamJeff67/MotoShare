@@ -36,5 +36,7 @@ __exportStar(require("./periodicPurchaseOrder.schema"), exports);
 __exportStar(require("./periodicSupplyOrder.schema"), exports);
 __exportStar(require("./passengerRecord.schema"), exports);
 __exportStar(require("./ridderRecord.schema"), exports);
+__exportStar(require("./passengerBank.schema"), exports);
+__exportStar(require("./ridderBank.schema"), exports);
 __exportStar(require("./enums"), exports);
 //# sourceMappingURL=schema.js.map
