@@ -13,7 +13,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { RootState } from "../../(store)/";
+import { RootState } from "../../(store)";
 import { useNavigation } from "@react-navigation/native";
 import {
   ScaledSheet,

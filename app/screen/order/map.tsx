@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
-import { RootState } from "../../(store)/";
+import { RootState } from "../../(store)";
 import MapView, { Marker, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";

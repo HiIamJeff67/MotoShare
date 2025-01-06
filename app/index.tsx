@@ -1,29 +1,29 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import WelcomeScreen from "./screen/auth/welcome";
-import LoginScreen from "./screen/auth/login";
-import ChooseScreen from "./screen/auth/choose";
-import Choose2Screen from "./screen/auth/choose2";
-import RegScreen from "./screen/auth/reg";
-import HomeScreen from "./screen/home";
-import ProfileScreen from "./screen/profile";
-import ServiceScreen from "./screen/service";
-import MapScreen from "./screen/order/map";
-import OrderScreen from "./screen/order/order";
-import OrderDetailScreen from "./screen/order/orderdetail";
-import MyOrderScreen from "./screen/myorder/myorder";
-import MyOrderDeScreen from "./screen/myorder/myorderde";
-import MyOrderHisScreen from "./screen/myorder/myorderhis";
-import MyOrderHisDeScreen from "./screen/myorder/myorderhisde";
-import MyInviteScreen from "./screen/invite/myinvite";
-import MyInviteDeScreen from "./screen/invite/myinvitede";
-import OtherInviteScreen from "./screen/invite/otherinvite";
-import OtherInviteDeScreen from "./screen/invite/otherinvitede";
-import InviteMap from "./screen/invite/invitemap";
-import EditProfile from "./screen/setting/editprofile";
-import Settings from "./screen/setting/settings";
-import UserSearch from "./screen/user/search";
+import WelcomeScreen from "./screen/auth/Welcome";
+import LoginScreen from "./screen/auth/Login";
+import ChooseScreen from "./screen/auth/Choose";
+import Choose2Screen from "./screen/auth/Choose2";
+import RegScreen from "./screen/auth/Register";
+import HomeScreen from "./screen/Home";
+import ProfileScreen from "./screen/Profile";
+import ServiceScreen from "./screen/Service";
+import MapScreen from "./screen/order/Map";
+import OrderScreen from "./screen/order/Order";
+import OrderDetailScreen from "./screen/order/OrderDetail";
+import MyOrderScreen from "./screen/myorder/MyOrder";
+import MyOrderDeScreen from "./screen/myorder/MyOrderDe";
+import MyOrderHisScreen from "./screen/myorder/MyOrderHis";
+import MyOrderHisDeScreen from "./screen/myorder/MyOrderHisDe";
+import MyInviteScreen from "./screen/invite/MyInvite";
+import MyInviteDeScreen from "./screen/invite/MyInviteDe";
+import OtherInviteScreen from "./screen/invite/OtherInvite";
+import OtherInviteDeScreen from "./screen/invite/OtherInviteDe";
+import InviteMap from "./screen/invite/InviteMap";
+import EditProfile from "./screen/setting/EditProfile";
+import Settings from "./screen/setting/Settings";
+import UserSearch from "./screen/user/Search";
 import store from "./(store)/";
 import { Provider, useDispatch } from "react-redux";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -34,16 +34,20 @@ import { View, Pressable, StatusBar, Platform, useColorScheme, Alert, AppState }
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer, CommonActions, useNavigation } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
-import { LightTheme, DarkTheme, Theme } from "../theme/theme";
+import { Theme } from "../theme/theme";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useSelector } from "react-redux";
 import { RootState } from "./(store)/";
-import { getUserTheme, ThemeType } from "@/theme";
-import { setUserSettings } from "./(store)/userSlice";
+import { setUserThemeSettings } from "./(store)/userSlice";
 import { LanguageProvider } from "@/app/locales/languageProvider";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "./component/LoadingWrapper/LoadingWrapper";
+import Bindings from "./screen/setting/Bindings";
+import AbsoluteLoadingWrapper from "./component/AbsoluteLoadingWrapper/AbsoluteLoadingWrapper";
+import ResetEmailPassword from "./screen/setting/ResetEmailPassword";
+import Report from "./screen/setting/Report";
+import MyPreferences from "./screen/setting/MyPreferences";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -257,9 +261,9 @@ function AppContent() {
   const systemTheme = useColorScheme();
   const { t } = useTranslation();
   if (user.theme === undefined || user.theme === null) {
-    dispatch(setUserSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
+    dispatch(setUserThemeSettings({ themeName: systemTheme === "dark" ? "DarkTheme" : "LightTheme" }));
   }
-  const theme = user.theme as Theme; // since we have make sure that it is Theme Type
+  const theme = (user.theme ?? (systemTheme === "dark" ? "DarkTheme" : "LightTheme")) as Theme; // since we have make sure that it is Theme Type
 
   return (
     <NavigationContainer theme={theme}>
@@ -278,7 +282,11 @@ function AppContent() {
             component={EditProfile}
             options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "更新個人資料" }}
           />
+          <Stack.Screen name="mypreferences" component={MyPreferences} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "偏好車主" }}/>
+          <Stack.Screen name="bindings" component={Bindings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "綁定與驗證" }} />
           <Stack.Screen name="settings" component={Settings} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "系統設置" }} />
+          <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
+          <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
           <Stack.Screen
             name="invitemap"
@@ -396,10 +404,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <LanguageProvider>
+    <LanguageProvider>
+      <Provider store={store}>
+        <AbsoluteLoadingWrapper />
         <AppContent />
-      </LanguageProvider>
-    </Provider>
+      </Provider>
+    </LanguageProvider>
   );
 }

@@ -19,7 +19,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
-import { HandleGoogleSignIn, HandleLogin } from "./handlelogin";
+import { HandleGoogleSignIn, HandleLogin } from "./HandleLogin";
 import { useTranslation } from 'react-i18next';
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 

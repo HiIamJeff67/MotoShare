@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/";
+import { RootState } from "../(store)";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { scale, verticalScale } from "react-native-size-matters";
 import { Theme } from "../../theme/theme";
-import { styles } from "./service.style";
+import { styles } from "./Service.style";
 import { useTranslation } from "react-i18next";
 
 const Service = () => {

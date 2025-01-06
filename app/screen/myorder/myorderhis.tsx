@@ -146,7 +146,7 @@ const MyOrderHistory = () => {
               <View key={item.id} style={styles.container}>
                 <Pressable
                   onPress={() =>
-                    navigation.navigate("myorderhisde", { orderid: item.id })
+                    navigation.navigate(...["myorderhisde", { orderid: item.id }] as never)
                   }
                 >
                   <View style={styles.card}>

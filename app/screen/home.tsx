@@ -3,13 +3,13 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { RootState } from "../(store)/";
+import { RootState } from "../(store)";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { moderateScale, verticalScale } from "react-native-size-matters";
 import React, { useEffect, useState } from "react";
-import { HomeScreenStyles, mapStyle } from "./home.style";
+import { HomeScreenStyles, mapStyle } from "./Home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
 import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
 import { useTranslation } from "react-i18next";
@@ -76,7 +76,7 @@ const Home = () => {
         );
         setUserRecords(response.data["searchRecords"]);
       } catch (error) {
-        console.log("Token 未獲取");
+        console.log(error);
       }
     }
   };

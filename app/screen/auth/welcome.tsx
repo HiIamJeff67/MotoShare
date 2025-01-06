@@ -6,13 +6,17 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { Theme } from "../../../theme/theme"; // 引入自定義的主題類型
 import i18n from "../../locales/i18next";
 import { useTranslation } from "react-i18next";
+import { setUserLanguageSettings } from "@/app/(store)/userSlice";
+import { useDispatch } from "react-redux";
 
 const WelcomeScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const theme = useTheme() as Theme; // 強制轉換為自定義主題類型
   const { colors } = theme;
   const { t } = useTranslation();
+
   const [language, setLanguage] = useState("zh"); // 默認語言
 
   return (
@@ -32,7 +36,7 @@ const WelcomeScreen = () => {
         onPress={() => {
           const newLanguage = language === "zh" ? "en" : "zh";
           setLanguage(newLanguage);
-          i18n.changeLanguage(newLanguage); // 同步更新 i18n 的語言
+          dispatch(setUserLanguageSettings({ language: newLanguage }));
         }}
         style={{
           backgroundColor: "#3498db",

@@ -60,6 +60,7 @@ export const ProfileScreenStyles = (theme: Theme, insets?: EdgeInsets) => {
       fontWeight: _fonts.regular.fontWeight, 
     }, 
     bottomButtonContainer: {
+      marginTop: verticalScale(6), 
       gap: verticalScale(8), 
     }, 
     logoutButton: {

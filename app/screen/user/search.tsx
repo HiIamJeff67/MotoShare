@@ -9,7 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
-import { Styles } from "./search.style";
+import { Styles } from "./Search.style";
 import { useTranslation } from "react-i18next";
 
 interface UserType {
