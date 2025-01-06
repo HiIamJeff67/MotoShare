@@ -130,7 +130,7 @@ export class WebhookService {
     if (!endpointSecret) throw ApiEndpointEnvVarNotFoundException;
 
     const event = this.stripe.webhooks.constructEvent(
-      request.body,
+      request.body, 
       signature,
       endpointSecret,
     );
