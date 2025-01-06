@@ -11,7 +11,6 @@ export class WebhookController {
 
   @Post('stripePaymentIntent')
   async handleStripeWebhook(
-    @Body() body, // 使用 Buffer 來接收原始請求主體
     @Req() req: Request, 
     @Res() response: Response, 
     @Headers('stripe-signature') signature: string,

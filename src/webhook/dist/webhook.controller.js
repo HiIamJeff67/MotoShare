@@ -54,8 +54,7 @@ var WebhookController = /** @class */ (function () {
     function WebhookController(webhookService) {
         this.webhookService = webhookService;
     }
-    WebhookController.prototype.handleStripeWebhook = function (body, // 使用 Buffer 來接收原始請求主體
-    req, response, signature) {
+    WebhookController.prototype.handleStripeWebhook = function (req, response, signature) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
             var raw, text, res, error_1;
@@ -91,11 +90,10 @@ var WebhookController = /** @class */ (function () {
         });
     };
     __decorate([
-        common_1.Patch('stripePaymentIntent'),
-        __param(0, common_1.Body()),
-        __param(1, common_1.Req()),
-        __param(2, common_1.Res()),
-        __param(3, common_1.Headers('stripe-signature'))
+        common_1.Post('stripePaymentIntent'),
+        __param(0, common_1.Req()),
+        __param(1, common_1.Res()),
+        __param(2, common_1.Headers('stripe-signature'))
     ], WebhookController.prototype, "handleStripeWebhook");
     WebhookController = __decorate([
         common_1.Controller('webhook')
