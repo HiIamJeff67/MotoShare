@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import axios from "axios";
 import { GoogleSignin, statusCodes, isErrorWithCode, isSuccessResponse } from "@react-native-google-signin/google-signin";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../(store)/userSlice";
+import { setUser, setUserInfos } from "../../(store)/userSlice";
 import * as SecureStore from "expo-secure-store";
 import { z } from "zod";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
@@ -94,24 +94,54 @@ const HandleLogin = ({ usernameOrEmail, password, role, onSignInStart, onSignInC
     }
 
     try {
-      let url = "";
       const data = usernameOrEmail.includes("@") ? { email: usernameOrEmail, password: password } : { userName: usernameOrEmail, password: password };
 
-      if (role === "Passenger") {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithAccountAndPassword`;
-      } else if (role === "Ridder") {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidderWithAccountAndPassword`;
-      }
-
-      const response = await axios.post(url, data, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
+      const response = await axios.post(
+        role === "Passenger"
+          ? `${process.env.EXPO_PUBLIC_API_URL}/auth/signInPassengerWithAccountAndPassword`
+          : `${process.env.EXPO_PUBLIC_API_URL}/auth/signInRidderWithAccountAndPassword`, 
+        data, 
+        {
+          headers: { 
+            "Content-Type": "application/x-www-form-urlencoded", 
+          },
+        }
+     );
 
       if (response?.data) {
         await saveToken(response.data.accessToken);
-        dispatch(setUser({ userName: response.data.userName, email: response.data.email, role: role }));
+
+        const getMyInfoResponse = await axios.get(
+          role === "Passenger"
+            ? `${process.env.EXPO_PUBLIC_API_URL}/passenger/getMyInfo`
+            : `${process.env.EXPO_PUBLIC_API_URL}/ridder/getMyInfo`, 
+          {
+            headers: {
+              Authorization: `Bearer ${response.data.accessToken}`
+            }
+          }
+        )
+        const info = getMyInfoResponse.data.info;
+
+        dispatch(setUser({ 
+          userName: getMyInfoResponse.data.userName, 
+          email: getMyInfoResponse.data.email, 
+          role: role, 
+        }));
+        dispatch(setUserInfos({
+          isOnline: info.isOnline,
+          age: info.age,
+          phoneNumber: info.phoneNumber,
+          emergencyPhoneNumber: info.emergencyPhoneNumber,
+          emergencyUserRole: info.emergencyUserRole,
+          selfIntroduction: info.selfIntroduction,
+          avatorUrl: info.avatorUrl,
+          avgStarRating: info.avgStarRating, 
+          createdAt: info.createdAt,
+          updatedAt: info.updatedAt,
+        }));
         onSignInSuccess?.();
-        Alert.alert("Success", `Logged in successfully as: ${response.data.userName}`);
+        Alert.alert("Success", `Logged in successfully as: ${getMyInfoResponse.data.userName}`);
       } else {
         throw new Error("Server request failed");
       }
@@ -155,7 +185,38 @@ const HandleGoogleSignInResult = ({ role, onSignInComplete, onSignInError, onSig
 
       if (axiosResponse?.data) {
         await saveToken(axiosResponse.data.accessToken);
-        dispatch(setUser({ userName: axiosResponse.data.userName, email: googleResponse.data.user.email, role: role }));
+
+        if (role === "Passenger") {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/passenger/getMyInfo`;
+        } else if (role === "Ridder") {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/ridder/getMyInfo`;
+        }
+        const getMyInfoResponse = await axios.get(url, 
+          {
+            headers: {
+              Authorization: `Bearer ${axiosResponse.data.accessToken}`
+            }
+          }
+        )
+        const info = getMyInfoResponse.data.info;
+
+        dispatch(setUser({ 
+          userName: getMyInfoResponse.data.userName, 
+          email: getMyInfoResponse.data.email, 
+          role: role, 
+        }));
+        dispatch(setUserInfos({
+          isOnline: info.isOnline,
+          age: info.age,
+          phoneNumber: info.phoneNumber,
+          emergencyPhoneNumber: info.emergencyPhoneNumber,
+          emergencyUserRole: info.emergencyUserRole,
+          selfIntroduction: info.selfIntroduction,
+          avatorUrl: info.avatorUrl,
+          avgStarRating: info.avgStarRating, 
+          createdAt: info.createdAt,
+          updatedAt: info.updatedAt,
+        }));
         onSignInSuccess?.();
         Alert.alert("Success", `Logged in successfully as: ${googleResponse.data.user.email}`);
       } else {
@@ -194,7 +255,7 @@ const HandleGoogleSignIn = ({ role, onSignInStart, onSignInComplete, onSignInErr
       const response = await GoogleSignin.signIn();
 
       if (isSuccessResponse(response)) {
-        console.log(response);
+        // console.log(response);
         await handleSignInResult(response as GoogleSignInResponse);
       } else {
         console.log("Sign in was cancelled by user");

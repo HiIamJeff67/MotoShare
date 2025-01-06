@@ -7,7 +7,7 @@ import { RootState } from "../(store)";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { moderateScale, verticalScale } from "react-native-size-matters";
 import React, { useEffect, useState } from "react";
 import { HomeScreenStyles, mapStyle } from "./Home.style";
 import RecordButton from "../component/RecordButton/RecordButton";
@@ -76,7 +76,7 @@ const Home = () => {
         );
         setUserRecords(response.data["searchRecords"]);
       } catch (error) {
-        console.log("Token 未獲取");
+        console.log(error);
       }
     }
   };

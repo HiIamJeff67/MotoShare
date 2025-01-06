@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from '@/theme/theme';
-import { scale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
 export const AnimatedInputMessageStyles = (theme: Theme) => {
     const [_colors, _fonts] = [theme.colors, theme.fonts];
@@ -21,9 +21,10 @@ export const AnimatedInputMessageStyles = (theme: Theme) => {
             padding: 20,
             alignItems: 'center',
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: scale(15),
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.4,
+            shadowRadius: scale(10),
+            elevation: 8,
         },
         title: {
             fontSize: scale(16),
@@ -46,6 +47,9 @@ export const AnimatedInputMessageStyles = (theme: Theme) => {
             gap: verticalScale(8), 
             marginBottom: verticalScale(12), 
         }, 
+        inputInnerContainer: {
+            width: "100%", 
+        }, 
         input: {
             width: "100%", 
             height: scale(36), 
@@ -55,6 +59,25 @@ export const AnimatedInputMessageStyles = (theme: Theme) => {
             borderStyle: "solid", 
             borderRadius: scale(8), 
             color: _colors.text, 
+        },
+        inputSideButton: {
+            position: "absolute", 
+            right: 0, 
+            width: "30%", 
+            height: scale(36), 
+            justifyContent: "center", 
+            alignItems: "center", 
+            backgroundColor: _colors.text, 
+            borderRadius: scale(8), 
+            borderColor: _colors.text, 
+            borderWidth: scale(2), 
+        }, 
+        inputSideButtonTitle: {
+            ...(_fonts.medium),
+            color: _colors.background,  
+        }, 
+        disabledButton: {
+            opacity: 0.8, 
         },
         buttonContainer: {
             flexDirection: 'row',
