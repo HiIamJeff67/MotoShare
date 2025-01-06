@@ -295,6 +295,27 @@
       "when": 1735984826485,
       "tag": "0041_wakeful_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1736173362728,
+      "tag": "0042_amused_chimera",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1736176003810,
+      "tag": "0043_lazy_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1736179942895,
+      "tag": "0044_windy_bloodstrike",
+      "breakpoints": true
     }
   ]
 }

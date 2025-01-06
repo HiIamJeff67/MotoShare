@@ -202,6 +202,18 @@ export const ClientRidderAuthNotFoundException = new NotFoundException({
     message: "Failed to find any ridderAuths", 
 });
 
+// E-C-120
+export const ClientPassengerBankNotFoundException = new NotFoundException({
+    case: "E-C-120", 
+    message: "Failed to find any passengerBanks", 
+});
+
+// E-C-121
+export const ClientRidderBankNotFoundException = new NotFoundException({
+    case: "E-C-121", 
+    message: "Failed to find any ridderBanks", 
+});
+
 /* ============================== Error about select operation ============================== */
 
 
@@ -343,13 +355,13 @@ export const ClientCreatePeriodicSupplyOrderException = new ForbiddenException({
 // E-C-223
 export const ClientCreatePassengerRecordException = new ForbiddenException({
     case: "E-C-223", 
-    message: "Failed to create passengerRecord", 
+    message: "Failed to create a passengerRecord", 
 });
 
 // E-C-224
 export const ClientCreateRidderRecordException = new ForbiddenException({
     case: "E-C-224", 
-    message: "Failed to create ridderRecord", 
+    message: "Failed to create a ridderRecord", 
 });
 
 // E-C-225
@@ -374,6 +386,18 @@ export const ClientCalculatePassengerAverageStarRatingException = new ForbiddenE
 export const ClientCalculateRidderAverageStarRatingException = new ForbiddenException({
     case: "E-C-228", 
     message: "Failed to calculate the average starRating of some ridder", 
+});
+
+// E-C-229
+export const ClientCreatePassengerBankException = new ForbiddenException({
+    case: "E-C-229", 
+    message: "Failed to create a passengerBank", 
+});
+
+// E-C-230
+export const ClientCreateRidderBankException = new ForbiddenException({
+    case: "E-C-230", 
+    message: "Failed to create a ridderBank", 
 });
 
 /* ============================== Error about create operation ============================== */

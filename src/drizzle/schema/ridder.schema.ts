@@ -11,6 +11,8 @@ import {
     RidderPreferences,
     PassengerPreferences,
     PeriodicSupplyOrderTable,
+    RidderRecordTable,
+    RidderBankTable,
 } from "./schema";
 import { RidderNotificationTable } from "./ridderNotification.schema";
 
@@ -38,4 +40,6 @@ export const RidderRelation = relations(RidderTable, ({ one, many }) => ({
     preferences: many(RidderPreferences), 
     preferencedBy: many(PassengerPreferences), 
     periodicSupplyOrders: many(PeriodicSupplyOrderTable), 
+    record: one(RidderRecordTable), 
+    bank: one(RidderBankTable), 
 }));

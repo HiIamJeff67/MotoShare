@@ -31,6 +31,7 @@ import { RidderRecordModule } from './ridderRecord/ridderRecord.module';
 import { StripeModule } from './stripe/stripe.module';
 import { PassengerBankModule } from './passengerBank/passengerBank.module';
 import { RidderBankModule } from './ridderBank/ridderBank.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { RidderBankModule } from './ridderBank/ridderBank.module';
     RidderRecordModule,
     PassengerBankModule,
     RidderBankModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

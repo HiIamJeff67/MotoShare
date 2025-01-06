@@ -1,4 +1,4 @@
-import { BadRequestException, InternalServerErrorException, NotAcceptableException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, InternalServerErrorException, NotAcceptableException, NotFoundException } from "@nestjs/common";
 
 // E-A-001
 export const ApiMissingParameterException = new BadRequestException({
@@ -46,6 +46,25 @@ export const ApiISOStringFormException = new NotAcceptableException({
     message: "Wrong form of ISO date string when converting it to time only string", 
 });
 
+/* ================================= Webhook exception ================================= */
+// E-A-200
+export const ApiWrongWebhookSignatureException = new NotAcceptableException({
+    case: "E-A-200", 
+    message: "Wrong webhook signature detected, please provide a valid signature", 
+});
+
+// E-A-201
+export const ApiEndpointEnvVarNotFoundException = new NotFoundException({
+    case: "E-A-201", 
+    message: "Cannot find some necessary environment variables for sepecifying endpoint for Stripe webhooks", 
+});
+
+// E-A-202
+export const ApiStripeWebhookUnhandleExcpetion = new ForbiddenException({
+    case: "E-A-202", 
+    message: "This request is unhandled due to it is undefined in stripe", 
+});
+/* ================================= Webhook exception ================================= */
 
 // E-A-900
 export const ApiGeneratingBearerTokenException = new InternalServerErrorException({

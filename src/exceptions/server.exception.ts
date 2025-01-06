@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from "@nestjs/common"
+import { ForbiddenException, InternalServerErrorException, NotFoundException } from "@nestjs/common"
 
 // private type
 type AdminFieldType = 
