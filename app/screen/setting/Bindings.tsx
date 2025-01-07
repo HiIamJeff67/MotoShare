@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { Alert, ScrollView, View } from 'react-native';
-import { BindingsStyles } from './Bindings.style';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/app/(store)';
-import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
-import AppInfoCard from '@/app/component/AppInfoCard/AppInfoCard';
-import AnimatedInputMessage from '@/app/component/InputMessage/AnimatedInputMessage';
-import axios from 'axios';
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import { setUserAuths } from '@/app/(store)/userSlice';
-import { isAuthCode } from '@/app/methods/isAuthCode';
+import { Alert, ScrollView, View } from "react-native";
+import { BindingsStyles } from "./Bindings.style";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/(store)";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import AppInfoCard from "@/app/component/AppInfoCard/AppInfoCard";
+import AnimatedInputMessage from "@/app/component/InputMessage/AnimatedInputMessage";
+import axios from "axios";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { setUserAuths } from "@/app/(store)/userSlice";
+import { isAuthCode } from "@/app/methods/isAuthCode";
+import { useTranslation } from "react-i18next";
+import { GoogleSignin, statusCodes, isErrorWithCode, isSuccessResponse } from "@react-native-google-signin/google-signin";
 
-export type ValidateOptionNameInterface = 
-  "MotoShare" |
-  "Email"     |
-  "Phone"     |
-  "Google"    ;
+GoogleSignin.configure({
+  webClientId: "845286501383-anaskssv4t2mn71hddrdll74uamcgne2.apps.googleusercontent.com", // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+  iosClientId: "845286501383-juhc485p1hrsgoegjvk0irl96vb3281d.apps.googleusercontent.com",
+  scopes: ["profile", "email"], // what API you want to access on behalf of the user, default is email and profile
+});
+
+export type ValidateOptionNameInterface = "MotoShare" | "Email" | "Phone" | "Google";
 
 const Bindings = () => {
   const navigation = useNavigation();
@@ -24,15 +28,16 @@ const Bindings = () => {
   const user = useSelector((state: RootState) => state.user);
   const theme = user.theme;
   const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL, 
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }, 
+    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [validateOptionName, setValidateOptionName] = useState<ValidateOptionNameInterface | null>(null);
   const [styles, setStyles] = useState<any>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -76,10 +81,10 @@ const Bindings = () => {
   }, [theme]);
 
   useEffect(() => {
-    const fetchToken = async() => {
+    const fetchToken = async () => {
       const userToken = await SecureStore.getItemAsync("userToken");
       setToken(userToken);
-    }
+    };
 
     fetchToken();
   }, []);
@@ -91,31 +96,31 @@ const Bindings = () => {
         content,
         [
           {
-            text: "確認",
+            text: t("confirm"),
             onPress: () => {},
-            style: "cancel", 
+            style: "cancel",
           },
         ],
         { cancelable: true }
       );
-    }
+    };
 
     setIsLoading(true);
     setLockButton(true);
-    inputValues = inputValues.filter(value => value);
+    inputValues = inputValues.filter((value) => value);
     const [email, password] = [inputValues[0], inputValues[1]];
     if (token && token.length !== 0) {
       try {
         const response = await api.put(
-          user.role === "Passenger" ? "/passengerAuth/bindDefaultAuth" : "/ridderAuth/bindDefaultAuth", 
+          user.role === "Passenger" ? "/passengerAuth/bindDefaultAuth" : "/ridderAuth/bindDefaultAuth",
           { email: email, password: password },
           {
             headers: {
-              Authorization: `Bearer ${token}`, 
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
-        )
-        
+        );
+
         if (response.status === 200) {
           dispatch(setUserAuths({ isDefaultAuthenticated: true }));
         }
@@ -132,62 +137,59 @@ const Bindings = () => {
         setValidateOptionName(null);
       }
     }
-  }
+  };
 
   const handleSendAuthCodeForEmailAuthentication = async () => {
     if (token && token.length !== 0) {
       try {
-        await api.get(
-          user.role === "Passenger" ? "/passengerAuth/sendAuthCodeForEmail" : "/ridderAuth/sendAuthCodeForEmail", 
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, 
-            }
-          }
-        );
+        await api.get(user.role === "Passenger" ? "/passengerAuth/sendAuthCodeForEmail" : "/ridderAuth/sendAuthCodeForEmail", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } catch (error) {
         console.log(error);
-        Alert.alert("寄送驗證碼至此電子信箱失敗");
+        Alert.alert(t("The verification code sent to this email failed"));
       }
     }
-  }
+  };
 
   const handleValidateAuthCodeForEmailAuthentication = async (inputValues: string[]) => {
     const showAlertMessage = () => {
       Alert.alert(
-        "驗證碼錯誤",
-        "你必須輸入正確的驗證碼才能繼續",
+        t("verification code error"),
+        t("You must enter the correct verification code to continue"),
         [
           {
-            text: "確認",
+            text: t("confirm"),
             onPress: () => {},
-            style: "cancel", 
+            style: "cancel",
           },
         ],
         { cancelable: true }
       );
-    }
+    };
 
     setIsLoading(true);
     setLockButton(true);
-    const authCode = inputValues.filter(value => value)[0];
+    const authCode = inputValues.filter((value) => value)[0];
     if (!isAuthCode(authCode)) showAlertMessage();
-    
+
     if (token && token.length !== 0) {
       try {
-          const response = await api.post(
-            user.role === "Passenger" ? "/passengerAuth/validateAuthCodeForEmail" : "/ridderAuth/validateAuthCodeForEmail", 
-            { authCode: authCode },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, 
-              }
-            }
-          )
-
-          if (response.status === 200) {
-            dispatch(setUserAuths({ isEmailAuthenticated: true }));
+        const response = await api.post(
+          user.role === "Passenger" ? "/passengerAuth/validateAuthCodeForEmail" : "/ridderAuth/validateAuthCodeForEmail",
+          { authCode: authCode },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
+        );
+
+        if (response.status === 200) {
+          dispatch(setUserAuths({ isEmailAuthenticated: true }));
+        }
       } catch (error) {
         console.log(error);
         showAlertMessage();
@@ -197,116 +199,221 @@ const Bindings = () => {
         setValidateOptionName(null);
       }
     }
-  }
+  };
 
+  const googleEmailVerify = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
 
+      if (isSuccessResponse(response)) {
+        console.log(response);
 
-  return (
-    isLoading || !styles || !theme || !user.auth
-      ? <LoadingWrapper />
-      : <ScrollView>
-          <View style={styles.container}>
-            <AppInfoCard 
-              iconSource={require('../../../assets/images/motorbike.jpg')}
-              title='MotoShare（預設）'
-              description='提供您的Email以及Password來綁定我們軟體內的預設的帳戶，之後可透過這些資訊登入。'
-              status={user.auth.isDefaultAuthenticated}
-              callBack={() => setValidateOptionName("MotoShare")}
-              isOpaqued={user.auth.isDefaultAuthenticated}
-              theme={theme}
-            />
-            {validateOptionName === "MotoShare" && 
-              <AnimatedInputMessage 
-                title='綁定MotoShare（預設）'
-                content='如果之前使用的註冊或綁定方式有提供給我們Email，你也可以選擇保留並繼續使用該Email。'
-                theme={theme}
-                inputAttributes={[
-                  { 
-                    placeholder: '電子郵件', 
-                    isSecureText: false, 
-                    defaultValue: user.email,  
-                  }, 
-                  { 
-                    placeholder: '密碼', 
-                    isSecureText: true 
-                  }
-                ]}
-                leftOptionTitle='綁定'
-                leftOptionCallBack={handleBindDefaultAuthentication}
-                rightOptionTitle='取消'
-                rightOptionCallBack={() => setValidateOptionName(null)}
-              />
-            }
-            <AppInfoCard 
-              iconSource={require('../../../assets/images/email.png')}
-              title='電子郵件'
-              description='請驗證您的Email來讓我們確認您的身份，透過這項驗證您才能在訂單完成後給予評價或是星級。'
-              status={user.auth.isEmailAuthenticated}
-              callBack={() => setValidateOptionName("Email")}
-              isOpaqued={user.auth.isEmailAuthenticated}
-              theme={theme}
-              isNotColorful={true}
-            />
-            {validateOptionName === "Email" && 
-              <AnimatedInputMessage 
-                title='驗證電子郵件'
-                content={`這項舉動會發送一封帶有驗證碼的信到您目前的電子信箱(${user.email})，請在收到驗證碼之後輸入至下方並送出以讓我們知道是你。`}
-                theme={theme}
-                inputAttributes={[{ 
-                  placeholder: '驗證碼', 
-                  isSecureText: false, 
-                  inputSideButton: { 
-                    title: '發送驗證信', 
-                    callback: handleSendAuthCodeForEmailAuthentication, 
-                  } 
-                }]}
-                leftOptionTitle='驗證'
-                leftOptionCallBack={handleValidateAuthCodeForEmailAuthentication}
-                rightOptionTitle='發送驗證碼'
-                rightOptionCallBack={() => setValidateOptionName(null)}
-              />
-            }
-            <AppInfoCard 
-              iconSource={require('../../../assets/images/phone-call.png')}
-              title='電話號碼'
-              description='請驗證您的電話號碼來讓我們確認您的身份，這雖然不會直接影響你的使用體驗，但是可以讓其他使用者更信任您。'
-              status={user.auth.isPhoneAuthenticated}
-              callBack={() => setValidateOptionName("Phone")}
-              isOpaqued={user.auth.isPhoneAuthenticated}
-              theme={theme}
-              isNotColorful={true}
-            />
-            {validateOptionName === "Phone" && 
-              <AnimatedInputMessage 
-                title='驗證電話號碼'
-                content='請輸入一個台灣的電話號碼（09XX-XXX-XXX)，您不需要輸入任何地區的電話開頭。'
-                theme={theme}
-                inputAttributes={[{
-                  placeholder: '電話號碼(+886)', 
-                  isSecureText: false, 
-                  inputSideButton: {
-                    title: '發送驗證碼', 
-                    callback: () => {}, 
-                  }, 
-                }]}
-                leftOptionTitle='驗證'
-                leftOptionCallBack={() => {}}
-                rightOptionTitle='取消'
-                rightOptionCallBack={() => setValidateOptionName(null)}
-              />
-            }
-            <AppInfoCard 
-              iconSource={require('../../../assets/images/google.png')}
-              title='Google'
-              description='綁定您的Google帳戶，之後登入就可以透過Google快速登入。'
-              status={user.auth.isGoogleAuthenticated}
-              callBack={() => setValidateOptionName("Google")}
-              isOpaqued={user.auth.isGoogleAuthenticated}
-              theme={theme}
-            />
-          </View>
-        </ScrollView>
-  )
-}
+        if (response.data.idToken) {
+          handleGoogleEmailVerify(response.data.idToken);
+        } else {
+          console.error("ID token is null");
+        }
+      } else {
+        console.log("Sign in was cancelled by user");
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.SIGN_IN_CANCELLED:
+            console.error("SIGN_IN_CANCELLED");
+            break;
+          case statusCodes.IN_PROGRESS:
+            console.error("IN_PROGRESS");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.error("PLAY_SERVICES_NOT_AVAILABLE");
+            break;
+          default:
+            console.error("An unexpected error occurred:", error);
+            break;
+        }
+      } else {
+        console.error("Non-status code error:", error);
+      }
+    } finally {
+    }
+  };
+
+  const handleGoogleEmailVerify = async (idToken: string) => {
+    const showAlertMessage = () => {
+      Alert.alert(
+        t("verification code error"),
+        t("You must enter the correct verification code to continue"),
+        [
+          {
+            text: t("confirm"),
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    };
+
+    setIsLoading(true);
+    setLockButton(true);
+
+    if (token && token.length !== 0) {
+      try {
+        const response = await api.put(
+          user.role === "Passenger" ? "/passengerAuth/bindGoogleAuth" : "/ridderAuth/bindGoogleAuth",
+          { idToken: idToken },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          dispatch(setUserAuths({ isGoogleAuthenticated: true }));
+        }
+      } catch (error) {
+        console.log(error);
+        showAlertMessage();
+      } finally {
+        setIsLoading(false);
+        setLockButton(false);
+        setValidateOptionName(null);
+      }
+    }
+  };
+
+  return isLoading || !styles || !theme || !user.auth ? (
+    <LoadingWrapper />
+  ) : (
+    <ScrollView>
+      <View style={styles.container}>
+        <AppInfoCard
+          iconSource={require("../../../assets/images/motorbike.jpg")}
+          title={t("MotoShare")}
+          description={t("provide email")}
+          status={user.auth.isDefaultAuthenticated}
+          callBack={() => setValidateOptionName("MotoShare")}
+          isOpaqued={user.auth.isDefaultAuthenticated}
+          theme={theme}
+        />
+        {validateOptionName === "MotoShare" && (
+          <AnimatedInputMessage
+            title={t("Bind to MotoShare (default)")}
+            content={t(
+              "If the previous registration or binding method provided us with an email, you can also choose to keep and continue to use that email."
+            )}
+            theme={theme}
+            inputAttributes={[
+              {
+                placeholder: t("email"),
+                isSecureText: false,
+                defaultValue: user.email,
+              },
+              {
+                placeholder: t("password"),
+                isSecureText: true,
+              },
+            ]}
+            leftOptionTitle={t("bind")}
+            leftOptionCallBack={handleBindDefaultAuthentication}
+            rightOptionTitle={t("cancel")}
+            rightOptionCallBack={() => setValidateOptionName(null)}
+          />
+        )}
+        <AppInfoCard
+          iconSource={require("../../../assets/images/email.png")}
+          title={t("email")}
+          description={t(
+            "Please verify your email to let us confirm your identity. Through this verification, you can give a review or star rating after the order is completed"
+          )}
+          status={user.auth.isEmailAuthenticated}
+          callBack={() => setValidateOptionName("Email")}
+          isOpaqued={user.auth.isEmailAuthenticated}
+          theme={theme}
+          isNotColorful={true}
+        />
+        {validateOptionName === "Email" && (
+          <AnimatedInputMessage
+            title={t("verification email")}
+            content={`${t("This action will send an email with a verification code to your current email address")}(${user.email}) ${t(
+              "Once you receive the verification code, please enter it below and send it to let us know it's you"
+            )}`}
+            theme={theme}
+            inputAttributes={[
+              {
+                placeholder: t("verification code"),
+                isSecureText: false,
+                inputSideButton: {
+                  title: t("code"),
+                  callback: handleSendAuthCodeForEmailAuthentication,
+                },
+              },
+            ]}
+            leftOptionTitle={t("verify")}
+            leftOptionCallBack={handleValidateAuthCodeForEmailAuthentication}
+            rightOptionTitle={t("send code")}
+            rightOptionCallBack={() => setValidateOptionName(null)}
+          />
+        )}
+        <AppInfoCard
+          iconSource={require("../../../assets/images/phone-call.png")}
+          title={t("verify phone number")}
+          description={t(
+            "Please verify your phone number to let us confirm your identity. Although this will not directly affect your experience, it can make other users trust you more"
+          )}
+          status={user.auth.isPhoneAuthenticated}
+          callBack={() => setValidateOptionName("Phone")}
+          isOpaqued={user.auth.isPhoneAuthenticated}
+          theme={theme}
+          isNotColorful={true}
+        />
+        {validateOptionName === "Phone" && (
+          <AnimatedInputMessage
+            title={t("verify phone number")}
+            content={t("Please enter a Taiwan phone number (09XX-XXX-XXX). You do not need to enter the beginning of the phone number in any region")}
+            theme={theme}
+            inputAttributes={[
+              {
+                placeholder: t("phone 886"),
+                isSecureText: false,
+                inputSideButton: {
+                  title: "code",
+                  callback: () => {},
+                },
+              },
+            ]}
+            leftOptionTitle={t("verify")}
+            leftOptionCallBack={() => {}}
+            rightOptionTitle={t("cancel")}
+            rightOptionCallBack={() => setValidateOptionName(null)}
+          />
+        )}
+        <AppInfoCard
+          iconSource={require("../../../assets/images/google.png")}
+          title="Google"
+          description={t("Bind your Google account, and then log in to quickly log in through Google")}
+          status={user.auth.isGoogleAuthenticated}
+          callBack={() => setValidateOptionName("Google")}
+          isOpaqued={user.auth.isGoogleAuthenticated}
+          theme={theme}
+        />
+        {validateOptionName === "Google" && (
+          <AnimatedInputMessage
+            title="綁定Google帳戶"
+            content="請登入你的 Google 電郵以綁定你的 Google 帳戶。"
+            theme={theme}
+            leftOptionTitle="登入"
+            leftOptionCallBack={googleEmailVerify}
+            rightOptionTitle="取消"
+            rightOptionCallBack={() => setValidateOptionName(null)}
+          />
+        )}
+      </View>
+    </ScrollView>
+  );
+};
 
 export default Bindings;

@@ -36,6 +36,13 @@
           "iosUrlScheme": "com.googleusercontent.apps.845286501383-juhc485p1hrsgoegjvk0irl96vb3281d"
         }
       ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "publishableKey": "pk_test_51QcCnZFxFe8Yk0tjZmCsvit0i4Yta4mqtDbAI56jNkFXJYgwwfxSYpTW1OCavsxtT4fJNCFo6sBsDVUCC0P3ylRC00HkQfPVYO",
+          "merchantIdentifier": "merchant.com.henryong.ridesharingsystem"
+        }
+      ],
       "expo-localization"
     ],
     "extra": {
