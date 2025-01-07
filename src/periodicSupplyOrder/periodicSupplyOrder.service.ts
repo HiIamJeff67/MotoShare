@@ -99,6 +99,8 @@ export class PeriodicSupplyOrderService {
         id: PeriodicSupplyOrderTable.id, 
         scheduledDay: PeriodicSupplyOrderTable.scheduledDay, 
         autoAccept: PeriodicSupplyOrderTable.autoAccept, 
+        startAfter: PeriodicSupplyOrderTable.startAfter, 
+        endedAt: PeriodicSupplyOrderTable.endedAt, 
         createdAt: PeriodicSupplyOrderTable.createdAt, 
         updatedAt: PeriodicSupplyOrderTable.updatedAt, 
       }).from(PeriodicSupplyOrderTable)

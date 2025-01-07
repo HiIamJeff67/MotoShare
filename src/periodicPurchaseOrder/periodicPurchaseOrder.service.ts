@@ -99,6 +99,8 @@ export class PeriodicPurchaseOrderService {
       id: PeriodicPurchaseOrderTable.id, 
       scheduledDay: PeriodicPurchaseOrderTable.scheduledDay, 
       autoAccept: PeriodicPurchaseOrderTable.autoAccept, 
+      startAfter: PeriodicPurchaseOrderTable.startAfter, 
+      endedAt: PeriodicPurchaseOrderTable.endedAt, 
       createdAt: PeriodicPurchaseOrderTable.createdAt, 
       updatedAt: PeriodicPurchaseOrderTable.updatedAt, 
     }).from(PeriodicPurchaseOrderTable)
