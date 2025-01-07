@@ -26,6 +26,8 @@ import Settings from "./screen/setting/Settings";
 import UserSearch from "./screen/user/Search";
 import MyCreateOrder from "./screen/setting/MyCreateOrder";
 import MyCreateOrderDe from "./screen/setting/MyCreateOrderDe";
+import POrder from "./screen/periodic/POrder";
+import POrderDetail from "./screen/periodic/POrderDetail";
 import PaymentScreen from "./screen/stripe/Payment";
 import store from "./(store)";
 import { Provider, useDispatch } from "react-redux";
@@ -328,6 +330,16 @@ function AppContent() {
             <Stack.Screen
               name="mycreateorderde"
               component={MyCreateOrderDe}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
+            />
+            <Stack.Screen
+              name="porder"
+              component={POrder}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
+            />
+            <Stack.Screen
+              name="porderdetail"
+              component={POrderDetail}
               options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
             />
             <Stack.Screen

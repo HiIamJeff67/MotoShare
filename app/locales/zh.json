@@ -227,5 +227,24 @@
   "send code": "發送驗證碼",
 
   "pure rider": "車主",
-  "pure passenger": "乘客"
+  "pure passenger": "乘客",
+
+  "Monday": "星期一",
+  "Tuesday": "星期二",
+  "Wednesday": "星期三",
+  "Thursday": "星期四",
+  "Friday": "星期五",
+  "Saturday": "星期六",
+  "Sunday": "星期日",
+  "Periodic Order": "週期性訂單",
+  "None": "沒有",
+  "Selected Weekday": "選擇的星期",
+
+  "Create POrder": "建立週期性訂單",
+  "Weekday": "星期幾",
+
+  "Delete": "刪除",
+  "Conflict": "衝突",
+  "Conflict Message": "成功送出訂單，不過系統自動檢測到你有潛在的時間衝突",
+  "Conflict Message2": "成功送出邀請，不過系統自動檢測到你有潛在的時間衝突"
 }

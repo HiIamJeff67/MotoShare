@@ -17,6 +17,7 @@ import "react-native-get-random-values";
 import { useNavigation, CommonActions, useRoute } from "@react-navigation/native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 
 const InviteMap = () => {
   const route = useRoute();
@@ -53,6 +54,7 @@ const InviteMap = () => {
   const snapPoints = useMemo(() => ["25%", "50%", "85%"], []);
   const navigation = useNavigation();
   const [lockButton, setLockButton] = useState(false);
+  const { t } = useTranslation();
 
   const getToken = async () => {
     try {
@@ -229,7 +231,12 @@ const InviteMap = () => {
       setLockButton(true);
       console.log("Update Response:", response.data);
       setLoading(false);
-      Alert.alert("成功", "送出邀請成功");
+
+      if (response.data.hasConflict) {
+        Alert.alert(t("Conflict"), t("Conflict Message"));
+      } else {
+        Alert.alert("Conflict", "Conflict Message2");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);

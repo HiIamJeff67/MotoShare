@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
   Image,
   ActivityIndicator,
   Switch,
+  Modal,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
@@ -56,6 +57,7 @@ const MapWithBottomSheet = () => {
     createNewOrder: false,
     makeRequest: false,
     inviteNow: false,
+    periodicOrder: false,
   });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -87,10 +89,14 @@ const MapWithBottomSheet = () => {
   const anyLoadingTrue = Object.values(loading).some((value) => value === true);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(true);
   const toggleSwitch = () => setIsSwitchEnabled((previousState) => !previousState);
+  const [isSwitchTwoEnabled, setIsSwitchTwoEnabled] = useState(false);
+  const toggleSwitchTwo = () => setIsSwitchTwoEnabled((previousState) => !previousState);
   const { t } = useTranslation();
   const toggleLoading = (key: string, value: boolean) => {
     setLoading((prev) => ({ ...prev, [key]: value }));
   };
+  const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const lockHeight = useCallback((height: string) => {
     setSnapPoints([height]); // 鎖定到單一高度
@@ -197,7 +203,7 @@ const MapWithBottomSheet = () => {
         unsubscribe();
       }
 
-      if (lockButton && showSearchOrderPage) {
+      if (lockButton && (showSearchOrderPage || isSwitchTwoEnabled)) {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -281,6 +287,8 @@ const MapWithBottomSheet = () => {
       toggleLoading("inviteNow", true);
     } else if (type === 3) {
       toggleLoading("makeRequest", true);
+    } else if (type === 4) {
+      toggleLoading("periodicOrder", true);
     }
 
     try {
@@ -293,14 +301,29 @@ const MapWithBottomSheet = () => {
               toggleLoading("createNewOrder", false);
               toggleLoading("inviteNow", false);
               toggleLoading("makeRequest", false);
+              toggleLoading("periodicOrder", false);
             },
           },
         ]);
         return;
       }
 
+      let startTime;
       let endDate = new Date(selectedDate);
-      endDate.setDate(endDate.getDate() + 1);
+      const DAYSDB = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const weekDay = DAYSDB[selectedDay];
+      const pSelectedDate = new Date("9999-12-31T00:00:00Z");
+      pSelectedDate.setHours(selectedDate.getHours());
+      pSelectedDate.setMinutes(selectedDate.getMinutes());
+      pSelectedDate.setSeconds(selectedDate.getSeconds());
+
+      if (isSwitchTwoEnabled) {
+        startTime = pSelectedDate;
+        endDate = new Date("9999-12-31T23:59:59Z");
+      } else {
+        startTime = selectedDate;
+        endDate.setDate(endDate.getDate() + 1);
+      }
 
       const data = {
         startAddress: originAddress,
@@ -309,10 +332,10 @@ const MapWithBottomSheet = () => {
         startCordLatitude: origin?.latitude,
         endCordLongitude: destination?.longitude,
         endCordLatitude: destination?.latitude,
-        ...(type === 1 && {
+        ...((type === 1 || type === 4) && {
           description: orderDescription,
           initPrice: initialPrice,
-          startAfter: selectedDate,
+          startAfter: startTime,
           endedAt: endDate,
           isUrgent: false,
           autoAccept: isSwitchEnabled,
@@ -322,6 +345,9 @@ const MapWithBottomSheet = () => {
           suggestPrice: initialPrice,
           suggestStartAfter: selectedDate,
           suggestEndedAt: endDate,
+        }),
+        ...(type === 4 && {
+          scheduledDay: weekDay,
         }),
       };
 
@@ -354,6 +380,12 @@ const MapWithBottomSheet = () => {
         params = {
           orderId: orderId,
         };
+      } else if (type === 4) {
+        if (user.role == "Passenger") {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/periodicPurchaseOrder/createMyPeriodicPurchaseOrder`;
+        } else if (user.role == "Ridder") {
+          url = `${process.env.EXPO_PUBLIC_API_URL}/periodicSupplyOrder/createMyPeriodicSupplyOrder`;
+        }
       }
 
       const response = await axios.post(url, data, {
@@ -367,9 +399,14 @@ const MapWithBottomSheet = () => {
       toggleLoading("createNewOrder", false);
       toggleLoading("inviteNow", false);
       toggleLoading("makeRequest", false);
+      toggleLoading("periodicOrder", false);
       setLockButton(true);
-      Alert.alert(t("success"), t("Ordersentsuccessfully"));
-      //console.log("Update Response:", response.data);
+      
+      if (response.data.hasConflict) {
+        Alert.alert(t("Conflict"), t("Conflict Message"));
+      } else {
+        Alert.alert(t("success"), t("Ordersentsuccessfully"));
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -379,6 +416,7 @@ const MapWithBottomSheet = () => {
               toggleLoading("createNewOrder", false);
               toggleLoading("inviteNow", false);
               toggleLoading("makeRequest", false);
+              toggleLoading("periodicOrder", false);
             },
           },
         ]);
@@ -390,6 +428,7 @@ const MapWithBottomSheet = () => {
               toggleLoading("createNewOrder", false);
               toggleLoading("inviteNow", false);
               toggleLoading("makeRequest", false);
+              toggleLoading("periodicOrder", false);
             },
           },
         ]);
@@ -466,6 +505,19 @@ const MapWithBottomSheet = () => {
     { label: t("Similar time"), value: "2" },
   ];
 
+  const DAYS = [t("Monday"), t("Tuesday"), t("Wednesday"), t("Thursday"), t("Friday"), t("Saturday"), t("Sunday")];
+
+  // 切換下拉清單開啟或關閉
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // 選擇星期後，更新狀態並關閉下拉清單
+  const onSelectDay = (day: number) => {
+    setSelectedDay(day);
+    setIsDropdownOpen(false);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
@@ -531,21 +583,42 @@ const MapWithBottomSheet = () => {
                   }}
                 >
                   <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
-                  <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
-                  <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
+                  <Text style={styles.bottomSheetText}>
+                    {t("starting point")}: {originAddress}
+                  </Text>
+                  <Text style={styles.bottomSheetText}>
+                    {t("destination")}: {destinationAddress}
+                  </Text>
                   <View style={styles.dateContainer}>
                     <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
                     <Text style={styles.bottomSheetText}>
-                      {selectedDate
-                        ? selectedDate.toLocaleString("en-GB", {
+                      {isSwitchTwoEnabled
+                        ? selectedDate.toLocaleTimeString("en-GB", {
                             timeZone: "Asia/Taipei",
                           })
-                        : "未選擇日期"}
+                        : selectedDate.toLocaleString("en-GB", {
+                            timeZone: "Asia/Taipei",
+                          })}
                     </Text>
                     <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
                       <Entypo name="calendar" size={moderateScale(24)} color="black" />
                     </TouchableOpacity>
                   </View>
+                  {isSwitchTwoEnabled && (
+                    <View style={styles.dateContainer}>
+                      <Text style={styles.bottomSheetText}>
+                        {t("Selected Weekday")}：{DAYS[selectedDay]}
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.bottomSheetDate}
+                        onPress={() => {
+                          toggleDropdown();
+                        }}
+                      >
+                        <Entypo name="calendar" size={moderateScale(24)} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  )}
                   <BottomSheetTextInput
                     style={styles.input}
                     placeholder={t("Initial price")}
@@ -560,19 +633,53 @@ const MapWithBottomSheet = () => {
                     onChangeText={setorderDescription}
                     placeholderTextColor="gray"
                   />
-                  <View style={{ alignItems: "center", flexDirection: "row" }}>
-                    <Switch
-                      trackColor={{ false: "#767577", true: "#81b0ff" }}
-                      thumbColor={isSwitchEnabled ? "#f5dd4b" : "#f4f3f4"}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={toggleSwitch}
-                      value={isSwitchEnabled}
-                    />
-                    <Text style={styles.bottomSheetText}>{t("start directly")}</Text>
+
+                  <View>
+                    <View style={styles.rowSwitch}>
+                      {/* 左側：Switch + Text */}
+                      <View style={styles.switchContainer}>
+                        <Switch
+                          trackColor={{ false: "#767577", true: "#81b0ff" }}
+                          thumbColor={isSwitchEnabled ? "#f5dd4b" : "#f4f3f4"}
+                          ios_backgroundColor="#3e3e3e"
+                          onValueChange={toggleSwitch}
+                          value={isSwitchEnabled}
+                          disabled={loading.fetchData || loading.periodicOrder}
+                        />
+                        <Text style={styles.bottomSheetText}>{t("start directly")}</Text>
+                      </View>
+
+                      {/* 右側：Text + Switch */}
+                      <View style={styles.switchContainer}>
+                        <Switch
+                          trackColor={{ false: "#767577", true: "#81b0ff" }}
+                          thumbColor={isSwitchTwoEnabled ? "#f5dd4b" : "#f4f3f4"}
+                          ios_backgroundColor="#3e3e3e"
+                          onValueChange={toggleSwitchTwo}
+                          value={isSwitchTwoEnabled}
+                          disabled={loading.fetchData || loading.periodicOrder}
+                        />
+                        <Text style={styles.bottomSheetText}>{t("Periodic Order")}</Text>
+                      </View>
+                    </View>
                   </View>
+
+                  {/* 模擬「下拉清單」的 Modal */}
+                  <Modal visible={isDropdownOpen} transparent animationType="fade" onRequestClose={() => setIsDropdownOpen(false)}>
+                    <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setIsDropdownOpen(false)}>
+                      <View style={styles.dropdownListContainer}>
+                        {DAYS.map((day: string, index: number) => (
+                          <TouchableOpacity key={day} style={styles.dropdownItem} onPress={() => onSelectDay(index)}>
+                            <Text style={styles.dropdownItemText}>{day}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </TouchableOpacity>
+                  </Modal>
+
                   <DateTimePickerModal
                     date={selectedDate}
-                    mode="datetime"
+                    mode={isSwitchTwoEnabled ? "time" : "datetime"}
                     locale="zh-tw"
                     is24Hour={true}
                     minimumDate={new Date()}
@@ -589,18 +696,26 @@ const MapWithBottomSheet = () => {
                         setDestination(null);
                         setShowSetPage(false);
                       }}
-                      disabled={loading.fetchData}
+                      disabled={loading.fetchData || loading.periodicOrder || lockButton}
                     >
                       <Text style={styles.buttonText}>{t("back")}</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.button, { backgroundColor: "#228B22" }]}
                       onPress={() => {
-                        searchOrderData("1");
+                        if (isSwitchTwoEnabled) {
+                          createOrderData(4);
+                        } else {
+                          searchOrderData("1");
+                        }
                       }}
-                      disabled={loading.fetchData}
+                      disabled={loading.fetchData || loading.periodicOrder || lockButton}
                     >
-                      <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : t("search order")}</Text>
+                      {isSwitchTwoEnabled ? (
+                        <Text style={styles.buttonText}>{loading.periodicOrder ? <ActivityIndicator size="large" /> : t("Create POrder")}</Text>
+                      ) : (
+                        <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : t("search order")}</Text>
+                      )}
                     </Pressable>
                   </View>
                 </BottomSheetView>
@@ -665,9 +780,15 @@ const MapWithBottomSheet = () => {
                                   <View style={styles.cardContent}>
                                     <View style={styles.cardLeftSection}>
                                       <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>{t("userName")}:{item.creatorName}</Text>
-                                        <Text style={styles.cardSubtitle}>{t("starting point")}:{item.startAddress}</Text>
-                                        <Text style={styles.cardSubtitle}>{t("destination")}:{item.endAddress}</Text>
+                                        <Text style={styles.cardTitle}>
+                                          {t("userName")}:{item.creatorName}
+                                        </Text>
+                                        <Text style={styles.cardSubtitle}>
+                                          {t("starting point")}:{item.startAddress}
+                                        </Text>
+                                        <Text style={styles.cardSubtitle}>
+                                          {t("destination")}:{item.endAddress}
+                                        </Text>
                                         <Text style={styles.cardSubtitle}>
                                           {t("start driving")}:
                                           {new Date(item.startAfter).toLocaleString("en-GB", {
@@ -724,7 +845,9 @@ const MapWithBottomSheet = () => {
                                         <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
                                       )}
                                       <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>{t("userName")}：{item.creatorName}</Text>
+                                        <Text style={styles.cardTitle}>
+                                          {t("userName")}：{item.creatorName}
+                                        </Text>
                                         <Text style={styles.cardSubtitle}>
                                           {t("start driving")}：
                                           {new Date(item.startAfter).toLocaleString("en-GB", {
@@ -747,7 +870,9 @@ const MapWithBottomSheet = () => {
                   </ScrollView>
                   <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
                     <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
-                      <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}</Text>
+                      <Text style={styles.footerButtonText}>
+                        {loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}
+                      </Text>
                     </Pressable>
                   </View>
                 </>
@@ -767,7 +892,7 @@ const MapWithBottomSheet = () => {
                 }}
               >
                 <GooglePlacesAutocomplete
-                  placeholder={t('search starting point')}
+                  placeholder={t("search starting point")}
                   textInputProps={{
                     placeholderTextColor: "#626262",
                     onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
@@ -1044,6 +1169,38 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: moderateScale(16),
     fontWeight: "bold",
+  },
+  rowSwitch: {
+    flexDirection: "row",
+    justifyContent: "space-between", // 讓左右各自貼邊
+    alignItems: "center",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    // 可依需求在此調整左右間距
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dropdownListContainer: {
+    width: "60%",
+    backgroundColor: "#fff",
+    borderRadius: moderateScale(8),
+    padding: moderateScale(8),
+    // 下面是為了在 iOS 上讓內容不超出圓角
+    overflow: "hidden",
+  },
+  dropdownItem: {
+    paddingVertical: moderateScale(12),
+    paddingHorizontal: moderateScale(8),
+  },
+  dropdownItemText: {
+    fontSize: moderateScale(16),
+    color: "#333",
   },
 });
 

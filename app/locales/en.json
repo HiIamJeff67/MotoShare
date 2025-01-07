@@ -228,5 +228,24 @@
   "send code": "Send Code",
 
   "pure rider": "Rider",
-  "pure passenger": "Passenger"
+  "pure passenger": "Passenger",
+
+  "Monday": "Monday",
+  "Tuesday": "Tuesday",
+  "Wednesday": "Wednesday",
+  "Thursday": "Thursday",
+  "Friday": "Friday",
+  "Saturday": "Saturday",
+  "Sunday": "Sunday",
+  "Periodic Order": "Periodic Order",
+  "None": "None",
+  "Selected Weekday": "Selected Weekday",
+
+  "Create POrder": "Create Periodic Order",
+  "Weekday": "Weekday",
+
+  "Delete": "Delete",
+  "Conflict": "Conflict",
+  "Conflict Message": "The order was successfully sent, but the system automatically detected a potential time conflict",
+  "Conflict Message2": "The invitation was successfully sent, but the system automatically detected a potential time conflict"
 }
