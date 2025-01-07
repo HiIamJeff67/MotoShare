@@ -90,8 +90,11 @@ export class PassengerBankService {
   /* ================================= Force to Finish Order by Stripe Pay operation ================================= */
   async payToFinishOrderById(
     id: string, 
+    userId: string, 
   ) {
-    
+    return await this.db.transaction(async (tx) => {
+      
+    });
   }
   /* ================================= Force to Finish Order by Stripe Pay operation ================================= */
 }

@@ -379,8 +379,8 @@ export class PassengerAuthService {
 				throw ClientPassengerNotFoundException;
 			}
 
-			if (responseOfSelectingPassengerAuth[0].googleId || responseOfSelectingPassengerAuth[0].googleId !== null
-				|| responseOfSelectingPassengerAuth[0].googleId !== "") {
+			if (responseOfSelectingPassengerAuth[0].googleId && responseOfSelectingPassengerAuth[0].googleId !== null
+				&& responseOfSelectingPassengerAuth[0].googleId.length !== 0) {
 					throw ClientUserGoogleAuthAlreadyBoundException;
 			}
 

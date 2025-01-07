@@ -373,8 +373,8 @@ export class RidderAuthService {
 				throw ClientRidderNotFoundException;
 			}
 
-			if (responseOfSelectingRidderAuth[0].googleId || responseOfSelectingRidderAuth[0].googleId !== null
-				|| responseOfSelectingRidderAuth[0].googleId !== "") {
+			if (responseOfSelectingRidderAuth[0].googleId && responseOfSelectingRidderAuth[0].googleId !== null
+				&& responseOfSelectingRidderAuth[0].googleId !== "") {
 					throw ClientUserGoogleAuthAlreadyBoundException;
 			}
 
