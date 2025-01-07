@@ -13,4 +13,10 @@ export interface UserInfos {
     updatedAt: string | null;
 }
 
-export interface SetUpUserInfosInterface extends Partial<UserInfos> {}
+export interface RidderInfos {
+    motocyclePhotoUrl: string | null;
+    motocycleType: string | null;
+    motocycleLicense: string | null
+}
+
+export interface SetUpUserInfosInterface extends Partial<UserInfos & RidderInfos> {}

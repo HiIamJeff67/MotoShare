@@ -310,6 +310,7 @@ function AppContent() {
               options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Reset email and password") }}
             />
             <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("feedback") }} />
+            {/* <Stack.Screen name="notification" component={Notification} options={{ headerShown: true, headerBackTitle: "我的頁面" , headerTitle: t("notification")}}/> */}
             <Stack.Screen
               name="settings"
               component={Settings}

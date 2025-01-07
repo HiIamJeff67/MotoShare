@@ -9,11 +9,11 @@ export const MyPreferencesStyles = (theme: Theme, insets?: EdgeInsets) => {
     return StyleSheet.create({
         container: {
             flex: 1, 
-            paddingVertical: verticalScale(6), 
-            paddingHorizontal: scale(12), 
         }, 
         itemContainer: {
-            justifyContent: "center", 
+            flex: 1, 
+            paddingVertical: verticalScale(6), 
+            paddingHorizontal: scale(12), 
             gap: verticalScale(12), 
             padding: scale(10), 
         }, 

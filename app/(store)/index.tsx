@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import loadingReducer from './loadingSlice';
+import webSocketReducer from "./webSocketSlice";
 
 const store = configureStore({
   reducer: {
     user: userReducer, 
     loading: loadingReducer, 
+    websocket: webSocketReducer, 
   }
 });
 

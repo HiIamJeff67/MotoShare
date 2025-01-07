@@ -1,6 +1,6 @@
 import { Theme } from '@/theme/theme';
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable, View } from 'react-native';
+import { Image, ImageSourcePropType, Pressable, TouchableOpacity, View } from 'react-native';
 import { PreferenceCardStyles } from './PreferenceCard.style';
 import { Text } from 'react-native';
 
@@ -8,8 +8,9 @@ export interface PreferenceCardInterface {
     iconSource: ImageSourcePropType;
     title: string;
     description?: string;
+    callBack?: () => void;
     status: boolean;
-    callBack: () => void;
+    statusCallBack: () => void;
     theme: Theme;
     isNotColorful?: boolean;
 }
@@ -19,7 +20,7 @@ const PreferenceCard = (props: PreferenceCardInterface) => {
 
     return (
         props.iconSource && 
-            <View style={styles.container} >
+            <TouchableOpacity style={styles.container} onPress={props.callBack} >
                 <View style={styles.overlay}>
                     <View style={styles.topBarContainer}>
                         <View style={styles.topBarInnerLeftContainer}>
@@ -27,15 +28,15 @@ const PreferenceCard = (props: PreferenceCardInterface) => {
                             <Text style={styles.title}>{props.title}</Text>
                         </View>
                         {props.status && 
-                            <Pressable 
+                            <TouchableOpacity 
                                 style={styles.topBarInnerRightContainer}
-                                onPress={props.callBack}
+                                onPress={props.statusCallBack}
                             >
                                 <Image 
                                     style={{...styles.statusIcon, ...styles.statusIconRed}} 
                                     source={require('../../../assets/images/close.png')} 
                                 />
-                            </Pressable>
+                            </TouchableOpacity>
                         }
                     </View>
                     {props.description && 
@@ -44,7 +45,7 @@ const PreferenceCard = (props: PreferenceCardInterface) => {
                         </View>
                     }
                 </View>
-            </View>
+            </TouchableOpacity>
     )
 }
 

@@ -5,20 +5,24 @@ import { Styles } from "./UserCard.style";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/(store)";
 
-interface UserInfo {
+export interface UserInfoForUserCard {
+  userName: string;
+  email: string;
   info: {
     age: number | null;
     avatorUrl: string | null;
     isOnline: boolean;
-    motocyclePhotoUrl: string | null;
-    motocycleType: string | null;
+    motocyclePhotoUrl?: string | null;
+    motocycleType?: string | null;
+    motocycleLicense?: string | null;
     selfIntroduction: string | null;
+    avgStarRating: number | null;
+    createdAt: string | null, 
   };
-  userName: string;
 }
 
 interface Props {
-  userInfo: UserInfo;
+  userInfo: UserInfoForUserCard;
   isButtonLoading: boolean;
   onClicked?: (userName: string) => void;
 }

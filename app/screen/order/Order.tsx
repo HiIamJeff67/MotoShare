@@ -25,6 +25,8 @@ import debounce from "lodash/debounce";
 import { FlashList } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import { OrderStyles } from "./Order.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface OrderType {
   id: string;
@@ -37,6 +39,8 @@ interface OrderType {
 
 const Order = () => {
   const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +51,14 @@ const Order = () => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   let roleText = "載入中...";
+
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(OrderStyles(theme, insets))
+    }
+  }, [theme]);
 
   if (user.role == "Ridder") {
     roleText = t("rider");
@@ -131,7 +143,7 @@ const Order = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
+      {isLoading || !styles || !theme ? (
         <LoadingWrapper />
       ) : (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -182,12 +194,12 @@ const Order = () => {
                   <Feather
                     name="search"
                     size={moderateScale(24)}
-                    color="black"
+                    color={theme?.colors.background}
                   />
                   <TextInput
                     placeholder={t("userName")}
                     style={styles.searchInput}
-                    placeholderTextColor="gray"
+                    placeholderTextColor={theme?.colors.background}
                     value={searchInput}
                     onChangeText={(text) => setSearchInput(text)}
                     onSubmitEditing={handleSearchInputChange}
@@ -226,73 +238,5 @@ const Order = () => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingBottom: verticalScale(15),
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5,
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: verticalScale(15),
-  },
-  searchBox: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    borderRadius: moderateScale(50),
-    borderWidth: scale(1),
-    borderColor: "gray",
-    backgroundColor: "white",
-    paddingHorizontal: scale(16),
-    height: verticalScale(40),
-  },
-  searchInput: {
-    marginLeft: scale(8),
-    flex: 1,
-    fontSize: moderateScale(15),
-  },
-  addButtonContainer: {
-    padding: moderateScale(10),
-    backgroundColor: "gray",
-    borderRadius: moderateScale(50),
-    marginLeft: scale(10),
-  },
-});
 
 export default Order;

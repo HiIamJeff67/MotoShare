@@ -12,6 +12,7 @@ import {
   Image,
   ActivityIndicator,
   Switch,
+  Animated,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
@@ -35,6 +36,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import { MapStyles } from "./Map.style";
+import LoadingWrapper from "../../component/LoadingWrapper/LoadingWrapper"
+import { addMinutes } from "../../methods/timeCalculate";
 
 interface DataType {
   id: string;
@@ -49,6 +53,19 @@ interface DataType {
 }
 
 const MapWithBottomSheet = () => {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
+  const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
+  const mapRef = useRef<MapView>(null);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const toggleSwitch = () => setIsSwitchEnabled((previousState) => !previousState);
+  const { t } = useTranslation();
+  const toggleLoading = (key: string, value: boolean) => {
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  };
+  const [snapPoints, setSnapPoints] = useState(["25%", "50%", "85%"]); // 初始高度
   const [activeIndex, setActiveIndex] = useState(0);
   const [searchData, setSearchData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({
@@ -57,7 +74,7 @@ const MapWithBottomSheet = () => {
     makeRequest: false,
     inviteNow: false,
   });
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(addMinutes(10));
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [initialPrice, setinitialPrice] = useState("");
   const [orderDescription, setorderDescription] = useState("");
@@ -77,25 +94,21 @@ const MapWithBottomSheet = () => {
   const [showSearchOrderPage, setShowSearchOrderPage] = useState(false);
   const [dropdownValue, setDropdownValue] = useState<string | null>("1");
   const [isDropdownFocus, setIsDropdownFocus] = useState(false);
-  const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
-  const mapRef = useRef<MapView>(null);
-  const user = useSelector((state: RootState) => state.user);
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const [snapPoints, setSnapPoints] = useState(["25%", "50%", "85%"]); // 初始高度
-  const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
   const anyLoadingTrue = Object.values(loading).some((value) => value === true);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(true);
-  const toggleSwitch = () => setIsSwitchEnabled((previousState) => !previousState);
-  const { t } = useTranslation();
-  const toggleLoading = (key: string, value: boolean) => {
-    setLoading((prev) => ({ ...prev, [key]: value }));
-  };
+  const [searchInputFlexState, setSearchInputFlexState] = useState(false);
+  const [styles, setStyles] = useState<any>(null);
 
   const lockHeight = useCallback((height: string) => {
     setSnapPoints([height]); // 鎖定到單一高度
     bottomSheetRef.current?.expand(); // 確保展開到新高度
   }, []);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MapStyles(theme, insets));
+    }
+  }, [theme])
 
   const getToken = async () => {
     try {
@@ -428,6 +441,10 @@ const MapWithBottomSheet = () => {
     getLocation();
   }, []);
 
+  useEffect(() => {
+    console.log(searchInputFlexState);
+  }, [searchInputFlexState]);
+
   const handleLocationPress = useCallback(
     debounce((data, details, type) => {
       if (details.geometry.location) {
@@ -467,584 +484,349 @@ const MapWithBottomSheet = () => {
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
-        <MapView ref={mapRef} style={styles.map} region={region || undefined}>
-          {origin && (
-            <Marker
-              coordinate={{
-                latitude: origin.latitude,
-                longitude: origin.longitude,
-              }}
-              title="起始位置"
-              description="選定的起始地點"
-            />
-          )}
-          {destination && (
-            <Marker
-              coordinate={{
-                latitude: destination.latitude,
-                longitude: destination.longitude,
-              }}
-              title="目的地"
-              description="選定的位置"
-            />
-          )}
-          {origin && destination && (
-            <MapViewDirections
-              origin={origin}
-              destination={destination}
-              apikey={GOOGLE_MAPS_APIKEY}
-              language="zh-TW"
-              strokeColor="hotpink"
-              strokeWidth={4}
-              onStart={(params) => {
-                console.log(`Started routing between ${params.origin} and ${params.destination}`);
-              }}
-              onReady={(result) => {
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-              }}
-              onError={(errorMessage) => {
-                console.log(errorMessage);
-              }}
-            />
-          )}
-        </MapView>
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          keyboardBehavior="interactive" // 設置鍵盤行為
-          enablePanDownToClose={false}
-          enableHandlePanningGesture={true}
-          enableContentPanningGesture={true}
-          index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
-        >
-          {showSetPage ? (
-            <>
-              {!showSearchOrderPage ? (
-                <BottomSheetView
-                  style={{
-                    flex: 1,
-                    paddingHorizontal: scale(20), // 設置水平間距
-                    paddingVertical: verticalScale(20), // 設置垂直間距
-                  }}
-                >
-                  <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
-                  <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
-                  <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
-                  <View style={styles.dateContainer}>
-                    <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
-                    <Text style={styles.bottomSheetText}>
-                      {selectedDate
-                        ? selectedDate.toLocaleString("en-GB", {
-                            timeZone: "Asia/Taipei",
-                          })
-                        : "未選擇日期"}
-                    </Text>
-                    <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
-                      <Entypo name="calendar" size={moderateScale(24)} color="black" />
-                    </TouchableOpacity>
-                  </View>
-                  <BottomSheetTextInput
-                    style={styles.input}
-                    placeholder={t("Initial price")}
-                    value={initialPrice}
-                    onChangeText={setinitialPrice}
-                    placeholderTextColor="gray"
-                  />
-                  <BottomSheetTextInput
-                    style={styles.input}
-                    placeholder={t("Order Description")}
-                    value={orderDescription}
-                    onChangeText={setorderDescription}
-                    placeholderTextColor="gray"
-                  />
-                  <View style={{ alignItems: "center", flexDirection: "row" }}>
-                    <Switch
-                      trackColor={{ false: "#767577", true: "#81b0ff" }}
-                      thumbColor={isSwitchEnabled ? "#f5dd4b" : "#f4f3f4"}
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={toggleSwitch}
-                      value={isSwitchEnabled}
-                    />
-                    <Text style={styles.bottomSheetText}>{t("start directly")}</Text>
-                  </View>
-                  <DateTimePickerModal
-                    date={selectedDate}
-                    mode="datetime"
-                    locale="zh-tw"
-                    is24Hour={true}
-                    minimumDate={new Date()}
-                    isVisible={isDatePickerVisible}
-                    onConfirm={handleConfirm}
-                    onCancel={hideDatePicker}
-                    timeZoneName={"Asia/Taipei"}
-                  />
-                  <View style={styles.buttonContainer}>
-                    <Pressable
-                      style={[styles.button, { backgroundColor: "#3498db" }]}
-                      onPress={() => {
-                        setOrigin(null);
-                        setDestination(null);
-                        setShowSetPage(false);
-                      }}
-                      disabled={loading.fetchData}
-                    >
-                      <Text style={styles.buttonText}>{t("back")}</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.button, { backgroundColor: "#228B22" }]}
-                      onPress={() => {
-                        searchOrderData("1");
-                      }}
-                      disabled={loading.fetchData}
-                    >
-                      <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : t("search order")}</Text>
-                    </Pressable>
-                  </View>
-                </BottomSheetView>
-              ) : (
-                <>
-                  <ScrollView
-                    style={{
-                      flex: 1,
-                      paddingHorizontal: scale(20), // 設置水平間距
-                    }}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                  >
-                    <View style={styles.dropdowncontainer}>
-                      <Dropdown
-                        style={[styles.dropdown, isDropdownFocus && { borderColor: "blue" }]}
-                        selectedTextStyle={styles.dropdownselectedTextStyle}
-                        placeholderStyle={styles.dropdownplaceholderStyle}
-                        containerStyle={styles.dropdowncontainerStyle}
-                        iconStyle={styles.dropdowniconStyle}
-                        dropdownPosition="bottom"
-                        data={dropDownData}
-                        labelField="label"
-                        valueField="value"
-                        placeholder={!isDropdownFocus ? "請選擇" : "..."}
-                        value={dropdownValue}
-                        onFocus={() => setIsDropdownFocus(true)}
-                        onBlur={() => setIsDropdownFocus(false)}
-                        onChange={(item) => {
-                          setSearchData([]);
-                          setIsDropdownFocus(false);
-                          setDropdownValue(item.value);
-                          searchOrderData(item.value);
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
+            {!styles || !theme
+              ? <LoadingWrapper />
+              : <>
+                  <MapView ref={mapRef} style={styles.map} region={region || undefined}>
+                    {origin && (
+                      <Marker
+                        coordinate={{
+                          latitude: origin.latitude,
+                          longitude: origin.longitude,
                         }}
-                        renderLeftIcon={() => (
-                          <AntDesign style={styles.dropdownicon} color={isDropdownFocus ? "blue" : "black"} name="Safety" size={20} />
-                        )}
+                        title="起始位置"
+                        description="選定的起始地點"
                       />
-                    </View>
-
-                    {loading.fetchData ? (
-                      <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color="black" />
-                      </View>
-                    ) : (
+                    )}
+                    {destination && (
+                      <Marker
+                        coordinate={{
+                          latitude: destination.latitude,
+                          longitude: destination.longitude,
+                        }}
+                        title="目的地"
+                        description="選定的位置"
+                      />
+                    )}
+                    {origin && destination && (
+                      <MapViewDirections
+                        origin={origin}
+                        destination={destination}
+                        apikey={GOOGLE_MAPS_APIKEY}
+                        language="zh-TW"
+                        strokeColor="hotpink"
+                        strokeWidth={4}
+                        onStart={(params) => {
+                          console.log(`Started routing between ${params.origin} and ${params.destination}`);
+                        }}
+                        onReady={(result) => {
+                          console.log(`Distance: ${result.distance} km`);
+                          console.log(`Duration: ${result.duration} min.`);
+                        }}
+                        onError={(errorMessage) => {
+                          console.log(errorMessage);
+                        }}
+                      />
+                    )}
+                  </MapView>
+                  <BottomSheet
+                    ref={bottomSheetRef}
+                    snapPoints={snapPoints}
+                    keyboardBehavior="interactive" 
+                    enablePanDownToClose={false}
+                    enableHandlePanningGesture={true}
+                    enableContentPanningGesture={true}
+                    index={Platform.OS === "ios" ? 2 : 1} 
+                    backgroundStyle={styles.bottomSheetBackground}
+                    handleStyle={styles.bottomSheetHandle}
+                    handleIndicatorStyle={styles.bottomSheetHandleIndicator}
+                  >
+                    {showSetPage ? (
                       <>
-                        {searchData.map((item, index) => {
-                          const isActive = index === activeIndex;
-
-                          return (
-                            <TouchableWithoutFeedback key={index} onPress={() => setActiveIndex(index)}>
-                              {isActive ? (
-                                <View style={styles.activeCard}>
-                                  <View style={styles.cardImageContainer}>
-                                    {item.avatorUrl ? (
-                                      <Image source={{ uri: item.avatorUrl }} style={styles.activeCardImage} />
-                                    ) : (
-                                      <FontAwesome name="user" size={50} color="black" />
-                                    )}
-                                  </View>
-
-                                  <View style={styles.cardContent}>
-                                    <View style={styles.cardLeftSection}>
-                                      <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>{t("userName")}:{item.creatorName}</Text>
-                                        <Text style={styles.cardSubtitle}>{t("starting point")}:{item.startAddress}</Text>
-                                        <Text style={styles.cardSubtitle}>{t("destination")}:{item.endAddress}</Text>
-                                        <Text style={styles.cardSubtitle}>
-                                          {t("start driving")}:
-                                          {new Date(item.startAfter).toLocaleString("en-GB", {
-                                            timeZone: "Asia/Taipei",
-                                          })}
-                                        </Text>
-                                      </View>
-                                    </View>
-                                    <View style={styles.cardRightSection}>
-                                      <Text style={styles.cardPrice}>${item.initPrice}</Text>
-                                    </View>
-                                  </View>
-
-                                  {item.autoAccept ? (
-                                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                                      <Pressable
-                                        style={styles.inviteButton}
-                                        disabled={anyLoadingTrue || lockButton}
-                                        onPress={() => createOrderData(3, item.id)}
-                                      >
-                                        <Text style={styles.inviteButtonText}>
-                                          {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
-                                        </Text>
-                                      </Pressable>
-                                      <Pressable
-                                        style={styles.inviteButton}
-                                        disabled={anyLoadingTrue || lockButton}
-                                        onPress={() => createOrderData(2, item.id)}
-                                      >
-                                        <Text style={styles.inviteButtonText}>
-                                          {loading.inviteNow ? <ActivityIndicator size="large" /> : t("accept order")}
-                                        </Text>
-                                      </Pressable>
-                                    </View>
-                                  ) : (
-                                    <Pressable
-                                      style={styles.inviteButton}
-                                      disabled={anyLoadingTrue || lockButton}
-                                      onPress={() => createOrderData(3, item.id)}
-                                    >
-                                      <Text style={styles.inviteButtonText}>
-                                        {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
-                                      </Text>
-                                    </Pressable>
+                        {!showSearchOrderPage ? (
+                          <BottomSheetView
+                            style={{
+                              flex: 1, 
+                              paddingHorizontal: scale(20), 
+                              paddingVertical: verticalScale(20), 
+                              backgroundColor: theme.colors.background, 
+                            }}
+                          >
+                            <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
+                            <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
+                            <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
+                            <View style={styles.dateContainer}>
+                              <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
+                              <Text style={styles.bottomSheetText}>
+                                {selectedDate
+                                  ? selectedDate.toLocaleString("en-GB", {
+                                      timeZone: "Asia/Taipei",
+                                    })
+                                  : "未選擇日期"}
+                              </Text>
+                              <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
+                                <Entypo name="calendar" size={moderateScale(24)} color={theme.colors.text} />
+                              </TouchableOpacity>
+                            </View>
+                            <BottomSheetTextInput
+                              style={styles.input}
+                              placeholder={t("Initial price")}
+                              value={initialPrice}
+                              onChangeText={setinitialPrice}
+                              placeholderTextColor="gray"
+                            />
+                            <BottomSheetTextInput
+                              style={styles.input}
+                              placeholder={t("Order Description")}
+                              value={orderDescription}
+                              onChangeText={setorderDescription}
+                              placeholderTextColor="gray"
+                            />
+                            <View style={styles.switcherContainer}>
+                              <Switch
+                                trackColor={{ false: "#d3d3d3", true: "#4CAF50" }} // 禁用灰色, 啟用綠色
+                                thumbColor={isSwitchEnabled ? "#ffffff" : "#D3D3D3"} // 啟用白色, 禁用淺灰
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={toggleSwitch}
+                                value={isSwitchEnabled}
+                              />
+                              <Text style={styles.bottomSheetText}>{t("start directly")}</Text>
+                            </View>
+                            <DateTimePickerModal
+                              date={selectedDate}
+                              mode="datetime"
+                              locale="zh-tw"
+                              is24Hour={true}
+                              minimumDate={new Date()}
+                              isVisible={isDatePickerVisible}
+                              onConfirm={handleConfirm}
+                              onCancel={hideDatePicker}
+                              timeZoneName={"Asia/Taipei"}
+                            />
+                            <View style={styles.buttonContainer}>
+                              <Pressable
+                                style={[styles.button, { backgroundColor: "#3498db" }]}
+                                onPress={() => {
+                                  setOrigin(null);
+                                  setDestination(null);
+                                  setShowSetPage(false);
+                                }}
+                                disabled={loading.fetchData}
+                              >
+                                <Text style={styles.buttonText}>{t("back")}</Text>
+                              </Pressable>
+                              <Pressable
+                                style={[styles.button, { backgroundColor: "#228B22" }]}
+                                onPress={() => {
+                                  searchOrderData("1");
+                                }}
+                                disabled={loading.fetchData}
+                              >
+                                <Text style={styles.buttonText}>{loading.fetchData ? <ActivityIndicator size="large" /> : t("search order")}</Text>
+                              </Pressable>
+                            </View>
+                          </BottomSheetView>
+                        ) : (
+                          <>
+                            <ScrollView 
+                              contentContainerStyle={{
+                                flex: 1,
+                                paddingHorizontal: scale(20), 
+                              }}
+                              showsHorizontalScrollIndicator={false}
+                              showsVerticalScrollIndicator={false}
+                            >
+                              <View style={styles.dropdowncontainer}>
+                                <Dropdown
+                                  style={[styles.dropdown, isDropdownFocus && { borderColor: "blue" }]}
+                                  selectedTextStyle={styles.dropdownselectedTextStyle}
+                                  placeholderStyle={styles.dropdownplaceholderStyle}
+                                  containerStyle={styles.dropdowncontainerStyle}
+                                  iconStyle={styles.dropdowniconStyle}
+                                  dropdownPosition="bottom"
+                                  data={dropDownData}
+                                  labelField="label"
+                                  valueField="value"
+                                  placeholder={!isDropdownFocus ? "請選擇" : "..."}
+                                  value={dropdownValue}
+                                  onFocus={() => setIsDropdownFocus(true)}
+                                  onBlur={() => setIsDropdownFocus(false)}
+                                  onChange={(item) => {
+                                    setSearchData([]);
+                                    setIsDropdownFocus(false);
+                                    setDropdownValue(item.value);
+                                    searchOrderData(item.value);
+                                  }}
+                                  renderLeftIcon={() => (
+                                    <AntDesign style={styles.dropdownicon} color={isDropdownFocus ? "blue" : "black"} name="Safety" size={20} />
                                   )}
+                                />
+                              </View>
+
+                              {loading.fetchData ? (
+                                <View style={styles.loadingContainer}>
+                                  <ActivityIndicator size="large" color={theme.colors.text} />
                                 </View>
                               ) : (
-                                <View style={styles.card}>
-                                  <View style={styles.cardContent}>
-                                    <View style={styles.cardLeftSection}>
-                                      {item.avatorUrl ? (
-                                        <Image source={{ uri: item.avatorUrl }} style={styles.cardImage} />
-                                      ) : (
-                                        <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
-                                      )}
-                                      <View style={styles.cardTextContainer}>
-                                        <Text style={styles.cardTitle}>{t("userName")}：{item.creatorName}</Text>
-                                        <Text style={styles.cardSubtitle}>
-                                          {t("start driving")}：
-                                          {new Date(item.startAfter).toLocaleString("en-GB", {
-                                            timeZone: "Asia/Taipei",
-                                          })}
-                                        </Text>
-                                      </View>
-                                    </View>
-                                    <View style={styles.cardRightSection}>
-                                      <Text style={styles.cardPrice}>${item.initPrice}</Text>
-                                    </View>
-                                  </View>
-                                </View>
+                                <>
+                                  {searchData.map((item, index) => {
+                                    const isActive = index === activeIndex;
+
+                                    return (
+                                      <TouchableWithoutFeedback key={index} onPress={() => setActiveIndex(index)}>
+                                        <View style={[isActive ? styles.activeCard : styles.card, { marginBottom: verticalScale(10) }]}>
+                                          <View style={styles.cardImageContainer}>
+                                            {item.avatorUrl ? (
+                                              <Image source={{ uri: item.avatorUrl }} style={isActive ? styles.activeCardImage : styles.cardImage} />
+                                            ) : (
+                                              <FontAwesome name="user" size={50} color={isActive ? theme.colors.text : "black"} />
+                                            )}
+                                          </View>
+
+                                          <View style={styles.cardContent}>
+                                            <View style={styles.cardLeftSection}>
+                                              <View style={styles.cardTextContainer}>
+                                                <Text style={styles.cardTitle}>{t("userName")}：{item.creatorName}</Text>
+                                                <Text style={styles.cardSubtitle}>{t("starting point")}：{item.startAddress}</Text>
+                                                <Text style={styles.cardSubtitle}>{t("destination")}：{item.endAddress}</Text>
+                                                <Text style={styles.cardSubtitle}>
+                                                  {t("start driving")}：
+                                                  {new Date(item.startAfter).toLocaleString("en-GB", {
+                                                    timeZone: "Asia/Taipei",
+                                                  })}
+                                                </Text>
+                                              </View>
+                                            </View>
+                                            <View style={styles.cardRightSection}>
+                                              <Text style={styles.cardPrice}>${item.initPrice}</Text>
+                                            </View>
+                                          </View>
+
+                                          {item.autoAccept ? (
+                                            <View style={styles.buttonContainer}>
+                                              <Pressable
+                                                style={styles.inviteButton}
+                                                disabled={anyLoadingTrue || lockButton}
+                                                onPress={() => createOrderData(3, item.id)}
+                                              >
+                                                <Text style={styles.inviteButtonText}>
+                                                  {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
+                                                </Text>
+                                              </Pressable>
+                                              <Pressable
+                                                style={styles.inviteButton}
+                                                disabled={anyLoadingTrue || lockButton}
+                                                onPress={() => createOrderData(2, item.id)}
+                                              >
+                                                <Text style={styles.inviteButtonText}>
+                                                  {loading.inviteNow ? <ActivityIndicator size="large" /> : t("accept order")}
+                                                </Text>
+                                              </Pressable>
+                                            </View>
+                                          ) : (
+                                            <Pressable
+                                              style={styles.inviteButton}
+                                              disabled={anyLoadingTrue || lockButton}
+                                              onPress={() => createOrderData(3, item.id)}
+                                            >
+                                              <Text style={styles.inviteButtonText}>
+                                                {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
+                                              </Text>
+                                            </Pressable>
+                                          )}
+                                        </View>
+                                      </TouchableWithoutFeedback>
+                                    );
+                                  })}
+                                </>
                               )}
-                            </TouchableWithoutFeedback>
-                          );
-                        })}
+                            </ScrollView>
+                            <View style={[styles.fixedFooter, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
+                              <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
+                                <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}</Text>
+                              </Pressable>
+                            </View>
+                          </>
+                        )}
                       </>
+                    ) : (
+                      <BottomSheetView style={styles.bottomSheetContainer}>
+                        <View style={{ flex: searchInputFlexState ? 0.5 : 0.1 }}>
+                          <GooglePlacesAutocomplete
+                            placeholder={t('search starting point')}
+                            textInputProps={{
+                              placeholderTextColor: theme.colors.text, 
+                              onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), 
+                              onSelectionChange: () => setSearchInputFlexState(true), 
+                              onEndEditing: () => setSearchInputFlexState(false), 
+                            }}
+                            fetchDetails={true}
+                            onPress={(data, details = null) => handleLocationPress(data, details, "origin")}
+                            query={{
+                              key: GOOGLE_MAPS_APIKEY,
+                              language: "zh-TW",
+                              components: "country:tw",
+                            }}
+                            onFail={(error) => {
+                              console.log("GooglePlacesAutocomplete Error:", error);
+                              Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
+                            }}
+                            styles={{
+                              container: styles.autoCompleteConatiner, 
+                              textInputContainer: styles.textInputContainer,
+                              textInput: styles.textInput,
+                              predefinedPlacesDescription: styles.predefinedPlacesDescription,
+                              listView: styles.listView, 
+                              description: styles.autoCompleteDescription, 
+                              poweredContainer: styles.autoCompletePowerContainer, 
+                              powered: styles.autoCompletePowered, 
+                              separator: styles.autoCompleteSeparator, 
+                              row: styles.autoCompleteRow, 
+                            }}
+                          />
+                        </View>
+                        <View style={{ flex: searchInputFlexState ? 0.1 : 0.5 }}>
+                          <GooglePlacesAutocomplete
+                            placeholder={t("search destination")}
+                            textInputProps={{
+                              placeholderTextColor: theme.colors.text,
+                              onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                            }}
+                            fetchDetails={true}
+                            onPress={(data, details = null) => handleLocationPress(data, details, "destination")}
+                            query={{
+                              key: GOOGLE_MAPS_APIKEY,
+                              language: "zh-TW",
+                              components: "country:tw",
+                            }}
+                            onFail={(error) => {
+                              console.log("GooglePlacesAutocomplete Error:", error);
+                              Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
+                            }}
+                            styles={{
+                              container: styles.autoCompleteConatiner, 
+                              textInputContainer: styles.textInputContainer,
+                              textInput: styles.textInput,
+                              predefinedPlacesDescription: styles.predefinedPlacesDescription,
+                              listView: styles.listView, 
+                              description: styles.autoCompleteDescription, 
+                              poweredContainer: styles.autoCompletePowerContainer, 
+                              powered: styles.autoCompletePowered, 
+                              separator: styles.autoCompleteSeparator, 
+                              row: styles.autoCompleteRow, 
+                            }}
+                          />
+                        </View>
+                      </BottomSheetView>
                     )}
-                  </ScrollView>
-                  <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
-                    <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
-                      <Text style={styles.footerButtonText}>{loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}</Text>
-                    </Pressable>
-                  </View>
+                  </BottomSheet>
                 </>
-              )}
-            </>
-          ) : (
-            <BottomSheetView
-              style={{
-                flex: 1,
-                paddingHorizontal: scale(20), // 設置水平間距
-                paddingVertical: verticalScale(20), // 設置垂直間距
-              }}
-            >
-              <View
-                style={{
-                  flex: 0.3,
-                }}
-              >
-                <GooglePlacesAutocomplete
-                  placeholder={t('search starting point')}
-                  textInputProps={{
-                    placeholderTextColor: "#626262",
-                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
-                  }}
-                  fetchDetails={true}
-                  onPress={(data, details = null) => handleLocationPress(data, details, "origin")}
-                  query={{
-                    key: GOOGLE_MAPS_APIKEY,
-                    language: "zh-TW",
-                    components: "country:tw",
-                  }}
-                  onFail={(error) => {
-                    console.log("GooglePlacesAutocomplete Error:", error);
-                    Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
-                  }}
-                  styles={{
-                    textInputContainer: styles.textInputContainer,
-                    textInput: styles.textInput,
-                    predefinedPlacesDescription: styles.predefinedPlacesDescription,
-                    listView: styles.listView,
-                  }}
-                />
-              </View>
-              <View
-                style={{
-                  flex: 0.3,
-                }}
-              >
-                <GooglePlacesAutocomplete
-                  placeholder={t("search destination")}
-                  textInputProps={{
-                    placeholderTextColor: "#626262",
-                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
-                  }}
-                  fetchDetails={true}
-                  onPress={(data, details = null) => handleLocationPress(data, details, "destination")}
-                  query={{
-                    key: GOOGLE_MAPS_APIKEY,
-                    language: "zh-TW",
-                    components: "country:tw",
-                  }}
-                  onFail={(error) => {
-                    console.log("GooglePlacesAutocomplete Error:", error);
-                    Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
-                  }}
-                  styles={{
-                    textInputContainer: styles.textInputContainer,
-                    textInput: styles.textInput,
-                    predefinedPlacesDescription: styles.predefinedPlacesDescription,
-                    listView: styles.listView,
-                  }}
-                />
-              </View>
-            </BottomSheetView>
-          )}
-        </BottomSheet>
-      </GestureHandlerRootView>
-    </TouchableWithoutFeedback>
+            }
+          </GestureHandlerRootView>
+        </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  textInputContainer: {
-    zIndex: 1,
-  },
-  textInput: {
-    height: verticalScale(40),
-    color: "#5d5d5d",
-    fontSize: moderateScale(16),
-    backgroundColor: "#f1f4ff",
-    borderRadius: moderateScale(10),
-    paddingLeft: scale(10),
-  },
-  predefinedPlacesDescription: {
-    color: "#1faadb",
-  },
-  listView: {
-    backgroundColor: "#fff",
-    borderRadius: moderateScale(5),
-    elevation: 5,
-    marginBottom: verticalScale(10),
-  },
-  bottomSheetTitle: {
-    fontSize: moderateScale(25),
-    fontWeight: "bold",
-  },
-  bottomSheetText: {
-    fontSize: moderateScale(15),
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(10),
-  },
-  bottomSheetDate: {
-    fontSize: moderateScale(15),
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(10),
-    marginLeft: scale(5),
-  },
-  input: {
-    height: verticalScale(40),
-    borderColor: "#ccc",
-    borderWidth: scale(1),
-    borderRadius: moderateScale(8),
-    paddingHorizontal: scale(10),
-    marginBottom: verticalScale(10),
-    backgroundColor: "#fff",
-  },
-  dateContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  button: {
-    height: verticalScale(40),
-    width: scale(120),
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOpacity: 0.5,
-    shadowRadius: moderateScale(5),
-    elevation: 5,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-  dropdowncontainer: {
-    width: "50%",
-    marginBlock: verticalScale(10),
-  },
-  dropdown: {
-    height: verticalScale(40),
-    borderColor: "gray",
-    borderWidth: scale(0.5),
-    borderRadius: moderateScale(8),
-    paddingHorizontal: scale(8),
-  },
-  dropdownicon: {
-    marginRight: scale(5),
-  },
-  dropdownplaceholderStyle: {
-    fontSize: moderateScale(16),
-  },
-  dropdownselectedTextStyle: {
-    fontSize: moderateScale(16),
-  },
-  dropdowniconStyle: {
-    width: scale(20),
-    height: verticalScale(20),
-  },
-  dropdowncontainerStyle: {
-    top: -verticalScale(70),
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: verticalScale(80),
-    marginVertical: verticalScale(1),
-    padding: moderateScale(15),
-    borderRadius: moderateScale(10),
-  },
-  activeCard: {
-    alignItems: "center",
-    height: "auto",
-    marginVertical: verticalScale(1),
-    padding: moderateScale(15),
-    borderWidth: scale(2),
-    borderRadius: moderateScale(10),
-  },
-  cardText: {
-    fontSize: scale(16),
-    color: "#fff",
-  },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cardLeftSection: {
-    flex: 5,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  cardImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    resizeMode: "cover",
-    marginRight: scale(10),
-  },
-  activeCardImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    resizeMode: "cover",
-  },
-  cardImageContainer: {
-    flexDirection: "column",
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  cardTextContainer: {
-    flexDirection: "column",
-  },
-  cardTitle: {
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-    color: "#000",
-  },
-  cardSubtitle: {
-    fontSize: moderateScale(14),
-    color: "#6D6D6D",
-    marginTop: verticalScale(5),
-  },
-  cardRightSection: {
-    flex: 1,
-    alignItems: "flex-end",
-    justifyContent: "center",
-  },
-  cardPrice: {
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-    color: "#000",
-  },
-  fixedFooter: {
-    paddingHorizontal: scale(20),
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#ccc",
-  },
-  footerButton: {
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(25),
-    height: verticalScale(50),
-    width: "100%",
-    backgroundColor: "#000",
-    borderRadius: scale(5),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footerButtonText: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-  inviteButton: {
-    marginTop: verticalScale(10),
-    height: verticalScale(40),
-    width: "45%",
-    backgroundColor: "#000",
-    borderRadius: scale(5),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inviteButtonText: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-});
 
 export default MapWithBottomSheet;
