@@ -10,7 +10,6 @@ export interface PreferenceCardInterface {
     description?: string;
     status: boolean;
     callBack: () => void;
-    isOpaqued?: boolean;
     theme: Theme;
     isNotColorful?: boolean;
 }
@@ -21,7 +20,7 @@ const PreferenceCard = (props: PreferenceCardInterface) => {
     return (
         props.iconSource && 
             <View style={styles.container} >
-                <View style={{ ...styles.overlay, ...(props.isOpaqued && styles.overlayOpaqued) }}>
+                <View style={styles.overlay}>
                     <View style={styles.topBarContainer}>
                         <View style={styles.topBarInnerLeftContainer}>
                             {props.iconSource && <Image style={{...styles.icon, ...(props.isNotColorful && styles.iconDefaultColor)}} source={props.iconSource} />}
@@ -31,7 +30,6 @@ const PreferenceCard = (props: PreferenceCardInterface) => {
                             <Pressable 
                                 style={styles.topBarInnerRightContainer}
                                 onPress={props.callBack}
-                                disabled={props.isOpaqued}
                             >
                                 <Image 
                                     style={{...styles.statusIcon, ...styles.statusIconRed}} 

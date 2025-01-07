@@ -18,10 +18,6 @@ export const PreferenceCardStyles = (theme: Theme, insets?: EdgeInsets) => {
             }, 
             overlay: {
                 justifyContent: "center", 
-                alignItems: "center", 
-            }, 
-            overlayOpaqued: {
-                opacity: 0.3, 
             }, 
             topBarContainer: {
                 flexDirection: "row", 

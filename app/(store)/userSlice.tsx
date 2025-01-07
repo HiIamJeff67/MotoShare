@@ -5,8 +5,9 @@ import { SetUpUserLanguageSettingsInterface, SetUpUserThemeSettingsInterface, Us
 import { SetUpUserInfosInterface, UserInfos } from './interfaces/userInfos.interface';
 import i18n from '../locales/i18next';
 import { SetUpUserAuthsInterface, UserAuths } from './interfaces/userAuths.interface';
+import { SetUpUserBankInterface, UserBank } from './interfaces/userBank.interface';
 
-interface AllState extends Partial<UserState & UserSettings> {
+interface AllState extends Partial<UserState & UserSettings & UserBank> {
   info: UserInfos | null;
   auth: UserAuths | null;
 }
@@ -23,6 +24,8 @@ const initialState: AllState = {
   info: null,
   
   auth: null, 
+
+  balance: null, 
 };
 
 const userSlice = createSlice({
@@ -65,6 +68,9 @@ const userSlice = createSlice({
         isPhoneAuthenticated: action.payload.isPhoneAuthenticated ?? state.auth?.isPhoneAuthenticated ?? false,
       };
     },
+    setUserBalance: (state, action: PayloadAction<Partial<SetUpUserBankInterface>>) => {
+      state.balance = action.payload.balance;
+    }, 
     clearUser: (state) => {
       state.userName = '';
       state.role = null;
@@ -72,9 +78,10 @@ const userSlice = createSlice({
       // note that we don't need to reset(clear) the user settings
       state.auth = null;
       state.info = null;
+      state.balance = null;
     }
   }
 });
 
-export const { setUser, clearUser, setUserThemeSettings, setUserLanguageSettings, setUserInfos, setUserAuths } = userSlice.actions;
+export const { setUser, setUserThemeSettings, setUserLanguageSettings, setUserInfos, setUserAuths, setUserBalance, clearUser } = userSlice.actions;
 export default userSlice.reducer;

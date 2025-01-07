@@ -6,7 +6,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { scale, verticalScale } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
-import { clearUser, setUserAuths, setUserInfos } from "../(store)/userSlice";
+import { clearUser, setUserAuths, setUserBalance, setUserInfos } from "../(store)/userSlice";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { ProfileScreenStyles } from "./Profile.style";
 import { useEffect, useState } from "react";
@@ -25,7 +25,7 @@ const Profile = () => {
   const isAbsoluteLoading = useSelector((state: RootState) => state.loading.isLoading);
   const theme = user.theme;
   const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    baseURL: process.env.EXPO_PUBLIC_API_URL, 
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
   const insets = useSafeAreaInsets();
@@ -77,7 +77,10 @@ const Profile = () => {
   useEffect(() => {
     const fetchToken = async () => {
       const userToken = await SecureStore.getItemAsync("userToken");
-      if (userToken) getUserAuths(userToken);
+      if (userToken) {
+        getUserAuths(userToken);
+        getUserBank(userToken);
+      }
       setToken(userToken);
     };
 
@@ -98,7 +101,26 @@ const Profile = () => {
 
         dispatch(setUserAuths(response.data));
       } catch (error) {
-        console.log(error)
+        console.log(error);
+      }
+    }
+  }
+
+  const getUserBank = async (token: string) => {
+    if (token.length !== 0 && user.auth === null) {
+      try {
+        const response = await api.get(
+          user.role === "Passenger" ? "/passengerBank/getMyBalance" : "/ridderBank/getMyBalance", 
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, 
+            }, 
+          }
+        );
+
+        dispatch(setUserBalance({ balance: response.data.balance }));
+      } catch (error) {
+        console.log(error);
       }
     }
   }
@@ -192,7 +214,7 @@ const Profile = () => {
   }
 
   const listData = [
-    { id: "1", label: "我的訂單" }, 
+    { id: "1", label: "我的訂單", callback: () => navigation.navigate("mycreateorder" as never) }, 
     { id: "2", label: "週期性訂單" }, 
     { id: "3", label: `偏好${user.role === "Passenger" ? "車主" : "乘客"}`, callback: () => navigation.navigate("mypreferences" as never) }, 
     { id: "4", label: "收藏" }, 
@@ -239,7 +261,7 @@ const Profile = () => {
         <View style={styles.infoRow}>
           <View style={styles.infoBox}>
             <Text style={styles.infoTitle}>帳戶餘額</Text>
-            <Text style={styles.infoValue}>680.00</Text>
+            <Text style={styles.infoValue}>{Number(user.balance) / 100} USD</Text>
             <Text style={styles.infoHint}>帳戶餘額用於直接交易</Text>
           </View>
           <View style={styles.infoBox}>

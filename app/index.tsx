@@ -49,6 +49,8 @@ import ResetEmailPassword from "./screen/setting/ResetEmailPassword";
 import Report from "./screen/setting/Report";
 import MyPreferences from "./screen/setting/MyPreferences";
 import ResetPasswordScreen from "./screen/auth/ForgetPasswordScreen";
+import MyCreateOrder from "./screen/setting/MyCreateOrder";
+import MyCreateOrderDe from "./screen/setting/MyCreateOrderDe";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -290,6 +292,16 @@ function AppContent() {
           <Stack.Screen name="resetemailpassword" component={ResetEmailPassword} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "重設信箱與密碼" }} />
           <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: "回報" }} />
           <Stack.Screen name="usersearch" component={UserSearch} options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "用戶搜尋" }} />
+          <Stack.Screen
+            name="mycreateorder"
+            component={MyCreateOrder}
+            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單" }}
+          />
+          <Stack.Screen
+            name="mycreateorderde"
+            component={MyCreateOrderDe}
+            options={{ headerShown: true, headerBackTitle: "主頁", headerTitle: "我的訂單詳情" }}
+          />
           <Stack.Screen
             name="invitemap"
             component={InviteMap}
