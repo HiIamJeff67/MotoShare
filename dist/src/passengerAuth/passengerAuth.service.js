@@ -315,8 +315,8 @@ let PassengerAuthService = class PassengerAuthService {
             if (!responseOfSelectingPassengerAuth || responseOfSelectingPassengerAuth.length === 0) {
                 throw exceptions_1.ClientPassengerNotFoundException;
             }
-            if (responseOfSelectingPassengerAuth[0].googleId || responseOfSelectingPassengerAuth[0].googleId !== null
-                || responseOfSelectingPassengerAuth[0].googleId !== "") {
+            if (responseOfSelectingPassengerAuth[0].googleId && responseOfSelectingPassengerAuth[0].googleId !== null
+                && responseOfSelectingPassengerAuth[0].googleId.length !== 0) {
                 throw exceptions_1.ClientUserGoogleAuthAlreadyBoundException;
             }
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");

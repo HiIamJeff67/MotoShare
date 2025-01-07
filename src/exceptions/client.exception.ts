@@ -459,6 +459,22 @@ export const ClientUploadFileMimeTypeException = (validMimeType: string[]) => {
 
 /* ============================== Error about update operation ============================== */
 
+
+
+/* ============================== Error about payment operation ============================== */
+// E-C-400
+export const ClientPassengerBalanceNotEnoughException = new NotAcceptableException({
+    case: "E-C-400", 
+    message: "Passenger doesn't have enough balance to pay", 
+})
+
+// E-C-401
+export const ClientRidderBalanceNotEnoughtException = new NotAcceptableException({
+    case: "E-C-401", 
+    message: "Ridder doesn't have enough balance to pay", 
+})
+/* ============================== Error about payment operation ============================== */
+
 // E-C-999
 export const ClientUnknownException = new InternalServerErrorException({
     case: "E-C-999", 

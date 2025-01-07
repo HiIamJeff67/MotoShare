@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiStripeWebhookUnhandleExcpetion = exports.ApiEndpointEnvVarNotFoundException = exports.ApiWrongWebhookSignatureException = exports.ApiISOStringFormException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiWrongSearchPriorityTypeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
+exports.ApiUnknownException = exports.ApiMissingUserRoleInHeaderWhileConnectingToSocketException = exports.ApiSendEmailForValidationException = exports.ApiGenerateAuthCodeException = exports.ApiGeneratingBearerTokenException = exports.ApiNonPositiveAmountDetectedException = exports.ApiPaymentIntentNotFinishedException = exports.ApiStripeWebhookUnhandleExcpetion = exports.ApiEndpointEnvVarNotFoundException = exports.ApiWrongWebhookSignatureException = exports.ApiISOStringFormException = exports.ApiPrevOrderIdFormException = exports.ApiSearchingLimitLessThanZeroException = exports.ApiSearchingLimitTooLargeException = exports.ApiWrongSearchPriorityTypeException = exports.ApiMissingBodyOrWrongDtoException = exports.ApiMissingParameterException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ApiMissingParameterException = new common_1.BadRequestException({
     case: "E-A-001",
@@ -47,6 +47,14 @@ exports.ApiEndpointEnvVarNotFoundException = new common_1.NotFoundException({
 exports.ApiStripeWebhookUnhandleExcpetion = new common_1.ForbiddenException({
     case: "E-A-202",
     message: "This request is unhandled due to it is undefined in stripe",
+});
+exports.ApiPaymentIntentNotFinishedException = new common_1.ForbiddenException({
+    case: "E-A-400",
+    message: "The transaction is not finished, please try again",
+});
+exports.ApiNonPositiveAmountDetectedException = new common_1.ForbiddenException({
+    case: "E-A-401",
+    message: "Detected non-positive amount",
 });
 exports.ApiGeneratingBearerTokenException = new common_1.InternalServerErrorException({
     case: "E-A-900",

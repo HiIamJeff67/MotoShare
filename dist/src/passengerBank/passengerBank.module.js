@@ -12,6 +12,7 @@ const passengerBank_service_1 = require("./passengerBank.service");
 const passengerBank_controller_1 = require("./passengerBank.controller");
 const stripe_module_1 = require("../stripe/stripe.module");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let PassengerBankModule = class PassengerBankModule {
 };
 exports.PassengerBankModule = PassengerBankModule;
@@ -19,7 +20,7 @@ exports.PassengerBankModule = PassengerBankModule = __decorate([
     (0, common_1.Module)({
         controllers: [passengerBank_controller_1.PassengerBankController],
         providers: [passengerBank_service_1.PassengerBankService],
-        imports: [drizzle_module_1.DrizzleModule, stripe_module_1.StripeModule]
+        imports: [drizzle_module_1.DrizzleModule, stripe_module_1.StripeModule, notification_module_1.NotificationModule]
     })
 ], PassengerBankModule);
 //# sourceMappingURL=passengerBank.module.js.map

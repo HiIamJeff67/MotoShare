@@ -9,6 +9,8 @@ export declare const ApiISOStringFormException: NotAcceptableException;
 export declare const ApiWrongWebhookSignatureException: NotAcceptableException;
 export declare const ApiEndpointEnvVarNotFoundException: NotFoundException;
 export declare const ApiStripeWebhookUnhandleExcpetion: ForbiddenException;
+export declare const ApiPaymentIntentNotFinishedException: ForbiddenException;
+export declare const ApiNonPositiveAmountDetectedException: ForbiddenException;
 export declare const ApiGeneratingBearerTokenException: InternalServerErrorException;
 export declare const ApiGenerateAuthCodeException: InternalServerErrorException;
 export declare const ApiSendEmailForValidationException: InternalServerErrorException;

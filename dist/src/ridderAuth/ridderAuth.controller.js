@@ -261,7 +261,7 @@ __decorate([
 ], RidderAuthController.prototype, "validateAuthCodeToResetEmailOrPassword", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Post)('bindDefaultAuth'),
+    (0, common_1.Put)('bindDefaultAuth'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -272,7 +272,7 @@ __decorate([
 ], RidderAuthController.prototype, "bindDefaultAuth", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Post)('bindGoogleAuth'),
+    (0, common_1.Put)('bindGoogleAuth'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),

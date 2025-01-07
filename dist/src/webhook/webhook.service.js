@@ -28,41 +28,32 @@ let WebhookService = class WebhookService {
     }
     async receiveSucceededStripePaymentIntent(paymentIntent) {
         const userRole = paymentIntent.metadata.userRole;
-        const userId = paymentIntent.metadata.userId;
         const amount = paymentIntent.amount;
         const customerId = paymentIntent.customer;
         let response = undefined;
         switch (userRole) {
             case "Passenger":
-                response = await this._updatePassengerBank(customerId, userId, amount);
+                response = await this._updatePassengerBank(customerId, amount);
                 break;
             case "Ridder":
-                response = this._updateRidderBank(customerId, userId, amount);
+                response = this._updateRidderBank(customerId, amount);
                 break;
         }
         return response;
     }
-    async _updatePassengerBank(customerId, userId, amount) {
+    async _updatePassengerBank(customerId, amount) {
         return await this.db.transaction(async (tx) => {
-            let responseOfSelectingPassengerBank = await tx.select({
+            const responseOfSelectingPassengerBank = await tx.select({
                 balance: passengerBank_schema_1.PassengerBankTable.balance,
             }).from(passengerBank_schema_1.PassengerBankTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.customerId, customerId), (0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId)));
+                .where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.customerId, customerId));
             if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-                const responseOfCreatingPassengerBank = await tx.insert(passengerBank_schema_1.PassengerBankTable).values({
-                    customerId: customerId,
-                    userId: userId,
-                    balance: amount,
-                }).returning({
-                    balance: passengerBank_schema_1.PassengerBankTable.balance,
-                });
-                if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
-                    throw exceptions_1.ClientCreatePassengerBankException;
-                }
-                responseOfSelectingPassengerBank = responseOfCreatingPassengerBank;
+                throw exceptions_1.ClientPassengerBankNotFoundException;
             }
+            const currentBalance = responseOfSelectingPassengerBank[0].balance;
+            const newBalance = currentBalance + amount;
             return await tx.update(passengerBank_schema_1.PassengerBankTable).set({
-                balance: (0, drizzle_orm_1.sql) `${responseOfSelectingPassengerBank[0].balance} + ${amount}`,
+                balance: newBalance,
                 updatedAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.customerId, customerId))
                 .returning({
@@ -70,27 +61,19 @@ let WebhookService = class WebhookService {
             });
         });
     }
-    async _updateRidderBank(customerId, userId, amount) {
+    async _updateRidderBank(customerId, amount) {
         return await this.db.transaction(async (tx) => {
-            let responseOfSelectingRidderBank = await tx.select({
+            const responseOfSelectingRidderBank = await tx.select({
                 balance: ridderBank_schema_1.RidderBankTable.balance,
             }).from(ridderBank_schema_1.RidderBankTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.customerId, customerId), (0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.userId, userId)));
+                .where((0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.customerId, customerId));
             if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
-                const responseOfCreatingRidderBank = await tx.insert(ridderBank_schema_1.RidderBankTable).values({
-                    customerId: customerId,
-                    userId: userId,
-                    balance: amount,
-                }).returning({
-                    balance: ridderBank_schema_1.RidderBankTable.balance,
-                });
-                if (!responseOfCreatingRidderBank || responseOfCreatingRidderBank.length === 0) {
-                    throw exceptions_1.ClientCreateRidderBankException;
-                }
-                responseOfSelectingRidderBank = responseOfCreatingRidderBank;
+                throw exceptions_1.ClientRidderBankNotFoundException;
             }
+            const currentBalance = responseOfSelectingRidderBank[0].balance;
+            const newBalance = currentBalance + amount;
             return await tx.update(ridderBank_schema_1.RidderBankTable).set({
-                balance: responseOfSelectingRidderBank[0].balance + amount,
+                balance: newBalance,
                 updatedAt: new Date(),
             }).where((0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.customerId, customerId))
                 .returning({
@@ -98,11 +81,11 @@ let WebhookService = class WebhookService {
             });
         });
     }
-    async handleStripeWebhook(buffer, signature) {
+    async handleStripeWebhook(body, signature) {
         const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
         if (!endpointSecret)
             throw exceptions_1.ApiEndpointEnvVarNotFoundException;
-        const event = this.stripe.webhooks.constructEvent(buffer, signature, endpointSecret);
+        const event = this.stripe.webhooks.constructEvent(body, signature, endpointSecret);
         let response = undefined;
         switch (event.type) {
             case 'payment_intent.succeeded':

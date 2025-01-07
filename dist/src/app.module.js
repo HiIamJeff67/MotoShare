@@ -41,6 +41,7 @@ const stripe_module_1 = require("./stripe/stripe.module");
 const passengerBank_module_1 = require("./passengerBank/passengerBank.module");
 const ridderBank_module_1 = require("./ridderBank/ridderBank.module");
 const webhook_module_1 = require("./webhook/webhook.module");
+const constants_1 = require("./stripe/constants");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -64,7 +65,7 @@ exports.AppModule = AppModule = __decorate([
                 }
             }),
             stripe_module_1.StripeModule.forRoot(process.env.STRIPE_SK_API_KEY, {
-                apiVersion: '2024-12-18.acacia',
+                apiVersion: constants_1.STRIPE_API_VERSION,
             }),
             drizzle_module_1.DrizzleModule,
             auth_module_1.AuthModule,

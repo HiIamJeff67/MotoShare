@@ -12,6 +12,7 @@ const ridderBank_service_1 = require("./ridderBank.service");
 const ridderBank_controller_1 = require("./ridderBank.controller");
 const stripe_module_1 = require("../stripe/stripe.module");
 const drizzle_module_1 = require("../drizzle/drizzle.module");
+const notification_module_1 = require("../notification/notification.module");
 let RidderBankModule = class RidderBankModule {
 };
 exports.RidderBankModule = RidderBankModule;
@@ -19,7 +20,7 @@ exports.RidderBankModule = RidderBankModule = __decorate([
     (0, common_1.Module)({
         controllers: [ridderBank_controller_1.RidderBankController],
         providers: [ridderBank_service_1.RidderBankService],
-        imports: [drizzle_module_1.DrizzleModule, stripe_module_1.StripeModule]
+        imports: [drizzle_module_1.DrizzleModule, stripe_module_1.StripeModule, notification_module_1.NotificationModule],
     })
 ], RidderBankModule);
 //# sourceMappingURL=ridderBank.module.js.map

@@ -66,6 +66,22 @@ export const ApiStripeWebhookUnhandleExcpetion = new ForbiddenException({
 });
 /* ================================= Webhook exception ================================= */
 
+
+/* ================================= payment exception ================================= */
+// E-A-400
+export const ApiPaymentIntentNotFinishedException = new ForbiddenException({
+    case: "E-A-400", 
+    message: "The transaction is not finished, please try again", 
+});
+
+// E-A-401
+export const ApiNonPositiveAmountDetectedException = new ForbiddenException({
+    case: "E-A-401", 
+    message: "Detected non-positive amount", 
+})
+/* ================================= payment exception ================================= */
+
+
 // E-A-900
 export const ApiGeneratingBearerTokenException = new InternalServerErrorException({
     case: "E-A-900",

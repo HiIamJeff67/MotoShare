@@ -315,8 +315,8 @@ let RidderAuthService = class RidderAuthService {
             if (!responseOfSelectingRidderAuth || responseOfSelectingRidderAuth.length === 0) {
                 throw exceptions_1.ClientRidderNotFoundException;
             }
-            if (responseOfSelectingRidderAuth[0].googleId || responseOfSelectingRidderAuth[0].googleId !== null
-                || responseOfSelectingRidderAuth[0].googleId !== "") {
+            if (responseOfSelectingRidderAuth[0].googleId && responseOfSelectingRidderAuth[0].googleId !== null
+                && responseOfSelectingRidderAuth[0].googleId !== "") {
                 throw exceptions_1.ClientUserGoogleAuthAlreadyBoundException;
             }
             const googleAuthUrl = this.config.get("GOOGLE_AUTH_URL");

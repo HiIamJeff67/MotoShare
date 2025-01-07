@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res } from '@nestjs/common';
 import { RidderBankService } from './ridderBank.service';
-import { CreateRidderBankDto } from './dto/create-ridderBank.dto';
-import { UpdateRidderBankDto } from './dto/update-ridderBank.dto';
 import { JwtRidderGuard } from '../auth/guard';
 import { Ridder } from '../auth/decorator';
 import { RidderType } from '../interfaces';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums';
+import { CreatePaymentIntentDto } from './dto/create-ridderBank.dto';
+import { toNumber } from '../utils';
+import { ApiNonPositiveAmountDetectedException, ApiPaymentIntentNotFinishedException, ClientRidderBankNotFoundException } from '../exceptions';
 
 @Controller('ridderBank')
 export class RidderBankController {
@@ -15,19 +16,75 @@ export class RidderBankController {
   ) {}
 
   @UseGuards(JwtRidderGuard)
-  @Get('/getCustomerId')
-  async getCustomerId(
+  @Get('/getMyBalance')
+  async getMyBalance(
     @Ridder() ridder: RidderType, 
     @Res() response: Response, 
   ) {
     try {
-      const res = await this.ridderBankService.getRidderBankByUserId(
+      const res = await this.ridderBankService.getMyBalacne(ridder.id);
+
+      if (!res || res.length === 0) throw ClientRidderBankNotFoundException;
+
+      response.status(HttpStatusCode.Ok).send(res[0]);
+    } catch (error) {
+      response.status(error.status).send({
+        case: error.case, 
+        message: error.message, 
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Get('/createPaymentIntentForAddingBalanceByUserId')
+  async createPaymentIntentForAddingBalanceByUserId(
+    @Ridder() ridder: RidderType, 
+    @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
+    @Res() response: Response, 
+  ) {
+    if (toNumber(createPaymentIntentDto.amount) <= 0) {
+      throw ApiNonPositiveAmountDetectedException;
+    }
+
+    try {
+      const res = await this.ridderBankService.createPaymentIntentForAddingBalance(
         ridder.id, 
         ridder.userName, 
         ridder.email, 
+        toNumber(createPaymentIntentDto.amount), 
       );
 
       response.status(HttpStatusCode.Ok).send(res);
+    } catch (error) {
+      response.status(error.status).send({
+        case: error.case, 
+        message: error.message, 
+      });
+    }
+  }
+
+  @UseGuards(JwtRidderGuard)
+  @Post('/payToFinishOrderById')
+  async payToFinishOrderById(
+    @Ridder() ridder: RidderType, 
+    @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
+    @Res() response: Response, 
+  ) {
+    if (toNumber(createPaymentIntentDto.amount) <= 0) {
+      throw ApiNonPositiveAmountDetectedException;
+    }
+
+    try {
+      const res = await this.ridderBankService.payToFinishOrderById(
+        ridder.id, 
+        ridder.userName, 
+        ridder.email, 
+        toNumber(createPaymentIntentDto.amount), 
+      );
+
+      if (!res || res.length === 0) throw ApiPaymentIntentNotFinishedException;
+
+      response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
       response.status(error.status).send({
         case: error.case, 

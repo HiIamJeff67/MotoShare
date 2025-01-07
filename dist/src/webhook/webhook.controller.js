@@ -21,29 +21,27 @@ let WebhookController = class WebhookController {
     constructor(webhookService) {
         this.webhookService = webhookService;
     }
-    async handleStripeWebhook(buffer, response, signature) {
+    async handleStripeWebhook(signature, body, res) {
         if (!signature)
             throw exceptions_1.ApiWrongWebhookSignatureException;
         try {
-            const res = await this.webhookService.handleStripeWebhook(buffer, signature);
-            response.status(enums_1.HttpStatusCode.Ok).send(res);
+            const response = await this.webhookService.handleStripeWebhook(body, signature);
+            res.status(enums_1.HttpStatusCode.Ok).send(response);
         }
-        catch (error) {
-            response.status(error.status ?? enums_1.HttpStatusCode.InternalServerError).send({
-                case: error.case,
-                message: error.message,
-            });
+        catch (err) {
+            console.error('Webhook Error:', err.message);
+            res.status(400).send(`Webhook Error: ${err.message}`);
         }
     }
 };
 exports.WebhookController = WebhookController;
 __decorate([
     (0, common_1.Post)('stripePaymentIntent'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)()),
-    __param(2, (0, common_1.Headers)('stripe-signature')),
+    __param(0, (0, common_1.Headers)('stripe-signature')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Buffer, Object, String]),
+    __metadata("design:paramtypes", [String, Buffer, Object]),
     __metadata("design:returntype", Promise)
 ], WebhookController.prototype, "handleStripeWebhook", null);
 exports.WebhookController = WebhookController = __decorate([
