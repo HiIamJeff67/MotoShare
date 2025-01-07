@@ -218,7 +218,7 @@ const Profile = () => {
   const listData = [
     { id: "1", label: t("myorder"), callback: () => navigation.navigate("mycreateorder" as never) }, 
     { id: "2", label: t("Recurring Orders"), callback: () => navigation.navigate("porder" as never) }, 
-    { id: "3", label: `${t("preference")} ${user.role === "Passenger" ? t("pure rider") : t("pure passenger")}`, callback: () => navigation.navigate("mypreferences" as never) }, 
+    { id: "3", label: `${t("preference")}${user.role === "Passenger" ? t("pure rider") : t("pure passenger")}`, callback: () => navigation.navigate("mypreferences" as never) }, 
     { id: "4", label: t("notification"), badge: 24, callback: () => {}},
     { id: "5", label: t("Update Profile"), callback: () => navigation.navigate("editprofile" as never) },
     { id: "6", label: t("Binding portal"), 
