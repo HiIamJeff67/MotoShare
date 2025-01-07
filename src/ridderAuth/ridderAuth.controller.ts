@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, UnauthorizedException, NotFoundException, InternalServerErrorException, NotAcceptableException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, UnauthorizedException, NotFoundException, InternalServerErrorException, NotAcceptableException, ConflictException, BadRequestException, Put } from '@nestjs/common';
 import { RidderAuthService } from './ridderAuth.service';
 import { JwtRidderGuard } from '../auth/guard';
 import { Ridder } from '../auth/decorator';
@@ -218,7 +218,7 @@ export class RidderAuthController {
 
   /* ================================= Binding Operations ================================= */
   @UseGuards(JwtRidderGuard)
-  @Post('bindDefaultAuth')
+  @Put('bindDefaultAuth')
   async bindDefaultAuth(
       @Ridder() ridder: RidderType, 
       @Body() bindRidderDefaultAuthDto: BindRidderDefaultAuthDto, 
@@ -248,7 +248,7 @@ export class RidderAuthController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Post('bindGoogleAuth')
+  @Put('bindGoogleAuth')
   async bindGoogleAuth(
       @Ridder() ridder: RidderType, 
       @Body() bindRidderGoogleAuthDto: BindRidderGoogleAuthDto, 

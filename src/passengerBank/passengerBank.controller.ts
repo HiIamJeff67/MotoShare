@@ -12,11 +12,6 @@ import { HttpStatusCode } from '../enums';
 export class PassengerBankController {
   constructor(private readonly passengerBankService: PassengerBankService) {}
 
-  @Get('/')
-  listCostomers() {
-    return this.passengerBankService.listStripeCostomers();
-  }
-
   @UseGuards(JwtPassengerGuard)
   @Get('/getCustomerId')
   async getCustomerId(
@@ -24,11 +19,14 @@ export class PassengerBankController {
     @Res() response: Response, 
   ) {
     try {
-      const res = await this.passengerBankService.getPassengerBankByUserId(passenger.id);
+      const res = await this.passengerBankService.getPassengerBankByUserId(
+        passenger.id, 
+        passenger.userName, 
+        passenger.email, 
+      );
 
       response.status(HttpStatusCode.Ok).send(res);
     } catch (error) {
-      console.log(error);
       response.status(error.status).send({
         case: error.case, 
         message: error.message, 

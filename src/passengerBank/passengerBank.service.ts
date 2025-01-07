@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePassengerBankDto } from './dto/create-passengerBank.dto';
 import { UpdatePassengerBankDto } from './dto/update-passengerBank.dto';
-import { STRIPE_CLIENT } from '../stripe/constants';
+import { STRIPE_API_VERSION, STRIPE_CLIENT, STRIPE_CURRENCY_TYPE } from '../stripe/constants';
 import Stripe from 'stripe';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
@@ -9,7 +9,6 @@ import { PassengerBankTable } from '../drizzle/schema/passengerBank.schema';
 import { ConfigService } from '@nestjs/config';
 import { ClientCreatePassengerBankException, ClientPassengerBankNotFoundException } from '../exceptions';
 import { eq } from 'drizzle-orm';
-import { el } from '@faker-js/faker/.';
 
 @Injectable()
 export class PassengerBankService {
@@ -19,12 +18,15 @@ export class PassengerBankService {
     @Inject(DRIZZLE) private db: DrizzleDB, 
   ) {}
 
-  async listStripeCostomers() {
+  private async listStripeCostomers() {
     return this.stripe.customers.list();
   }
 
+  /* ================================= Get & Create operation ================================= */
   async getPassengerBankByUserId(
     userId: string, 
+    userName: string, 
+    email: string, 
   ) {
     return await this.db.transaction(async (tx) => {
       const responseOfSelectingPassengerBank = await tx.select({
@@ -34,7 +36,13 @@ export class PassengerBankService {
         .limit(1);
       let customerId: string | null = null;
       if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-        const customer = await this.stripe.customers.create({});
+        const customer = await this.stripe.customers.create({
+          metadata: {
+            userName: userName, 
+            email: email, 
+            userRole: "Passenger", 
+          }
+        });
         customerId = customer.id;
 
         const responseOfCreatingPassengerBank = await tx.insert(PassengerBankTable).values({
@@ -52,16 +60,18 @@ export class PassengerBankService {
 
       const ephemeralKey = await this.stripe.ephemeralKeys.create(
         { customer: customerId },
-        { apiVersion: '2024-12-18.acacia' }
+        { apiVersion: STRIPE_API_VERSION }
       );
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: 100 * 100,
-        currency: 'usd',
-        customer: customerId,
+        currency: STRIPE_CURRENCY_TYPE, 
+        customer: customerId, 
         automatic_payment_methods: {
           enabled: true,
         },
         metadata: {
+          userName: userName, 
+          email: email, 
           userRole: "Passenger", 
         }
       });
@@ -74,4 +84,14 @@ export class PassengerBankService {
       };
     });
   }
+  /* ================================= Get & Create operation ================================= */
+  
+
+  /* ================================= Force to Finish Order by Stripe Pay operation ================================= */
+  async payToFinishOrderById(
+    id: string, 
+  ) {
+    
+  }
+  /* ================================= Force to Finish Order by Stripe Pay operation ================================= */
 }

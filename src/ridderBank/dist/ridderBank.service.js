@@ -45,75 +45,77 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.PassengerBankService = void 0;
+exports.RidderBankService = void 0;
 var common_1 = require("@nestjs/common");
 var constants_1 = require("../stripe/constants");
 var drizzle_module_1 = require("../drizzle/drizzle.module");
-var passengerBank_schema_1 = require("../drizzle/schema/passengerBank.schema");
-var exceptions_1 = require("../exceptions");
+var ridderBank_schema_1 = require("../drizzle/schema/ridderBank.schema");
 var drizzle_orm_1 = require("drizzle-orm");
-var PassengerBankService = /** @class */ (function () {
-    function PassengerBankService(config, stripe, db) {
+var exceptions_1 = require("../exceptions");
+var RidderBankService = /** @class */ (function () {
+    function RidderBankService(config, stripe, db) {
         this.config = config;
         this.stripe = stripe;
         this.db = db;
     }
-    PassengerBankService.prototype.listStripeCostomers = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.stripe.customers.list()];
-            });
-        });
-    };
-    PassengerBankService.prototype.getPassengerBankByUserId = function (userId) {
+    /* ================================= Get & Create operation ================================= */
+    RidderBankService.prototype.getRidderBankByUserId = function (userId, userName, email) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.db.transaction(function (tx) { return __awaiter(_this, void 0, void 0, function () {
-                            var responseOfSelectingPassengerBank, customerId, customer, responseOfCreatingPassengerBank, ephemeralKey, paymentIntent;
+                            var responseOfSelectingRidderBank, customerId, customer, responseOfCreatingRidderBank, ephemeralKey, paymentIntent;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, tx.select({
-                                            customerId: passengerBank_schema_1.PassengerBankTable.customerId
-                                        }).from(passengerBank_schema_1.PassengerBankTable)
-                                            .where(drizzle_orm_1.eq(passengerBank_schema_1.PassengerBankTable.userId, userId))
+                                            customerId: ridderBank_schema_1.RidderBankTable.customerId
+                                        }).from(ridderBank_schema_1.RidderBankTable)
+                                            .where(drizzle_orm_1.eq(ridderBank_schema_1.RidderBankTable.userId, userId))
                                             .limit(1)];
                                     case 1:
-                                        responseOfSelectingPassengerBank = _a.sent();
+                                        responseOfSelectingRidderBank = _a.sent();
                                         customerId = null;
-                                        if (!(!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0)) return [3 /*break*/, 4];
-                                        return [4 /*yield*/, this.stripe.customers.create({})];
+                                        if (!(!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0)) return [3 /*break*/, 4];
+                                        return [4 /*yield*/, this.stripe.customers.create({
+                                                metadata: {
+                                                    userName: userName,
+                                                    email: email,
+                                                    userRole: "Ridder"
+                                                }
+                                            })];
                                     case 2:
                                         customer = _a.sent();
                                         customerId = customer.id;
-                                        return [4 /*yield*/, tx.insert(passengerBank_schema_1.PassengerBankTable).values({
+                                        return [4 /*yield*/, tx.insert(ridderBank_schema_1.RidderBankTable).values({
                                                 customerId: customer.id,
                                                 userId: userId
                                             }).returning({
-                                                balance: passengerBank_schema_1.PassengerBankTable.balance
+                                                balance: ridderBank_schema_1.RidderBankTable.balance
                                             })];
                                     case 3:
-                                        responseOfCreatingPassengerBank = _a.sent();
-                                        if (!responseOfCreatingPassengerBank || responseOfCreatingPassengerBank.length === 0) {
-                                            throw exceptions_1.ClientCreatePassengerBankException;
+                                        responseOfCreatingRidderBank = _a.sent();
+                                        if (!responseOfCreatingRidderBank || responseOfCreatingRidderBank.length === 0) {
+                                            throw exceptions_1.ClientCreateRidderBankException;
                                         }
                                         return [3 /*break*/, 5];
                                     case 4:
-                                        customerId = responseOfSelectingPassengerBank[0].customerId;
+                                        customerId = responseOfSelectingRidderBank[0].customerId;
                                         _a.label = 5;
-                                    case 5: return [4 /*yield*/, this.stripe.ephemeralKeys.create({ customer: customerId }, { apiVersion: '2024-12-18.acacia' })];
+                                    case 5: return [4 /*yield*/, this.stripe.ephemeralKeys.create({ customer: customerId }, { apiVersion: constants_1.STRIPE_API_VERSION })];
                                     case 6:
                                         ephemeralKey = _a.sent();
                                         return [4 /*yield*/, this.stripe.paymentIntents.create({
                                                 amount: 100 * 100,
-                                                currency: 'usd',
+                                                currency: constants_1.STRIPE_CURRENCY_TYPE,
                                                 customer: customerId,
                                                 automatic_payment_methods: {
                                                     enabled: true
                                                 },
                                                 metadata: {
-                                                    userRole: "Passenger"
+                                                    userName: userName,
+                                                    email: email,
+                                                    userRole: "Ridder"
                                                 }
                                             })];
                                     case 7:
@@ -132,11 +134,11 @@ var PassengerBankService = /** @class */ (function () {
             });
         });
     };
-    PassengerBankService = __decorate([
+    RidderBankService = __decorate([
         common_1.Injectable(),
         __param(1, common_1.Inject(constants_1.STRIPE_CLIENT)),
         __param(2, common_1.Inject(drizzle_module_1.DRIZZLE))
-    ], PassengerBankService);
-    return PassengerBankService;
+    ], RidderBankService);
+    return RidderBankService;
 }());
-exports.PassengerBankService = PassengerBankService;
+exports.RidderBankService = RidderBankService;
