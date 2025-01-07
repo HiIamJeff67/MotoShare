@@ -137,13 +137,13 @@ const MyCreateOrderDe = () => {
                       {t("destination")}：{order.endAddress}
                     </Text>
                     <Text style={styles.title}>
-                      {"start driving"}:{" "}
+                      {t("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
                     <Text style={styles.title}>
-                      {"Initial price"}: {order.initPrice}
+                      {t("Initial price")}: {order.initPrice}
                     </Text>
                     {user.role == "Ridder" ? (
                       <Text style={styles.title}>

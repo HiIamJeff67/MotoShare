@@ -196,7 +196,7 @@ const Profile = () => {
   const listData = [
     { id: "1", label: t("myorder"), callback: () => navigation.navigate("mycreateorder" as never) }, 
     { id: "2", label: t("Recurring Orders") }, 
-    { id: "3", label: `${t("preference")} ${user.role === "Passenger" ? t("rider") : t("passenger")}`, callback: () => navigation.navigate("mypreferences" as never) }, 
+    { id: "3", label: `${t("preference")} ${user.role === "Passenger" ? t("pure rider") : t("pure passenger")}`, callback: () => navigation.navigate("mypreferences" as never) }, 
     { id: "4", label: t("collection") }, 
     { id: "5", label: t("notification"), badge: 24 },
     { id: "6", label: t("Update Profile"), callback: () => navigation.navigate("editprofile" as never) },
@@ -205,7 +205,7 @@ const Profile = () => {
       ...(user.auth && {badge: `${Math.max(0, numberOfAuths - Object.values(user.auth).filter(value => value === true).length)}`}), 
       callback: () => navigation.navigate("bindings"  as never), 
     }, 
-    { id: "8", label: t("Account Balance"),  }, 
+    { id: "8", label: t("Recharge Balance"), callback: () => navigation.navigate("payment" as never)}, 
     { id: "9", label: t("System Settings"), callback: () => navigation.navigate("settings" as never) },
     { id: "10", label: t("Reset email and password"), callback: () => navigation.navigate("resetemailpassword" as never) }, 
     { id: "11", label: t("feedback"), callback: () => navigation.navigate("report" as never) }, 

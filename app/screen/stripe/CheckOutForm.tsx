@@ -6,6 +6,10 @@ import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
+interface CheckOutFormProps {
+  amount: number;
+}
+
 const getToken = async () => {
   try {
     const token = await SecureStore.getItemAsync("userToken");
@@ -19,7 +23,7 @@ const getToken = async () => {
   }
 };
 
-async function fetchPaymentSheetParams() {
+async function fetchPaymentSheetParams(amount: string) {
   const token = await getToken();
 
   if (!token) {
@@ -27,14 +31,20 @@ async function fetchPaymentSheetParams() {
     throw new Error("Unable to get token");
   }
 
-  let url: string = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/getCustomerId`;
+  let url: string = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
 
   try {
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 放在 headers 中
+    const response = await axios.post(
+      url,
+      {
+        amount: amount,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 放在 headers 中
+        },
+      }
+    );
 
     const { paymentIntent, ephemeralKey, customer } = response.data;
     return { paymentIntent, ephemeralKey, customer };
@@ -50,12 +60,13 @@ async function fetchPaymentSheetParams() {
   }
 }
 
-export default function CheckoutScreen() {
+export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
+  const amountReal = (amount * 100).toString();
 
   const initializePaymentSheet = async () => {
-    const paymentSheetParams = await fetchPaymentSheetParams();
+    const paymentSheetParams = await fetchPaymentSheetParams(amountReal);
     const { paymentIntent, ephemeralKey, customer } = paymentSheetParams;
 
     // Use Mock payment data: https://docs.stripe.com/payments/accept-a-payment?platform=react-native&ui=payment-sheet#react-native-test
@@ -74,16 +85,6 @@ export default function CheckoutScreen() {
         phone: "0958123456",
       },
       returnURL: Linking.createURL("stripe-redirect"),
-
-      // Enable Apple Pay:
-      // https://docs.stripe.com/payments/accept-a-payment?platform=react-native&ui=payment-sheet#add-apple-pay
-      applePay: {
-        merchantCountryCode: "US",
-      },
-      googlePay: {
-        merchantCountryCode: "US",
-        testEnv: true, // use test environment
-      },
     });
     if (!error) {
       setLoading(true);

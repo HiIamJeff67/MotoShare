@@ -40,8 +40,7 @@
         "@stripe/stripe-react-native",
         {
           "publishableKey": "pk_test_51QcCnZFxFe8Yk0tjZmCsvit0i4Yta4mqtDbAI56jNkFXJYgwwfxSYpTW1OCavsxtT4fJNCFo6sBsDVUCC0P3ylRC00HkQfPVYO",
-          "enableGooglePay": true,
-          "merchantIdentifier": "merchant.com.example"
+          "merchantIdentifier": "merchant.com.henryong.ridesharingsystem"
         }
       ],
       "expo-localization"

@@ -40,7 +40,7 @@ const MyOrderDetail = () => {
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   let roleText = "載入中...";
 
   if (user.role === "Ridder") {
@@ -260,7 +260,9 @@ const MyOrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>{t("my order id")}: {order?.id}</Text>
+                <Text style={styles.orderNumber}>
+                  {t("my order id")}: {order?.id}
+                </Text>
               </View>
 
               <View style={styles.body}>
@@ -269,29 +271,46 @@ const MyOrderDetail = () => {
                     <Text style={styles.title}>
                       {roleText}：{user.role === "Passenger" ? order.ridderName : order.passengerName}
                     </Text>
-                    <Text style={styles.title}>{t("starting point")}：{order.finalStartAddress}</Text>
-                    <Text style={styles.title}>{t("destination")}：{order.finalEndAddress}</Text>
+                    <Text style={styles.title}>
+                      {t("starting point")}：{order.finalStartAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      {t("destination")}：{order.finalEndAddress}
+                    </Text>
                     <Text style={styles.title}>
                       {t("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>{t("final price")}: {order.finalPrice}</Text>
-                    <Text style={styles.title}>{t("my remark")}: {user.role === "Passenger" ? order.passengerDescription : order.ridderDescription}</Text>
-                    <Text style={styles.title}>{t("other remark")}: {user.role === "Passenger" ? order.ridderDescription : order.passengerDescription}</Text>
+                    <Text style={styles.title}>
+                      {t("final price")}: {order.finalPrice}
+                    </Text>
+                    <Text style={styles.title}>
+                      {t("my remark")}: {user.role === "Passenger" ? order.passengerDescription : order.ridderDescription}
+                    </Text>
+                    <Text style={styles.title}>
+                      {t("other remark")}: {user.role === "Passenger" ? order.ridderDescription : order.passengerDescription}
+                    </Text>
                     <Text style={styles.title}>
                       {t("update time")}:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    {(user.role === "Passenger" && order.passengerStatus == "STARTED") || (user.role === "Ridder" && order.ridderStatus == "STARTED") ? (
-                      <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
-                        <Text style={styles.actionButtonText}>{t("payment")}</Text>
-                      </Pressable>
+                    {(user.role === "Passenger" && order.passengerStatus == "STARTED") ||
+                    (user.role === "Ridder" && order.ridderStatus == "STARTED") ? (
+                      <>
+                        <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
+                          <Text style={styles.actionButtonText}>{t("Payment Cash")}</Text>
+                        </Pressable>
+                        <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
+                          <Text style={styles.actionButtonText}>{t("Payment Balance")}</Text>
+                        </Pressable>
+                      </>
                     ) : null}
-                    {(user.role === "Passenger" && order.passengerStatus == "UNPAID") || (user.role === "Ridder" && order.ridderStatus == "UNPAID") ? (
+                    {(user.role === "Passenger" && order.passengerStatus == "UNPAID") ||
+                    (user.role === "Ridder" && order.ridderStatus == "UNPAID") ? (
                       <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(1)} disabled={loading || lockButton}>
                         <Text style={styles.actionButtonText}>{t("done")}</Text>
                       </Pressable>

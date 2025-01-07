@@ -283,7 +283,11 @@ function AppContent() {
             <Stack.Screen name="choose2" component={Choose2Screen} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="payment" component={PaymentScreen} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="payment"
+              component={PaymentScreen}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Recharge Balance") }}
+            />
             <Stack.Screen name="forgetPassword" component={ResetPasswordScreen} options={{ headerShown: false }} />
             <Stack.Screen
               name="editprofile"

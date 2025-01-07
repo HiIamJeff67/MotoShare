@@ -48,9 +48,9 @@ const OrderDetail = () => {
   let roleText = "載入中...";
 
   if (user.role == "Ridder") {
-    roleText = t("rider");
+    roleText = t("pure rider");
   } else if (user.role == "Passenger") {
-    roleText = t("passenger");
+    roleText = t("pure passenger");
   }
 
   const getToken = async () => {
@@ -134,13 +134,13 @@ const OrderDetail = () => {
                     <Text style={styles.title}>{t("starting point")}：{order.startAddress}</Text>
                     <Text style={styles.title}>{t("destination")}：{order.endAddress}</Text>
                     <Text style={styles.title}>
-                      {("start driving")}:{" "}
+                      {t("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
                     <Text style={styles.title}>
-                    {("Initial price")}: {order.initPrice}
+                    {t("Initial price")}: {order.initPrice}
                     </Text>
                     {user.role == "Ridder" 
                       ? <Text style={styles.title}>{t("Path deviation")}: {order.tolerableRDV}</Text>

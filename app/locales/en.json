@@ -97,7 +97,8 @@
   "paymentSuccess": "Payment Success",
   "my remark": "My Remark",
   "other remark": "Other Remark",
-  "payment": "Payment",
+  "Payment Cash": "Cash",
+  "Payment Balance": "Balance",
   "done": "Done",
 
   "Token failed": "Token acquisition failed",
@@ -107,7 +108,7 @@
   "An unknown error occurred": "An unknown error occurred",
 
   "Search User": "Search User",
-  "Age" : "Age",
+  "Age": "Age",
   "Motorcycle Type": "Motorcycle Type",
   "Online Status": "Online Status",
   "Introduction": "Introduction",
@@ -167,7 +168,7 @@
 
   "Add To Preference": "Add To Preference",
   "Add To Preference Success": "Add To Preference Success",
-  "Account Balance": "Account Balance",
+  "Recharge Balance": "Recharge Balance",
   "Reset email and password": "Reset email and password",
   "Recurring Orders": "Recurring Orders",
   "preference": "Preference",
@@ -210,7 +211,7 @@
   "Error retrieving profile": "Error retrieving profile",
   "verification code error": "Verification code error",
   "MotoShare": "MotoShare (default)",
-  "provide email":"Provide your Email and Password to bind the default account in our software, and you can log in with these information later.",
+  "provide email": "Provide your Email and Password to bind the default account in our software, and you can log in with these information later.",
   "Bind to MotoShare (default)": "Bind to MotoShare (default)",
   "If the previous registration or binding method provided us with an email, you can also choose to keep and continue to use that email.": "If the previous registration or binding method provided us with an email, you can also choose to keep and continue to use that email.",
   "bind": "Bind",
@@ -222,9 +223,10 @@
   "Please verify your phone number to let us confirm your identity. Although this will not directly affect your experience, it can make other users trust you more": "Please verify your phone number to let us confirm your identity. Although this will not directly affect your experience, it can make other users trust you more.",
   "verify phone number": "Verify Phone Number",
   "Please enter a Taiwan phone number (09XX-XXX-XXX). You do not need to enter the beginning of the phone number in any region": "Please enter a Taiwan phone number (09XX-XXX-XXX). You do not need to enter the beginning of the phone number in any region.",
-  "phone 886":"Phone Number(+886)",
+  "phone 886": "Phone Number(+886)",
   "Bind your Google account, and then log in to quickly log in through Google": "Bind your Google account, and then log in to quickly log in through Google. ",
-  "send code": "Send Code"
+  "send code": "Send Code",
 
-
+  "pure rider": "Rider",
+  "pure passenger": "Passenger"
 }

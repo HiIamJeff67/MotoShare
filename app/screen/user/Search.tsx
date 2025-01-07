@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableWithoutFeedback, Pressable, TextInput, Platform, Keyboard, Alert, Image, ActivityIndicator } from "react-native";
+import { View, TouchableWithoutFeedback, TextInput, Platform, Keyboard, Alert } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)";
-import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import debounce from "lodash/debounce";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 import { Styles } from "./Search.style";
 import { useTranslation } from "react-i18next";
+import UserCard from "@/app/component/UserCard/UserCard";
 
 interface UserType {
   id: string;
@@ -34,13 +34,11 @@ interface UserMoreInfo {
 const SearchUser = () => {
   const user = useSelector((state: RootState) => state.user);
   const theme = user.theme;
-  const [token, setToken] = useState<string | null>(null);
   const [styles, setStyles] = useState<any>(null);
   const [userInfo, setUserInfo] = useState<UserInfoType>();
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const navigation = useNavigation();
   const { t } = useTranslation();
   let roleText = "載入中...";
 
@@ -51,9 +49,9 @@ const SearchUser = () => {
   }, [theme]);
 
   if (user.role == "Ridder") {
-    roleText = t("passenger");
+    roleText = t("pure passenger");
   } else if (user.role == "Passenger") {
-    roleText = t("rider");
+    roleText = t("pure rider");
   }
 
   const getToken = async () => {
@@ -223,54 +221,7 @@ const SearchUser = () => {
         {isLoading ? (
           <LoadingWrapper />
         ) : (
-          userInfo && (
-            <View style={styles.container}>
-              <Pressable onPress={() => navigation.navigate(...(["orderdetail", { item: "123" }] as never))}>
-                <View style={styles.card}>
-                  <View style={styles.photoContainer}>
-                    <Image
-                      source={{ uri: userInfo.info.avatorUrl ?? "https://via.placeholder.com/100" }} // 替換為你的頭像 URL
-                      style={styles.avatar}
-                    />
-                  </View>
-                  <View style={styles.body}>
-                    <Text style={styles.title}>
-                      {roleText}：{userInfo.userName}
-                    </Text>
-                    <Text style={styles.title}>
-                      {t("Age")}：{userInfo.info.age}
-                    </Text>
-                    <Text style={styles.title}>
-                      {t("Motorcycle Type")}：{userInfo.info.motocycleType}
-                    </Text>
-                    <Text style={styles.title}>
-                      {t("Online Status")}：{userInfo.info.isOnline ? t("Online") : t("Offline")}
-                    </Text>
-                    <Text style={styles.title}>
-                      {t("Introduction")}：{userInfo.info.selfIntroduction}
-                    </Text>
-                    <Pressable
-                      style={styles.button}
-                      disabled={isButtonLoading}
-                      onPress={() => {
-                        createMyPreference(userInfo.userName);
-                      }}
-                    >
-                      <Text style={styles.buttonText}>{isButtonLoading ? <ActivityIndicator size="large" /> : t("Add To Preference")}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {userInfo.info.motocyclePhotoUrl && (
-                  <View style={styles.card}>
-                    <View style={styles.photoContainer}>
-                      <Image source={{ uri: userInfo.info.motocyclePhotoUrl }} style={styles.motoPhoto} />
-                    </View>
-                  </View>
-                )}
-              </Pressable>
-            </View>
-          )
+          userInfo && <UserCard userInfo={userInfo} isButtonLoading={isButtonLoading} onClicked={createMyPreference} />
         )}
       </View>
     </TouchableWithoutFeedback>

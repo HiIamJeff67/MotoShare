@@ -208,7 +208,12 @@ const Bindings = () => {
 
       if (isSuccessResponse(response)) {
         console.log(response);
-        Alert.alert("Google 登入成功", `你的Google Email是：${response.data.user.email}`);
+
+        if (response.data.idToken) {
+          handleGoogleEmailVerify(response.data.idToken);
+        } else {
+          console.error("ID token is null");
+        }
       } else {
         console.log("Sign in was cancelled by user");
       }
@@ -232,6 +237,51 @@ const Bindings = () => {
         console.error("Non-status code error:", error);
       }
     } finally {
+    }
+  };
+
+  const handleGoogleEmailVerify = async (idToken: string) => {
+    const showAlertMessage = () => {
+      Alert.alert(
+        t("verification code error"),
+        t("You must enter the correct verification code to continue"),
+        [
+          {
+            text: t("confirm"),
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    };
+
+    setIsLoading(true);
+    setLockButton(true);
+
+    if (token && token.length !== 0) {
+      try {
+        const response = await api.put(
+          user.role === "Passenger" ? "/passengerAuth/bindGoogleAuth" : "/ridderAuth/bindGoogleAuth",
+          { idToken: idToken },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          dispatch(setUserAuths({ isGoogleAuthenticated: true }));
+        }
+      } catch (error) {
+        console.log(error);
+        showAlertMessage();
+      } finally {
+        setIsLoading(false);
+        setLockButton(false);
+        setValidateOptionName(null);
+      }
     }
   };
 
