@@ -330,8 +330,8 @@ const InviteMap = () => {
                 latitude: origin.latitude,
                 longitude: origin.longitude,
               }}
-              title="起始位置" // "Origin"
-              description="選定的起始地點" // "Selected origin"
+              title={t("starting point")} // "Origin"
+              description={t("Select starting location")} // "Selected origin"
             />
           )}
           {/* 條件渲染目的地標記 */}
@@ -341,8 +341,8 @@ const InviteMap = () => {
                 latitude: destination.latitude,
                 longitude: destination.longitude,
               }}
-              title="目的地" // "Destination"
-              description="選定的位置" // "Selected location"
+              title={t("destination")} // "Destination"
+              description={t("selected location")} // "Selected location"
             />
           )}
           {origin && destination && (
@@ -384,11 +384,11 @@ const InviteMap = () => {
             {showDetailsPage ? (
               // 顯示目的地詳細資訊的頁面
               <View>
-                <Text style={styles.bottomSheetTitle}>地址詳細資訊</Text>
-                <Text style={styles.bottomSheetText}>起始位置: {originAddress}</Text>
-                <Text style={styles.bottomSheetText}>目的地址: {destinationAddress}</Text>
+                <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
+                <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
+                <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
                 <View style={styles.dateContainer}>
-                  <Text style={styles.bottomSheetText}>開始時間：</Text>
+                  <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
                   <Text style={styles.bottomSheetText}>
                     {selectedDate
                       ? selectedDate.toLocaleString("en-GB", {
@@ -400,18 +400,18 @@ const InviteMap = () => {
                     <Entypo name="calendar" size={24} color="black" />
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.bottomSheetText}>推薦價格:</Text>
+                <Text style={styles.bottomSheetText}>{t("recommend price")}:</Text>
                 <BottomSheetTextInput
                   style={styles.input}
-                  placeholder="推薦價格"
+                  placeholder={t("recommend price")}
                   value={initialPrice}
                   onChangeText={setinitialPrice}
                   placeholderTextColor="gray"
                 />
-                <Text style={styles.bottomSheetText}>描述:</Text>
+                <Text style={styles.bottomSheetText}>{t("description")}:</Text>
                 <BottomSheetTextInput
                   style={styles.input}
-                  placeholder="描述"
+                  placeholder={t("description")}
                   value={orderDescription}
                   onChangeText={setorderDescription}
                   placeholderTextColor="gray"
@@ -437,7 +437,7 @@ const InviteMap = () => {
                     }}
                     disabled={loading || lockButton}
                   >
-                    <Text style={styles.buttonText}>選擇地址</Text>
+                    <Text style={styles.buttonText}>{t("choose address")}</Text>
                   </Pressable>
 
                   <Pressable
@@ -445,7 +445,7 @@ const InviteMap = () => {
                     onPress={() => updateOrderData()}
                     disabled={loading || lockButton}
                   >
-                    <Text style={styles.buttonText}>{loading ? "邀請中..." : "邀請對方"}</Text>
+                    <Text style={styles.buttonText}>{loading ? t("inviting") : t("invite others")}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -458,7 +458,7 @@ const InviteMap = () => {
                   }}
                 >
                   <GooglePlacesAutocomplete
-                    placeholder="搜尋起始位置"
+                    placeholder={t("search starting point")}
                     textInputProps={{
                       placeholderTextColor: "#626262",
                       onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
@@ -488,7 +488,7 @@ const InviteMap = () => {
                   }}
                 >
                   <GooglePlacesAutocomplete
-                    placeholder="搜尋目的地"
+                    placeholder={t("search destination")}
                     textInputProps={{
                       placeholderTextColor: "#626262",
                       onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)

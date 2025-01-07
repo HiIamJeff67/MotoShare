@@ -402,12 +402,12 @@ const Bindings = () => {
         />
         {validateOptionName === "Google" && (
           <AnimatedInputMessage
-            title="綁定Google帳戶"
-            content="請登入你的 Google 電郵以綁定你的 Google 帳戶。"
+            title={t("bind google account")}
+            content={t("Please log in to your Google email to bind your Google account.")}
             theme={theme}
-            leftOptionTitle="登入"
+            leftOptionTitle={t("login")}
             leftOptionCallBack={googleEmailVerify}
-            rightOptionTitle="取消"
+            rightOptionTitle={t("cancel")}
             rightOptionCallBack={() => setValidateOptionName(null)}
           />
         )}

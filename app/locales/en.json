@@ -247,5 +247,21 @@
   "Delete": "Delete",
   "Conflict": "Conflict",
   "Conflict Message": "The order was successfully sent, but the system automatically detected a potential time conflict",
-  "Conflict Message2": "The invitation was successfully sent, but the system automatically detected a potential time conflict"
+  "Conflict Message2": "The invitation was successfully sent, but the system automatically detected a potential time conflict",
+
+  "Select starting location": "Select starting location",
+  "selected location": "Selected location",
+  "recommend price": "Recommend price",
+  "description": "Description",
+  "choose address": "Choose Address",
+  "inviting": "Inviting",
+  "invite others": "Invite others",
+  "bind google account": "Bind Google Account",
+  "Please log in to your Google email to bind your Google account" : "Please log in to your Google email to bind your Google account",
+  "top up": "Top Up",
+  "Choose another amount": "Choose another amount",
+  "dollar": "Dollar",
+  "checkout": "Checkout",
+  "Account Balance": "Account Balance"
+  
 }

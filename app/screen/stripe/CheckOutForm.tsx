@@ -5,6 +5,7 @@ import { useStripe } from "@stripe/stripe-react-native";
 import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 interface CheckOutFormProps {
   amount: number;
@@ -64,6 +65,7 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
   const amountReal = (amount * 100).toString();
+  const { t } = useTranslation();
 
   const initializePaymentSheet = async () => {
     const paymentSheetParams = await fetchPaymentSheetParams(amountReal);
@@ -105,5 +107,5 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
     initializePaymentSheet();
   }, []);
 
-  return <CheckOutButton style={{}} onPress={openPaymentSheet} disabled={!loading} title="Checkout" />;
+  return <CheckOutButton style={{}} onPress={openPaymentSheet} disabled={!loading} title={t("checkout")} />;
 }

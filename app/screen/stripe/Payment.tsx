@@ -6,6 +6,7 @@ import { scale, verticalScale } from "react-native-size-matters";
 import { Styles } from "./Payment.style";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/(store)";
+import { useTranslation } from "react-i18next";
 
 const PaymentPage = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -13,6 +14,7 @@ const PaymentPage = () => {
   const [styles, setStyles] = useState<any>(null);
   const [selectedAmount, setSelectedAmount] = useState(100);
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const amounts: { value: number; color: string }[] = [
     { value: 1, color: "#4CD964" },
@@ -40,10 +42,10 @@ const PaymentPage = () => {
       }}
     >
       <View style={styles.header}>
-        <Text style={styles.amount}>儲值 {selectedAmount.toFixed(2)} 元</Text>
+        <Text style={styles.amount}>{t("top up")} {selectedAmount.toFixed(2)} {t("dollar")}</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>選擇其他金額</Text>
+      <Text style={styles.sectionTitle}>{t("Choose another amount")}</Text>
 
       <View style={styles.gridContainer}>
         {amounts.map((item, index) => (
