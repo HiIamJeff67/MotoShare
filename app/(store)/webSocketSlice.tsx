@@ -1,46 +1,46 @@
-// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { io, Socket } from 'socket.io-client';
+import * as SecureStore from "expo-secure-store";
+import { UserRoleType } from './interfaces/userState.interface';
 
-// interface Notification {
-//   id: string;
-//   title: string;
-//   description: string;
-// }
+interface Notification {
+  id: string;
+  title: string;
+  description: string;
+}
 
-// interface WebSocketState {
-//   socket: WebSocket | null;
-//   notifications: Notification[];
-// }
+interface WebSocketState {
+  isConnected: boolean; // 使用 Socket 類型
+  notifications: Notification[];
+}
 
-// interface SetupWebSocketPayloadInterface {
-//     token: string | null;
-// }
+const initialState: WebSocketState = {
+  isConnected: false, 
+  notifications: [],
+};
 
-// const initialState: WebSocketState = {
-//   socket: null,
-//   notifications: [],
-// };
+const webSocketSlice = createSlice({
+  name: 'webSocket',
+  initialState,
+  reducers: {
+    connectToSocket(state) {
+        state.isConnected = true;
+    }, 
+    disconnectToSocket(state) {
+        state.isConnected = false;
+    }, 
+    addNotification(state, action: PayloadAction<Notification>) {
+      state.notifications.push(action.payload);
+      console.log(state.notifications);
+    },
+    setNotifications(state, action: PayloadAction<Notification[]>) {
+        state.notifications = [...state.notifications, ...action.payload];
+    }, 
+    clearNotifications(state) {
+      state.notifications = [];
+    },
+  },
+});
 
-// const webSocketSlice = createSlice({
-//   name: 'webSocket',
-//   initialState,
-//   reducers: {
-//     setSocket(state, action: PayloadAction<SetupWebSocketPayloadInterface>) {
-//       if (action.payload.token) {
-//         const socket = new WebSocket('ws://https://motoshare-x7gp.onrender.com/notifications', {
-//             headers: {
-                
-//             }, 
-//         });
-//       }
-//     },
-//     addNotification(state, action: PayloadAction<Notification>) {
-//       state.notifications.push(action.payload);
-//     },
-//     clearNotifications(state) {
-//       state.notifications = [];
-//     },
-//   },
-// });
-
-// export const { setSocket, addNotification, clearNotifications } = webSocketSlice.actions;
-// export default webSocketSlice.reducer;
+export const { connectToSocket, disconnectToSocket, addNotification, clearNotifications } = webSocketSlice.actions;
+export default webSocketSlice.reducer;

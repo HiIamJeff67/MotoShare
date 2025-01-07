@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Pressable, InteractionManager } from "rea
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../(store)";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -15,11 +15,16 @@ import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
 import MapView from "react-native-maps";
+import { addNotification, connectToSocket, disconnectToSocket } from "../(store)/webSocketSlice";
+import { io } from "socket.io-client";
 
 const Home = () => {
-  const user = useSelector((state: RootState) => state.user);
-  const theme = user.theme;
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const user = useSelector((state: RootState) => state.user);
+  const userRole = user.role;
+  const websocketClient = useSelector((state: RootState) => state.websocket);
+  const theme = user.theme;
   const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -49,6 +54,37 @@ const Home = () => {
   useEffect(() => {
     const fetchToken = async () => {
       const userToken = await SecureStore.getItemAsync("userToken");
+      if (userToken && user.role) {
+        console.log(userToken)
+        const socket = io(`${process.env.EXPO_PUBLIC_API_URL}/notifications`, {
+          extraHeaders: {
+            authorization: `Bearer ${userToken}`,
+            userrole: user.role,
+          },
+          transports: ['websocket'],
+        });
+
+        // Update connection status in Redux
+        socket.on('connect', () => {
+          console.log('connected to webSocket...')
+          dispatch(connectToSocket());
+        });
+
+        socket.on('disconnect', (reason) => {
+          console.log('disconnected from webSocket...', reason); // Log the reason for disconnection
+          dispatch(disconnectToSocket());
+        });
+  
+        socket.on('notification', (data) => {
+          console.log('Received notification:', data);
+          dispatch(addNotification(data));
+        });
+  
+        // Optional: Add error handling
+        socket.on('connect_error', (error) => {
+          console.error('Connection error:', error);
+        });
+      }
       setToken(userToken);
     };
 
@@ -57,7 +93,7 @@ const Home = () => {
       // 當所有互動完成後更新狀態
       setIsLoading(false);
     });
-  }, []);
+  }, [userRole]);
 
   useEffect(() => {
     getUserRecords();
