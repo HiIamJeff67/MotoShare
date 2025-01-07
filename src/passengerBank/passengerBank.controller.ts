@@ -34,7 +34,7 @@ export class PassengerBankController {
   }
 
   @UseGuards(JwtPassengerGuard)
-  @Get('/createPaymentIntentForAddingBalanceByUserId')
+  @Post('/createPaymentIntentForAddingBalanceByUserId')
   async createPaymentIntentForAddingBalanceByUserId(
     @Passenger() passenger: PassengerType, 
     @Body() createPaymentIntentDto: CreatePaymentIntentDto, 

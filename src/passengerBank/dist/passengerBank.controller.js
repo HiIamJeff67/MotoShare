@@ -150,7 +150,7 @@ var PassengerBankController = /** @class */ (function () {
     ], PassengerBankController.prototype, "getMyBalance");
     __decorate([
         common_1.UseGuards(guard_1.JwtPassengerGuard),
-        common_1.Get('/createPaymentIntentForAddingBalanceByUserId'),
+        common_1.Post('/createPaymentIntentForAddingBalanceByUserId'),
         __param(0, decorator_1.Passenger()),
         __param(1, common_1.Body()),
         __param(2, common_1.Res())

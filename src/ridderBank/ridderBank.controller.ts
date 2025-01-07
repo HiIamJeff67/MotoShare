@@ -36,7 +36,7 @@ export class RidderBankController {
   }
 
   @UseGuards(JwtRidderGuard)
-  @Get('/createPaymentIntentForAddingBalanceByUserId')
+  @Post('/createPaymentIntentForAddingBalanceByUserId')
   async createPaymentIntentForAddingBalanceByUserId(
     @Ridder() ridder: RidderType, 
     @Body() createPaymentIntentDto: CreatePaymentIntentDto, 

@@ -150,7 +150,7 @@ var RidderBankController = /** @class */ (function () {
     ], RidderBankController.prototype, "getMyBalance");
     __decorate([
         common_1.UseGuards(guard_1.JwtRidderGuard),
-        common_1.Get('/createPaymentIntentForAddingBalanceByUserId'),
+        common_1.Post('/createPaymentIntentForAddingBalanceByUserId'),
         __param(0, decorator_1.Ridder()),
         __param(1, common_1.Body()),
         __param(2, common_1.Res())
