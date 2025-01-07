@@ -165,7 +165,7 @@ const MyInviteDetail = () => {
         return;
       }
 
-      response = await axios.patch(
+      response = await axios.post(
         url,
         {
           status: "CANCEL", // 這裡是 body 的部分，應該放在第二個參數

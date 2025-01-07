@@ -21,12 +21,26 @@ import { useTranslation } from "react-i18next";
 
 const InviteMap = () => {
   const route = useRoute();
-  const { orderId, orderStartAddress, orderEndAddress, orderInitPrice, orderStartAfter } = route.params as {
+  const {
+    orderId,
+    orderStartAddress,
+    orderEndAddress,
+    orderInitPrice,
+    orderStartAfter,
+    orderStartCordX,
+    orderStartCordY,
+    orderEndCordX,
+    orderEndCordY,
+  } = route.params as {
     orderId: string;
     orderStartAddress: string;
     orderEndAddress: string;
     orderInitPrice: number;
     orderStartAfter: string;
+    orderStartCordX: number;
+    orderStartCordY: number;
+    orderEndCordX: number;
+    orderEndCordY: number;
   };
 
   const parsedOrderStartAfter = new Date(orderStartAfter);
@@ -199,10 +213,19 @@ const InviteMap = () => {
         suggestPrice: initialPrice,
         startAddress: originAddress,
         endAddress: destinationAddress,
-        startCordLongitude: origin?.longitude,
-        startCordLatitude: origin?.latitude,
-        endCordLongitude: destination?.longitude,
-        endCordLatitude: destination?.latitude,
+        ...(origin && destination
+          ? {
+              startCordLongitude: origin.longitude,
+              startCordLatitude: origin.latitude,
+              endCordLongitude: destination.longitude,
+              endCordLatitude: destination.latitude,
+            }
+          : {
+              startCordLongitude: orderStartCordX,
+              startCordLatitude: orderStartCordY,
+              endCordLongitude: orderEndCordX,
+              endCordLatitude: orderEndCordY,
+            }),
         suggestStartAfter: selectedDate,
         suggestEndedAt: endDate,
       };
@@ -385,8 +408,12 @@ const InviteMap = () => {
               // 顯示目的地詳細資訊的頁面
               <View>
                 <Text style={styles.bottomSheetTitle}>{t("address detail information")}</Text>
-                <Text style={styles.bottomSheetText}>{t("starting point")}: {originAddress}</Text>
-                <Text style={styles.bottomSheetText}>{t("destination")}: {destinationAddress}</Text>
+                <Text style={styles.bottomSheetText}>
+                  {t("starting point")}: {originAddress}
+                </Text>
+                <Text style={styles.bottomSheetText}>
+                  {t("destination")}: {destinationAddress}
+                </Text>
                 <View style={styles.dateContainer}>
                   <Text style={styles.bottomSheetText}>{t("start time")}：</Text>
                   <Text style={styles.bottomSheetText}>

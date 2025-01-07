@@ -262,6 +262,10 @@
   "Choose another amount": "Choose another amount",
   "dollar": "Dollar",
   "checkout": "Checkout",
-  "Account Balance": "Account Balance"
+  "Account Balance": "Account Balance",
   
+  "My Create Order": "My Create Order",
+  "My Create Order Detail": "My Create Order Detail",
+
+  "Periodic Order Detail": "Periodic Order Detail"
 }

@@ -6,6 +6,9 @@ import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../(store)";
+import { setUserBalance } from "@/app/(store)/userSlice";
 
 interface CheckOutFormProps {
   amount: number;
@@ -95,11 +98,15 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
 
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
+    const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.user);
+    const newBalance = (user.balance ?? 0) + 100;
 
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert("Success", "Your order is confirmed!");
+      dispatch(setUserBalance({ balance: newBalance }));
     }
   };
 

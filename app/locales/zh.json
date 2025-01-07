@@ -261,5 +261,10 @@
   "Choose another amount": "選擇其他金額",
   "dollar": "元",
   "checkout": "結帳",
-  "Account Balance": "帳戶餘額"
+  "Account Balance": "帳戶餘額",
+
+  "My Create Order": "我建立的訂單",
+  "My Create Order Detail": "我建立的訂單詳情",
+
+  "Periodic Order Detail": "週期性訂單詳情"
 }

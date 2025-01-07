@@ -23,7 +23,6 @@ const Home = () => {
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
   const userRole = user.role;
-  const websocketClient = useSelector((state: RootState) => state.websocket);
   const theme = user.theme;
   const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,

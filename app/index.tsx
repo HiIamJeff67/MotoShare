@@ -22,6 +22,7 @@ import OtherInviteScreen from "./screen/invite/OtherInvite";
 import OtherInviteDeScreen from "./screen/invite/OtherInviteDe";
 import InviteMap from "./screen/invite/InviteMap";
 import EditProfile from "./screen/setting/EditProfile";
+import Notification from "./screen/notification/Notification";
 import Settings from "./screen/setting/Settings";
 import UserSearch from "./screen/user/Search";
 import MyCreateOrder from "./screen/setting/MyCreateOrder";
@@ -286,6 +287,11 @@ function AppContent() {
             <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="reg" component={RegScreen} options={{ headerShown: false }} />
             <Stack.Screen
+              name="notification"
+              component={Notification}
+              options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("notification") }}
+            />
+            <Stack.Screen
               name="payment"
               component={PaymentScreen}
               options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Recharge Balance") }}
@@ -312,7 +318,6 @@ function AppContent() {
               options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("Reset email and password") }}
             />
             <Stack.Screen name="report" component={Report} options={{ headerShown: true, headerBackTitle: "我的頁面", headerTitle: t("feedback") }} />
-            {/* <Stack.Screen name="notification" component={Notification} options={{ headerShown: true, headerBackTitle: "我的頁面" , headerTitle: t("notification")}}/> */}
             <Stack.Screen
               name="settings"
               component={Settings}
@@ -326,22 +331,22 @@ function AppContent() {
             <Stack.Screen
               name="mycreateorder"
               component={MyCreateOrder}
-              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("myorder") }}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("My Create Order") }}
             />
             <Stack.Screen
               name="mycreateorderde"
               component={MyCreateOrderDe}
-              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("My Create Order Detail") }}
             />
             <Stack.Screen
               name="porder"
               component={POrder}
-              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("Periodic Order") }}
             />
             <Stack.Screen
               name="porderdetail"
               component={POrderDetail}
-              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("my order detail") }}
+              options={{ headerShown: true, headerBackTitle: t("home"), headerTitle: t("Periodic Order Detail") }}
             />
             <Stack.Screen
               name="invitemap"

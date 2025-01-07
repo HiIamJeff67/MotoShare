@@ -137,7 +137,7 @@ const OtherOrder = () => {
                 <View key={item.id} style={styles.container}>
                   <Pressable
                     onPress={() =>
-                      navigation.navigate(...["OtherInviteDe", { orderid: item.id }] as never)
+                      navigation.navigate(...["otherinvitede", { orderid: item.id }] as never)
                     }
                   >
                     <View style={styles.card}>

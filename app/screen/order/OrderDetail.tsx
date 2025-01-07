@@ -25,6 +25,11 @@ interface CreatorType {
   userName: string;
 }
 
+interface CordType {
+  x: number;
+  y: number;
+}
+
 // 定義每個訂單的資料結構
 interface OrderType {
   id: string;
@@ -37,6 +42,8 @@ interface OrderType {
   updatedAt: Date;
   endedAt: Date;
   creator: CreatorType;
+  startCord: CordType;
+  endCord: CordType;
 }
 
 const OrderDetail = () => {
@@ -46,9 +53,9 @@ const OrderDetail = () => {
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
   const navigation = useNavigation();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   let roleText = "載入中...";
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [order, setOrder] = useState<OrderType>();
   const [styles, setStyles] = useState<any>(null);
@@ -83,9 +90,9 @@ const OrderDetail = () => {
     let response,
       url = "";
 
-    if (user.role == "Passenger") {
+    if (user.role === "Passenger") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/supplyOrder/getSupplyOrderById`;
-    } else if (user.role == "Ridder") {
+    } else if (user.role === "Ridder") {
       url = `${process.env.EXPO_PUBLIC_API_URL}/purchaseOrder/getPurchaseOrderById`;
     }
 
@@ -110,7 +117,7 @@ const OrderDetail = () => {
         });
 
         setOrder(response.data);
-        //console.log(response.data);
+        console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data);
@@ -134,7 +141,9 @@ const OrderDetail = () => {
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
-                <Text style={styles.orderNumber}>{t("order id")}: {order?.id}</Text>
+                <Text style={styles.orderNumber}>
+                  {t("order id")}: {order?.id}
+                </Text>
               </View>
 
               <View style={styles.body}>
@@ -143,8 +152,12 @@ const OrderDetail = () => {
                     <Text style={styles.title}>
                       {roleText}：{order.creator.userName}
                     </Text>
-                    <Text style={styles.title}>{t("starting point")}：{order.startAddress}</Text>
-                    <Text style={styles.title}>{t("destination")}：{order.endAddress}</Text>
+                    <Text style={styles.title}>
+                      {t("starting point")}：{order.startAddress}
+                    </Text>
+                    <Text style={styles.title}>
+                      {t("destination")}：{order.endAddress}
+                    </Text>
                     <Text style={styles.title}>
                       {t("start driving")}:{" "}
                       {new Date(order.startAfter).toLocaleString("en-GB", {
@@ -152,29 +165,41 @@ const OrderDetail = () => {
                       })}
                     </Text>
                     <Text style={styles.title}>
-                    {t("Initial price")}: {order.initPrice}
+                      {t("Initial price")}: {order.initPrice}
                     </Text>
-                    {user.role == "Ridder" 
-                      ? <Text style={styles.title}>{t("Path deviation")}: {order.tolerableRDV}</Text>
-                      : null
-                    }
+                    {user.role == "Ridder" ? (
+                      <Text style={styles.title}>
+                        {t("Path deviation")}: {order.tolerableRDV}
+                      </Text>
+                    ) : null}
                     <Text style={styles.title}>
                       {t("update time")}:{" "}
                       {new Date(order.updatedAt).toLocaleString("en-GB", {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>{t("remark")}: {order.description}</Text>
+                    <Text style={styles.title}>
+                      {t("remark")}: {order.description}
+                    </Text>
                     <Pressable
                       style={[styles.inviteButton]}
                       onPress={() =>
-                        navigation.navigate(...["invitemap", {
-                          orderId: orderid,
-                          orderStartAddress: order.startAddress,
-                          orderEndAddress: order.endAddress,
-                          orderInitPrice: order.initPrice,
-                          orderStartAfter: order.startAfter,
-                        }] as never)
+                        navigation.navigate(
+                          ...([
+                            "invitemap",
+                            {
+                              orderId: orderid,
+                              orderStartAddress: order.startAddress,
+                              orderEndAddress: order.endAddress,
+                              orderInitPrice: order.initPrice,
+                              orderStartAfter: order.startAfter,
+                              orderStartCordX: order.startCord.x,
+                              orderStartCordY: order.startCord.y,
+                              orderEndCordX: order.endCord.x,
+                              orderEndCordY: order.endCord.y,
+                            },
+                          ] as never)
+                        )
                       }
                     >
                       <Text style={styles.inviteButtonText}>{t("Create invitation")}</Text>
