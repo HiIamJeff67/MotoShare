@@ -99,7 +99,7 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
     const dispatch = useDispatch();
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.user) as { balance: number | null };
     const newBalance = (user.balance ?? 0) + 100;
 
     if (error) {
