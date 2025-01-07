@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Query } from '@nestjs/common';
 import { PassengerBankService } from './passengerBank.service';
 import { CreatePaymentIntentDto } from './dto/create-passengerBank.dto';
 import { Passenger } from '../auth/decorator';
@@ -65,6 +65,7 @@ export class PassengerBankController {
   @Post('/payToFinishOrderById')
   async payToFinishOrderById(
     @Passenger() passenger: PassengerType, 
+    @Query('id') id: string, 
     @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
     @Res() response: Response, 
   ) {
@@ -74,9 +75,9 @@ export class PassengerBankController {
 
     try {
       const res = await this.passengerBankService.payToFinishOrderById(
+        id, 
         passenger.id, 
         passenger.userName, 
-        passenger.email, 
         toNumber(createPaymentIntentDto.amount), 
       );
 

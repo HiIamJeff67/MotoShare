@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Query } from '@nestjs/common';
 import { RidderBankService } from './ridderBank.service';
 import { JwtRidderGuard } from '../auth/guard';
 import { Ridder } from '../auth/decorator';
@@ -67,6 +67,7 @@ export class RidderBankController {
   @Post('/payToFinishOrderById')
   async payToFinishOrderById(
     @Ridder() ridder: RidderType, 
+    @Query('id') id: string, 
     @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
     @Res() response: Response, 
   ) {
@@ -76,9 +77,9 @@ export class RidderBankController {
 
     try {
       const res = await this.ridderBankService.payToFinishOrderById(
+        id, 
         ridder.id, 
         ridder.userName, 
-        ridder.email, 
         toNumber(createPaymentIntentDto.amount), 
       );
 

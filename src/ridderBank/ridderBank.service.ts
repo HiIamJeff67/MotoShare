@@ -266,12 +266,12 @@ export class RidderBankService {
   }
 
   async payToFinishOrderById(
+    id: string, 
     userId: string, 
     userName: string, 
-    email: string, 
     amount: number, 
   ) {
-    return this._payToFinishOrderById(userId, userName, email, amount);
+    return this._payToFinishOrderById(id, userId, userName, amount);
   }
   /* ================================= Public Payment operation ================================= */
 }
