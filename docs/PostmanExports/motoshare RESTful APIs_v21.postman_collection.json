@@ -1,0 +1,6194 @@
+{
+	"info": {
+		"_postman_id": "73add970-1b34-48e7-b3fc-3175712f68d3",
+		"name": "motoshare RESTful APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31750281"
+	},
+	"item": [
+		{
+			"name": "Passenger Routes",
+			"item": [
+				{
+					"name": "Actual Route in Vercel",
+					"item": [
+						{
+							"name": "createPassengerWithInfoAndCollection",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "userName",
+											"value": "user6",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "user6@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/createPassengerWithInfoAndCollection",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"createPassengerWithInfoAndCollection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPassengers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/getAllPassengers",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"getAllPassengers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "signInPassengerByEamilAndPassword",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "user1@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/signInPassengerByEamilAndPassword",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"signInPassengerByEamilAndPassword"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Test Route",
+					"item": [
+						{
+							"name": "getAllPassengers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/passenger/getAllPassengers",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"passenger",
+										"getAllPassengers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "testBcrypt",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/passenger/testBcrypt?secretText=123&hash=$2b$10$negVvsFs.AOE.LZU4ViXnONb3LhOA2XGBL2UaLPp1HMUIqAfMWTRO",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"passenger",
+										"testBcrypt"
+									],
+									"query": [
+										{
+											"key": "secretText",
+											"value": "123"
+										},
+										{
+											"key": "hash",
+											"value": "$2b$10$negVvsFs.AOE.LZU4ViXnONb3LhOA2XGBL2UaLPp1HMUIqAfMWTRO"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MDI2NCwiZXhwIjoxNzM1NDYxMDY0fQ.1Vj9nUyzAIyEvs7TQ8I4Jek6Cy-fMIZ09oEs3FqWtUE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passenger/getMe",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passenger",
+								"getMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPassengerWithInfoByUserName",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzgxMTE5OSwiZXhwIjoxNzMzODEyOTk5fQ.D2VQ98kv4HX_12IRdEsC0bpyVMLU8rUGi8oTEFA2jnM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{localhost}}/passenger/getPassengerWithInfoByUserName?userName=Jeff",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passenger",
+								"getPassengerWithInfoByUserName"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "Jeff"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MDI2NCwiZXhwIjoxNzM1NDYxMDY0fQ.1Vj9nUyzAIyEvs7TQ8I4Jek6Cy-fMIZ09oEs3FqWtUE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passenger/getMyInfo",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passenger",
+								"getMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyCollection",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDc4OTQ0LCJleHAiOjE3MzE0ODQzNDR9.GUKnwncdrCeZJCugQ5J-LywMSdGG5f1cUUVulmRjjV0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/getMyCollection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"getMyCollection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationPassengers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passenger/searchPaginationPassengers?limit=2&offset=0&passenger",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"searchPaginationPassengers"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "passenger",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MDI2NCwiZXhwIjoxNzM1NDYxMDY0fQ.1Vj9nUyzAIyEvs7TQ8I4Jek6Cy-fMIZ09oEs3FqWtUE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "Jeff",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"description": "update password no longer support",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "123@gmail.com",
+									"description": "update email no longer support",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passenger/updateMe",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passenger",
+								"updateMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MDI2NCwiZXhwIjoxNzM1NDYxMDY0fQ.1Vj9nUyzAIyEvs7TQ8I4Jek6Cy-fMIZ09oEs3FqWtUE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatorFile",
+									"type": "file",
+									"src": "/Users/jeff/Desktop/圖片/Chrome 主頁畫面 05.jpeg",
+									"disabled": true
+								},
+								{
+									"key": "phoneNumber",
+									"value": "0999777666",
+									"type": "text"
+								},
+								{
+									"key": "emergencyPhoneNumber",
+									"value": "0999666777",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passenger/updateMyInfo",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passenger",
+								"updateMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4N2U0ZDYxZi00YWU4LTQ0YTMtYWI4Ny1lODMwM2VhOGNlNWEiLCJlbWFpbCI6InBhc3NlbmdlcjRAZ21haWwuY29tIiwiaWF0IjoxNzMwNTU3MzAyLCJleHAiOjE3MzA1NjI3MDJ9.Qnokb0gkT3aOZZcxZDU4VQYLNYsN9PVKM5bvcAJ0eq0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/deleteMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"deleteMe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ridder Routes",
+			"item": [
+				{
+					"name": "Actual Route in Vercel",
+					"item": [
+						{
+							"name": "createRidderWithInfoAndCollection",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "userName",
+											"value": "ridder6",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "ridder6@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridder/createRidderWithInfoAndCollection",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"ridder",
+										"createRidderWithInfoAndCollection"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Test Route",
+					"item": [
+						{
+							"name": "getAllRidders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/ridder/getAllRidders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"ridder",
+										"getAllRidders"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjExQGdtYWlsLmNvbSIsImlhdCI6MTczMjE5ODM0NCwiZXhwIjoxNzMyMjAzNzQ0fQ.y6F1AUli5t920e_4AEsTBmCMWIlaV-zqaSEwDpPSqgk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridder/getMe",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridder",
+								"getMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getRidderWithInfoByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getRidderWithInfoByUserName?userName=ridder1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getRidderWithInfoByUserName"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "ridder1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getMyInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyCollection",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getMyCollection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getMyCollection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationRidders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/searchPaginationRidders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"searchPaginationRidders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjExQGdtYWlsLmNvbSIsImlhdCI6MTczMjE5ODM0NCwiZXhwIjoxNzMyMjAzNzQ0fQ.y6F1AUli5t920e_4AEsTBmCMWIlaV-zqaSEwDpPSqgk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "ridder12",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ridder12@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password3",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridder/updateMe",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridder",
+								"updateMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzQ2MjYwMywiZXhwIjoxNzMzNDY0NDAzfQ.hh8so9ct91xWew18EKBoVPkalDYci_Aozr7s0EfhWyg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "age",
+									"value": "18",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "isOnline",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "phoneNumber",
+									"value": "0912345678",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "motocycleLicense",
+									"value": "FIB-1234",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "selfIntroduction",
+									"value": "Hi I am user2",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "avatorFile",
+									"type": "file",
+									"src": "/Users/jeff/Desktop/圖片/AI midjourney/AI-phonk-03.jpeg"
+								},
+								{
+									"key": "motocyclePhotoFile",
+									"type": "file",
+									"src": "/Users/jeff/Downloads/—Pngtree—creative ukiyo-e surf illustration_4510731.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/ridder/updateMyInfo",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridder",
+								"updateMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTE3NDg0MS03NGQ3LTQ4ZjMtOTcwMi04ZmQwOWMxYjgwMTkiLCJlbWFpbCI6InJpZGRlcjExQGdtYWlsLmNvbSIsImlhdCI6MTczMjU1MzIyMSwiZXhwIjoxNzMyNTU1MDIxfQ.CK71TLEcp9La4jpQG5OqVewZCGess_DmYf_MtDuqvW8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridder/deleteMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"deleteMe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PurchaseOrder Routes",
+			"item": [
+				{
+					"name": "Test Routes",
+					"item": [
+						{
+							"name": "testWithExpired",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/testWithExpired",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"purchaseOrder",
+										"testWithExpired"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "testWithoutExpired",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/testWithoutExpired",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"purchaseOrder",
+										"testWithoutExpired"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPurchaseOrders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/purchaseOrder/getAllPurchaseOrders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"purchaseOrder",
+										"getAllPurchaseOrders"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "createPurchaseOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQwNjE5OSwiZXhwIjoxNzM1NDE2OTk5fQ.tvLL1Qd-frOeIRvEacJhyk78BxZ04OuXUPAiefRx47k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "initPrice",
+									"value": "1202",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "-122.084",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "37.4219983",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121.2311589",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "25.0804902",
+									"type": "text"
+								},
+								{
+									"key": "isUrgent",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "test for creating passsenger notification",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2030-12-29T00:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2030-12-30T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "nowhere",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "somewhere",
+									"type": "text"
+								},
+								{
+									"key": "autoAccept",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/purchaseOrder/createPurchaseOrder",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"createPurchaseOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPurchaseOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjc3MCwiZXhwIjoxNzM1MzE4NTcwfQ.O7PIvTRQD_9DWgRgwhdTFK0Va5Zu9AAo6u13P3Dcbrc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/purchaseOrder/searchMyPurchaseOrders?limit=10&offset=0&isAutoAccept=true",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchMyPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "isAutoAccept",
+									"value": "true",
+									"description": "if \"true\" then true, else false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNzMyMTExLCJleHAiOjE3MzE3Mzc1MTF9.1zAAZu95kJlKAxZkHZh09mCChmEV4kifwL4_3Lyu4fU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/getPurchaseOrderById?id=f8dea630-5624-45cb-a918-754ee54c53db",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"purchaseOrder",
+								"getPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f8dea630-5624-45cb-a918-754ee54c53db"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationPurchaseOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/purchaseOrder/searchPaginationPurchaseOrders?limit=12&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchPaginationPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "passenger6",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "12"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchAboutToStartPurchaseOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/purchaseOrder/searchAboutToStartPurchaseOrders",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchAboutToStartPurchaseOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimliarTimePurchaseOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startAfter",
+									"value": "2024-12-20T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2024-12-30T01:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/purchaseOrder/searchSimliarTimePurchaseOrders?limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchSimliarTimePurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "passenger",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "isAutoAccept",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchCurAdjacentPurchaseOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "23",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/purchaseOrder/searchCurAdjacentPurchaseOrders?limit=10&offset=0",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchCurAdjacentPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "passenger6",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchDestAdjacentPurchaseOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchDestAdjacentPurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchDestAdjacentPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimilarRoutePurchaseOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startCordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "128",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "21",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchSimilarRoutePurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchSimilarRoutePurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchBetterFirstPurchaseOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startCordLongitude",
+									"value": "123.22",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "12",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2024-12-20T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2024-12-30T01:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/purchaseOrder/searchBetterFirstPurchaseOrders?searchPriorities=TSURD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"searchBetterFirstPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TSURD",
+									"description": "T : Time, S: start pos, U: updatedAt, R: route, D: dest pos"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzY1NTUzMCwiZXhwIjoxNzMzNjU3MzMwfQ.RuhhcV6chYjF4bo9e-iTfKWTjzNwWraZS03s0UgmNqI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "test test test!!!",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "POSTED",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2030-12-21T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2030-12-30T01:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/updateMyPurchaseOrderById?id=52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"updateMyPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "startPurchaseOrderWithoutInvite",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMjcxMDkzOCwiZXhwIjoxNzMyNzEyNzM4fQ.UBkFBEgMqVCpnHQFxPGbNzThy2b4x71MqVpZCFk8RpA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "I'm in urgent!!!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/startPurchaseOrderWithoutInvite?id=beb2effe-d1c4-414a-af6f-e899b56eb7be",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"purchaseOrder",
+								"startPurchaseOrderWithoutInvite"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "beb2effe-d1c4-414a-af6f-e899b56eb7be"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancelMyPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzQwNzI4OSwiZXhwIjoxNzMzNDA5MDg5fQ.8KPy3dhcRKdZiKwYyulaXb__YIYqd_UAqVFIFV82hNE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/purchaseOrder/cancelMyPurchaseOrderById?id",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"purchaseOrder",
+								"cancelMyPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0M2EwNmM4YS1mZjAxLTQwYjktODBkZi1jMGJiNjllZTA0ODgiLCJlbWFpbCI6IjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MzA2MDkxMDQsImV4cCI6MTczMDYxNDUwNH0.pKYirJTAPC4M2NghmJgbcxaLBTawY1BwX7jUKn5VF9o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/deleteMyPurchaseOrderById?id=52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"deleteMyPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SupplyOrder Routes",
+			"item": [
+				{
+					"name": "createSupplyOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzM1NDA0NzcyLCJleHAiOjE3MzU0MTU1NzJ9.Ke92BkHSUeOQWk8MCkDpq_7u5o0gwnaUyXxu469bmn0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "11/17 - 3",
+									"type": "text"
+								},
+								{
+									"key": "initPrice",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121.5",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "22",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "my home",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "asb",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2025-07-26T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2025-07-26T02:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/createSupplyOrder",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"createSupplyOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMySupplyOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzM0MDE0MjYzLCJleHAiOjE3MzQwMTYwNjN9.hKTUkPBTy7byBYiSUQCzY0d4P5OLrqcI3l3SahLlfjk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/searchMySupplyOrders?limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"searchMySupplyOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk2OTIxLCJleHAiOjE3MzE1MDIzMjF9.MEUsAyr0cvYGaFGaB6UYpSLGhoJN-a8ZbZrAfopJyvY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/getSupplyOrderById?id=569b2483-fa76-41b8-9915-45b8c77beb88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"getSupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "569b2483-fa76-41b8-9915-45b8c77beb88"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationSupplyOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/supplyOrder/searchPaginationSupplyOrders?creatorName=ridder&limit=10&offset=0",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"supplyOrder",
+								"searchPaginationSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "ridder"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchAboutToStartPurchaseOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/supplyOrder/searchAboutToStartSupplyOrders",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"supplyOrder",
+								"searchAboutToStartSupplyOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimilarTimeSupplyOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startAfter",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/searchSimilarTimeSupplyOrders",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"searchSimilarTimeSupplyOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchCurAdjacentSupplyOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchCurAdjacentSupplyOrders?creatorName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchCurAdjacentSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchDestAdjacentSupplyOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchDestAdjacentSupplyOrders?creatorName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchDestAdjacentSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimilarRouteSupplyOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startCordLongitude",
+									"value": "124",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchSimilarRouteSupplyOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchSimilarRouteSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "startSupplyOrderWithoutInvite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{realtime_server_url}}/supplyOrder/startSupplyOrderWithoutInvite?id=beb2effe-d1c4-414a-af6f-e899b56eb7be",
+							"host": [
+								"{{realtime_server_url}}"
+							],
+							"path": [
+								"supplyOrder",
+								"startSupplyOrderWithoutInvite"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "beb2effe-d1c4-414a-af6f-e899b56eb7be"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchBetterFirstSupplyOrders",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "endCordLongitude",
+									"value": "123.12",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "21",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "122.01",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2024-12-20T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2024-12-30T01:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/searchBetterFirstSupplyOrders?searchPriorities=TRUSD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"searchBetterFirstSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TRUSD"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMySupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NDA0NDNkYy04NjMyLTQ5NTctOWQ2My05OWQxYjgyOWQ0OTYiLCJlbWFpbCI6InJpZGRlckFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTczMzk3ODI0NCwiZXhwIjoxNzMzOTgwMDQ0fQ.tI5Vrvm23lAaL_9iYz9E3chE7vwfzTRkj-jpLlCT3bo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "updated description 1",
+									"type": "text"
+								},
+								{
+									"key": "initPrice",
+									"value": "333",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "123.33",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "23.12",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/updateMySupplyOrderById?id=b2d0e430-ee6c-40a8-86cb-b28442aebb13",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"updateMySupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b2d0e430-ee6c-40a8-86cb-b28442aebb13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancelMySupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGE0N2UzNi03YTFjLTRmNGUtODRkNC01ZjhiZDhlMzI1NjkiLCJlbWFpbCI6InJpZGRlcjNAZ21haWwuY29tIiwiaWF0IjoxNzMwNjM0NTg2LCJleHAiOjE3MzA2Mzk5ODZ9.ycqOWPeNPKHmm0FDtW6KTehcDKlIGN9C1z1tnuhpz_g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/cancelMySupplyOrderById?id=e5c4d5e5-0cd3-4d3e-8ba2-bf7a8f6eaf6c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"cancelMySupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "e5c4d5e5-0cd3-4d3e-8ba2-bf7a8f6eaf6c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMySupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzQwNzI4OSwiZXhwIjoxNzMzNDA5MDg5fQ.8KPy3dhcRKdZiKwYyulaXb__YIYqd_UAqVFIFV82hNE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/supplyOrder/deleteMySupplyOrderById?id",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"supplyOrder",
+								"deleteMySupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication Routes",
+			"item": [
+				{
+					"name": "signUpPassengerWithUserNameAndEmailAndPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "passengerAdmin",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "passengerAdmin@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "*ec?%621e0fASD11b80@!cTA0e12ef223e$#f27~133&7IO7da5$21a0f2530",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/auth/signUpPassengerWithUserNameAndEmailAndPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"auth",
+								"signUpPassengerWithUserNameAndEmailAndPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signUpPassengerWithGoogleAuth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "idToken",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signUpPassengerWithGoogleAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signUpPassengerWithGoogleAuth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signUpRidderWithUserNameAndEmailAndPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "ridder23",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ridder23@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"description": "7cb9USKbe1&*$3d1daa0ea$ab97bc9aab6f3!82b9NMA5!%~b345fef7POac5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/auth/signUpRidderWithUserNameAndEmailAndPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"auth",
+								"signUpRidderWithUserNameAndEmailAndPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signUpRidderWithGoogleAuth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "idToken",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signUpRidderWithGoogleAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signUpRidderWithGoogleAuth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInPassengerWithAccountAndPassword",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "iamjeffhi67@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "userName",
+									"value": "Jeff",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "1qaz2wsxTEST!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signInPassengerWithAccountAndPassword",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signInPassengerWithAccountAndPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInPassengerWithGoogleAuth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idToken",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signInPassengerWithGoogleAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signInPassengerWithGoogleAuth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInRidderWithAccountAndPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "ridder2",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signInRidderWithAccountAndPassword",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signInRidderWithAccountAndPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInRidderWithGoogleAuth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idToken",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/signInRidderWithGoogleAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"signInRidderWithGoogleAuth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PassengerInvite Routes",
+			"item": [
+				{
+					"name": "passenger/createPassengerInviteByOrderId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDAxMzkwNywiZXhwIjoxNzM0MDE1NzA3fQ.MR-mVKFRGwWXgl61zGME9y6IP5vqqDFUB0rlBVLF-5o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "briefDescription",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "suggestPrice",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "133",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "35",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "22",
+									"type": "text"
+								},
+								{
+									"key": "suggestStartAfter",
+									"value": "2024-12-30T13:31:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "suggestEndedAt",
+									"value": "2025-01-02T13:31:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "your home",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "my home",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/passenger/createPassengerInviteByOrderId?orderId=8804f9c9-65fa-4c3c-b151-d4df091b1791",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"createPassengerInviteByOrderId"
+							],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "8804f9c9-65fa-4c3c-b151-d4df091b1791"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/getMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/getMyPassengerInviteById?id=bc20add9-cb75-496d-89f6-c7b348ed89e5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"getMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "bc20add9-cb75-496d-89f6-c7b348ed89e5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxMzM2NDI4LCJleHAiOjE3MzEzNDE4Mjh9.yB4Jnha9tG9njkI-Bk3nnIMmv8YBbFqPDMbXa5IqqHo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/getMyPassengerInviteById?id=bc20add9-cb75-496d-89f6-c7b348ed89e5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"getMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "bc20add9-cb75-496d-89f6-c7b348ed89e5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyPaginationPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxODMzODE3LCJleHAiOjE3MzE4MzkyMTd9.7XiCynDk_cGk6mPS4V5Il_xeL57zUgdAUdkefMcQ_EE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passengerInvite/passenger/searchMyPaginationPassengerInvites?receiverName=ridder&limit=10&offset=0",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyPaginationPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "ridder"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyAboutToStartPassengerInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/passenger/searchMyAboutToStartPassengerInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyAboutToStartPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimliarTimePassengerInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/passenger/searchMySimliarTimePassengerInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMySimliarTimePassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyCurAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMyCurAdjacentPassengerInvites?receiverName=ridder3&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyCurAdjacentPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "ridder3"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyDestAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMyDestAdjacentPassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyDestAdjacentPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMySimilarRoutePassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMySimilarRoutePassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyBetterFirstPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDAxMzkwNywiZXhwIjoxNzM0MDE1NzA3fQ.MR-mVKFRGwWXgl61zGME9y6IP5vqqDFUB0rlBVLF-5o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/passenger/searchMyBetterFirstPassengerInvites?searchPriorities=TSURD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyBetterFirstPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TSURD"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyPaginationPasssengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzM0MDExNjY3LCJleHAiOjE3MzQwMTM0Njd9.8ADtSpiU2FIflnCqOFcLs9SIK7_fYCeT7PKB7WY44yo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/ridder/searchMyPaginationPasssengerInvites?limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyPaginationPasssengerInvites"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyAboutToStartPassengerInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/ridder/searchMyAboutToStartPassengerInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyAboutToStartPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarTimePassengerInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/ridder/searchMySimilarTimePassengerInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMySimilarTimePassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyCurAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMyCurAdjacentPassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyCurAdjacentPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyDestAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMyDestAdjacentPassengerInvites?inviterName=passenger1&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyDestAdjacentPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "passenger1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMySimilarRoutePassengerInvites?inviterName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMySimilarRoutePassengerInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyBetterFirstPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzM0MDE0MjYzLCJleHAiOjE3MzQwMTYwNjN9.hKTUkPBTy7byBYiSUQCzY0d4P5OLrqcI3l3SahLlfjk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/ridder/searchMyBetterFirstPassengerInvites?searchPriorities=TSURD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyBetterFirstPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TSURD",
+									"description": "searchPriorities should be any combination of 'T', 'R', 'U', 'S', 'D', see more on the note"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/updateMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzMxNTA1MywiZXhwIjoxNzMzMzE2ODUzfQ.kXAWp6c3lyZFvsDNwiZCm4IENiPbOb9HKrwndFakYGw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "CANCEL",
+									"description": "CHECKING or CANCEL",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "briefDescription",
+									"value": "yo yo yo",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/passenger/updateMyPassengerInviteById?id=5d419cc3-0add-4e68-9a43-b31ec6202594",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"updateMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5d419cc3-0add-4e68-9a43-b31ec6202594"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/decidePassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzMxNjY0NiwiZXhwIjoxNzMzMzE4NDQ2fQ.RJweq7Fyf51y-lQdhQ0eGQwyQXg1GpCtXMbmNwM0_L4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "ACCEPTED",
+									"description": "ACCEPTED or REJECTED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/passengerInvite/ridder/decidePassengerInviteById?id=194e7cef-36a5-4d18-983f-936da0926b18",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"decidePassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "194e7cef-36a5-4d18-983f-936da0926b18"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/deleteMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzM2YzOTg0Zi02MGJlLTQ4NzAtYTY5MC0wNDlkNWQ1MzYzNTIiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzMxODM3MDkzLCJleHAiOjE3MzE4NDI0OTN9.v2iJ8h5CRNtznfNcQHEoGcg_Q5msZAoOG_YLufdo5J0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passengerInvite/passenger/deleteMyPassengerInviteById?id=33c72305-353a-4d99-bf21-893dfec877eb",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"deleteMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "33c72305-353a-4d99-bf21-893dfec877eb"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderInvite Routes",
+			"item": [
+				{
+					"name": "ridder/createRidderInviteByOrderId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWMyOTVjYS01YjdhLTRhMTEtOGI5OS0yM2NhYTFlYjMzZDciLCJlbWFpbCI6InJpZGRlcjIzQGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNzA1NCwiZXhwIjoxNzM1MzE4ODU0fQ.hvSxbsnazDDMxv-pn-ty9w5NpTExxJSGqs6Y2VS85nk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "briefDescription",
+									"value": "Guess what, I'm ridder5, hehe",
+									"type": "text"
+								},
+								{
+									"key": "suggestPrice",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "nowhere",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "everywhere",
+									"type": "text"
+								},
+								{
+									"key": "suggestStartAfter",
+									"value": "2024-12-31T13:31:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "suggestEndedAt",
+									"value": "2025-01-01T13:31:00.000Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/ridderInvite/ridder/createRidderInviteByOrderId?orderId=abb5d85a-ea7c-4218-a784-76603afac44b",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"createRidderInviteByOrderId"
+							],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "abb5d85a-ea7c-4218-a784-76603afac44b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/getMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"getMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/getMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA0NzcwLCJleHAiOjE3MzE1MTAxNzB9.Lq3MyKn9sCQ-rQnLALyM52f_rtWWNTIWZNDjSGFHLV8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/getMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"getMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyPaginationRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyPaginationRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyPaginationRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyAboutToStartRidderInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/ridder/searchMyAboutToStartRidderInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyAboutToStartRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarTimeRidderInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/ridder/searchMySimilarTimeRidderInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMySimilarTimeRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyCurAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyCurAdjacentRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyCurAdjacentRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyDestAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyDestAdjacentRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyDestAdjacentRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMySimilarRoutePassengerInvites?receiverName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMySimilarRoutePassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyBetterFirstRidderInvites",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDAxMjQ5MSwiZXhwIjoxNzM0MDE0MjkxfQ.0LUvTyB4Aj4zt75CLb4NtmYCDR0w1JKcCsHefgUZ8GU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/ridder/searchMyBetterFirstRidderInvites?searchPriorities=TRUSD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyBetterFirstRidderInvites"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TRUSD",
+									"description": "searchPriorities should be any combination of 'T', 'R', 'U', 'S', 'D', see more on the note"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyPaginationRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxODA5NzcyLCJleHAiOjE3MzE4MTUxNzJ9.0VMGs1Tdy21eXKMhoFzoG0zNs9Zdn90pU45DdOwQrEM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderInvite/passenger/searchMyPaginationRidderInvites?limit=10&offset=0",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyPaginationRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "ridder",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyAboutToStartRidderInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/passenger/searchMyAboutToStartRidderInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyAboutToStartRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimilarTimeRidderInvites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/passenger/searchMySimilarTimeRidderInvites",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMySimilarTimeRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyCurAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMyCurAdjacentRidderInvites?inviterName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyCurAdjacentRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyDestAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMyDestAdjacentRidderInvites?inviterName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyDestAdjacentRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMySimilarRouteRidderInvites?receiverName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMySimilarRouteRidderInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/updateMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "CANCEL",
+									"type": "text"
+								},
+								{
+									"key": "briefDescription",
+									"value": "sorry, I posted wrong one...",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/updateMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"updateMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/decideRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzM2YzOTg0Zi02MGJlLTQ4NzAtYTY5MC0wNDlkNWQ1MzYzNTIiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzMxOTM1MDM3LCJleHAiOjE3MzE5NDA0Mzd9.d6RrA7ZsCcgEx6rvjamuaCV-YCaz3ICgGsSrY-nsRg0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "status",
+								"value": "ACCEPTED",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "ACCEPTED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/decideRidderInviteById?id=c5dc7897-aa42-4d6c-b86a-b43d5ec6dc21",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"decideRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "c5dc7897-aa42-4d6c-b86a-b43d5ec6dc21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/deleteMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/deleteMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"deleteMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyBetterFirstRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDAxMjQ5MSwiZXhwIjoxNzM0MDE0MjkxfQ.0LUvTyB4Aj4zt75CLb4NtmYCDR0w1JKcCsHefgUZ8GU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderInvite/passenger/searchMyBetterFirstRidderInvites?searchPriorities=TRUSD",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyBetterFirstRidderInvites"
+							],
+							"query": [
+								{
+									"key": "searchPriorities",
+									"value": "TRUSD",
+									"description": "searchPriorities should be any combination of 'T', 'R', 'U', 'S', 'D', see more on the note"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Routes",
+			"item": [
+				{
+					"name": "passenger/getOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTdiYTYxMy0wODliLTRkZDctYjU4OS02YTBiN2VhOGRmOGUiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzM1Mzg2NTYxLCJleHAiOjE3MzUzOTczNjF9.QqvK6VHi_pV7uckyGrZXaxHnilUilrYQC_FwyqET3pY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/order/passenger/getOrderById?id=707ff7cc-2265-4c42-ade7-c117e8c655f6",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"order",
+								"passenger",
+								"getOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "707ff7cc-2265-4c42-ade7-c117e8c655f6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTdiYTYxMy0wODliLTRkZDctYjU4OS02YTBiN2VhOGRmOGUiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzM1Mzg2NTYxLCJleHAiOjE3MzUzOTczNjF9.QqvK6VHi_pV7uckyGrZXaxHnilUilrYQC_FwyqET3pY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/order/ridder/getOrderById?id=707ff7cc-2265-4c42-ade7-c117e8c655f6",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"getOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "707ff7cc-2265-4c42-ade7-c117e8c655f6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchPaginationOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/passenger/searchPaginationOrders",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"passenger",
+								"searchPaginationOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchPaginationOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTdiYTYxMy0wODliLTRkZDctYjU4OS02YTBiN2VhOGRmOGUiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzMyNDEzNDgwLCJleHAiOjE3MzI0MTg4ODB9.Ilq1yC02CDWxA5qOhiKYMBUnI_VW7p2Kk3ah7DRBQ6A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/ridder/searchMyPaginationOrders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"ridder",
+								"searchMyPaginationOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toStartedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toStartedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toStartedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toUnpaidStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toUnpaidStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toUnpaidStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toFinishedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toFinishedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toFinishedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toStartedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/toStartedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"toStartedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toUnpaidStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/toUnpaidStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"toUnpaidStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toFinishedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/ridder/toFinishedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"ridder",
+								"toFinishedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancelAndDeleteOrderById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{realtime_server_url}}/order/cancelAndDeleteOrderById",
+							"host": [
+								"{{realtime_server_url}}"
+							],
+							"path": [
+								"order",
+								"cancelAndDeleteOrderById"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History Routes",
+			"item": [
+				{
+					"name": "passenger/getHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/getHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"getHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/getHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"getHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchPaginationHistories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/searchPaginationHistories?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"searchPaginationHistories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchPaginationHistories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/searchPaginationHistories?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"searchPaginationHistories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/rateAndCommentHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "starRating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "it's very fun",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/rateAndCommentHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"rateAndCommentHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/rateAndCommentHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "starRating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "It's very great to share this drive with you. 祝您旅途愉快～",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/rateAndCommentHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"rateAndCommentHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/delinkHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/delinkHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"delinkHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/delinkHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/delinkHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"delinkHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email Routes",
+			"item": [
+				{
+					"name": "test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/email/test",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"email",
+								"test"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PassengerAuth Routes",
+			"item": [
+				{
+					"name": "getMyAuth",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MjczNywiZXhwIjoxNzM1NDYzNTM3fQ.WR_UhmG_6WMz-Gbbmd8VCoqSEMcTDm7M2mC4vyHfkoY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerAuth/getMyAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerAuth",
+								"getMyAuth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendAuthCodeForEmail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/sendAuthCodeForEmail",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"sendAuthCodeForEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendAuthCodeToResetForgottenPassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/sendAuthCodeToResetForgottenPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"sendAuthCodeToResetForgottenPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendAuthCodeToResetEmailOrPassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/sendAuthCodeToResetEmailOrPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"sendAuthCodeToResetEmailOrPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeForEmail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "authCode",
+									"value": "798912",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/validateAuthCodeForEmail",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"validateAuthCodeForEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeToResetForgottenPassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "authCode",
+									"value": "886264",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1qaz2wsxTEST!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/validateAuthCodeToResetForgottenPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"validateAuthCodeToResetForgottenPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeToResetEmailOrPassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMxNjI4OCwiZXhwIjoxNzM1MzE4MDg4fQ.IcDsp8vO0_Alu_0AyymxCGO7NjMrj1DzniH3pbDkqlY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "authCode",
+									"value": "053613",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "jeff@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "oldPassword",
+									"value": "1qaz2wsxTEST!",
+									"type": "text"
+								},
+								{
+									"key": "newPassword",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{render_realtime_server_url}}/passengerAuth/validateAuthCodeToResetEmailOrPassword",
+							"host": [
+								"{{render_realtime_server_url}}"
+							],
+							"path": [
+								"passengerAuth",
+								"validateAuthCodeToResetEmailOrPassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderAuth Routes",
+			"item": [
+				{
+					"name": "sendAuthCodeForEmail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/sendAuthCodeForEmail",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"sendAuthCodeForEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendAuthCodeToResetForgottenPassword",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/sendAuthCodeToResetForgottenPassword",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"sendAuthCodeToResetForgottenPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendAuthCodeToResetEmailOrPassword",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/sendAuthCodeToResetEmailOrPassword",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"sendAuthCodeToResetEmailOrPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeForEmail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/validateAuthCodeForEmail",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"validateAuthCodeForEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeToResetForgottenPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/validateAuthCodeToResetForgottenPassword",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"validateAuthCodeToResetForgottenPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateAuthCodeToResetEmailOrPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderAuth/validateAuthCodeToResetEmailOrPassword",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderAuth",
+								"validateAuthCodeToResetEmailOrPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyAuth",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTQ1MjczNywiZXhwIjoxNzM1NDYzNTM3fQ.WR_UhmG_6WMz-Gbbmd8VCoqSEMcTDm7M2mC4vyHfkoY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderAuth/getMyAuth",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderAuth",
+								"getMyAuth"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "此 route 底下的API所需要的 body 跟 authentication 請參考PassengerAuth Routes"
+		},
+		{
+			"name": "Cron Routes",
+			"item": [
+				{
+					"name": "test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/api/cron/test",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"api",
+								"cron",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mainCronJobWorkflowDaily",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/api/cron/mainCronJobWorkflowDaily",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"api",
+								"cron",
+								"mainCronJobWorkflowDaily"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mainCronJobWorkflowWeekly",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/api/cron/mainCronJobWorkflowWeekly",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"api",
+								"cron",
+								"mainCronJobWorkflowWeekly"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PassengerPreferences Routes",
+			"item": [
+				{
+					"name": "createMyPreferenceByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzQ4OTg4OCwiZXhwIjoxNzMzNDkxNjg4fQ.aQNGGEbb-Mcgqt8XxdD2ikdClZa5WQVvs34AYBHAUvo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerPreferences/createMyPreferenceByUserName?preferenceUserName=ridder1",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerPreferences",
+								"createMyPreferenceByUserName"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": "ridder1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPaginationPreferences",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzQ4OTg4OCwiZXhwIjoxNzMzNDkxNjg4fQ.aQNGGEbb-Mcgqt8XxdD2ikdClZa5WQVvs34AYBHAUvo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerPreferences/searchMyPaginationPreferences?preferenceUserName=ridder6&limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerPreferences",
+								"searchMyPaginationPreferences"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": "ridder6"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPreferenceByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzQ4OTg4OCwiZXhwIjoxNzMzNDkxNjg4fQ.aQNGGEbb-Mcgqt8XxdD2ikdClZa5WQVvs34AYBHAUvo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerPreferences/deleteMyPreferenceByUserName?preferenceUserName=ridder12",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerPreferences",
+								"deleteMyPreferenceByUserName"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": "ridder12"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderPreferences Routes",
+			"item": [
+				{
+					"name": "createMyPreferenceByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzQ5MTYxMCwiZXhwIjoxNzMzNDkzNDEwfQ.Jt46plY79bJlnfcCk3ZH-o6u4lT9xgZcjpMh7g990rQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderPreferences/createMyPreferenceByUserName?preferenceUserName=passenger",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderPreferences",
+								"createMyPreferenceByUserName"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": "passenger"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPaginationPreferences",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzQ5MTYxMCwiZXhwIjoxNzMzNDkzNDEwfQ.Jt46plY79bJlnfcCk3ZH-o6u4lT9xgZcjpMh7g990rQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderPreferences/searchMyPaginationPreferences?preferenceUserName=&limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderPreferences",
+								"searchMyPaginationPreferences"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": ""
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPreferenceByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzQ5MTYxMCwiZXhwIjoxNzMzNDkzNDEwfQ.Jt46plY79bJlnfcCk3ZH-o6u4lT9xgZcjpMh7g990rQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderPreferences/deleteMyPreferenceByUserName?preferenceUserName=passenger2",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderPreferences",
+								"deleteMyPreferenceByUserName"
+							],
+							"query": [
+								{
+									"key": "preferenceUserName",
+									"value": "passenger2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PeriodicPurchaseOrder Routes",
+			"item": [
+				{
+					"name": "createMyPeriodicPurchaseOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzkzMTc1MSwiZXhwIjoxNzMzOTMzNTUxfQ.F00OpsfdjlTlnah_rqK3Huy6PdcjI3mJwKwkmqAQa-g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "scheduledDay",
+									"value": "Monday",
+									"description": "\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"",
+									"type": "text"
+								},
+								{
+									"key": "initPrice",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "115",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "somewhere",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "everywhere",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "9999-12-31T00:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "9999-12-31T00:01:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "isUrgent",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "autoAccept",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/periodicPurchaseOrder/createMyPeriodicPurchaseOrder",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"periodicPurchaseOrder",
+								"createMyPeriodicPurchaseOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyPeriodicPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzU5MjkyNywiZXhwIjoxNzMzNTk0NzI3fQ.h2YUA8MpF5CJmtXDKgWWTMMiGHg_kySNCg-0falttxQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/periodicPurchaseOrder/getMyPeriodicPurchaseOrderById?id=c3fe74d8-4483-45e9-82b3-303ec6fea305",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"periodicPurchaseOrder",
+								"getMyPeriodicPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "c3fe74d8-4483-45e9-82b3-303ec6fea305"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPaginationPeriodicPurchaseOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzU5MjkyNywiZXhwIjoxNzMzNTk0NzI3fQ.h2YUA8MpF5CJmtXDKgWWTMMiGHg_kySNCg-0falttxQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/periodicPurchaseOrder/searchMyPaginationPeriodicPurchaseOrders?limit=10&offset=0&isAutoAccept=false",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"periodicPurchaseOrder",
+								"searchMyPaginationPeriodicPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "scheduledDay",
+									"value": "Monday",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "isAutoAccept",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyPeriodicPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzU5MjkyNywiZXhwIjoxNzMzNTk0NzI3fQ.h2YUA8MpF5CJmtXDKgWWTMMiGHg_kySNCg-0falttxQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "scheduledDay",
+									"value": "Tuesday",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/periodicPurchaseOrder/updateMyPeriodicPurchaseOrderById?id=c3fe74d8-4483-45e9-82b3-303ec6fea305",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"periodicPurchaseOrder",
+								"updateMyPeriodicPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "c3fe74d8-4483-45e9-82b3-303ec6fea305"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPeriodicPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzU5MjkyNywiZXhwIjoxNzMzNTk0NzI3fQ.h2YUA8MpF5CJmtXDKgWWTMMiGHg_kySNCg-0falttxQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/periodicPurchaseOrder/deleteMyPeriodicPurchaseOrderById?id=c3fe74d8-4483-45e9-82b3-303ec6fea305",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"periodicPurchaseOrder",
+								"deleteMyPeriodicPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "c3fe74d8-4483-45e9-82b3-303ec6fea305"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PeriodicSupplyOrder Routes",
+			"item": []
+		},
+		{
+			"name": "PassengerNotification Routes",
+			"item": [
+				{
+					"name": "getMyPassengerNotificationById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzY0Njc1MSwiZXhwIjoxNzMzNjQ4NTUxfQ.6XsiwLgEbNLjZjzSsohJBzxg4au8gAD2D_KvufA-dZU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerNotification/getMyPassengerNotificationById?id=f8313a42-124e-4a2d-9312-87ef1e55621a",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerNotification",
+								"getMyPassengerNotificationById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f8313a42-124e-4a2d-9312-87ef1e55621a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPaginationPassengerNotifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzY0Njc1MSwiZXhwIjoxNzMzNjQ4NTUxfQ.6XsiwLgEbNLjZjzSsohJBzxg4au8gAD2D_KvufA-dZU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerNotification/searchMyPaginationPassengerNotifications?limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerNotification",
+								"searchMyPaginationPassengerNotifications"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyPassengerNotificationToReadStatus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzY0Njg5NSwiZXhwIjoxNzMzNjQ4Njk1fQ.dkeZxeOVUBdPTtYtOCPeyNpCFtn7tIHyZ0aLMbIQ1dM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerNotification/updateMyPassengerNotificationToReadStatus?id=f8313a42-124e-4a2d-9312-87ef1e55621a",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerNotification",
+								"updateMyPassengerNotificationToReadStatus"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f8313a42-124e-4a2d-9312-87ef1e55621a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPassengerNotification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczMzY0Njg5NSwiZXhwIjoxNzMzNjQ4Njk1fQ.dkeZxeOVUBdPTtYtOCPeyNpCFtn7tIHyZ0aLMbIQ1dM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/passengerNotification/deleteMyPassengerNotification?id=f8313a42-124e-4a2d-9312-87ef1e55621a",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"passengerNotification",
+								"deleteMyPassengerNotification"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f8313a42-124e-4a2d-9312-87ef1e55621a"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderNotification Routes",
+			"item": [
+				{
+					"name": "getMyRidderNotificationById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzY0NzI3NCwiZXhwIjoxNzMzNjQ5MDc0fQ.jarcTAcyKeFBAbqGQH1-UW6XCOdDOeNvlZuhbth1Zpg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderNotification/getMyRidderNotificationById?id=a3884413-2f10-427f-8b17-5528194fd824",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderNotification",
+								"getMyRidderNotificationById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "a3884413-2f10-427f-8b17-5528194fd824"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchMyPaginationRidderNotifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzY0NzI3NCwiZXhwIjoxNzMzNjQ5MDc0fQ.jarcTAcyKeFBAbqGQH1-UW6XCOdDOeNvlZuhbth1Zpg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderNotification/searchMyPaginationRidderNotifications?limit=10&offset=0",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderNotification",
+								"searchMyPaginationRidderNotifications"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyRidderNotificationToReadStatus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzY0NzI3NCwiZXhwIjoxNzMzNjQ5MDc0fQ.jarcTAcyKeFBAbqGQH1-UW6XCOdDOeNvlZuhbth1Zpg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderNotification/updateMyRidderNotificationToReadStatus?id=a3884413-2f10-427f-8b17-5528194fd824",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderNotification",
+								"updateMyRidderNotificationToReadStatus"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "a3884413-2f10-427f-8b17-5528194fd824"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyRidderNotification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZmQ0YWUzOC0wNGI4LTRhYTItYWUyMy0wNmFkMGUwM2IwYTkiLCJlbWFpbCI6InJpZGRlcjEyQGdtYWlsLmNvbSIsImlhdCI6MTczMzY0NzI3NCwiZXhwIjoxNzMzNjQ5MDc0fQ.jarcTAcyKeFBAbqGQH1-UW6XCOdDOeNvlZuhbth1Zpg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderNotification/deleteMyRidderNotification?id=a3884413-2f10-427f-8b17-5528194fd824",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderNotification",
+								"deleteMyRidderNotification"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "a3884413-2f10-427f-8b17-5528194fd824"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PassengerRecord Routes",
+			"item": [
+				{
+					"name": "storeSearchRecordByUserId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMwNzMwOCwiZXhwIjoxNzM1MzA5MTA4fQ.S9YJg1iYolekiPinxKs87mvfeZOT8AWVhVFn-4Boi_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchRecord\": {\n        \"id\": 1,\n        \"data\": \"test\", \n        \"content\": \"yeeeeee\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passengerRecord/storeSearchRecordByUserId",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passengerRecord",
+								"storeSearchRecordByUserId"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSearchRecordsByUserId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNTMwNzMwOCwiZXhwIjoxNzM1MzA5MTA4fQ.S9YJg1iYolekiPinxKs87mvfeZOT8AWVhVFn-4Boi_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vercel_realtime_server_url}}/passengerRecord/getSearchRecordsByUserId",
+							"host": [
+								"{{vercel_realtime_server_url}}"
+							],
+							"path": [
+								"passengerRecord",
+								"getSearchRecordsByUserId"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderRecord Routes",
+			"item": [
+				{
+					"name": "storeSearchRecordByUserId Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDY3NzExMiwiZXhwIjoxNzM0Njc4OTEyfQ.XmmXY5NUWDbXRwEd9Z2yJ7W0DiM1MLMgiuEorcUSRy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchRecord\": {\n        \"id\": 1,\n        \"data\": \"test\", \n        \"content\": \"yeeeeee\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/ridderRecord/storeSearchRecordByUserId",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderRecord",
+								"storeSearchRecordByUserId"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSearchRecordsByUserId Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzIzOGY4NS1iNzk4LTQyNTAtYjRlYy0zZThkZTMyMjBjNTciLCJlbWFpbCI6ImlhbWplZmZoaTY3QGdtYWlsLmNvbSIsImlhdCI6MTczNDY3MjM2NiwiZXhwIjoxNzM0Njc0MTY2fQ.h-ULtB7gykdB1KbzLmuVE_vc6HNcWuNABJc06uj_xbg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/ridderRecord/getSearchRecordsByUserId",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"ridderRecord",
+								"getSearchRecordsByUserId"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

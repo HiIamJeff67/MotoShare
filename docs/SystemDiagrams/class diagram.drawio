@@ -1,0 +1,433 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/25.0.2 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="25.0.2">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="6066" dy="5567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-2" value="«interface»&lt;br&gt;&lt;b&gt;登入頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-370" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-3" value="«interface»&lt;br&gt;&lt;b&gt;註冊頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-500" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-4" value="«interface»&lt;br&gt;&lt;b&gt;主頁&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-680" y="-290" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-5" value="«interface»&lt;br&gt;&lt;b&gt;服務頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-20" y="-219" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-6" value="«interface»&lt;br&gt;&lt;b&gt;我的頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-680" y="-370" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-7" value="«interface»&lt;br&gt;&lt;b&gt;建立訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="169" y="-430" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-8" value="«interface»&lt;br&gt;&lt;b&gt;邀請頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="169" y="-160" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-9" value="«interface»&lt;br&gt;&lt;b&gt;查看訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="169" y="-330" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-10" value="«interface»&lt;br&gt;&lt;b&gt;訂單管理頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="169" y="-50" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-11" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;帳號前端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ userName: string&lt;br&gt;+ email: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ password: string&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ signUpPassengerWithUserNameAndEmailAndPassword(email: string, userName: string, password: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ signUpPassengerWithGoogleAuth(userName: string | undefined, idToken: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;signInPassengerWithAccountAndPassword(userName: string or email: string, password: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;signInPassengerWithGoogleAuth(idToken: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMe(): { userName: string }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getPassengerWithInfoByUserName(userName: string): Object of passenger info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getPassengerWithInfoByPhoneNumber(phoneNumber: string): Object&amp;nbsp; of passenger info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMyInfo(): Object of passenger with info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMyCollection(): Object of passenger with collection&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchPaginationPassengers(userName: string, limit: number, offset: number): Object of passenger&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMe(userName: string): Object of passenger&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyInfo(userInfo: Object of passenger info): Object of passenger with info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ resetAccessTokenToLogout(): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ deleteMe(password: string): Object of passenger&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeForEmail(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeToResetForgottenPassword(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeToResetEmailOrPassword(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ validateAuthCodeForEmail&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-490" y="-448" width="400" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-12" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.009;entryY=0.271;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-6" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-550" y="-230" as="sourcePoint" />
+            <mxPoint x="-390" y="-230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-13" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.997;entryY=0.432;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-5" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-530" y="-310" as="sourcePoint" />
+            <mxPoint x="-490" y="-220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-14" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.009;entryY=0.322;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-4" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-540" y="-400" as="sourcePoint" />
+            <mxPoint x="-380" y="-400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-15" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.456;entryY=0.003;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-2" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-600.0000000000005" y="-451.18000000000006" as="sourcePoint" />
+            <mxPoint x="-435" y="-451.18000000000006" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-16" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-3" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-780" y="-280" as="sourcePoint" />
+            <mxPoint x="-620" y="-280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-17" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-7" target="SSlFhgnDX2w9frVKNlzl-5" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-441" y="-380" as="sourcePoint" />
+            <mxPoint x="241.80000000000018" y="-440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-18" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-9" target="SSlFhgnDX2w9frVKNlzl-5" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-431" y="-370" as="sourcePoint" />
+            <mxPoint x="160" y="-270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-19" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-8" target="SSlFhgnDX2w9frVKNlzl-5" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-416" y="-154" as="sourcePoint" />
+            <mxPoint x="249.19999999999982" y="-15.699999999999818" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-20" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-10" target="SSlFhgnDX2w9frVKNlzl-5" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-406" y="-144" as="sourcePoint" />
+            <mxPoint x="110" y="-240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-24" value="«interface»&lt;br&gt;&lt;b&gt;忘記密碼頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-240" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-26" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=-0.002;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-24" target="SSlFhgnDX2w9frVKNlzl-11" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-635" y="-540" as="sourcePoint" />
+            <mxPoint x="-420" y="-400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-27" value="«interface»&lt;br&gt;&lt;b&gt;重設信箱或密碼頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1315" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-28" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-27" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-505" y="-540" as="sourcePoint" />
+            <mxPoint x="-420" y="-400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-29" value="«interface»&lt;br&gt;&lt;b&gt;更新個人資料頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1185" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-30" value="«interface»&lt;br&gt;&lt;b&gt;偏好頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1055" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-31" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-29" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-375" y="-540" as="sourcePoint" />
+            <mxPoint x="-410" y="-390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-32" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-30" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-365" y="-530" as="sourcePoint" />
+            <mxPoint x="-420" y="-400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-33" value="«interface»&lt;br&gt;&lt;b&gt;儲值頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-790" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-35" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-33" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-115" y="-540" as="sourcePoint" />
+            <mxPoint x="-420" y="-400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-36" value="«interface»&lt;br&gt;&lt;b&gt;系統設置頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-660" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-37" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-36" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="15" y="-540" as="sourcePoint" />
+            <mxPoint x="-375" y="-391" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-39" value="«interface»&lt;br&gt;&lt;b&gt;我的訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1450" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-41" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-39" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1105" y="-530" as="sourcePoint" />
+            <mxPoint x="-605" y="-350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-42" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;驗證後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的驗證模組相似）&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- userId: string&lt;br&gt;+ isEmailAuthenticated: boolean&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ isPhoneAuthenticated: boolean&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- authCode: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ authCodeExpiredAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ isDefaultAuthenticated: boolea&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- googleId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeForEmail(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeToResetForgottenPassword(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sendAuthCodeToResetEmailOrPassword(): { string, Date }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ validateAuthCodeForEmail(authCode: string): { boolean }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;validateAuthCodeToResetForgottenPassword(authCode: string): { boolean }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;validateAuthCodeToResetEmailOrPassword(authCode: string): { boolean }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ bindDefaultAuth(email: string, password: string): { boolean }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ bindGoogleAuth(idToken: string): { boolean }&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1725" y="-350" width="395" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-43" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;帳號後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的帳號模組相似)&lt;/b&gt;&lt;/p&gt;&lt;br&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ userName: string&lt;br&gt;- email: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- password: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- accessToken: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ isOnline: string&lt;br&gt;+ age: number&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ phoneNumber: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ emergencyPhoneNumber: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ emergencyUserRole: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ selfIntroduction: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ avatorUrl: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ avgStarRating: number&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ signUpPassengerWithUserNameAndEmailAndPassword(email: string, userName: string, password: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ signUpPassengerWithGoogleAuth(userName: string | undefined, idToken: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;signInPassengerWithAccountAndPassword(userName: string or email: string, password: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;signInPassengerWithGoogleAuth(idToken: string): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMe(): { userName: string }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getPassengerWithInfoByUserName(userName: string): Object of passenger info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getPassengerWithInfoByPhoneNumber(phoneNumber: string): Object&amp;nbsp; of passenger info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMyInfo(): Object of passenger with info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMyCollection(): Object of passenger with collection&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchPaginationPassengers(userName: string, limit: number, offset: number): Object of passenger&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMe(userName: string): Object of passenger&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyInfo(userInfo: Object of passenger info): Object of passenger with info&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ resetAccessTokenToLogout(): string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ deleteMe(password: string): Object of passenger&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-525" y="340" width="470" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-45" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;金庫後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的金庫模組相似）&lt;/b&gt;&lt;br&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- customerId: string&lt;br&gt;+ userId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ balance: double&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getMyBalance(): { number }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createPaymentIntentForAddingBalanceByUserId(amount: number): { paymentIntent: string, ephemeralKey: string, customer: string, publishableKey: string&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;}&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ payToFinishOrderById(id: string, amount: number): { balance: number }&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1115" y="-180" width="370" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-46" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;紀錄後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的紀錄模組相似)&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;br&gt;+ userId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ searchRecords: jsonb [ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ storeSearchRecordByUserId(searchRecord: jsonb): { searchRecords: jsonb[] }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getSearchRecordsByUserId(): { searchRecord: jsonb[]&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;}&lt;/span&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-900" y="165" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-48" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;通知後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的通知模組相似)&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;br&gt;- userId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ title: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ description: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ notificationType: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ linkId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ isRead: boolean&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getMyPassengerNotificationById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ searchMyPaginationPassengerNotifications(limit: number, offset: number): Object[ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyPassengerNotificationToReadStatus(id: string): { isRead: boolean }&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;deleteMyPassengerNotification(id: string): Object&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1055" y="-1070" width="380" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-49" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;偏好後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的偏好模組相似, 但是關係為Passenger -&amp;gt; Ridder, 或Ridder -&amp;gt; Passenger)&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;- userId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- preferenceUserId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createMyPreferenceByUserName(preferenceUserName: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ searchMyPaginationPreferences(preferenceUserName: string, limit: number, offset: number): Object[ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;deleteMyPreferenceByUserName(id: string): Object of preferences&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1470" y="-990" width="380" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-53" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;進行中的訂單(Order)後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- passengerId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- ridderId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ prevOrderId: string&lt;br&gt;+ passengerDescription: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ ridder&lt;span style=&quot;background-color: initial;&quot;&gt;Description: string&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ finalPrice: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ finalStartCord: point&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ finalEndCord: point&lt;br&gt;+ finalStartAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ finalEndAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ startAfter: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endedAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ passengerStatus: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ ridderStatus: string&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getOrderById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyPaginationOrders(ridderName: boolean, limit: number, offset: number): Object [ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyAboutToStartOrders(ridderName: string | undefined, limit: number, offset: number): Object [ ]&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;toStartedStatusById(id&lt;span style=&quot;background-color: initial;&quot;&gt;: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): { passengerStatus: string }&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;toUnpaidStatusById(rid&lt;span style=&quot;background-color: initial;&quot;&gt;: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;):&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;{ passengerStatus: string }&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;toFinishedStatusById(id&lt;span style=&quot;background-color: initial;&quot;&gt;: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;):&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;{ passengerStatus: string }&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;cancelAndDeleteOrderById(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, endCordLogitude: string, endCordLatitude: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1490" y="-2030" width="470" height="570" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-54" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;定期訂單後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger跟Ridder的定期訂單模組相似)&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;br&gt;- creatorId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ scheduledDay: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ initPrice: integer&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startCord: point&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ endCord: point&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startAddress: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ endAddress: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startAfter: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ endedAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ isUrgent: boolean&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ autoAccept: boolean&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ notificationType: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createMyPeriodicPurchaseOrder(scheduledDay: string, initPrice: number, startCordLongitude: number, startCordLatitude: number, endCordLogitude: number, endCordLatitude: number, startAddress: string, endAddress: string, startAfter: string, endedAt: string, isUrgent: boolean, autoAccept: boolean): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;getMyPeriodicPurchaseOrderById(id: string) Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ searchMyPaginationPeriodicPurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;scheduledDay: string,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;limit: number, offset: number, isAutoAccept: boolean): Object[ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyPeriodicPurchaseOrderById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;deleteMyPeriodicPurchaseOrderById(id: string): Object&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-2210" y="-360" width="430" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-55" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;歷史訂單後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- passengerId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- ridderId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ prevOrderId: string&lt;br&gt;+ passengerDescription: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ ridder&lt;span style=&quot;background-color: initial;&quot;&gt;Description: string&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ finalPrice: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ finalStartCord: point&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ finalEndCord: point&lt;br&gt;+ finalStartAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ finalEndAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ startAfter: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endedAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ starRatingByPassenger: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ starRatingByRidder: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ commentByPassenger: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ commentByRidder: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ status: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getHistoryById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchPaginationHistories(limit: number, offset: number): Object [ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;rateAndCommentHistoryById(id: string, starRating: string, comment: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;delinkHistoryById(id: string): Object&lt;/span&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="1020" y="-1840" width="466" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-56" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-11" target="SSlFhgnDX2w9frVKNlzl-58" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-560" y="-179" as="sourcePoint" />
+            <mxPoint x="-482" y="-211" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-58" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-350" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-60" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-58" target="SSlFhgnDX2w9frVKNlzl-43" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-280" y="152" as="sourcePoint" />
+            <mxPoint x="-280" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-61" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-104" target="SSlFhgnDX2w9frVKNlzl-82" edge="1">
+          <mxGeometry x="0.0023" width="160" relative="1" as="geometry">
+            <mxPoint x="1243" y="-2560" as="sourcePoint" />
+            <mxPoint x="1283" y="-2370" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-62" value="«interface»&lt;br&gt;&lt;b&gt;週期性訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1725" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-63" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-62" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1250" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-64" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-62" target="SSlFhgnDX2w9frVKNlzl-65" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1240" y="-530" as="sourcePoint" />
+            <mxPoint x="-1620" y="-490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-65" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-2055" y="-470" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-66" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-65" target="SSlFhgnDX2w9frVKNlzl-54" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1385" y="-540" as="sourcePoint" />
+            <mxPoint x="-1730" y="-460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-67" value="«interface»&lt;br&gt;&lt;b&gt;綁定與驗證頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1585" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-68" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-67" target="SSlFhgnDX2w9frVKNlzl-6" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1525" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-69" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1590" y="-480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-70" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-67" target="SSlFhgnDX2w9frVKNlzl-69" edge="1">
+          <mxGeometry x="0.0095" width="160" relative="1" as="geometry">
+            <mxPoint x="-1525" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-71" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-69" target="SSlFhgnDX2w9frVKNlzl-42" edge="1">
+          <mxGeometry x="0.0095" width="160" relative="1" as="geometry">
+            <mxPoint x="-1385" y="-540" as="sourcePoint" />
+            <mxPoint x="-1385" y="-470" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-73" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-82" target="SSlFhgnDX2w9frVKNlzl-55" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1038" y="-2446" as="sourcePoint" />
+            <mxPoint x="1133" y="-2100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-82" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="1193" y="-1990" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-85" value="«interface»&lt;br&gt;&lt;b&gt;建立訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1490" y="-2280" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-86" value="«interface»&lt;br&gt;&lt;b&gt;查看訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1130" y="-2280" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-87" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-85" target="SSlFhgnDX2w9frVKNlzl-90" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-965" y="-1890" as="sourcePoint" />
+            <mxPoint x="-330" y="-1710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-88" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-86" target="SSlFhgnDX2w9frVKNlzl-90" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-930" y="-1860" as="sourcePoint" />
+            <mxPoint x="-1250" y="-2030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-89" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;訂單(PurchaseOrder, SupplyOrder)後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger建立的PurchaseOrder跟Ridder建立的SupplyOrder, 它們的模組相似)&lt;/b&gt;&lt;/p&gt;&lt;br&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- creatorId: string&lt;br&gt;+ description: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ initPrice: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startCord: point&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endCord: point&lt;br&gt;+ startAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ startAfter: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endedAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ isUrgent: boolean&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ autoAccept: boolean&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ status: boolean&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createPurchaseOrder(description: string, initPrice: number, startCordLongitude: number, startCordLatitude: number, endCordLogitude: number, endCordLatitude: number, startAddress: string, endAddress: string, startAfter: string, endedAt: string, isUrgent: boolean, autoAccept: boolean): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getPurchaseOrderById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyPurchaseOrders(isAutoAccept: boolean, limit: number, offset: number): Object [ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchPaginationPurchaseOrders(creatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean): Object [ ]&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchAboutToStartPurchaseOrders(c&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, startAfter: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchSimliarTimePurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;c&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, startAfter: string, endedAt: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchCurAdjacentPurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;c&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, startCordLogitude: string, startCordLatitude: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchDestAdjacentPurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;c&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, endCordLogitude: string, endCordLatitude: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchSimilarRoutePurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;c&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean,&amp;nbsp;&lt;/span&gt;startCordLogitude: string, startCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;,&amp;nbsp;&lt;/span&gt;endCordLogitude: string, endCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchBetterFirstPurchaseOrders(&lt;span style=&quot;background-color: initial;&quot;&gt;c&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;reatorName: string | undefined, limit: number, offset: number, isAutoAccept: boolean, searchPriorities: string, startAfter: string | undefined, endedAt: string | undefined,&amp;nbsp;&lt;/span&gt;startCordLogitude: string | undefined, startCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;| undefined,&amp;nbsp;&lt;/span&gt;endCordLogitude: string | undefined, endCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;| undefined&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyPurchaseOrderById(id: string, status: boolean): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startPurchaseOrderWithoutInvite(id: string, description: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ cancelMyPurchaseOrderById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ deleteMyPurchaseOrderById(id: string): Object&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-658" y="-2200" width="490" height="955" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-90" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1315" y="-2170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-91" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-90" target="SSlFhgnDX2w9frVKNlzl-53" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1065" y="-2220" as="sourcePoint" />
+            <mxPoint x="-1185" y="-2130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-92" value="«interface»&lt;br&gt;&lt;b&gt;建立訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-648" y="-2460" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-93" value="«interface»&lt;br&gt;&lt;b&gt;查看訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-288" y="-2460" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-94" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-92" target="SSlFhgnDX2w9frVKNlzl-96" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-123" y="-2070" as="sourcePoint" />
+            <mxPoint x="512" y="-1890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-95" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-93" target="SSlFhgnDX2w9frVKNlzl-96" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-88" y="-2040" as="sourcePoint" />
+            <mxPoint x="-408" y="-2210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-96" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-473" y="-2350" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-97" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-96" target="SSlFhgnDX2w9frVKNlzl-89" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-223" y="-2400" as="sourcePoint" />
+            <mxPoint x="-343" y="-2310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-98" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;TS Module&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;訂單(PurchaseOrder, SupplyOrder)後端&lt;/b&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;模組&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;(Passenger建立的PurchaseOrder跟Ridder建立的SupplyOrder, 它們的模組相似)&lt;/b&gt;&lt;/p&gt;&lt;br&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- id: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- userId: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ orderId: string&lt;br&gt;+ briefDescription: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ suggestPrice: string&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ startCord: point&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endCord: point&lt;br&gt;+ startAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ endAddress: string&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ suggestStartAfter: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ suggestEndedAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ status: boolean&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ createdAt: Date&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 4px;&quot;&gt;+ updatedAt: Date&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createPassengerInviteByOrderId(briefDescription: string, suggestPrice: number, startCordLongitude: number, startCordLatitude: number, endCordLogitude: number, endCordLatitude: number, startAddress: string, endAddress: string, suggestStartAfter: string, suggestEndedAt: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getMyPassengerInviteById(id: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyPurchaseOrders(isAutoAccept: boolean, limit: number, offset: number): Object [ ]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyPaginationPassengerInvites(receiverName: string | undefined, limit: number, offset: number): Object [ ]&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyAboutToStartPassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, startAfter: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMySimliarTimePassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, startAfter: string, endedAt: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyCurAdjacentPassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, startCordLogitude: string, startCordLatitude: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyDestAdjacentPassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, endCordLogitude: string, endCordLatitude: string&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMySimilarRoutePassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number,&amp;nbsp;&lt;/span&gt;startCordLogitude: string, startCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;,&amp;nbsp;&lt;/span&gt;endCordLogitude: string, endCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+&amp;nbsp;searchMyBetterFirstPassengerInvites(receiverName&lt;span style=&quot;background-color: initial;&quot;&gt;: string | undefined, limit: number, offset: number, searchPriorities: string, startAfter: string | undefined, endedAt: string | undefined,&amp;nbsp;&lt;/span&gt;startCordLogitude: string | undefined, startCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;| undefined,&amp;nbsp;&lt;/span&gt;endCordLogitude: string | undefined, endCordLatitude: string&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;nbsp;| undefined&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;): Object [ ]&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ updateMyPassengerInviteById(id: string, status: boolean): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;// 只給對方使用(Ridder才能決定（接受或拒絕）PassengerInvite)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ decidePassengerInviteById(id: string, status: boolean, rejectReason: string): Object&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ deleteMyPassengerInviteById(id: string): Object&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="169" y="-2145" width="490" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-99" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="354" y="-2330" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-101" value="«interface»&lt;br&gt;&lt;b&gt;邀請頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="359" y="-2470" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-102" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-101" target="SSlFhgnDX2w9frVKNlzl-99" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-223" y="-2400" as="sourcePoint" />
+            <mxPoint x="-343" y="-2310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-103" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="SSlFhgnDX2w9frVKNlzl-98" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="415" y="-2270" as="sourcePoint" />
+            <mxPoint x="415" y="-2180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-104" value="«interface»&lt;br&gt;&lt;b&gt;訂單管理頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="1198" y="-2100" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-105" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-990" y="-320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-107" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-33" target="SSlFhgnDX2w9frVKNlzl-105" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1525" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-108" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-105" target="SSlFhgnDX2w9frVKNlzl-45" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-725" y="-540" as="sourcePoint" />
+            <mxPoint x="-920" y="-310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-110" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-4" target="SSlFhgnDX2w9frVKNlzl-111" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-610" y="120" as="sourcePoint" />
+            <mxPoint x="-670" y="90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-111" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-685" y="-120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-112" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-111" target="SSlFhgnDX2w9frVKNlzl-46" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-615" y="-230" as="sourcePoint" />
+            <mxPoint x="-615" y="-110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-113" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1340" y="-740" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-114" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-30" target="SSlFhgnDX2w9frVKNlzl-113" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-855" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-115" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-113" target="SSlFhgnDX2w9frVKNlzl-49" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-855" y="-590" as="sourcePoint" />
+            <mxPoint x="-930" y="-680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-116" value="«interface»&lt;br&gt;&lt;b&gt;通知頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-920" y="-600" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-117" value="&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;div&gt;&lt;i&gt;RESTful API&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-925" y="-710" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-118" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-116" target="SSlFhgnDX2w9frVKNlzl-117" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-990" y="-590" as="sourcePoint" />
+            <mxPoint x="-1190" y="-720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-119" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-117" target="SSlFhgnDX2w9frVKNlzl-48" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-855" y="-590" as="sourcePoint" />
+            <mxPoint x="-950" y="-720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-120" value="«interface»&lt;br&gt;&lt;b&gt;我的訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-1310" y="-2280" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-121" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-120" target="SSlFhgnDX2w9frVKNlzl-90" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1425" y="-2220" as="sourcePoint" />
+            <mxPoint x="-1305" y="-2130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-122" value="«interface»&lt;br&gt;&lt;b&gt;我的訂單頁面&lt;/b&gt;" style="html=1;whiteSpace=wrap;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-468" y="-2460" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-123" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-122" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-583" y="-2400" as="sourcePoint" />
+            <mxPoint x="-413" y="-2350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SSlFhgnDX2w9frVKNlzl-125" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="SSlFhgnDX2w9frVKNlzl-27" target="SSlFhgnDX2w9frVKNlzl-69" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="-1250" y="-540" as="sourcePoint" />
+            <mxPoint x="-615" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

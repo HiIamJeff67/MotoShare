@@ -34,7 +34,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 	private socketMap = new Map<string, SocketMetaPayloadInterface>();
 
 	/* ================================= Validation operations ================================= */
-  	private validateToken(token: string): JwtPayload {
+  	private _validateToken(token: string): JwtPayload {
 		const secret = this.configService.get<string>("JWT_SECRET");
 		if (!secret) throw ServerExtractJwtSecretEnvVariableException;
 
@@ -47,7 +47,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 		}
   	}
 
-	private async getUserById(
+	private async _getUserById(
 		userId: string, 
 		token: string, 
 		userRole: UserRoleType, 
@@ -94,16 +94,16 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 			const userRole = socket.handshake.headers.userrole as UserRoleType;
 			if (!userRole) throw ApiMissingUserRoleInHeaderWhileConnectingToSocketException;
 
-			const payload = this.validateToken(token);
+			const payload = this._validateToken(token);
 			if (!payload || !payload.sub) throw ServerTranslateBearerTokenToPayloadException;
 
-			const user = await this.getUserById(payload.sub, token, userRole);
+			const user = await this._getUserById(payload.sub, token, userRole);
 			if (!user) throw (userRole === "Passenger" 
 				? ClientPassengerNotFoundException 
 				: ClientRidderNotFoundException
 			);
 
-			console.log({ ...user, socketId: socket.id });	// only while developing
+			// console.log({ ...user, socketId: socket.id });	// only while developing
 			if (this.socketMap.has(user.id)) {
 				const existingUser = this.socketMap.get(user.id);
 				if (existingUser) {
@@ -118,7 +118,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 			socket.join(`${socket.id}'s notification`);	// let the users join their notification room to listen notifications
 
-			console.log(`User ${user.id} connected with socket ID ${socket.id}`);	// only while developing
+			// console.log(`User ${user.id} connected with socket ID ${socket.id}`);	// only while developing
 			return {
 				status: HttpStatusCode.SwitchingProtocols,
 				upgrade: socket.handshake.headers.upgrade, 
@@ -143,7 +143,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 	
 			socket.disconnect(true);
 			this.socketMap.delete(userId);
-			console.log(`User ${userId} disconnected with socket ID ${socket.id}`);	// only while developing
+			// console.log(`User ${userId} disconnected with socket ID ${socket.id}`);	// only while developing
 			return {
 				status: HttpStatusCode.Ok, 
 				message: `Good bye! User ${userData.userName} disconnected with socket ID ${socket.id}`, 
@@ -170,7 +170,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 	notifyPassenger(userId: string, notification: NotificationInterface) {
 		const socketUser = this.socketMap.get(userId);
 		if (socketUser && socketUser.role === "Passenger") {
-			console.log(`Pushing to room : ${socketUser.socket.id}'s notification`)
+			// console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
 			this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
 		}
 	}
@@ -178,7 +178,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 	notifyRidder(userId: string, notification: NotificationInterface) {
 		const socketUser = this.socketMap.get(userId);
 		if (socketUser && socketUser.role === "Ridder") {
-			console.log(`Pushing to room : ${socketUser.socket.id}'s notification`)
+			// console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
 			this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
 		}
 	}
@@ -186,11 +186,11 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 
 	/* ================================= Test operations ================================= */
-	@SubscribeMessage('test')
-	onTest(@MessageBody() data: any): WsResponse<any> {
-		const event = 'test';
-		this.server.emit('test', { event, data });
-		return { event, data };
-	}
+	// @SubscribeMessage('test')
+	// onTest(@MessageBody() data: any): WsResponse<any> {
+	// 	const event = 'test';
+	// 	this.server.emit('test', { event, data });
+	// 	return { event, data };
+	// }
 	/* ================================= Test operations ================================= */
 }

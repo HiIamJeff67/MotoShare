@@ -1,0 +1,3866 @@
+{
+	"info": {
+		"_postman_id": "73add970-1b34-48e7-b3fc-3175712f68d3",
+		"name": "motoshareAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31750281"
+	},
+	"item": [
+		{
+			"name": "Passenger Routes",
+			"item": [
+				{
+					"name": "Actual Route in Vercel",
+					"item": [
+						{
+							"name": "createPassengerWithInfoAndCollection",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "userName",
+											"value": "user6",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "user6@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/createPassengerWithInfoAndCollection",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"createPassengerWithInfoAndCollection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPassengers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/getAllPassengers",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"getAllPassengers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "signInPassengerByEamilAndPassword",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "user1@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/passenger/signInPassengerByEamilAndPassword",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"passenger",
+										"signInPassengerByEamilAndPassword"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Test Route",
+					"item": [
+						{
+							"name": "getAllPassengers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/passenger/getAllPassengers",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"passenger",
+										"getAllPassengers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "testBcrypt",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/passenger/testBcrypt?secretText=123&hash=$2b$10$negVvsFs.AOE.LZU4ViXnONb3LhOA2XGBL2UaLPp1HMUIqAfMWTRO",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"passenger",
+										"testBcrypt"
+									],
+									"query": [
+										{
+											"key": "secretText",
+											"value": "123"
+										},
+										{
+											"key": "hash",
+											"value": "$2b$10$negVvsFs.AOE.LZU4ViXnONb3LhOA2XGBL2UaLPp1HMUIqAfMWTRO"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzM2YzOTg0Zi02MGJlLTQ4NzAtYTY5MC0wNDlkNWQ1MzYzNTIiLCJlbWFpbCI6InRlc3QwMDJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTEyMDE4LCJleHAiOjE3MzE1MTc0MTh9.CAUgCC1X79-XB-H3722wZDBtqI-Ez5j9ThCMZFJfk4M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passenger/getMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"getMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPassengerWithInfoByUserName",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDc4OTQ0LCJleHAiOjE3MzE0ODQzNDR9.GUKnwncdrCeZJCugQ5J-LywMSdGG5f1cUUVulmRjjV0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/getPassengerWithInfoByUserName?userName=passenger1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"getPassengerWithInfoByUserName"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "passenger1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDc4OTQ0LCJleHAiOjE3MzE0ODQzNDR9.GUKnwncdrCeZJCugQ5J-LywMSdGG5f1cUUVulmRjjV0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passenger/getMyInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"getMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyCollection",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDc4OTQ0LCJleHAiOjE3MzE0ODQzNDR9.GUKnwncdrCeZJCugQ5J-LywMSdGG5f1cUUVulmRjjV0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/getMyCollection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"getMyCollection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationPassengers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passenger/searchPaginationPassengers?limit=2&offset=0&passenger",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"searchPaginationPassengers"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "passenger",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4N2U0ZDYxZi00YWU4LTQ0YTMtYWI4Ny1lODMwM2VhOGNlNWEiLCJlbWFpbCI6InBhc3NlbmdlcjRAZ21haWwuY29tIiwiaWF0IjoxNzMwNTU3MzAyLCJleHAiOjE3MzA1NjI3MDJ9.Qnokb0gkT3aOZZcxZDU4VQYLNYsN9PVKM5bvcAJ0eq0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "paseenger5",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/updateMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"updateMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4N2U0ZDYxZi00YWU4LTQ0YTMtYWI4Ny1lODMwM2VhOGNlNWEiLCJlbWFpbCI6InBhc3NlbmdlcjRAZ21haWwuY29tIiwiaWF0IjoxNzMwNTU3MzAyLCJleHAiOjE3MzA1NjI3MDJ9.Qnokb0gkT3aOZZcxZDU4VQYLNYsN9PVKM5bvcAJ0eq0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "age",
+									"value": "18",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/updateMyInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"updateMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4N2U0ZDYxZi00YWU4LTQ0YTMtYWI4Ny1lODMwM2VhOGNlNWEiLCJlbWFpbCI6InBhc3NlbmdlcjRAZ21haWwuY29tIiwiaWF0IjoxNzMwNTU3MzAyLCJleHAiOjE3MzA1NjI3MDJ9.Qnokb0gkT3aOZZcxZDU4VQYLNYsN9PVKM5bvcAJ0eq0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/passenger/deleteMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passenger",
+								"deleteMe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ridder Routes",
+			"item": [
+				{
+					"name": "Actual Route in Vercel",
+					"item": [
+						{
+							"name": "createRidderWithInfoAndCollection",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "userName",
+											"value": "ridder6",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "ridder6@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridder/createRidderWithInfoAndCollection",
+									"protocol": "https",
+									"host": [
+										"moto-share-jeffs-projects-95ef1060",
+										"vercel",
+										"app"
+									],
+									"path": [
+										"ridder",
+										"createRidderWithInfoAndCollection"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Test Route",
+					"item": [
+						{
+							"name": "getAllRidders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3333/ridder/getAllRidders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3333",
+									"path": [
+										"ridder",
+										"getAllRidders"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getRidderWithInfoByUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getRidderWithInfoByUserName?userName=ridder1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getRidderWithInfoByUserName"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "ridder1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getMyInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyCollection",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MjYwNzY5MC04MmVmLTQ0YzAtODE0Mi1kMzBmMWFlNTEzOTQiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI0NTk1LCJleHAiOjE3MzA2Mjk5OTV9.M0KMPvyVLnCjY3rEQjBoZ8ocFtX9TOxHTnuwgSNIBWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/getMyCollection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"getMyCollection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationRidders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/searchPaginationRidders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"searchPaginationRidders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjNAZ21haWwuY29tIiwiaWF0IjoxNzMxMjkzMTA3LCJleHAiOjE3MzEyOTg1MDd9.9Fk2WXPikU4m3tldjXwSfJWrxdFZKc1AMPWtYZrtDdo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "ridder2",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ridder2@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password3",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridder/updateMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"updateMe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjNAZ21haWwuY29tIiwiaWF0IjoxNzMxMjkzMTA3LCJleHAiOjE3MzEyOTg1MDd9.9Fk2WXPikU4m3tldjXwSfJWrxdFZKc1AMPWtYZrtDdo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "age",
+									"value": "18",
+									"type": "text"
+								},
+								{
+									"key": "isOnline",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "phoneNumber",
+									"value": "0912345678",
+									"type": "text"
+								},
+								{
+									"key": "motocycleLicense",
+									"value": "ABC123",
+									"type": "text"
+								},
+								{
+									"key": "selfIntroduction",
+									"value": "Hi I am user2",
+									"type": "text"
+								},
+								{
+									"key": "avatorUrl",
+									"value": "testUrl2.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridder/updateMyInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"updateMyInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMDVjZGY5My0wYzViLTQyOWQtOTMwNS1mNTA4MzY4ZDdjNGIiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMwNjI1Nzg0LCJleHAiOjE3MzA2MzExODR9.W41u1mGCd4KPmNyp3ZKLX3-6ocLppMaDvG33pPZvdNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridder/deleteMe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridder",
+								"deleteMe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PurchaseOrder Routes",
+			"item": [
+				{
+					"name": "createPurchaseOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NjkyLCJleHAiOjE3MzE3NDMwOTJ9.CpJTNgkPi-aCEIslRD_dsV34JsTtiPQxUcTGYtogb7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "initPrice",
+									"value": "999",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "-122.084",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "37.4219983",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121.2311589",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "25.0804902",
+									"type": "text"
+								},
+								{
+									"key": "isUrgent",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "test 11/15",
+									"type": "text"
+								},
+								{
+									"key": "startAfter",
+									"value": "2000-07-26T00:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "endedAt",
+									"value": "2000-07-26T01:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "nowhere",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "somewhere",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/createPurchaseOrder",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"purchaseOrder",
+								"createPurchaseOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyPurchaseOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDgxNjIyLCJleHAiOjE3MzE0ODcwMjJ9.mvDFBpB1iaf13oPaReTgR46n1yZozmoGKdjrhrJYSEg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/getMyPurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"getMyPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNzMyMTExLCJleHAiOjE3MzE3Mzc1MTF9.1zAAZu95kJlKAxZkHZh09mCChmEV4kifwL4_3Lyu4fU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/purchaseOrder/getPurchaseOrderById?id=f8dea630-5624-45cb-a918-754ee54c53db",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"purchaseOrder",
+								"getPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f8dea630-5624-45cb-a918-754ee54c53db"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationPurchaseOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchPaginationPurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchPaginationPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "passenger6",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchCurAdjacentPurchaseOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "23",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchCurAdjacentPurchaseOrders?creatorName=passenger6&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchCurAdjacentPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "passenger6"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchDestAdjacentPurchaseOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchDestAdjacentPurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchDestAdjacentPurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimilarRoutePurchaseOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startCordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "128",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "21",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/searchSimilarRoutePurchaseOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"searchSimilarRoutePurchaseOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMyPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0M2EwNmM4YS1mZjAxLTQwYjktODBkZi1jMGJiNjllZTA0ODgiLCJlbWFpbCI6IjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MzA2MDkxMDQsImV4cCI6MTczMDYxNDUwNH0.pKYirJTAPC4M2NghmJgbcxaLBTawY1BwX7jUKn5VF9o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "test test test!!!",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "EXPIRED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/updateMyPurchaseOrderById?id=52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"updateMyPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMyPurchaseOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0M2EwNmM4YS1mZjAxLTQwYjktODBkZi1jMGJiNjllZTA0ODgiLCJlbWFpbCI6IjEyM0BnbWFpbC5jb20iLCJpYXQiOjE3MzA2MDkxMDQsImV4cCI6MTczMDYxNDUwNH0.pKYirJTAPC4M2NghmJgbcxaLBTawY1BwX7jUKn5VF9o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/deleteMyPurchaseOrderById?id=52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"deleteMyPurchaseOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "52d0aa70-000e-4e7b-a29f-fc84f1cdd9a7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test-getAllPurchaseOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/purchaseOrder/getAllPurchaseOrders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"purchaseOrder",
+								"getAllPurchaseOrders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SupplyOrder Routes",
+			"item": [
+				{
+					"name": "createSupplyOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMjA4NjBhOC00MjIzLTQxYzQtOGVkZi03MTJlZDI4Y2NhNjUiLCJlbWFpbCI6InJpZGRlcjNAZ21haWwuY29tIiwiaWF0IjoxNzMxNTEzODMwLCJleHAiOjE3MzE1MTkyMzB9.dOnx2BXbKvspOSZgksFf6nspU5lYU0n4qhXUuxRESG8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "initPrice",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121.5",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "22",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "POSTED",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/createSupplyOrder",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"createSupplyOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMySupplyOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk2NTQ1LCJleHAiOjE3MzE1MDE5NDV9.sQOhdcJpcsxF032BqdNqtnZ36xaX2BCWGPLl0Kg55Ys",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/getMySupplyOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"getMySupplyOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk2OTIxLCJleHAiOjE3MzE1MDIzMjF9.MEUsAyr0cvYGaFGaB6UYpSLGhoJN-a8ZbZrAfopJyvY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/getSupplyOrderById?id=569b2483-fa76-41b8-9915-45b8c77beb88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"getSupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "569b2483-fa76-41b8-9915-45b8c77beb88"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchPaginationSupplyOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchPaginationSupplyOrders?creatorName=ridder&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchPaginationSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "ridder"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchCurAdjacentSupplyOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchCurAdjacentSupplyOrders?creatorName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchCurAdjacentSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchDestAdjacentSupplyOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "cordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchDestAdjacentSupplyOrders?creatorName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchDestAdjacentSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "creatorName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchSimilarRouteSupplyOrders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "startCordLongitude",
+									"value": "124",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "121",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "22",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/searchSimilarRouteSupplyOrders?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"searchSimilarRouteSupplyOrders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMySupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk2NTQ1LCJleHAiOjE3MzE1MDE5NDV9.sQOhdcJpcsxF032BqdNqtnZ36xaX2BCWGPLl0Kg55Ys",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "updated description 1",
+									"type": "text"
+								},
+								{
+									"key": "initPrice",
+									"value": "333",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "123.33",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "23.12",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/updateMySupplyOrderById?id=569b2483-fa76-41b8-9915-45b8c77beb88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"updateMySupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "569b2483-fa76-41b8-9915-45b8c77beb88"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMySupplyOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGE0N2UzNi03YTFjLTRmNGUtODRkNC01ZjhiZDhlMzI1NjkiLCJlbWFpbCI6InJpZGRlcjNAZ21haWwuY29tIiwiaWF0IjoxNzMwNjM0NTg2LCJleHAiOjE3MzA2Mzk5ODZ9.ycqOWPeNPKHmm0FDtW6KTehcDKlIGN9C1z1tnuhpz_g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/supplyOrder/deleteMySupplyOrderById?id=e5c4d5e5-0cd3-4d3e-8ba2-bf7a8f6eaf6c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"supplyOrder",
+								"deleteMySupplyOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "e5c4d5e5-0cd3-4d3e-8ba2-bf7a8f6eaf6c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication Routes",
+			"item": [
+				{
+					"name": "signUpPassenger",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "passenger9",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "passenger9@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/auth/signUpPassenger",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"auth",
+								"signUpPassenger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signUpRidder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "ridder5",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ridder5@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/auth/signUpRidder",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"auth",
+								"signUpRidder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInPassenger",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "passenger6@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "userName",
+									"value": "passenger6",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1qA!zzzz",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/auth/signInPassenger",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"auth",
+								"signInPassenger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInRidder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "ridder1@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "userName",
+									"value": "ridder1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "Test1234!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/auth/signInRidder",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"auth",
+								"signInRidder"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PassengerInvite Routes",
+			"item": [
+				{
+					"name": "passenger/createPassengerInviteByOrderId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTcwNzc3LCJleHAiOjE3MzE1NzYxNzd9.NkGw7EA7JLXUWPaevUFewo5355fd5Co4hJzdjUBEOss",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "briefDescription",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "suggestPrice",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "suggestStartAfter",
+									"value": "2000-07-26T00:00:01.967Z",
+									"type": "text"
+								},
+								{
+									"key": "suggestEndedAt",
+									"value": "2000-07-26T00:00:01.967Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/createPassengerInviteByOrderId?orderId=569b2483-fa76-41b8-9915-45b8c77beb88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"createPassengerInviteByOrderId"
+							],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "569b2483-fa76-41b8-9915-45b8c77beb88"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/getMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/getMyPassengerInviteById?id=bc20add9-cb75-496d-89f6-c7b348ed89e5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"getMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "bc20add9-cb75-496d-89f6-c7b348ed89e5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxMzM2NDI4LCJleHAiOjE3MzEzNDE4Mjh9.yB4Jnha9tG9njkI-Bk3nnIMmv8YBbFqPDMbXa5IqqHo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/getMyPassengerInviteById?id=bc20add9-cb75-496d-89f6-c7b348ed89e5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"getMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "bc20add9-cb75-496d-89f6-c7b348ed89e5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyPaginationPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMyPaginationPassengerInvites?receiverName=ridder&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyPaginationPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "ridder"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyCurAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMyCurAdjacentPassengerInvites?receiverName=ridder3&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyCurAdjacentPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "ridder3"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyDestAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMyDestAdjacentPassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMyDestAdjacentPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/searchMySimilarRoutePassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"searchMySimilarRoutePassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyPaginationPasssengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMyPaginationPasssengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyPaginationPasssengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyCurAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMyCurAdjacentPassengerInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyCurAdjacentPassengerInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyDestAdjacentPassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMyDestAdjacentPassengerInvites?inviterName=passenger1&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMyDestAdjacentPassengerInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "passenger1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAwMTM4LCJleHAiOjE3MzE1MDU1Mzh9.DVgn87i-xYtYHs7tKIqvekN5sPOjPTq0YgF5XCmH66E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/searchMySimilarRoutePassengerInvites?inviterName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"searchMySimilarRoutePassengerInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/updateMyPassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNDk4MjkzLCJleHAiOjE3MzE1MDM2OTN9.I4JIbcpzA62hwWY5HBvYSVoMr8kmm3WcFE_2t0rHOqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "CANCEL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/updateMyPassengerInviteById?id=5a3b3a9b-c52d-4758-8576-4d9314e0e6c0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"updateMyPassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5a3b3a9b-c52d-4758-8576-4d9314e0e6c0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/decidePassengerInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTcwODYwLCJleHAiOjE3MzE1NzYyNjB9.nu8VOaJOmFOcxmY3PCqxB9mi3PSUuj8CHGi0qoCkhmo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "ACCEPTED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/ridder/decidePassengerInviteById?id=5ee2ea6e-4ce0-48bb-b577-441b280df490",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"ridder",
+								"decidePassengerInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5ee2ea6e-4ce0-48bb-b577-441b280df490"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/deleteMyPassengerInviteById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/passengerInvite/passenger/deleteMyPassengerInviteById",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"passengerInvite",
+								"passenger",
+								"deleteMyPassengerInviteById"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RidderInvite Routes",
+			"item": [
+				{
+					"name": "ridder/createRidderInviteByOrderId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNDllZjRkZi1jM2JmLTRjY2YtYWJlYS04Y2FkODA0OWQ2MjciLCJlbWFpbCI6InJpZGRlcjVAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4MDcwLCJleHAiOjE3MzE3NDM0NzB9.ErImHCUsJKAjZxHQis8XREEKv-p-o9dYotXL4BGROzo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "briefDescription",
+									"value": "Guess what, I'm ridder5, hehe",
+									"type": "text"
+								},
+								{
+									"key": "suggestPrice",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "startCordLongitude",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "startCordLatitude",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "endCordLongitude",
+									"value": "125",
+									"type": "text"
+								},
+								{
+									"key": "endCordLatitude",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "startAddress",
+									"value": "nowhere",
+									"type": "text"
+								},
+								{
+									"key": "endAddress",
+									"value": "everywhere",
+									"type": "text"
+								},
+								{
+									"key": "suggestStartAfter",
+									"value": "2024-11-30T12:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "suggestEndedAt",
+									"value": "2024-11-30T12:00:00.000Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderInvite/ridder/createRidderInviteByOrderId?orderId=4e50d23b-a144-43d5-a187-429f18e26d94",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"createRidderInviteByOrderId"
+							],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "4e50d23b-a144-43d5-a187-429f18e26d94"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/getMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"getMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/getMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA0NzcwLCJleHAiOjE3MzE1MTAxNzB9.Lq3MyKn9sCQ-rQnLALyM52f_rtWWNTIWZNDjSGFHLV8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/getMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"getMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyPaginationRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyPaginationRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyPaginationRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyCurAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyCurAdjacentRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyCurAdjacentRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMyDestAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMyDestAdjacentRidderInvites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMyDestAdjacentRidderInvites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/searchMySimilarRoutePassengerInvites?receiverName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"searchMySimilarRoutePassengerInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyPaginationRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMyPaginationRidderInvites?inviterName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyPaginationRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyCurAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMyCurAdjacentRidderInvites?inviterName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyCurAdjacentRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMyDestAdjacentRidderInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMyDestAdjacentRidderInvites?inviterName=r&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMyDestAdjacentRidderInvites"
+							],
+							"query": [
+								{
+									"key": "inviterName",
+									"value": "r"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchMySimilarRoutePassengerInvites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNTA1MDY1LCJleHAiOjE3MzE1MTA0NjV9.kQWulmFz9QzsUeeXIY9FpIBhzTyVy438V86W8LV6gpo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/passenger/searchMySimilarRouteRidderInvites?receiverName=passenger&limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"searchMySimilarRouteRidderInvites"
+							],
+							"query": [
+								{
+									"key": "receiverName",
+									"value": "passenger"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/updateMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "CANCEL",
+									"type": "text"
+								},
+								{
+									"key": "briefDescription",
+									"value": "sorry, I posted wrong one...",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/updateMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"updateMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/decideRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "status",
+								"value": "ACCEPTED",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "ACCEPTED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/ridderInvite/passenger/decideRidderInviteById?id=ee18b6e4-47a3-4e5c-a36e-efcf6555565b",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"ridderInvite",
+								"passenger",
+								"decideRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "ee18b6e4-47a3-4e5c-a36e-efcf6555565b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/deleteMyRidderInviteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MTUwNTBhZC01NWQzLTQwOTctODA0Mi05OTEyM2Y2MjczYjkiLCJlbWFpbCI6InJpZGRlcjJAZ21haWwuY29tIiwiaWF0IjoxNzMxNTAzNzk2LCJleHAiOjE3MzE1MDkxOTZ9.GWvLKUjyUHcxDfUhT1rXo--cB3hKXeGjHgfgKVe-r8U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/ridderInvite/ridder/deleteMyRidderInviteById?id=8707a37b-1785-45fe-b29a-886de7e6d52b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"ridderInvite",
+								"ridder",
+								"deleteMyRidderInviteById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8707a37b-1785-45fe-b29a-886de7e6d52b"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Routes",
+			"item": [
+				{
+					"name": "passenger/getOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/passenger/getOrderById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"passenger",
+								"getOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/getOrderById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"getOrderById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchPaginationOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/passenger/searchPaginationOrders",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"passenger",
+								"searchPaginationOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchPaginationOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/searchPaginationOrders",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"searchPaginationOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toStartedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toStartedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toStartedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toUnpaidStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toUnpaidStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toUnpaidStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/toFinishedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/passenger/toFinishedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"passenger",
+								"toFinishedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toStartedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/toStartedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"toStartedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toUnpaidStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "https://moto-share-jeffs-projects-95ef1060.vercel.app/order/ridder/toUnpaidStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "https",
+							"host": [
+								"moto-share-jeffs-projects-95ef1060",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"order",
+								"ridder",
+								"toUnpaidStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/toFinishedStatusById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/order/ridder/toFinishedStatusById?id=5250d9b8-3065-4e28-94fc-b59839a46265",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"order",
+								"ridder",
+								"toFinishedStatusById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5250d9b8-3065-4e28-94fc-b59839a46265"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History Routes",
+			"item": [
+				{
+					"name": "passenger/getHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/getHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"getHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/getHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/getHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"getHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/searchPaginationHistories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/searchPaginationHistories?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"searchPaginationHistories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/searchPaginationHistories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/searchPaginationHistories?limit=10&offset=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"searchPaginationHistories"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/rateAndCommentHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "starRating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "it's very fun",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/rateAndCommentHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"rateAndCommentHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/rateAndCommentHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "starRating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "It's very great to share this drive with you. 祝您旅途愉快～",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/rateAndCommentHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"rateAndCommentHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passenger/delinkHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTFlZGNmMS01MDRjLTRjOWEtOWNhMi1jM2ViYWM3OGI1ZDAiLCJlbWFpbCI6InBhc3NlbmdlcjZAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM3NzE5LCJleHAiOjE3MzE3NDMxMTl9.YruHVOU1JjQBGjgNVq41gHPRebnkXrrb-auprHB1R1A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/history/passenger/delinkHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"passenger",
+								"delinkHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ridder/delinkHistoryById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMTg5ODMxOC03ZDlmLTRkMzItYTY0Mi1hMWRlYzc3YzVjYWQiLCJlbWFpbCI6InJpZGRlcjFAZ21haWwuY29tIiwiaWF0IjoxNzMxNzM4NTYwLCJleHAiOjE3MzE3NDM5NjB9._R-ujoZ6u8GjjTT0P21MlTEBD4ZhhwmJO2wUoJf-9m8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3333/history/ridder/delinkHistoryById?id=f1e819d7-ecaa-4f22-9123-ff082f111401",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"history",
+								"ridder",
+								"delinkHistoryById"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1e819d7-ecaa-4f22-9123-ff082f111401"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
