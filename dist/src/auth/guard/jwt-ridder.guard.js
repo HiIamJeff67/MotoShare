@@ -2,18 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtRidderGuard = void 0;
 const passport_1 = require("@nestjs/passport");
-const exceptions_1 = require("../../exceptions");
 class JwtRidderGuard extends (0, passport_1.AuthGuard)('jwt-ridder') {
     constructor() {
         super();
     }
     async canActivate(context) {
         try {
-            await super.canActivate(context);
+            const result = await super.canActivate(context);
+            if (!result)
+                return false;
             return true;
         }
         catch (error) {
-            throw exceptions_1.ClientInvalidTokenException;
             return false;
         }
     }

@@ -8,12 +8,12 @@ export class JwtRidderGuard extends AuthGuard('jwt-ridder') {
     }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        try {
-          await super.canActivate(context);
-          return true;
-        } catch (error) {
-          throw ClientInvalidTokenException;
-          return false;
-        }
-    }
+      try {
+          const result = await super.canActivate(context);
+          if (!result) return false;
+          return true; 
+      } catch (error) {
+          return false; 
+      }
+  }
 }

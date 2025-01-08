@@ -18,7 +18,8 @@ let AnyGuard = class AnyGuard {
     async canActivate(context) {
         for (const guardType of this.guardTypes) {
             const guard = new guardType();
-            if (await guard.canActivate(context)) {
+            const result = await guard.canActivate(context);
+            if (result) {
                 return true;
             }
         }

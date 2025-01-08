@@ -7,5 +7,5 @@ export declare class RidderBankController {
     constructor(ridderBankService: RidderBankService);
     getMyBalance(ridder: RidderType, response: Response): Promise<void>;
     createPaymentIntentForAddingBalanceByUserId(ridder: RidderType, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
-    payToFinishOrderById(ridder: RidderType, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
+    payToFinishOrderById(ridder: RidderType, id: string, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
 }

@@ -7,5 +7,5 @@ export declare class PassengerBankController {
     constructor(passengerBankService: PassengerBankService);
     getMyBalance(passenger: PassengerType, response: Response): Promise<void>;
     createPaymentIntentForAddingBalanceByUserId(passenger: PassengerType, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
-    payToFinishOrderById(passenger: PassengerType, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
+    payToFinishOrderById(passenger: PassengerType, id: string, createPaymentIntentDto: CreatePaymentIntentDto, response: Response): Promise<void>;
 }

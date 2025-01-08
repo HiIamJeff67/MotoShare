@@ -217,8 +217,8 @@ let PassengerBankService = class PassengerBankService {
     async createPaymentIntentForAddingBalance(userId, userName, email, amount) {
         return this._createPaymentIntentForAddingBalanceByUserId(userId, userName, email, amount);
     }
-    async payToFinishOrderById(userId, userName, email, amount) {
-        return this._payToFinishOrderById(userId, userName, email, amount);
+    async payToFinishOrderById(id, userId, userName, amount) {
+        return this._payToFinishOrderById(id, userId, userName, amount);
     }
 };
 exports.PassengerBankService = PassengerBankService;

@@ -6,11 +6,12 @@ export class AnyGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     for (const guardType of this.guardTypes) {
-      const guard = new guardType();
-      
-      if (await guard.canActivate(context)) {
-        return true;
-      }
+        const guard = new guardType();
+        const result = await guard.canActivate(context);
+        
+        if (result) {
+            return true;
+        }
     }
     return false;
   }

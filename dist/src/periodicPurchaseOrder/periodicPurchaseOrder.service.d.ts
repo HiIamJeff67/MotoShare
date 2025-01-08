@@ -34,6 +34,8 @@ export declare class PeriodicPurchaseOrderService {
         id: string;
         scheduledDay: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
         autoAccept: boolean;
+        startAfter: Date;
+        endedAt: Date;
         createdAt: Date;
         updatedAt: Date;
     }[]>;

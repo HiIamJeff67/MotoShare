@@ -80,6 +80,8 @@ let PeriodicSupplyOrderService = class PeriodicSupplyOrderService {
             id: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.id,
             scheduledDay: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.scheduledDay,
             autoAccept: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.autoAccept,
+            startAfter: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.startAfter,
+            endedAt: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.endedAt,
             createdAt: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.createdAt,
             updatedAt: periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable.updatedAt,
         }).from(periodicSupplyOrder_schema_1.PeriodicSupplyOrderTable)

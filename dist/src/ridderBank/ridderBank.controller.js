@@ -55,12 +55,12 @@ let RidderBankController = class RidderBankController {
             });
         }
     }
-    async payToFinishOrderById(ridder, createPaymentIntentDto, response) {
+    async payToFinishOrderById(ridder, id, createPaymentIntentDto, response) {
         if ((0, utils_1.toNumber)(createPaymentIntentDto.amount) <= 0) {
             throw exceptions_1.ApiNonPositiveAmountDetectedException;
         }
         try {
-            const res = await this.ridderBankService.payToFinishOrderById(ridder.id, ridder.userName, ridder.email, (0, utils_1.toNumber)(createPaymentIntentDto.amount));
+            const res = await this.ridderBankService.payToFinishOrderById(id, ridder.id, ridder.userName, (0, utils_1.toNumber)(createPaymentIntentDto.amount));
             if (!res || res.length === 0)
                 throw exceptions_1.ApiPaymentIntentNotFinishedException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
@@ -85,7 +85,7 @@ __decorate([
 ], RidderBankController.prototype, "getMyBalance", null);
 __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Get)('/createPaymentIntentForAddingBalanceByUserId'),
+    (0, common_1.Post)('/createPaymentIntentForAddingBalanceByUserId'),
     __param(0, (0, decorator_1.Ridder)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -98,11 +98,11 @@ __decorate([
     (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
     (0, common_1.Post)('/payToFinishOrderById'),
     __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Res)()),
+    __param(1, (0, common_1.Query)('id')),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.RidderType,
-        create_ridderBank_dto_1.CreatePaymentIntentDto, Object]),
+    __metadata("design:paramtypes", [interfaces_1.RidderType, String, create_ridderBank_dto_1.CreatePaymentIntentDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderBankController.prototype, "payToFinishOrderById", null);
 exports.RidderBankController = RidderBankController = __decorate([
