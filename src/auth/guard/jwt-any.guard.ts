@@ -10,7 +10,7 @@ export class AnyGuard implements CanActivate {
         const result = await guard.canActivate(context);
         
         if (result) {
-            return true;
+          return true;
         }
     }
     return false;

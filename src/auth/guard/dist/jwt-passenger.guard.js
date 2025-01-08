@@ -1,10 +1,17 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,42 +49,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.AnyGuard = void 0;
-var common_1 = require("@nestjs/common");
-var AnyGuard = /** @class */ (function () {
-    function AnyGuard(guardTypes) {
-        this.guardTypes = guardTypes;
+exports.JwtPassengerGuard = void 0;
+var passport_1 = require("@nestjs/passport");
+var JwtPassengerGuard = /** @class */ (function (_super) {
+    __extends(JwtPassengerGuard, _super);
+    function JwtPassengerGuard() {
+        return _super.call(this) || this;
     }
-    AnyGuard.prototype.canActivate = function (context) {
+    JwtPassengerGuard.prototype.canActivate = function (context) {
         return __awaiter(this, void 0, Promise, function () {
-            var _i, _a, guardType, guard, result;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var result, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _i = 0, _a = this.guardTypes;
-                        _b.label = 1;
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, _super.prototype.canActivate.call(this, context)];
                     case 1:
-                        if (!(_i < _a.length)) return [3 /*break*/, 4];
-                        guardType = _a[_i];
-                        guard = new guardType();
-                        return [4 /*yield*/, guard.canActivate(context)];
+                        result = _a.sent();
+                        if (!result)
+                            return [2 /*return*/, false];
+                        return [2 /*return*/, true];
                     case 2:
-                        result = _b.sent();
-                        if (result) {
-                            return [2 /*return*/, true];
-                        }
-                        _b.label = 3;
-                    case 3:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, false];
+                        error_1 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    AnyGuard = __decorate([
-        common_1.Injectable()
-    ], AnyGuard);
-    return AnyGuard;
-}());
-exports.AnyGuard = AnyGuard;
+    return JwtPassengerGuard;
+}(passport_1.AuthGuard('jwt-passenger')));
+exports.JwtPassengerGuard = JwtPassengerGuard;

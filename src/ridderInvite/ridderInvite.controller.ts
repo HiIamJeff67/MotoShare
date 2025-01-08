@@ -728,7 +728,7 @@ export class RidderInviteController {
 
   /* ================= Update detail operations used by Ridder ================= */
   @UseGuards(JwtRidderGuard)
-  @Post('ridder/updateMyRidderInviteById')
+  @Patch('ridder/updateMyRidderInviteById')
   async updateMyRidderInviteById(
     @Ridder() ridder: RidderType,
     @Query('id') id: string,
