@@ -6,9 +6,9 @@ import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../(store)";
-import { setUserBalance } from "@/app/(store)/userSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../(store)/index";
+import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 
 interface CheckOutFormProps {
   amount: number;
@@ -27,7 +27,7 @@ const getToken = async () => {
   }
 };
 
-async function fetchPaymentSheetParams(amount: string) {
+async function fetchPaymentSheetParams(amount: string, user: UserRoleType) {
   const token = await getToken();
 
   if (!token) {
@@ -35,7 +35,15 @@ async function fetchPaymentSheetParams(amount: string) {
     throw new Error("Unable to get token");
   }
 
-  let url: string = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
+  let url: string;
+
+  if (user === "Passenger") {
+    url = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
+  } else if (user === "Ridder") {
+    url = `${process.env.EXPO_PUBLIC_API_URL}/ridderBank/createPaymentIntentForAddingBalanceByUserId`;
+  } else {
+    throw new Error("Invalid user role in fetchPaymentSheetParams");
+  }
 
   try {
     const response = await axios.post(
@@ -69,9 +77,14 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const [loading, setLoading] = useState(false);
   const amountReal = (amount * 100).toString();
   const { t } = useTranslation();
+  const user = useSelector((state: RootState) => state.user.role);
 
   const initializePaymentSheet = async () => {
-    const paymentSheetParams = await fetchPaymentSheetParams(amountReal);
+    if (!user) {
+      Alert.alert("Error", "User role not found");
+      return;
+    }
+    const paymentSheetParams = await fetchPaymentSheetParams(amountReal, user);
     const { paymentIntent, ephemeralKey, customer } = paymentSheetParams;
 
     // Use Mock payment data: https://docs.stripe.com/payments/accept-a-payment?platform=react-native&ui=payment-sheet#react-native-test
@@ -98,15 +111,11 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
 
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
-    const dispatch = useDispatch();
-    const user = useSelector((state: RootState) => state.user) as { balance: number | null };
-    const newBalance = (user.balance ?? 0) + 100;
 
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert("Success", "Your order is confirmed!");
-      dispatch(setUserBalance({ balance: newBalance }));
     }
   };
 
@@ -114,5 +123,12 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
     initializePaymentSheet();
   }, []);
 
-  return <CheckOutButton style={{}} onPress={openPaymentSheet} disabled={!loading} title={t("checkout")} />;
+  return (
+    <CheckOutButton
+      style={{}}
+      onPress={openPaymentSheet}
+      disabled={!loading}
+      title={t("checkout")}
+    />
+  );
 }
