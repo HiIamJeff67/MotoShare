@@ -1079,18 +1079,18 @@ export class RidderInviteService {
 
         const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId(
           (updateRidderInviteDto.status && updateRidderInviteDto.status === "CANCEL")
-          ? NotificationTemplateOfCancelingRidderInvite(
-              inviterName, 
-              ridderInvite[0].passengerId as string, 
-              responseOfUpdatingRidderInvite[0].id as string, 
-            )
-          : NotificationTemplateOfUpdatingRidderInvite(
-              inviterName, 
-              ridderInvite[0].passengerId as string, 
-              responseOfUpdatingRidderInvite[0].id as string, 
-            )
+            ? NotificationTemplateOfCancelingRidderInvite(
+                inviterName, 
+                ridderInvite[0].passengerId as string, 
+                responseOfUpdatingRidderInvite[0].id as string, 
+              )
+            : NotificationTemplateOfUpdatingRidderInvite(
+                inviterName, 
+                ridderInvite[0].passengerId as string, 
+                responseOfUpdatingRidderInvite[0].id as string, 
+              )
         );
-        if (!responseOfCreatingNotification || responseOfCreatingNotification.length) {
+        if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
           throw ClientCreatePassengerNotificationException;
         }
 

@@ -754,6 +754,7 @@ export class RidderInviteController {
         ...res[0], 
       });
     } catch (error) {
+      console.log(error)
       if (!(error instanceof BadRequestException 
         || error instanceof UnauthorizedException 
         || error instanceof NotFoundException
