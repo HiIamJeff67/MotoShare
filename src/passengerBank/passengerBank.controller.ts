@@ -66,19 +66,14 @@ export class PassengerBankController {
   async payToFinishOrderById(
     @Passenger() passenger: PassengerType, 
     @Query('id') id: string, 
-    @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
     @Res() response: Response, 
   ) {
-    if (toNumber(createPaymentIntentDto.amount) <= 0) {
-      throw ApiNonPositiveAmountDetectedException;
-    }
 
     try {
       const res = await this.passengerBankService.payToFinishOrderById(
         id, 
         passenger.id, 
         passenger.userName, 
-        toNumber(createPaymentIntentDto.amount), 
       );
 
       if (!res || res.length === 0) throw ApiPaymentIntentNotFinishedException;

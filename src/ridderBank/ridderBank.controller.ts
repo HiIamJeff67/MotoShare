@@ -62,35 +62,4 @@ export class RidderBankController {
       });
     }
   }
-
-  @UseGuards(JwtRidderGuard)
-  @Post('/payToFinishOrderById')
-  async payToFinishOrderById(
-    @Ridder() ridder: RidderType, 
-    @Query('id') id: string, 
-    @Body() createPaymentIntentDto: CreatePaymentIntentDto, 
-    @Res() response: Response, 
-  ) {
-    if (toNumber(createPaymentIntentDto.amount) <= 0) {
-      throw ApiNonPositiveAmountDetectedException;
-    }
-
-    try {
-      const res = await this.ridderBankService.payToFinishOrderById(
-        id, 
-        ridder.id, 
-        ridder.userName, 
-        toNumber(createPaymentIntentDto.amount), 
-      );
-
-      if (!res || res.length === 0) throw ApiPaymentIntentNotFinishedException;
-
-      response.status(HttpStatusCode.Ok).send(res[0]);
-    } catch (error) {
-      response.status(error.status).send({
-        case: error.case, 
-        message: error.message, 
-      });
-    }
-  }
 }

@@ -97,44 +97,16 @@ export class PassengerBankService {
     id: string, 
     userId: string, // decreasing the balance of the passenger, and increasing the balance of the ridder
     userName: string, 
-    amount: number, 
   ) {
     return await this.db.transaction(async (tx) => {
-      // decreasing the balance of the passenger
-      const responseOfSelectingPassengerBank = await tx.select({
-        balance: PassengerBankTable.balance, 
-      }).from(PassengerBankTable)
-        .where(eq(PassengerBankTable.userId, userId))
-        .limit(1);
-      if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-        throw ClientPassengerBankNotFoundException;
-      }
-      if (responseOfSelectingPassengerBank[0].balance < amount) {
-        throw ClientPassengerBalanceNotEnoughException;
-      }
-
-      const newPassengerBalance = responseOfSelectingPassengerBank[0].balance - amount;
-      const responseOfDecreasingPassengerBank = await tx.update(PassengerBankTable).set({
-        balance: newPassengerBalance, 
-        updatedAt: new Date(), 
-      }).where(eq(PassengerBankTable.userId, userId))
-        .returning({
-          balance: PassengerBankTable.balance, 
-        });
-      if (!responseOfDecreasingPassengerBank || responseOfDecreasingPassengerBank.length === 0) {
-        throw ApiPaymentIntentNotFinishedException;
-      }
-
       // finish the order, and also get the infomation of the ridder
       // since the order will finish directly, so we can just delete it
       // and make a history of it as we done in order.service
       const responseOfDeletingOrder = await tx.delete(OrderTable)
         .where(and(
           eq(OrderTable.id, id), 
-          or(
-            ne(OrderTable.passengerStatus, "FINISHED"), 
-            ne(OrderTable.ridderStatus, "FINISHED"), 
-          ), 
+          eq(OrderTable.passengerStatus, "UNPAID"), 
+          eq(OrderTable.ridderStatus, "UNPAID"), 
         ))
         .returning({
           passengerId: OrderTable.passengerId,
@@ -217,6 +189,31 @@ export class PassengerBankService {
         throw ClientCreateRidderNotificationException;
       }
 
+      // decreasing the balance of the passenger
+      const responseOfSelectingPassengerBank = await tx.select({
+        balance: PassengerBankTable.balance, 
+      }).from(PassengerBankTable)
+        .where(eq(PassengerBankTable.userId, userId))
+        .limit(1);
+      if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
+        throw ClientPassengerBankNotFoundException;
+      }
+      if (responseOfSelectingPassengerBank[0].balance < responseOfDeletingOrder[0].finalPrice) {
+        throw ClientPassengerBalanceNotEnoughException;
+      }
+
+      const newPassengerBalance = responseOfSelectingPassengerBank[0].balance - responseOfDeletingOrder[0].finalPrice;
+      const responseOfDecreasingPassengerBank = await tx.update(PassengerBankTable).set({
+        balance: newPassengerBalance, 
+        updatedAt: new Date(), 
+      }).where(eq(PassengerBankTable.userId, userId))
+        .returning({
+          balance: PassengerBankTable.balance, 
+        });
+      if (!responseOfDecreasingPassengerBank || responseOfDecreasingPassengerBank.length === 0) {
+        throw ApiPaymentIntentNotFinishedException;
+      }
+
       // increasing the balance of the ridder
       const responseOfSelectingRidderBank = await tx.select({
         balance: RidderBankTable.balance, 
@@ -226,7 +223,7 @@ export class PassengerBankService {
         throw ClientRidderBankNotFoundException;
       }
       
-      const newRidderBalance = responseOfSelectingRidderBank[0].balance + amount;
+      const newRidderBalance = responseOfSelectingRidderBank[0].balance + responseOfDeletingOrder[0].finalPrice;
       const responseOfIncreasingRidderBank = await tx.update(RidderBankTable).set({
         balance: newRidderBalance, 
         updatedAt: new Date(), 
@@ -273,9 +270,8 @@ export class PassengerBankService {
     id: string, 
     userId: string, 
     userName: string, 
-    amount: number, 
   ) {
-    return this._payToFinishOrderById(id, userId, userName, amount);
+    return this._payToFinishOrderById(id, userId, userName);
   }
   /* ================================= Public Payment operation ================================= */
 }
