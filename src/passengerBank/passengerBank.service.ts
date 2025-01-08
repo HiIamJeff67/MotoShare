@@ -160,7 +160,7 @@ export class PassengerBankService {
         throw ApiPrevOrderIdFormException;
       }
       const [type, prevOrderId] = prevOrderData;
-      if (type === "Passenger") {
+      if (type === "PurchaseOrder") {
         const responseOfDeletingPurchaseOrder = await tx.delete(PurchaseOrderTable)
           .where(eq(PurchaseOrderTable.id, prevOrderId))
           .returning({
@@ -169,7 +169,7 @@ export class PassengerBankService {
         if (!responseOfDeletingPurchaseOrder || responseOfDeletingPurchaseOrder.length === 0) {
           throw ClientPurchaseOrderNotFoundException;
         }
-      } else if (type === "Ridder") {
+      } else if (type === "SupplyOrder") {
         const responseOfDeletingSupplyOrder = await tx.delete(SupplyOrderTable)
           .where(eq(SupplyOrderTable.id, prevOrderId ))
           .returning({

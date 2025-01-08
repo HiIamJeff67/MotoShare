@@ -133,7 +133,7 @@ let RidderBankService = class RidderBankService {
                 throw exceptions_1.ApiPrevOrderIdFormException;
             }
             const [type, prevOrderId] = prevOrderData;
-            if (type === "Passenger") {
+            if (type === "PurchaseOrder") {
                 const responseOfDeletingPurchaseOrder = await tx.delete(purchaseOrder_schema_1.PurchaseOrderTable)
                     .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, prevOrderId))
                     .returning({
@@ -143,7 +143,7 @@ let RidderBankService = class RidderBankService {
                     throw exceptions_1.ClientPurchaseOrderNotFoundException;
                 }
             }
-            else if (type === "Ridder") {
+            else if (type === "SupplyOrder") {
                 const responseOfDeletingSupplyOrder = await tx.delete(supplyOrder_schema_1.SupplyOrderTable)
                     .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, prevOrderId))
                     .returning({

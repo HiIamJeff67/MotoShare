@@ -3,7 +3,7 @@ import { PassengerBankService } from './passengerBank.service';
 import { CreatePaymentIntentDto } from './dto/create-passengerBank.dto';
 import { Passenger } from '../auth/decorator';
 import { PassengerType } from '../interfaces';
-import { JwtPassengerGuard } from '../auth/guard';
+import { AnyGuard, JwtPassengerGuard } from '../auth/guard';
 import { Response } from 'express';
 import { HttpStatusCode } from '../enums';
 import { toNumber } from '../utils';
@@ -61,7 +61,7 @@ export class PassengerBankController {
     }
   }
 
-  @UseGuards(JwtPassengerGuard)
+  @UseGuards(new AnyGuard([JwtPassengerGuard]))
   @Post('/payToFinishOrderById')
   async payToFinishOrderById(
     @Passenger() passenger: PassengerType, 
@@ -85,6 +85,7 @@ export class PassengerBankController {
 
       response.status(HttpStatusCode.Ok).send(res[0]);
     } catch (error) {
+      console.log(error);
       response.status(error.status).send({
         case: error.case, 
         message: error.message, 

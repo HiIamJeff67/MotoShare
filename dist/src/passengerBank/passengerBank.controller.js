@@ -66,6 +66,7 @@ let PassengerBankController = class PassengerBankController {
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
         }
         catch (error) {
+            console.log(error);
             response.status(error.status).send({
                 case: error.case,
                 message: error.message,
@@ -95,7 +96,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PassengerBankController.prototype, "createPaymentIntentForAddingBalanceByUserId", null);
 __decorate([
-    (0, common_1.UseGuards)(guard_1.JwtPassengerGuard),
+    (0, common_1.UseGuards)(new guard_1.AnyGuard([guard_1.JwtPassengerGuard])),
     (0, common_1.Post)('/payToFinishOrderById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),

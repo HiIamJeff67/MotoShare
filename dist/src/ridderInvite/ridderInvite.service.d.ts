@@ -12,9 +12,9 @@ export declare class RidderInviteService {
     private updateExpiredRidderInvites;
     createRidderInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
+        createdAt: Date;
         orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
-        createdAt: Date;
         hasConflict: boolean;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
@@ -239,8 +239,8 @@ export declare class RidderInviteService {
         RDV: unknown;
     }[]>;
     searchBetterFirstRidderInvitesByReceiverId(receiverId: string, inviterName: string | undefined, limit: number, offset: number, searchPriorities: SearchPriorityType): Promise<{
-        ridderInvite: any;
         purchaseOrder: any;
+        ridderInvite: any;
     }[]>;
     updateRidderInviteById(id: string, inviterId: string, inviterName: string, updateRidderInviteDto: UpdateRidderInviteDto): Promise<{
         id: string;
@@ -263,7 +263,7 @@ export declare class RidderInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;
