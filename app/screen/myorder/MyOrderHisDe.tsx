@@ -62,9 +62,9 @@ const MyOrderHistoryDetail = () => {
 
   if (user.role === "Ridder") {
     //home.tsx才正確
-    roleText = t("passenger");
+    roleText = t("pure passenger");
   } else if (user.role === "Passenger") {
-    roleText = t("rider");
+    roleText = t("pure rider");
   }
 
   const getToken = async () => {

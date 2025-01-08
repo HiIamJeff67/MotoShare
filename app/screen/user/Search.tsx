@@ -19,6 +19,7 @@ interface UserType {
 
 interface UserInfoType {
   userName: string;
+  email: string;
   info: UserMoreInfo;
 }
 
@@ -29,6 +30,8 @@ interface UserMoreInfo {
   motocyclePhotoUrl: string | null;
   motocycleType: string | null;
   selfIntroduction: string | null;
+  avgStarRating: number | null;
+  createdAt: string | null;
 }
 
 const SearchUser = () => {

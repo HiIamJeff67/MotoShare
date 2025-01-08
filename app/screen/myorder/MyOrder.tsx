@@ -49,9 +49,9 @@ const MyOrder = () => {
   let roleText = "載入中...";
 
   if (user.role === "Ridder") {
-    roleText = t("passenger");
+    roleText = t("pure passenger");
   } else if (user.role === "Passenger") {
-    roleText = t("rider");
+    roleText = t("pure rider");
   }
 
   const getToken = async () => {

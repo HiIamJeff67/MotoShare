@@ -60,10 +60,10 @@ const Order = () => {
     }
   }, [theme]);
 
-  if (user.role == "Ridder") {
-    roleText = t("rider");
-  } else if (user.role == "Passenger") {
-    roleText = t("passenger");
+  if (user.role == "Passenger") {
+    roleText = t("pure rider"); 
+  } else if (user.role == "Ridder") {
+    roleText = t("pure passenger");
   }
 
   const dismissKeyboard = () => {
@@ -204,15 +204,6 @@ const Order = () => {
                     onChangeText={(text) => setSearchInput(text)}
                     onSubmitEditing={handleSearchInputChange}
                   />
-                </View>
-                <View style={styles.addButtonContainer}>
-                  <Pressable onPress={() => {}}>
-                    <Feather
-                      name="plus"
-                      size={moderateScale(24)}
-                      color="black"
-                    />
-                  </Pressable>
                 </View>
               </View>
             }

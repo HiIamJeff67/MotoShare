@@ -20,7 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { HandleGoogleSignIn, HandleLogin } from "./HandleLogin";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 
 const PassengerLogin = () => {
@@ -83,11 +83,6 @@ const PassengerLogin = () => {
       keyboardHideListener.remove();
     };
   }, [translateY]);
-
-  const handleSocialLogin = (provider: "Google" | "Apple") => {
-    Alert.alert("社交登入", `您選擇了 ${provider} 登入1111`);
-    console.log("社交登入", `您選擇了 ${provider} 登入`);
-  };
 
   // 監控 loading 狀態變化，禁用或恢復返回
   useEffect(() => {
@@ -179,7 +174,7 @@ const PassengerLogin = () => {
           <Image source={require("../../../assets/images/password.png")} style={styles.icon} />
           <TextInput
             style={styles.textInput}
-            placeholder={(t("password"))}
+            placeholder={t("password")}
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
@@ -188,25 +183,17 @@ const PassengerLogin = () => {
         </View>
 
         <View style={styles.centerAlign}>
-        <Pressable
-            style={styles.loginButton}
-            onPress={handleLoginSubmit}
-            disabled={isGoogleInProgress || loading || lockButton}
-          >
-            {loading ? (
-              <ActivityIndicator size="large" color="#ffffff" />
-            ) : (
-              <Text style={styles.loginButtonText}>{t("login")}</Text>
-            )}
-        </Pressable>
+          <Pressable style={styles.loginButton} onPress={handleLoginSubmit} disabled={isGoogleInProgress || loading || lockButton}>
+            {loading ? <ActivityIndicator size="large" color="#ffffff" /> : <Text style={styles.loginButtonText}>{t("login")}</Text>}
+          </Pressable>
         </View>
 
         <View style={styles.centerAlign}>
-        <Pressable onPress={() => navigation.navigate(...(["forgetPassword", { role: role }]) as never)}>
-          <Text style={styles.forgotPasswordText}>{t("forgotPassword")}</Text>
-        </Pressable>
+          <Pressable onPress={() => navigation.navigate(...(["forgetPassword", { role: role }] as never))}>
+            <Text style={styles.forgotPasswordText}>{t("forgotPassword")}</Text>
+          </Pressable>
         </View>
-        
+
         <View style={styles.centerAlign}>
           <Text style={styles.otherLoginText}>{t("LoginWithThirdParty")}</Text>
         </View>
@@ -218,10 +205,6 @@ const PassengerLogin = () => {
             disabled={isGoogleInProgress || loading || lockButton}
           >
             <Image source={require("../../../assets/images/google.png")} style={styles.socialIcon} />
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback onPress={() => handleSocialLogin("Apple")}>
-            <Image source={require("../../../assets/images/apple.png")} style={styles.socialIcon} />
           </TouchableWithoutFeedback>
         </View>
       </ScrollView>
@@ -301,8 +284,7 @@ const styles = StyleSheet.create({
     color: "#3498db",
   },
   socialContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
     paddingHorizontal: scale(100),

@@ -1,12 +1,11 @@
 import React from "react";
-import { Text, View, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
+import { Text, View, ScrollView, Alert, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)";
 import * as SecureStore from "expo-secure-store";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 import { OrderDetailStyles } from "./OrderDetail.style";
@@ -60,9 +59,9 @@ const OrderDetail = () => {
   const [order, setOrder] = useState<OrderType>();
   const [styles, setStyles] = useState<any>(null);
 
-  if (user.role == "Ridder") {
+  if (user.role == "Passenger") {
     roleText = t("pure rider");
-  } else if (user.role == "Passenger") {
+  } else if (user.role == "Ridder") {
     roleText = t("pure passenger");
   }
 

@@ -64,12 +64,6 @@ export const OrderStyles = (theme: Theme, insets?: EdgeInsets) => {
             flex: 1,
             fontSize: moderateScale(15),
         },
-        addButtonContainer: {
-            padding: moderateScale(10),
-            backgroundColor: "gray",
-            borderRadius: moderateScale(50),
-            marginLeft: scale(10),
-        },
     });
 }
 

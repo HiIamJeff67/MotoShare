@@ -20,7 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { handleRegister, handleGoogleReg } from "./HandleReg";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
 
 const PassengerReg = () => {
@@ -85,10 +85,6 @@ const PassengerReg = () => {
       keyboardHideListener.remove();
     };
   }, [translateY]);
-
-  const handleSocialLogin = (provider: "Google" | "Apple") => {
-    Alert.alert("社交登入", `您選擇了 ${provider} 登入`);
-  };
 
   // 監控 loading 狀態變化，禁用或恢復返回
   useEffect(() => {
@@ -247,9 +243,6 @@ const PassengerReg = () => {
           >
             <Image source={require("../../../assets/images/google.png")} style={styles.socialIcon} />
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => handleSocialLogin("Apple")}>
-            <Image source={require("../../../assets/images/apple.png")} style={styles.socialIcon} />
-          </TouchableWithoutFeedback>
         </View>
       </ScrollView>
     </Animated.View>
@@ -328,12 +321,11 @@ const styles = StyleSheet.create({
     color: "#3498db",
   },
   socialContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     width: "100%",
     paddingHorizontal: scale(100),
     paddingTop: verticalScale(20),
+    justifyContent: "center",
+    alignItems: "center",
   },
   socialIcon: {
     width: scale(30),

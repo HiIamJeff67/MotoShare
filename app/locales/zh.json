@@ -48,7 +48,7 @@
   "start time": "開始時間",
   "Initial price": "初始價格",
   "Order Description": "訂單描述",
-  "start directly": "可直接開始",
+  "start directly": "別人可直接開始",
   "back": "返回",
   "search order": "搜索訂單",
 
@@ -91,7 +91,7 @@
   "The message from the other": "對方給你的留言",
   "rating": "評分",
   "Please enter your rating": "請輸入您的評分",
-  "please enter your message": "請輸入您的留言",
+  "Please enter your message": "請輸入您的留言",
   "confirm": "確認",
   "comment": "評論",
   "paymentSuccess": "支付成功",
@@ -114,6 +114,7 @@
   "Introduction": "簡介",
   "Offline": "離線",
   "Online": "線上",
+  "No Motorcycle": "沒有機車照片 ",
 
   "account recovery": "帳戶恢復",
   "email:": "電子郵件:",
@@ -152,6 +153,7 @@
   "delete account": "刪除帳戶",
   "Confirm to log out account": "確認登出帳戶",
   "confirm logout info": "你確定要登出帳號？登出後需要再登入才能繼續使用本軟體",
+  "confirm delete account": "確認刪除帳戶",
   "confirm delete info": "你確定要刪除帳號？請提供您目前的密碼已繼續刪除帳號，刪除後將無法再透過本帳號登入",
   "wrong password": "密碼錯誤",
   "enter correct password": "你必須輸入正確密碼才能繼續",

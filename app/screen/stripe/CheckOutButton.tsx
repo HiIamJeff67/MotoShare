@@ -1,5 +1,5 @@
 import { Text, TouchableHighlight } from "react-native";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { moderateScale } from "react-native-size-matters";
 
 export default function CheckOutButton(props: React.ComponentProps<typeof TouchableHighlight> & { title: string }) {
   return (

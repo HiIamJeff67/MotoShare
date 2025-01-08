@@ -41,7 +41,20 @@ export const Styles = (theme: Theme) => {
     body: {
       padding: moderateScale(16),
     },
+    body2: {
+      padding: moderateScale(16),
+      alignItems: "center",
+      justifyContent: "center",
+    },
     title: {
+      marginBottom: verticalScale(5),
+      fontSize: moderateScale(15),
+      fontWeight: "600",
+      color: "#333",
+    },
+    title2: {
+      alignItems: "center",
+      justifyContent: "center",
       marginBottom: verticalScale(5),
       fontSize: moderateScale(15),
       fontWeight: "600",

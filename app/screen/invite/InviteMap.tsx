@@ -1,5 +1,16 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { View, StyleSheet, Alert, Text, Platform, Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  Text,
+  Platform,
+  Keyboard,
+  Pressable,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)";
@@ -258,7 +269,7 @@ const InviteMap = () => {
       if (response.data.hasConflict) {
         Alert.alert(t("Conflict"), t("Conflict Message"));
       } else {
-        Alert.alert("Conflict", "Conflict Message2");
+        Alert.alert(t("Conflict"), t("Conflict Message2"));
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -472,7 +483,7 @@ const InviteMap = () => {
                     onPress={() => updateOrderData()}
                     disabled={loading || lockButton}
                   >
-                    <Text style={styles.buttonText}>{loading ? t("inviting") : t("invite others")}</Text>
+                    <Text style={styles.buttonText}>{loading ? <ActivityIndicator size="large" /> : t("invite others")}</Text>
                   </Pressable>
                 </View>
               </View>

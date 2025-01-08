@@ -17,7 +17,7 @@ export interface UserInfoForUserCard {
     motocycleLicense?: string | null;
     selfIntroduction: string | null;
     avgStarRating: number | null;
-    createdAt: string | null, 
+    createdAt: string | null;
   };
 }
 
@@ -82,10 +82,16 @@ const UserCard: React.FC<Props> = ({ userInfo, isButtonLoading, onClicked = () =
           </View>
         </View>
 
-        {userInfo.info.motocyclePhotoUrl && (
+        {userInfo.info.motocyclePhotoUrl ? (
           <View style={styles.card}>
             <View style={styles.photoContainer}>
               <Image source={{ uri: userInfo.info.motocyclePhotoUrl }} style={styles.motoPhoto} />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.card}>
+            <View style={styles.body2}>
+              <Text style={styles.title2}>{t("No Motorcycle")} </Text>
             </View>
           </View>
         )}

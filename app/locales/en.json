@@ -48,7 +48,7 @@
   "start time": "Starting Time",
   "Initial price": "Initial Price",
   "Order Description": "Order Description",
-  "start directly": "Start Directly",
+  "start directly": "Others Can Start Directly",
   "back": "Back",
   "search order": "Search Order",
 
@@ -91,7 +91,7 @@
   "The message from the other ": "The message from the other",
   "rating": "Rating",
   "Please enter your rating": "Please enter your rating",
-  "please enter your message": "Please enter your message",
+  "Please enter your message": "Please enter your message",
   "confirm": "Confirm",
   "comment": "Comment",
   "paymentSuccess": "Payment Success",
@@ -114,6 +114,7 @@
   "Introduction": "Introduction",
   "Offline": "Offline",
   "Online": "Online",
+  "No Motorcycle": "No Motorcycle Photo ",
 
   "account recovery": "Account Recovery",
   "email:": "Email:",

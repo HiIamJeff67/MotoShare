@@ -45,9 +45,9 @@ const MyOrderDetail = () => {
 
   if (user.role === "Ridder") {
     //home.tsx才正確
-    roleText = t("passenger");
+    roleText = t("pure passenger");
   } else if (user.role === "Passenger") {
-    roleText = t("rider");
+    roleText = t("pure rider");
   }
 
   const getToken = async () => {
@@ -304,7 +304,7 @@ const MyOrderDetail = () => {
                         <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
                           <Text style={styles.actionButtonText}>{t("Payment Cash")}</Text>
                         </Pressable>
-                        <Pressable style={[styles.actionButton]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
+                        <Pressable style={[styles.actionButton, {marginTop: verticalScale(10)}]} onPress={() => OrderStatus(3)} disabled={loading || lockButton}>
                           <Text style={styles.actionButtonText}>{t("Payment Balance")}</Text>
                         </Pressable>
                       </>

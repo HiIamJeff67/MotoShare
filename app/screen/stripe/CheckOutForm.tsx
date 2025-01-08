@@ -6,9 +6,11 @@ import CheckOutButton from "./CheckOutButton";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../(store)/index";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
+import { setUserBalance } from "@/app/(store)/userSlice";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 
 interface CheckOutFormProps {
   amount: number;
@@ -35,14 +37,12 @@ async function fetchPaymentSheetParams(amount: string, user: UserRoleType) {
     throw new Error("Unable to get token");
   }
 
-  let url: string;
+  let url = "";
 
   if (user === "Passenger") {
     url = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
   } else if (user === "Ridder") {
     url = `${process.env.EXPO_PUBLIC_API_URL}/ridderBank/createPaymentIntentForAddingBalanceByUserId`;
-  } else {
-    throw new Error("Invalid user role in fetchPaymentSheetParams");
   }
 
   try {
@@ -78,12 +78,61 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const amountReal = (amount * 100).toString();
   const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.user.role);
+  const balance = useSelector((state: RootState) => state.user.balance);
+  const newBalance = (balance ?? 0) + 100 * 100;
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [lockButton, setLockButton] = useState(false);
+
+  if (!user) {
+    Alert.alert("錯誤", "請重新登入");
+    return;
+  }
+
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (!loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "home" }],
+          })
+        );
+      }
+    }
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation, lockButton]);
 
   const initializePaymentSheet = async () => {
-    if (!user) {
-      Alert.alert("Error", "User role not found");
-      return;
-    }
     const paymentSheetParams = await fetchPaymentSheetParams(amountReal, user);
     const { paymentIntent, ephemeralKey, customer } = paymentSheetParams;
 
@@ -115,7 +164,9 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
+      dispatch(setUserBalance({ balance: newBalance }));
       Alert.alert("Success", "Your order is confirmed!");
+      setLockButton(true);
     }
   };
 
@@ -123,12 +174,9 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
     initializePaymentSheet();
   }, []);
 
-  return (
-    <CheckOutButton
-      style={{}}
-      onPress={openPaymentSheet}
-      disabled={!loading}
-      title={t("checkout")}
-    />
+  return !loading ? (
+    <CheckOutButton onPress={openPaymentSheet} disabled={!loading || lockButton} title="Loading..." />
+  ) : (
+    <CheckOutButton onPress={openPaymentSheet} disabled={!loading || lockButton} title={t("checkout")} />
   );
 }

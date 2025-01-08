@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Switch,
   Modal,
+  TextInput,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
@@ -401,7 +402,7 @@ const MapWithBottomSheet = () => {
       toggleLoading("makeRequest", false);
       toggleLoading("periodicOrder", false);
       setLockButton(true);
-      
+
       if (response.data.hasConflict) {
         Alert.alert(t("Conflict"), t("Conflict Message"));
       } else {
@@ -566,7 +567,6 @@ const MapWithBottomSheet = () => {
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
-          keyboardBehavior="interactive" // 設置鍵盤行為
           enablePanDownToClose={false}
           enableHandlePanningGesture={true}
           enableContentPanningGesture={true}
@@ -619,14 +619,14 @@ const MapWithBottomSheet = () => {
                       </TouchableOpacity>
                     </View>
                   )}
-                  <BottomSheetTextInput
+                  <TextInput
                     style={styles.input}
                     placeholder={t("Initial price")}
                     value={initialPrice}
                     onChangeText={setinitialPrice}
                     placeholderTextColor="gray"
                   />
-                  <BottomSheetTextInput
+                  <TextInput
                     style={styles.input}
                     placeholder={t("Order Description")}
                     value={orderDescription}
@@ -781,16 +781,16 @@ const MapWithBottomSheet = () => {
                                     <View style={styles.cardLeftSection}>
                                       <View style={styles.cardTextContainer}>
                                         <Text style={styles.cardTitle}>
-                                          {t("userName")}:{item.creatorName}
+                                          {t("userName")}: {item.creatorName}
                                         </Text>
                                         <Text style={styles.cardSubtitle}>
-                                          {t("starting point")}:{item.startAddress}
+                                          {t("starting point")}: {item.startAddress}
                                         </Text>
                                         <Text style={styles.cardSubtitle}>
-                                          {t("destination")}:{item.endAddress}
+                                          {t("destination")}: {item.endAddress}
                                         </Text>
                                         <Text style={styles.cardSubtitle}>
-                                          {t("start driving")}:
+                                          {t("start driving")}:{" "}
                                           {new Date(item.startAfter).toLocaleString("en-GB", {
                                             timeZone: "Asia/Taipei",
                                           })}

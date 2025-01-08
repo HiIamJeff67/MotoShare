@@ -22,7 +22,7 @@ const PaymentPage = () => {
     { value: 10, color: "#FFA500" },
     { value: 20, color: "#4169E1" },
     { value: 50, color: "#8A2BE2" },
-    { value: 100, color: "#191970" },
+    { value: 100, color: "#ADD8E6" },
   ];
 
   useEffect(() => {

@@ -232,7 +232,7 @@ const MyInviteDetail = () => {
                     <Text style={styles.title}>{t("remark")}: {invite.inviteBriefDescription}</Text>
                     {invite.inviteStatus == "CHECKING" && (
                       <Pressable style={[styles.inviteButton]} onPress={() => setModalVisible(true)} disabled={loading || lockButton}>
-                        <Text style={styles.inviteButtonText}>{("cancel invite")}</Text>
+                        <Text style={styles.inviteButtonText}>{t("cancel invite")}</Text>
                       </Pressable>
                     )}
                   </>
@@ -270,7 +270,7 @@ const MyInviteDetail = () => {
               >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-                    <Text style={styles.modalText}>{("Please enter the reason for cancellation")}:</Text>
+                    <Text style={styles.modalText}>{t("Please enter the reason for cancellation")}:</Text>
                     <TextInput
                       style={styles.input}
                       placeholder={t("reason for cancellation")}
