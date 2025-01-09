@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
-import { STRIPE_CLIENT } from '../stripe/constants';
+import { STRIPE_CLIENT, STRIPE_CURRENCY_TYPE } from '../stripe/constants';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { StrictUserRoleType } from '../types';
 import { PassengerBankTable } from '../drizzle/schema/passengerBank.schema';
 import { and, eq, sql } from 'drizzle-orm';
-import { ApiEndpointEnvVarNotFoundException, ApiStripeWebhookUnhandleExcpetion, ApiWrongWebhookSignatureException, ClientCreatePassengerBankException, ClientCreateRidderBankException, ClientPassengerBankNotFoundException, ClientRidderBankNotFoundException } from '../exceptions';
+import { ApiEndpointEnvVarNotFoundException, ApiStripeWebhookUnhandleExcpetion, ApiWrongWebhookSignatureException, ClientCreatePassengerBankException, ClientCreateRidderBankException, ClientPassengerBankNotFoundException, ClientRidderBankNotFoundException, ServerStripeSpecifiedUnDefinedTypesException } from '../exceptions';
 import { RidderBankTable } from '../drizzle/schema/ridderBank.schema';
 
 @Injectable()
@@ -19,8 +19,11 @@ export class WebhookService {
   /* ================================= Receive Stripe operation ================================= */
   async receiveSucceededStripePaymentIntent(paymentIntent: Stripe.PaymentIntent) {
     const userRole = paymentIntent.metadata.userRole as StrictUserRoleType;
-    const amount = paymentIntent.amount;
+    const userName = paymentIntent.metadata.userName as string;
+    const email = paymentIntent.metadata.email as string;
+    const paymentIntentId = paymentIntent.id as string;
     const customerId = paymentIntent.customer as string;
+    const amount = paymentIntent.amount;
 
     let response: any = undefined;
     switch(userRole) {
@@ -30,6 +33,19 @@ export class WebhookService {
       case "Ridder":
         response = this._updateRidderBank(customerId, amount);
         break;
+      default:
+        throw ServerStripeSpecifiedUnDefinedTypesException;
+    }
+
+    // the below condidtion means there's error on either case of "Passenger" or case of "Ridder"
+    if (!response) {
+      response = await this._refundPaymentIntentToUser(
+        userRole, 
+        userName, 
+        email, 
+        paymentIntentId, 
+        amount, 
+      );
     }
 
     return response;
@@ -95,6 +111,24 @@ export class WebhookService {
 
 
   /* ================================= Refund back to Stripe operation ================================= */
+  private async _refundPaymentIntentToUser(
+    userRole: string, 
+    userName: string, 
+    email: string, 
+    paymentIntentId: string, 
+    amount: number, 
+  ) {
+    return await this.stripe.refunds.create({
+      payment_intent: paymentIntentId, 
+      currency: STRIPE_CURRENCY_TYPE, 
+      amount: amount, 
+      metadata: {
+        userName: userName, 
+        email: email, 
+        userRole: userRole, 
+      }
+    });
+  }
   /* ================================= Refund back to Stripe operation ================================= */
 
 
@@ -114,6 +148,9 @@ export class WebhookService {
     switch (event.type) {
       case 'payment_intent.succeeded':
         response = await this.receiveSucceededStripePaymentIntent(event.data.object as Stripe.PaymentIntent);
+        break;
+      case 'payment_intent.payment_failed':
+
         break;
       default:
         throw ApiStripeWebhookUnhandleExcpetion;

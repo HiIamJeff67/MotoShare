@@ -5,7 +5,7 @@ import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
 import { PassengerBankTable } from '../drizzle/schema/passengerBank.schema';
 import { ConfigService } from '@nestjs/config';
-import { ApiPaymentIntentNotFinishedException, ApiPrevOrderIdFormException, ClientCreateHistoryException, ClientCreatePassengerBankException, ClientCreateRidderNotificationException, ClientOrderNotFoundException, ClientPassengerBalanceNotEnoughException, ClientPassengerBankNotFoundException, ClientPurchaseOrderNotFoundException, ClientRidderBankNotFoundException, ClientSupplyOrderNotFoundException } from '../exceptions';
+import { ApiPaymentIntentNotFinishedException, ApiPrevOrderIdFormException, ClientCreateHistoryException, ClientCreatePassengerBankException, ClientCreateRidderNotificationException, ClientOrderNotFoundException, ClientOrderStatusNotAllowedToPayException, ClientPassengerBalanceNotEnoughException, ClientPassengerBankNotFoundException, ClientPurchaseOrderNotFoundException, ClientRidderBankNotFoundException, ClientSupplyOrderNotFoundException } from '../exceptions';
 import { and, eq, gte, ne, or } from 'drizzle-orm';
 import { OrderTable } from '../drizzle/schema/order.schema';
 import { PurchaseOrderTable } from '../drizzle/schema/purchaseOrder.schema';
@@ -103,11 +103,7 @@ export class PassengerBankService {
       // since the order will finish directly, so we can just delete it
       // and make a history of it as we done in order.service
       const responseOfDeletingOrder = await tx.delete(OrderTable)
-        .where(and(
-          eq(OrderTable.id, id), 
-          eq(OrderTable.passengerStatus, "UNPAID"), 
-          eq(OrderTable.ridderStatus, "UNPAID"), 
-        ))
+        .where(eq(OrderTable.id, id))
         .returning({
           passengerId: OrderTable.passengerId,
           ridderId: OrderTable.ridderId,
@@ -119,11 +115,17 @@ export class PassengerBankService {
           finalEndCord: OrderTable.finalEndCord,
           finalStartAddress: OrderTable.finalStartAddress,
           finalEndAddress: OrderTable.finalEndAddress,
+          passengerStatus: OrderTable.passengerStatus, 
+          ridderStatus: OrderTable.ridderStatus, 
           startAfter: OrderTable.startAfter,
           endedAt: OrderTable.endedAt,
         });
       if (!responseOfDeletingOrder || responseOfDeletingOrder.length === 0) {
         throw ClientOrderNotFoundException;
+      }
+      if (responseOfDeletingOrder[0].passengerStatus !== "UNPAID" 
+        && responseOfDeletingOrder[0].ridderStatus !== "UNPAID") {
+          throw ClientOrderStatusNotAllowedToPayException;
       }
 
       // also delete the previous purchaseOrder or supplyOrder
@@ -241,6 +243,11 @@ export class PassengerBankService {
     });
   }
   /* ================================= Force to Finish Order by PaymentIntent operation ================================= */
+
+
+  /* ================================= Payback the PaymentIntent operation for Handling Some Error Happened in Database ================================= */
+  
+  /* ================================= Payback the PaymentIntent operation for Handling Some Error Happened in Database ================================= */
 
 
   /* ================================= Get operation(public) ================================= */

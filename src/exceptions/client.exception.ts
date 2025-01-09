@@ -466,13 +466,19 @@ export const ClientUploadFileMimeTypeException = (validMimeType: string[]) => {
 export const ClientPassengerBalanceNotEnoughException = new NotAcceptableException({
     case: "E-C-400", 
     message: "Passenger doesn't have enough balance to pay", 
-})
+});
 
 // E-C-401
 export const ClientRidderBalanceNotEnoughtException = new NotAcceptableException({
     case: "E-C-401", 
     message: "Ridder doesn't have enough balance to pay", 
-})
+});
+
+// E-C-402
+export const ClientOrderStatusNotAllowedToPayException = new NotAcceptableException({
+    case: "E-C-402", 
+    message: "Pay operation in Order not allowed, it is only allowed if the passengerStatus is UNPAID, or the ridderStatus is UNPAID", 
+});
 /* ============================== Error about payment operation ============================== */
 
 // E-C-999

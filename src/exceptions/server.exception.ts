@@ -8,7 +8,13 @@ type AdminFieldType =
 // E-S-001
 export const ServerAllowedPhoneNumberException = new InternalServerErrorException({
     case: "E-S-001",
-    messaage: "Specifying not allowed phone number on IsPhoneNumberString decorator",
+    messaage: "Specify not allowed phone number on IsPhoneNumberString decorator",
+});
+
+// E-S-400
+export const ServerStripeSpecifiedUnDefinedTypesException = new InternalServerErrorException({
+    case: "E-S-400", 
+    message: "Specify undefined types on Stripe", 
 });
 
 // E-S-700
