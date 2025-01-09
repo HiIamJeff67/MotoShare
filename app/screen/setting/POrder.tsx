@@ -10,6 +10,8 @@ import { FlashList } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 import * as SecureStore from "expo-secure-store";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { POrderStyles } from "./POrder.style";
 
 interface OrderType {
   id: string;
@@ -18,15 +20,25 @@ interface OrderType {
 }
 
 const POrder = () => {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.user);
-  const [orders, setOrders] = useState<OrderType[]>([]);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
-  const { t } = useTranslation();
+  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(POrderStyles(theme, insets));
+    }
+  }, [theme]);
 
   const getToken = async () => {
     try {
@@ -114,7 +126,7 @@ const POrder = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
+      {isLoading || !styles || !theme ? (
         <LoadingWrapper />
       ) : (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -171,73 +183,5 @@ const POrder = () => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingBottom: verticalScale(15),
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5,
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: verticalScale(15),
-  },
-  searchBox: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    borderRadius: moderateScale(50),
-    borderWidth: scale(1),
-    borderColor: "gray",
-    backgroundColor: "white",
-    paddingHorizontal: scale(16),
-    height: verticalScale(40),
-  },
-  searchInput: {
-    marginLeft: scale(8),
-    flex: 1,
-    fontSize: moderateScale(15),
-  },
-  addButtonContainer: {
-    padding: moderateScale(10),
-    backgroundColor: "gray",
-    borderRadius: moderateScale(50),
-    marginLeft: scale(10),
-  },
-});
 
 export default POrder;

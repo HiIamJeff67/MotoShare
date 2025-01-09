@@ -15,9 +15,15 @@ export const SettingButtonStyles = (theme: Theme, insets?: EdgeInsets) => {
             borderBottomWidth: scale(1),
             borderBottomColor: _colors.border,
         }, 
+        icon: {
+            width: moderateScale(24), 
+            height: moderateScale(24), 
+            tintColor: _colors.text, 
+            marginLeft: scale(12), 
+        }, 
         itemTitleContainer: {
             flex: 1,
-            marginLeft: scale(15), 
+            marginLeft: scale(8), 
             flexDirection: "column", 
             gap: verticalScale(2), 
         }, 

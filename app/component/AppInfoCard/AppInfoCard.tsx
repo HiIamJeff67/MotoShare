@@ -1,6 +1,6 @@
 import { Theme } from '@/theme/theme';
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
 import { AppInfoCardStyles } from './AppInfoCard.style';
 
 export interface AppInfoCardInterface {
@@ -22,7 +22,7 @@ const AppInfoCard = (props: AppInfoCardInterface) => {
 
     return (
         props.iconSource && 
-            <Pressable style={styles.container} onPress={props.callBack} disabled={props.isOpaqued}>
+            <TouchableOpacity style={styles.container} onPress={props.callBack} disabled={props.isOpaqued}>
                 <View style={{ ...styles.overlay, ...(props.isOpaqued && styles.overlayOpaqued) }}>
                     <View style={styles.topBarContainer}>
                         <View style={styles.topBarInnerLeftContainer}>
@@ -40,7 +40,7 @@ const AppInfoCard = (props: AppInfoCardInterface) => {
                         <Text style={styles.description}>{props.description}</Text>
                     </View>
                 </View>
-            </Pressable>
+            </TouchableOpacity>
     )
 }
 

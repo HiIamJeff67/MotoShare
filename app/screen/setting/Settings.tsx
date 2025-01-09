@@ -111,11 +111,13 @@ const Settings = () => {
       ? <LoadingWrapper />
       : (<View style={styles.container}>
           <SettingButton 
+            icon={require("../../../assets/images/themes.png")}
             title={t("theme")}
             theme={theme}
             callback={showThemeModal} 
           />
           <SettingButton 
+            icon={require("../../../assets/images/earth.png")}
             title={t("language")} 
             theme={theme}
             callback={showLanguageModal}

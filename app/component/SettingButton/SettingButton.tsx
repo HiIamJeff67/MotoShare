@@ -9,6 +9,7 @@ import { SettingButtonStyles } from './SettingButton.style';
 
 export interface SettingButtonProps {
     title: string;
+    icon?: any;
     extraContent?: string;
     badgeCount?: number;
     theme: Theme;
@@ -20,6 +21,7 @@ const SettingButton = (props: SettingButtonProps) => {
 
     return (
         <Pressable style={styles.items} onPress={props.callback}>
+            {props.icon && <Image style={styles.icon} source={props.icon} />}
             <View style={styles.itemTitleContainer}>
                 <Text style={styles.itemTitle}>{props.title}</Text>
                 {props.extraContent && props.extraContent.length !== 0 && <Text style={styles.extraContent}>{props.extraContent}</Text>}

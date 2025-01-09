@@ -9,31 +9,30 @@ import { useRoute, useNavigation, CommonActions } from "@react-navigation/native
 import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
-
-// 定義每個訂單的資料結構
-interface OrderType {
-  id: string;
-  description: string;
-  tolerableRDV: number;
-  startAfter: Date;
-  initPrice: number;
-  startAddress: string;
-  endAddress: string;
-  updatedAt: Date;
-  endedAt: Date;
-  scheduledDay: string;
-}
+import { POrderInterface } from "@/interfaces/order.interface";
+import { POrderDetailStyles } from "./POrderDetail.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const POrderDetail = () => {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.user);
-  const [order, setOrder] = useState<OrderType>();
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+  const route = useRoute();
+  const { orderid } = route.params as { orderid: string };
+
   const [isLoading, setIsLoading] = useState(true);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
-  const route = useRoute();
-  const { orderid } = route.params as { orderid: string };
-  const navigation = useNavigation();
-  const { t } = useTranslation();
+  const [order, setOrder] = useState<POrderInterface>();
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(POrderDetailStyles(theme, insets));
+    }
+  }, [theme]);
 
   const getToken = async () => {
     try {
@@ -186,7 +185,7 @@ const POrderDetail = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
+      {isLoading || !styles || !theme ? (
         <LoadingWrapper />
       ) : (
         <ScrollView>
@@ -224,7 +223,7 @@ const POrderDetail = () => {
                         {t("Path deviation")}: {order.tolerableRDV}
                       </Text>
                     ) : null}
-                    <Text style={styles.title}>
+                    <Text style={styles.description}>
                       {t("remark")}: {order.description}
                     </Text>
                     <Pressable style={[styles.inviteButton]} disabled={isButtonLoading || lockButton} onPress={() => deleteOrder()}>
@@ -240,91 +239,5 @@ const POrderDetail = () => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: scale(20), // 設置水平間距
-    paddingTop: verticalScale(15), // 設置垂直間距
-    paddingBottom: verticalScale(30), // 設置垂直間距
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5, // Android 的陰影
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  searchBox: {
-    height: verticalScale(40),
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    borderRadius: moderateScale(50),
-    borderWidth: scale(1),
-    borderColor: "gray",
-    backgroundColor: "white",
-    paddingHorizontal: scale(16),
-  },
-  searchInput: {
-    marginLeft: scale(8),
-    flex: 1,
-    fontSize: moderateScale(20),
-  },
-  addButtonContainer: {
-    padding: moderateScale(12),
-    backgroundColor: "gray",
-    borderRadius: moderateScale(50),
-    marginLeft: scale(10),
-  },
-  inviteButton: {
-    borderRadius: moderateScale(12),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.3,
-    shadowRadius: moderateScale(4),
-    backgroundColor: "#8B0000",
-    elevation: 5,
-    height: verticalScale(40),
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  inviteButtonText: {
-    fontSize: moderateScale(18),
-    fontWeight: "bold",
-    color: "white",
-  },
-});
 
 export default POrderDetail;

@@ -1,91 +1,200 @@
-// import { RootState } from '@/app/(store)';
-// import React, { useEffect, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
-// import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
-// import { scale, verticalScale } from 'react-native-size-matters';
-// import { useSelector } from 'react-redux';
-// import { NotificationStyles } from './Notification.style';
-// import LoadingWrapper from '@/app/component/LoadingWrapper/LoadingWrapper';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import { Alert, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
+import { RootState } from "../../(store)";
+import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { FlashList } from "@shopify/flash-list";
+import { useDispatch } from "react-redux";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import { clearNotificationNewMessage } from "@/app/(store)/webSocketSlice";
+import { NotificationStyles } from "./Notification.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import NotificationInfoCard from "@/app/component/NotificationInfoCard/NotificationDetailCard";
+import { NotificationInterface } from "@/interfaces/userNotifications.interface";
 
-// const notificationsData = [
-//   { id: '1', title: '新消息通知', description: '您有一條新消息。' },
-//   { id: '2', title: '系統更新', description: '系統已成功更新。' },
-//   { id: '3', title: '活動提醒', description: '不要錯過即將到來的活動！' },
-// ];
+const Notification = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+  const websocketClient = useSelector((state: RootState) => state.websocket);
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<NotificationInterface[]>([]);
+  const [selectedNotificationInfo, setSelectedNotificationInfo] = useState<any>(null);
+  const [styles, setStyles] = useState<any>(null);
 
-// const Notification = () => {
-//     const user = useSelector((state: RootState) => state.user);
-//     const theme = user.theme;
-//     const { t } = useTranslation();
+  useEffect(() => {
+    if (theme) {
+      setStyles(NotificationStyles(theme, insets));
+    }
+  }, [theme]);
 
-//     const [styles, setStyles] = useState<any>(null)
+  useEffect(() => {
+    setNotifications((prev) => {
+      const merged = [...prev, ...websocketClient.notifications];
+      return merged.filter(
+        (item, index, array) => array.findIndex((i) => i.id === item.id) !== index
+      );
+    });
+  }, [websocketClient.notifications]);
 
-//     useEffect(() => {
-//         if (theme) {
-//             setStyles(NotificationStyles(theme));
-//         }
-//     }, [theme]);
+  useEffect(() => {
+    const fetchToken = async () => {
+      const userToken = await SecureStore.getItemAsync("userToken");
+      setToken(userToken);
+    }
 
-//   const renderItem = ({ item }) => (
-//     <View style={styles.notificationItem}>
-//       <Text style={styles.notificationTitle}>{item.title}</Text>
-//       <Text style={styles.notificationDescription}>{item.description}</Text>
-//     </View>
-//   );
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      dispatch(clearNotificationNewMessage());
+    }, 1000);
 
-//   return (
-//     !styles || !theme
-//         ? <LoadingWrapper />
-//         : (<View style={styles.container}>
-//             <Text style={styles.title}>{t("Notification List")}</Text>
-//             <FlatList
-//                 data={notificationsData}
-//                 renderItem={renderItem}
-//                 keyExtractor={item => item.id}
-//             />
-//             <Pressable style={styles.button} onPress={() => {/* Handle action */}}>
-//                 <Text style={styles.buttonText}>{t("Clear All Notifications")}</Text>
-//             </Pressable>
-//         </View>)
-//   );
-// };
+    fetchToken();
+    return () => clearTimeout(timer);
+  }, []);
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: scale(20),
-//     backgroundColor: '#fff',
-//   },
-//   title: {
-//     fontSize: scale(24),
-//     fontWeight: 'bold',
-//     marginBottom: verticalScale(20),
-//   },
-//   notificationItem: {
-//     padding: scale(15),
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#d3d3d3',
-//     marginBottom: verticalScale(10),
-//   },
-//   notificationTitle: {
-//     fontSize: scale(18),
-//     fontWeight: 'bold',
-//   },
-//   notificationDescription: {
-//     fontSize: scale(16),
-//     color: '#555',
-//   },
-//   button: {
-//     backgroundColor: '#3498db',
-//     paddingVertical: verticalScale(10),
-//     borderRadius: scale(5),
-//     alignItems: 'center',
-//     marginTop: verticalScale(20),
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     fontSize: scale(16),
-//   },
-// });
+  useEffect(() => {
+    getUserNotifications();
+  }, [token]);
 
-// export default Notification;
+  // get the static notifications from database
+  const getUserNotifications = async () => {
+    if (token && token.length !== 0) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          user.role === "Passenger" 
+            ? `${process.env.EXPO_PUBLIC_API_URL}/passengerNotification/searchMyPaginationPassengerNotifications`
+            : `${process.env.EXPO_PUBLIC_API_URL}/ridderNotification/searchMyPaginationPassengerNotifications`, 
+            {
+              params: {
+                "limit": 10, 
+                "offset": 0, 
+              }, 
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded", 
+                "Authorization": `Bearer ${token}`, 
+              }
+            }
+        )
+        setNotifications((prev) => [...prev, ...response.data]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  const getUserNotificationInfo = async (item: NotificationInterface, index: number) => {
+    if (token && token.length !== 0) {
+      // we will also update the isRead field of that specified notification
+      try {
+        setIsDataLoading(true);
+        const response = await axios.get(
+          user.role === "Passenger"
+            ? `${process.env.EXPO_PUBLIC_API_URL}/passengerNotification/getMyPassengerNotificationById`
+            : `${process.env.EXPO_PUBLIC_API_URL}/ridderNotification/getMyRidderNotificationById`, 
+          {
+            params: {
+              "id": item.id, 
+            }, 
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded", 
+              "Authorization": `Bearer ${token}`, 
+            }
+          }
+        )
+        console.log(response.data);
+        setSelectedNotificationInfo(response.data);
+
+        if (!item.isRead) {
+          await axios.patch(
+            user.role === "Passenger"
+              ? `${process.env.EXPO_PUBLIC_API_URL}/passengerNotification/updateMyPassengerNotificationToReadStatus`
+              : `${process.env.EXPO_PUBLIC_API_URL}/ridderNotification/updateMyRidderNotificationToReadStatus`, 
+            null, 
+            {
+              params: {
+                "id": item.id, 
+              }, 
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded", 
+                "Authorization": `Bearer ${token}`, 
+              }
+            }
+          )
+          setNotifications(prev => {
+            const updatedNotifications = prev;
+            updatedNotifications[index].isRead = true;
+            return updatedNotifications;
+          });
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          Alert.alert(error.message);
+        } else {
+          console.log(error);
+        }
+      } finally {
+        setIsDataLoading(false);
+      }
+    }
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      {isLoading || !styles || !theme ? (
+        <LoadingWrapper />
+      ) : (
+        <View style={styles.outerContainer}>
+            <ScrollView 
+              style={styles.container} 
+              showsVerticalScrollIndicator={false}
+            >
+              {notifications.map((item, index) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[styles.container, item.isRead ? styles.readedCard : null]}
+                  onPress={() => getUserNotificationInfo(item, index)}
+                >
+                  <View style={styles.card}>
+                    <View style={styles.header}>
+                      <Text style={styles.number}>ID: {item.id}</Text>
+                    </View>
+                    <View style={styles.body}>
+                      <Text style={styles.title}>Title: {item.title}</Text>
+                      <Text style={styles.title}>
+                        NotificationType: {item.notificationType}
+                      </Text>
+                      <Text style={styles.title}>
+                        CreatedAt:{" "}
+                        {new Date(item.createdAt).toLocaleString("en-GB", {
+                          timeZone: "Asia/Taipei",
+                        })}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {selectedNotificationInfo && selectedNotificationInfo.length !== 0 &&
+              <NotificationInfoCard 
+                notificationDetail={selectedNotificationInfo}
+                isDataLoading={isDataLoading}
+                onClose={() => setSelectedNotificationInfo(null)}
+                theme={theme}
+              />
+            }
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default Notification;

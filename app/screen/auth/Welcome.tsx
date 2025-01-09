@@ -8,6 +8,7 @@ import i18n from "../../locales/i18next";
 import { useTranslation } from "react-i18next";
 import { setUserLanguageSettings } from "@/app/(store)/userSlice";
 import { useDispatch } from "react-redux";
+import { Dropdown } from "react-native-element-dropdown";
 
 const WelcomeScreen = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const WelcomeScreen = () => {
   const { colors } = theme;
   const { t } = useTranslation();
 
+  const [dropDownDisplay, setDropDownDisplay] = useState(false);
   const [language, setLanguage] = useState("zh"); // 默認語言
 
   return (
@@ -35,14 +37,15 @@ const WelcomeScreen = () => {
       <TouchableOpacity
         onPress={() => {
           const newLanguage = language === "zh" ? "en" : "zh";
+          setDropDownDisplay(prev => !prev);
           setLanguage(newLanguage);
           dispatch(setUserLanguageSettings({ language: newLanguage }));
         }}
         style={{
           backgroundColor: "#3498db",
-          borderRadius: moderateScale(5),
-          height: verticalScale(40),
-          width: scale(60),
+          borderRadius: "50%",
+          width: moderateScale(60),
+          height: moderateScale(60),
           justifyContent: "center",
           alignItems: "center",
         }}

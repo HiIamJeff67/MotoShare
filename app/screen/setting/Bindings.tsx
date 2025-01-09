@@ -380,7 +380,7 @@ const Bindings = () => {
                 placeholder: t("phone 886"),
                 isSecureText: false,
                 inputSideButton: {
-                  title: "code",
+                  title: t("send code"),
                   callback: () => {},
                 },
               },
