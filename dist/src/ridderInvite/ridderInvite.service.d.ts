@@ -13,8 +13,8 @@ export declare class RidderInviteService {
     createRidderInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createRidderInviteDto: CreateRidderInviteDto): Promise<{
         id: string;
         createdAt: Date;
-        orderId: string;
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
+        orderId: string;
         hasConflict: boolean;
     }[]>;
     getRidderInviteById(id: string, userId: string): Promise<{
@@ -263,7 +263,7 @@ export declare class RidderInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
+        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
     }[] | {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;

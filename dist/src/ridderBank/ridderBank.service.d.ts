@@ -9,7 +9,6 @@ export declare class RidderBankService {
     private db;
     constructor(config: ConfigService, passengerNotification: PassengerNotificationService, stripe: Stripe, db: DrizzleDB);
     private _createPaymentIntentForAddingBalanceByUserId;
-    private _payToFinishOrderById;
     getMyBalacne(userId: string): Promise<{
         balance: number;
     }[]>;
@@ -19,7 +18,4 @@ export declare class RidderBankService {
         customer: string;
         publishableKey: any;
     }>;
-    payToFinishOrderById(id: string, userId: string, userName: string, amount: number): Promise<{
-        userBalance: number;
-    }[]>;
 }

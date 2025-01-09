@@ -55,23 +55,6 @@ let RidderBankController = class RidderBankController {
             });
         }
     }
-    async payToFinishOrderById(ridder, id, createPaymentIntentDto, response) {
-        if ((0, utils_1.toNumber)(createPaymentIntentDto.amount) <= 0) {
-            throw exceptions_1.ApiNonPositiveAmountDetectedException;
-        }
-        try {
-            const res = await this.ridderBankService.payToFinishOrderById(id, ridder.id, ridder.userName, (0, utils_1.toNumber)(createPaymentIntentDto.amount));
-            if (!res || res.length === 0)
-                throw exceptions_1.ApiPaymentIntentNotFinishedException;
-            response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
-        }
-        catch (error) {
-            response.status(error.status).send({
-                case: error.case,
-                message: error.message,
-            });
-        }
-    }
 };
 exports.RidderBankController = RidderBankController;
 __decorate([
@@ -94,17 +77,6 @@ __decorate([
         create_ridderBank_dto_1.CreatePaymentIntentDto, Object]),
     __metadata("design:returntype", Promise)
 ], RidderBankController.prototype, "createPaymentIntentForAddingBalanceByUserId", null);
-__decorate([
-    (0, common_1.UseGuards)(guard_1.JwtRidderGuard),
-    (0, common_1.Post)('/payToFinishOrderById'),
-    __param(0, (0, decorator_1.Ridder)()),
-    __param(1, (0, common_1.Query)('id')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.RidderType, String, create_ridderBank_dto_1.CreatePaymentIntentDto, Object]),
-    __metadata("design:returntype", Promise)
-], RidderBankController.prototype, "payToFinishOrderById", null);
 exports.RidderBankController = RidderBankController = __decorate([
     (0, common_1.Controller)('ridderBank'),
     __metadata("design:paramtypes", [ridderBank_service_1.RidderBankService])

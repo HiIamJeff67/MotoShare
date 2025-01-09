@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from '../drizzle/drizzle.module';
 import { DrizzleDB } from '../drizzle/types/drizzle';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { PassengerTable, PassengerInfoTable, PassengerNotificationTable } from '../drizzle/schema/schema';
 import { NotificationGateway } from './notification.gateway';
 import { ConfigService } from '@nestjs/config';
@@ -138,7 +138,11 @@ export class PassengerNotificationService {
             createdAt: PassengerNotificationTable.createdAt, 
         }).from(PassengerNotificationTable)
           .where(eq(PassengerNotificationTable.userId, userId))
-          .orderBy(desc(PassengerNotificationTable.createdAt))
+          .orderBy(
+            // since isRead is a boolean value, and true means '1', false means '0', so we sort it in descending order
+            desc(PassengerNotificationTable.isRead), 
+            desc(PassengerNotificationTable.createdAt), 
+          )
           .limit(limit)
           .offset(offset);
     }

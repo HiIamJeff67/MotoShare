@@ -20,7 +20,7 @@ export declare class PassengerBankService {
         customer: string;
         publishableKey: any;
     }>;
-    payToFinishOrderById(id: string, userId: string, userName: string, amount: number): Promise<{
+    payToFinishOrderById(id: string, userId: string, userName: string): Promise<{
         userBalance: number;
     }[]>;
 }

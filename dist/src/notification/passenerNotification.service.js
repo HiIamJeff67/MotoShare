@@ -98,7 +98,7 @@ let PassengerNotificationService = class PassengerNotificationService {
             createdAt: schema_1.PassengerNotificationTable.createdAt,
         }).from(schema_1.PassengerNotificationTable)
             .where((0, drizzle_orm_1.eq)(schema_1.PassengerNotificationTable.userId, userId))
-            .orderBy((0, drizzle_orm_1.desc)(schema_1.PassengerNotificationTable.createdAt))
+            .orderBy((0, drizzle_orm_1.desc)(schema_1.PassengerNotificationTable.isRead), (0, drizzle_orm_1.desc)(schema_1.PassengerNotificationTable.createdAt))
             .limit(limit)
             .offset(offset);
     }

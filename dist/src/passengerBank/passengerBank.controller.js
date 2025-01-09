@@ -55,12 +55,9 @@ let PassengerBankController = class PassengerBankController {
             });
         }
     }
-    async payToFinishOrderById(passenger, id, createPaymentIntentDto, response) {
-        if ((0, utils_1.toNumber)(createPaymentIntentDto.amount) <= 0) {
-            throw exceptions_1.ApiNonPositiveAmountDetectedException;
-        }
+    async payToFinishOrderById(passenger, id, response) {
         try {
-            const res = await this.passengerBankService.payToFinishOrderById(id, passenger.id, passenger.userName, (0, utils_1.toNumber)(createPaymentIntentDto.amount));
+            const res = await this.passengerBankService.payToFinishOrderById(id, passenger.id, passenger.userName);
             if (!res || res.length === 0)
                 throw exceptions_1.ApiPaymentIntentNotFinishedException;
             response.status(enums_1.HttpStatusCode.Ok).send(res[0]);
@@ -100,10 +97,9 @@ __decorate([
     (0, common_1.Post)('/payToFinishOrderById'),
     __param(0, (0, decorator_1.Passenger)()),
     __param(1, (0, common_1.Query)('id')),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Res)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [interfaces_1.PassengerType, String, create_passengerBank_dto_1.CreatePaymentIntentDto, Object]),
+    __metadata("design:paramtypes", [interfaces_1.PassengerType, String, Object]),
     __metadata("design:returntype", Promise)
 ], PassengerBankController.prototype, "payToFinishOrderById", null);
 exports.PassengerBankController = PassengerBankController = __decorate([

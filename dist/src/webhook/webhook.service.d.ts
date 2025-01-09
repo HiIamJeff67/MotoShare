@@ -7,5 +7,6 @@ export declare class WebhookService {
     receiveSucceededStripePaymentIntent(paymentIntent: Stripe.PaymentIntent): Promise<any>;
     private _updatePassengerBank;
     private _updateRidderBank;
+    private _refundPaymentIntentToUser;
     handleStripeWebhook(body: Buffer, signature: string): Promise<any>;
 }

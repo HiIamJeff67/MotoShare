@@ -29,7 +29,7 @@ let NotificationGateway = class NotificationGateway {
         this.db = db;
         this.socketMap = new Map();
     }
-    validateToken(token) {
+    _validateToken(token) {
         const secret = this.configService.get("JWT_SECRET");
         if (!secret)
             throw exceptions_1.ServerExtractJwtSecretEnvVariableException;
@@ -41,7 +41,7 @@ let NotificationGateway = class NotificationGateway {
             throw exceptions_1.ClientTokenExpiredException;
         }
     }
-    async getUserById(userId, token, userRole) {
+    async _getUserById(userId, token, userRole) {
         const user = (userRole === "Passenger")
             ? await this.db.select({
                 id: schema_1.PassengerTable.id,
@@ -78,15 +78,14 @@ let NotificationGateway = class NotificationGateway {
             const userRole = socket.handshake.headers.userrole;
             if (!userRole)
                 throw exceptions_1.ApiMissingUserRoleInHeaderWhileConnectingToSocketException;
-            const payload = this.validateToken(token);
+            const payload = this._validateToken(token);
             if (!payload || !payload.sub)
                 throw exceptions_1.ServerTranslateBearerTokenToPayloadException;
-            const user = await this.getUserById(payload.sub, token, userRole);
+            const user = await this._getUserById(payload.sub, token, userRole);
             if (!user)
                 throw (userRole === "Passenger"
                     ? exceptions_1.ClientPassengerNotFoundException
                     : exceptions_1.ClientRidderNotFoundException);
-            console.log({ ...user, socketId: socket.id });
             if (this.socketMap.has(user.id)) {
                 const existingUser = this.socketMap.get(user.id);
                 if (existingUser) {
@@ -99,7 +98,6 @@ let NotificationGateway = class NotificationGateway {
                 socket: socket,
             });
             socket.join(`${socket.id}'s notification`);
-            console.log(`User ${user.id} connected with socket ID ${socket.id}`);
             return {
                 status: enums_1.HttpStatusCode.SwitchingProtocols,
                 upgrade: socket.handshake.headers.upgrade,
@@ -122,7 +120,6 @@ let NotificationGateway = class NotificationGateway {
                 throw exceptions_1.ServerUserNotFoundInSocketMapException;
             socket.disconnect(true);
             this.socketMap.delete(userId);
-            console.log(`User ${userId} disconnected with socket ID ${socket.id}`);
             return {
                 status: enums_1.HttpStatusCode.Ok,
                 message: `Good bye! User ${userData.userName} disconnected with socket ID ${socket.id}`,
@@ -144,21 +141,14 @@ let NotificationGateway = class NotificationGateway {
     notifyPassenger(userId, notification) {
         const socketUser = this.socketMap.get(userId);
         if (socketUser && socketUser.role === "Passenger") {
-            console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
             this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
         }
     }
     notifyRidder(userId, notification) {
         const socketUser = this.socketMap.get(userId);
         if (socketUser && socketUser.role === "Ridder") {
-            console.log(`Pushing to room : ${socketUser.socket.id}'s notification`);
             this.server.to(`${socketUser.socket.id}'s notification`).emit(`notification`, notification);
         }
-    }
-    onTest(data) {
-        const event = 'test';
-        this.server.emit('test', { event, data });
-        return { event, data };
     }
 };
 exports.NotificationGateway = NotificationGateway;
@@ -172,13 +162,6 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
 ], NotificationGateway.prototype, "forceDisconnect", null);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('test'),
-    __param(0, (0, websockets_1.MessageBody)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Object)
-], NotificationGateway.prototype, "onTest", null);
 exports.NotificationGateway = NotificationGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({ namespace: 'notifications' }),
     __param(1, (0, common_1.Inject)(drizzle_module_1.DRIZZLE)),

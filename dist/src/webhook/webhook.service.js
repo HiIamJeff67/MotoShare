@@ -28,8 +28,11 @@ let WebhookService = class WebhookService {
     }
     async receiveSucceededStripePaymentIntent(paymentIntent) {
         const userRole = paymentIntent.metadata.userRole;
-        const amount = paymentIntent.amount;
+        const userName = paymentIntent.metadata.userName;
+        const email = paymentIntent.metadata.email;
+        const paymentIntentId = paymentIntent.id;
         const customerId = paymentIntent.customer;
+        const amount = paymentIntent.amount;
         let response = undefined;
         switch (userRole) {
             case "Passenger":
@@ -38,6 +41,11 @@ let WebhookService = class WebhookService {
             case "Ridder":
                 response = this._updateRidderBank(customerId, amount);
                 break;
+            default:
+                throw exceptions_1.ServerStripeSpecifiedUnDefinedTypesException;
+        }
+        if (!response) {
+            response = await this._refundPaymentIntentToUser(userRole, userName, email, paymentIntentId, amount);
         }
         return response;
     }
@@ -81,6 +89,18 @@ let WebhookService = class WebhookService {
             });
         });
     }
+    async _refundPaymentIntentToUser(userRole, userName, email, paymentIntentId, amount) {
+        return await this.stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            currency: constants_1.STRIPE_CURRENCY_TYPE,
+            amount: amount,
+            metadata: {
+                userName: userName,
+                email: email,
+                userRole: userRole,
+            }
+        });
+    }
     async handleStripeWebhook(body, signature) {
         const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
         if (!endpointSecret)
@@ -90,6 +110,8 @@ let WebhookService = class WebhookService {
         switch (event.type) {
             case 'payment_intent.succeeded':
                 response = await this.receiveSucceededStripePaymentIntent(event.data.object);
+                break;
+            case 'payment_intent.payment_failed':
                 break;
             default:
                 throw exceptions_1.ApiStripeWebhookUnhandleExcpetion;

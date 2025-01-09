@@ -138,7 +138,11 @@ export class RidderNotificationService {
             createdAt: RidderNotificationTable.createdAt, 
         }).from(RidderNotificationTable)
           .where(eq(RidderNotificationTable.userId, userId))
-          .orderBy(desc(RidderNotificationTable.createdAt))
+          .orderBy(
+            // since isRead is a boolean value, and true means '1', false means '0', so we sort it in descending order
+            desc(RidderNotificationTable.isRead), 
+            desc(RidderNotificationTable.createdAt), 
+          )
           .limit(limit)
           .offset(offset);
     }

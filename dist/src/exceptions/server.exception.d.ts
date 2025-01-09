@@ -1,6 +1,7 @@
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 type AdminFieldType = "passengerAdmin's userName" | "passengerAdmin's email" | "passengerAdmin's password" | "passengerAdmin's userName or email" | "ridderAdmin's userName" | "ridderAdmin's email" | "ridderAdmin's password" | "ridderAdmin's userName or email";
 export declare const ServerAllowedPhoneNumberException: InternalServerErrorException;
+export declare const ServerStripeSpecifiedUnDefinedTypesException: InternalServerErrorException;
 export declare const ServerTranslateBearerTokenToPayloadException: InternalServerErrorException;
 export declare const ServerUserNotFoundInSocketMapException: NotFoundException;
 export declare const ServerNeonConnectionException: InternalServerErrorException;

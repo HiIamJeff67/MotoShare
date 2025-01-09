@@ -1,10 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerUnknownException = exports.ServerExtractGoogleAuthUrlEnvVariableException = exports.ServerExtractAdminAccountEnvVariableException = exports.ServerExtractCronSecretEnvVariableException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerAllowedPhoneNumberException = void 0;
+exports.ServerUnknownException = exports.ServerExtractGoogleAuthUrlEnvVariableException = exports.ServerExtractAdminAccountEnvVariableException = exports.ServerExtractCronSecretEnvVariableException = exports.ServerExtractJwtSecretEnvVariableException = exports.ServerSupabaseUploadFileException = exports.ServerSupabaseUploadFileParaNotFoundException = exports.ServerSupabaseEnvVarNotFoundException = exports.ServerSupabaseConnectionException = exports.ServerNeonAutoUpdateExpiredOrderException = exports.ServerNeonautoUpdateExpiredRidderInviteException = exports.ServerNeonAutoUpdateExpiredPassengerInviteException = exports.ServerNeonAutoUpdateExpiredSupplyOrderException = exports.ServerNeonAutoUpdateExpiredPurchaseOrderException = exports.ServerNeonEnvVarNotFoundException = exports.ServerNeonConnectionException = exports.ServerUserNotFoundInSocketMapException = exports.ServerTranslateBearerTokenToPayloadException = exports.ServerStripeSpecifiedUnDefinedTypesException = exports.ServerAllowedPhoneNumberException = void 0;
 const common_1 = require("@nestjs/common");
 exports.ServerAllowedPhoneNumberException = new common_1.InternalServerErrorException({
     case: "E-S-001",
-    messaage: "Specifying not allowed phone number on IsPhoneNumberString decorator",
+    messaage: "Specify not allowed phone number on IsPhoneNumberString decorator",
+});
+exports.ServerStripeSpecifiedUnDefinedTypesException = new common_1.InternalServerErrorException({
+    case: "E-S-400",
+    message: "Specify undefined types on Stripe",
 });
 exports.ServerTranslateBearerTokenToPayloadException = new common_1.InternalServerErrorException({
     case: "E-S-700",

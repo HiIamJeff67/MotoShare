@@ -21,13 +21,7 @@ const config_1 = require("@nestjs/config");
 const ridderBank_schema_1 = require("../drizzle/schema/ridderBank.schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const exceptions_1 = require("../exceptions");
-const order_schema_1 = require("../drizzle/schema/order.schema");
-const purchaseOrder_schema_1 = require("../drizzle/schema/purchaseOrder.schema");
-const supplyOrder_schema_1 = require("../drizzle/schema/supplyOrder.schema");
-const history_schema_1 = require("../drizzle/schema/history.schema");
 const passenerNotification_service_1 = require("../notification/passenerNotification.service");
-const notificationTemplate_1 = require("../notification/notificationTemplate");
-const passengerBank_schema_1 = require("../drizzle/schema/passengerBank.schema");
 let RidderBankService = class RidderBankService {
     constructor(config, passengerNotification, stripe, db) {
         this.config = config;
@@ -85,125 +79,6 @@ let RidderBankService = class RidderBankService {
             publishableKey: this.config.get("STRIPE_PK_API_KEY"),
         };
     }
-    async _payToFinishOrderById(id, userId, userName, amount) {
-        return await this.db.transaction(async (tx) => {
-            const responseOfSelectingRidderBank = await tx.select({
-                balance: ridderBank_schema_1.RidderBankTable.balance,
-            }).from(ridderBank_schema_1.RidderBankTable)
-                .where((0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.userId, userId))
-                .limit(1);
-            if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
-                throw exceptions_1.ClientRidderBankNotFoundException;
-            }
-            if (responseOfSelectingRidderBank[0].balance < amount) {
-                throw exceptions_1.ClientRidderBalanceNotEnoughtException;
-            }
-            const newRidderBalance = responseOfSelectingRidderBank[0].balance - amount;
-            const responseOfDecreasingRidderBank = await tx.update(ridderBank_schema_1.RidderBankTable).set({
-                balance: newRidderBalance,
-                updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(ridderBank_schema_1.RidderBankTable.userId, userId))
-                .returning({
-                balance: ridderBank_schema_1.RidderBankTable.balance,
-            });
-            if (!responseOfDecreasingRidderBank || responseOfDecreasingRidderBank.length === 0) {
-                throw exceptions_1.ApiPaymentIntentNotFinishedException;
-            }
-            const responseOfDeletingOrder = await tx.delete(order_schema_1.OrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.ne)(order_schema_1.OrderTable.passengerStatus, "FINISHED"), (0, drizzle_orm_1.ne)(order_schema_1.OrderTable.ridderStatus, "FINISHED"))))
-                .returning({
-                passengerId: order_schema_1.OrderTable.passengerId,
-                ridderId: order_schema_1.OrderTable.ridderId,
-                prevOrderId: order_schema_1.OrderTable.prevOrderId,
-                finalPrice: order_schema_1.OrderTable.finalPrice,
-                passengerDescription: order_schema_1.OrderTable.passengerDescription,
-                ridderDescription: order_schema_1.OrderTable.ridderDescription,
-                finalStartCord: order_schema_1.OrderTable.finalStartCord,
-                finalEndCord: order_schema_1.OrderTable.finalEndCord,
-                finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
-                finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
-                startAfter: order_schema_1.OrderTable.startAfter,
-                endedAt: order_schema_1.OrderTable.endedAt,
-            });
-            if (!responseOfDeletingOrder || responseOfDeletingOrder.length === 0) {
-                throw exceptions_1.ClientOrderNotFoundException;
-            }
-            const prevOrderData = responseOfDeletingOrder[0].prevOrderId.split(" ");
-            if (!prevOrderData || prevOrderData.length !== 2) {
-                throw exceptions_1.ApiPrevOrderIdFormException;
-            }
-            const [type, prevOrderId] = prevOrderData;
-            if (type === "PurchaseOrder") {
-                const responseOfDeletingPurchaseOrder = await tx.delete(purchaseOrder_schema_1.PurchaseOrderTable)
-                    .where((0, drizzle_orm_1.eq)(purchaseOrder_schema_1.PurchaseOrderTable.id, prevOrderId))
-                    .returning({
-                    id: purchaseOrder_schema_1.PurchaseOrderTable.id,
-                });
-                if (!responseOfDeletingPurchaseOrder || responseOfDeletingPurchaseOrder.length === 0) {
-                    throw exceptions_1.ClientPurchaseOrderNotFoundException;
-                }
-            }
-            else if (type === "SupplyOrder") {
-                const responseOfDeletingSupplyOrder = await tx.delete(supplyOrder_schema_1.SupplyOrderTable)
-                    .where((0, drizzle_orm_1.eq)(supplyOrder_schema_1.SupplyOrderTable.id, prevOrderId))
-                    .returning({
-                    id: supplyOrder_schema_1.SupplyOrderTable.id,
-                });
-                if (!responseOfDeletingSupplyOrder || responseOfDeletingSupplyOrder.length === 0) {
-                    throw exceptions_1.ClientSupplyOrderNotFoundException;
-                }
-            }
-            else {
-                throw exceptions_1.ApiPrevOrderIdFormException;
-            }
-            const responseOfCreatingHistory = await tx.insert(history_schema_1.HistoryTable).values({
-                ridderId: responseOfDeletingOrder[0].ridderId,
-                passengerId: responseOfDeletingOrder[0].passengerId,
-                prevOrderId: responseOfDeletingOrder[0].prevOrderId,
-                finalPrice: responseOfDeletingOrder[0].finalPrice,
-                passengerDescription: responseOfDeletingOrder[0].passengerDescription,
-                ridderDescription: responseOfDeletingOrder[0].ridderDescription,
-                finalStartCord: responseOfDeletingOrder[0].finalStartCord,
-                finalEndCord: responseOfDeletingOrder[0].finalEndCord,
-                finalStartAddress: responseOfDeletingOrder[0].finalStartAddress,
-                finalEndAddress: responseOfDeletingOrder[0].finalEndAddress,
-                startAfter: responseOfDeletingOrder[0].startAfter,
-                endedAt: responseOfDeletingOrder[0].endedAt,
-                status: "FINISHED",
-            }).returning({
-                historId: history_schema_1.HistoryTable.id,
-                historyStatus: history_schema_1.HistoryTable.status,
-            });
-            if (!responseOfCreatingHistory || responseOfCreatingHistory.length === 0) {
-                throw exceptions_1.ClientCreateHistoryException;
-            }
-            const responseOfCreatingNotification = await this.passengerNotification.createPassengerNotificationByUserId((0, notificationTemplate_1.NotificationTemplateOfCreatingHistory)(userName, responseOfDeletingOrder[0].passengerId, responseOfCreatingHistory[0].historId));
-            if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
-                throw exceptions_1.ClientCreateRidderNotificationException;
-            }
-            const responseOfSelectingPassengerBank = await tx.select({
-                balance: passengerBank_schema_1.PassengerBankTable.balance,
-            }).from(passengerBank_schema_1.PassengerBankTable)
-                .where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, responseOfDeletingOrder[0].passengerId));
-            if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-                throw exceptions_1.ClientRidderBankNotFoundException;
-            }
-            const newPassengerBalance = responseOfSelectingPassengerBank[0].balance + amount;
-            const responseOfIncreasingPassengerBank = await tx.update(ridderBank_schema_1.RidderBankTable).set({
-                balance: newPassengerBalance,
-                updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, responseOfDeletingOrder[0].passengerId))
-                .returning({
-                balance: passengerBank_schema_1.PassengerBankTable.balance,
-            });
-            if (!responseOfIncreasingPassengerBank || responseOfIncreasingPassengerBank.length === 0) {
-                throw exceptions_1.ApiPaymentIntentNotFinishedException;
-            }
-            return [{
-                    userBalance: responseOfDecreasingRidderBank[0].balance,
-                }];
-        });
-    }
     async getMyBalacne(userId) {
         return await this.db.select({
             balance: ridderBank_schema_1.RidderBankTable.balance,
@@ -213,9 +88,6 @@ let RidderBankService = class RidderBankService {
     }
     async createPaymentIntentForAddingBalance(userId, userName, email, amount) {
         return this._createPaymentIntentForAddingBalanceByUserId(userId, userName, email, amount);
-    }
-    async payToFinishOrderById(id, userId, userName, amount) {
-        return this._payToFinishOrderById(id, userId, userName, amount);
     }
 };
 exports.RidderBankService = RidderBankService;

@@ -74,4 +74,5 @@ export declare const ClientUploadFileExceedException: (maxSize: number, unit: Fi
 export declare const ClientUploadFileMimeTypeException: (validMimeType: string[]) => NotAcceptableException;
 export declare const ClientPassengerBalanceNotEnoughException: NotAcceptableException;
 export declare const ClientRidderBalanceNotEnoughtException: NotAcceptableException;
+export declare const ClientOrderStatusNotAllowedToPayException: NotAcceptableException;
 export declare const ClientUnknownException: InternalServerErrorException;

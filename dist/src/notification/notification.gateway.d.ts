@@ -1,4 +1,4 @@
-import { OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket } from "socket.io";
 import { ConfigService } from '@nestjs/config';
 import { DrizzleDB } from '../drizzle/types/drizzle';
@@ -10,8 +10,8 @@ export declare class NotificationGateway implements OnGatewayConnection, OnGatew
     constructor(configService: ConfigService, db: DrizzleDB);
     private server;
     private socketMap;
-    private validateToken;
-    private getUserById;
+    private _validateToken;
+    private _getUserById;
     handleConnection(socket: Socket): Promise<{
         status: HttpStatusCode;
         upgrade: string | undefined;
@@ -30,5 +30,4 @@ export declare class NotificationGateway implements OnGatewayConnection, OnGatew
     forceDisconnect(socket: Socket): void;
     notifyPassenger(userId: string, notification: NotificationInterface): void;
     notifyRidder(userId: string, notification: NotificationInterface): void;
-    onTest(data: any): WsResponse<any>;
 }

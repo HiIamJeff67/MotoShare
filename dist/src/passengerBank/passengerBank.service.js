@@ -88,32 +88,10 @@ let PassengerBankService = class PassengerBankService {
             publishableKey: this.config.get("STRIPE_PK_API_KEY"),
         };
     }
-    async _payToFinishOrderById(id, userId, userName, amount) {
+    async _payToFinishOrderById(id, userId, userName) {
         return await this.db.transaction(async (tx) => {
-            const responseOfSelectingPassengerBank = await tx.select({
-                balance: passengerBank_schema_1.PassengerBankTable.balance,
-            }).from(passengerBank_schema_1.PassengerBankTable)
-                .where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId))
-                .limit(1);
-            if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
-                throw exceptions_1.ClientPassengerBankNotFoundException;
-            }
-            if (responseOfSelectingPassengerBank[0].balance < amount) {
-                throw exceptions_1.ClientPassengerBalanceNotEnoughException;
-            }
-            const newPassengerBalance = responseOfSelectingPassengerBank[0].balance - amount;
-            const responseOfDecreasingPassengerBank = await tx.update(passengerBank_schema_1.PassengerBankTable).set({
-                balance: newPassengerBalance,
-                updatedAt: new Date(),
-            }).where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId))
-                .returning({
-                balance: passengerBank_schema_1.PassengerBankTable.balance,
-            });
-            if (!responseOfDecreasingPassengerBank || responseOfDecreasingPassengerBank.length === 0) {
-                throw exceptions_1.ApiPaymentIntentNotFinishedException;
-            }
             const responseOfDeletingOrder = await tx.delete(order_schema_1.OrderTable)
-                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id), (0, drizzle_orm_1.or)((0, drizzle_orm_1.ne)(order_schema_1.OrderTable.passengerStatus, "FINISHED"), (0, drizzle_orm_1.ne)(order_schema_1.OrderTable.ridderStatus, "FINISHED"))))
+                .where((0, drizzle_orm_1.eq)(order_schema_1.OrderTable.id, id))
                 .returning({
                 passengerId: order_schema_1.OrderTable.passengerId,
                 ridderId: order_schema_1.OrderTable.ridderId,
@@ -125,11 +103,17 @@ let PassengerBankService = class PassengerBankService {
                 finalEndCord: order_schema_1.OrderTable.finalEndCord,
                 finalStartAddress: order_schema_1.OrderTable.finalStartAddress,
                 finalEndAddress: order_schema_1.OrderTable.finalEndAddress,
+                passengerStatus: order_schema_1.OrderTable.passengerStatus,
+                ridderStatus: order_schema_1.OrderTable.ridderStatus,
                 startAfter: order_schema_1.OrderTable.startAfter,
                 endedAt: order_schema_1.OrderTable.endedAt,
             });
             if (!responseOfDeletingOrder || responseOfDeletingOrder.length === 0) {
                 throw exceptions_1.ClientOrderNotFoundException;
+            }
+            if (responseOfDeletingOrder[0].passengerStatus !== "UNPAID"
+                && responseOfDeletingOrder[0].ridderStatus !== "UNPAID") {
+                throw exceptions_1.ClientOrderStatusNotAllowedToPayException;
             }
             const prevOrderData = responseOfDeletingOrder[0].prevOrderId.split(" ");
             if (!prevOrderData || prevOrderData.length !== 2) {
@@ -184,6 +168,28 @@ let PassengerBankService = class PassengerBankService {
             if (!responseOfCreatingNotification || responseOfCreatingNotification.length === 0) {
                 throw exceptions_1.ClientCreateRidderNotificationException;
             }
+            const responseOfSelectingPassengerBank = await tx.select({
+                balance: passengerBank_schema_1.PassengerBankTable.balance,
+            }).from(passengerBank_schema_1.PassengerBankTable)
+                .where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId))
+                .limit(1);
+            if (!responseOfSelectingPassengerBank || responseOfSelectingPassengerBank.length === 0) {
+                throw exceptions_1.ClientPassengerBankNotFoundException;
+            }
+            if (responseOfSelectingPassengerBank[0].balance < responseOfDeletingOrder[0].finalPrice) {
+                throw exceptions_1.ClientPassengerBalanceNotEnoughException;
+            }
+            const newPassengerBalance = responseOfSelectingPassengerBank[0].balance - responseOfDeletingOrder[0].finalPrice;
+            const responseOfDecreasingPassengerBank = await tx.update(passengerBank_schema_1.PassengerBankTable).set({
+                balance: newPassengerBalance,
+                updatedAt: new Date(),
+            }).where((0, drizzle_orm_1.eq)(passengerBank_schema_1.PassengerBankTable.userId, userId))
+                .returning({
+                balance: passengerBank_schema_1.PassengerBankTable.balance,
+            });
+            if (!responseOfDecreasingPassengerBank || responseOfDecreasingPassengerBank.length === 0) {
+                throw exceptions_1.ApiPaymentIntentNotFinishedException;
+            }
             const responseOfSelectingRidderBank = await tx.select({
                 balance: ridderBank_schema_1.RidderBankTable.balance,
             }).from(ridderBank_schema_1.RidderBankTable)
@@ -191,7 +197,7 @@ let PassengerBankService = class PassengerBankService {
             if (!responseOfSelectingRidderBank || responseOfSelectingRidderBank.length === 0) {
                 throw exceptions_1.ClientRidderBankNotFoundException;
             }
-            const newRidderBalance = responseOfSelectingRidderBank[0].balance + amount;
+            const newRidderBalance = responseOfSelectingRidderBank[0].balance + responseOfDeletingOrder[0].finalPrice;
             const responseOfIncreasingRidderBank = await tx.update(ridderBank_schema_1.RidderBankTable).set({
                 balance: newRidderBalance,
                 updatedAt: new Date(),
@@ -217,8 +223,8 @@ let PassengerBankService = class PassengerBankService {
     async createPaymentIntentForAddingBalance(userId, userName, email, amount) {
         return this._createPaymentIntentForAddingBalanceByUserId(userId, userName, email, amount);
     }
-    async payToFinishOrderById(id, userId, userName, amount) {
-        return this._payToFinishOrderById(id, userId, userName, amount);
+    async payToFinishOrderById(id, userId, userName) {
+        return this._payToFinishOrderById(id, userId, userName);
     }
 };
 exports.PassengerBankService = PassengerBankService;
