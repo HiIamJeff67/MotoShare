@@ -139,8 +139,8 @@ export class PassengerNotificationService {
         }).from(PassengerNotificationTable)
           .where(eq(PassengerNotificationTable.userId, userId))
           .orderBy(
-            // since isRead is a boolean value, and true means '1', false means '0', so we sort it in descending order
-            desc(PassengerNotificationTable.isRead), 
+            // since isRead is a boolean value, and true means '1', false means '0', so we sort it in ascending order
+            asc(PassengerNotificationTable.isRead), 
             desc(PassengerNotificationTable.createdAt), 
           )
           .limit(limit)
