@@ -19,6 +19,8 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
+import { MyOrderHisDeStyles } from "./MyOrderHisDe.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -47,9 +49,14 @@ interface OrderType {
 
 const MyOrderHistoryDetail = () => {
   const user = useSelector((state: RootState) => state.user);
-  const [order, setOrder] = useState<OrderType>();
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const { orderid } = route.params as { orderid: string };
+  const { t } = useTranslation();
+  let roleText = "載入中...";
+
+  const [order, setOrder] = useState<OrderType>();
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [inputText, setInputText] = useState("");
@@ -57,8 +64,7 @@ const MyOrderHistoryDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
-  const { t } = useTranslation();
-  let roleText = "載入中...";
+  const [styles, setStyles] = useState<any>(null);
 
   if (user.role === "Ridder") {
     //home.tsx才正確
@@ -66,6 +72,12 @@ const MyOrderHistoryDetail = () => {
   } else if (user.role === "Passenger") {
     roleText = t("pure rider");
   }
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MyOrderHisDeStyles(theme, insets));
+    }
+  }, [theme])
 
   const getToken = async () => {
     try {
@@ -79,49 +91,6 @@ const MyOrderHistoryDetail = () => {
       return null;
     }
   };
-
-  // 監控 loading 狀態變化，禁用或恢復返回
-  useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-
-    if (loading) {
-      // 禁用手勢返回並隱藏返回按鈕
-      navigation.setOptions({
-        gestureEnabled: false,
-      });
-
-      // 禁用物理返回按鈕
-      unsubscribe = navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault(); // 禁用返回
-      });
-    } else {
-      // 恢復手勢返回和返回按鈕
-      navigation.setOptions({
-        gestureEnabled: true,
-      });
-
-      // 移除返回監聽器
-      if (unsubscribe) {
-        unsubscribe();
-      }
-
-      if (lockButton) {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: "home" }, { name: "myorder" }],
-          })
-        );
-      }
-    }
-
-    // 在組件卸載時移除監聽器
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [loading, navigation]);
 
   useEffect(() => {
     const SearchOrder = async () => {
@@ -169,6 +138,49 @@ const MyOrderHistoryDetail = () => {
 
     SearchOrder();
   }, []);
+
+  // 監控 loading 狀態變化，禁用或恢復返回
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (loading) {
+      // 禁用手勢返回並隱藏返回按鈕
+      navigation.setOptions({
+        gestureEnabled: false,
+      });
+
+      // 禁用物理返回按鈕
+      unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault(); // 禁用返回
+      });
+    } else {
+      // 恢復手勢返回和返回按鈕
+      navigation.setOptions({
+        gestureEnabled: true,
+      });
+
+      // 移除返回監聽器
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      if (lockButton) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "home" }, { name: "myorder" }],
+          })
+        );
+      }
+    }
+
+    // 在組件卸載時移除監聽器
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [loading, navigation]);
 
   const SendRate = async () => {
     setLoading(true);
@@ -230,9 +242,13 @@ const MyOrderHistoryDetail = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
+      {isLoading || !styles || !theme ? (
+        <View style={{
+          flex: 1, 
+          justifyContent: "center", 
+          alignItems: "center", 
+        }}>
+          <ActivityIndicator size="large" color={theme?.colors.text} />
         </View>
       ) : (
         <ScrollView>

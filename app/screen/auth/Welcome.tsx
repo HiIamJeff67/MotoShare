@@ -15,7 +15,7 @@ const WelcomeScreen = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const theme = useTheme() as Theme; // 強制轉換為自定義主題類型
-  const { colors } = theme;
+  const { dark, colors, fonts } = theme;
   const { t } = useTranslation();
 
   const [dropDownDisplay, setDropDownDisplay] = useState(false);
@@ -42,7 +42,7 @@ const WelcomeScreen = () => {
           dispatch(setUserLanguageSettings({ language: newLanguage }));
         }}
         style={{
-          backgroundColor: "#3498db",
+          backgroundColor: colors.primary, 
           borderRadius: "50%",
           width: moderateScale(60),
           height: moderateScale(60),
@@ -83,18 +83,24 @@ const WelcomeScreen = () => {
       >
         <Text
           style={{
-            color: "#3498db",
-            fontSize: moderateScale(32), // Equivalent to "text-4xl"
-            paddingBottom: verticalScale(10),
-            fontWeight: "bold",
-            textAlign: "center",
+              ...(fonts.bold), 
+              color: colors.primary, 
+              fontSize: moderateScale(32), 
+              marginBottom: verticalScale(6), 
+              textShadowColor: dark ? '#011FFD' : '#A3D5FF', 
+              textShadowOffset: { width: 0, height: 0 }, 
+              textShadowRadius: 10, 
+              shadowColor: colors.primary, 
+              shadowOffset: { width: 0, height: 0 }, 
+              shadowOpacity: 0.9, 
+              elevation: 5, // Android 上的額外陰影層次
           }}
-        >
-          {t("welcomeMessage")}
-        </Text>
+      >
+          {t('welcomeMessage')}
+      </Text>
         <Text
           style={{
-            color: "#3498db",
+            color: colors.primary, 
             fontSize: moderateScale(15), // Equivalent to "text-base"
           }}
         >
@@ -112,8 +118,8 @@ const WelcomeScreen = () => {
             justifyContent: "center",
             alignItems: "center",
             borderRadius: moderateScale(10), // Adjusting for rounded corners
-            backgroundColor: "#3498db",
-            shadowColor: "#3498db",
+            backgroundColor: colors.primary, 
+            shadowColor: colors.primary, 
             shadowOffset: { width: 0, height: verticalScale(5) },
             shadowOpacity: 0.5,
             shadowRadius: moderateScale(10),
@@ -122,7 +128,7 @@ const WelcomeScreen = () => {
         >
           <Text
             style={{
-              fontWeight: "600",
+              ...(fonts.heavy), 
               color: "#ffffff",
               fontSize: moderateScale(18), // Equivalent to "text-xl"
             }}
@@ -137,7 +143,8 @@ const WelcomeScreen = () => {
         <Pressable onPress={() => navigation.navigate("choose" as never)}>
           <Text
             style={{
-              color: "#3498db",
+              ...(fonts.heavy), 
+              color: colors.primary, 
               fontSize: moderateScale(16), // Equivalent to "text-lg"
             }}
           >

@@ -29,49 +29,6 @@ const getToken = async () => {
   }
 };
 
-async function fetchPaymentSheetParams(amount: string, user: UserRoleType) {
-  const token = await getToken();
-
-  if (!token) {
-    Alert.alert("Token failed", "unable to get token");
-    throw new Error("Unable to get token");
-  }
-
-  let url = "";
-
-  if (user === "Passenger") {
-    url = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
-  } else if (user === "Ridder") {
-    url = `${process.env.EXPO_PUBLIC_API_URL}/ridderBank/createPaymentIntentForAddingBalanceByUserId`;
-  }
-
-  try {
-    const response = await axios.post(
-      url,
-      {
-        amount: amount,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // 放在 headers 中
-        },
-      }
-    );
-
-    const { paymentIntent, ephemeralKey, customer } = response.data;
-    return { paymentIntent, ephemeralKey, customer };
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data);
-      Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
-    } else {
-      console.log("An unexpected error occurred:", error);
-      Alert.alert("錯誤", "伺服器錯誤");
-    }
-    throw error;
-  }
-}
-
 export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
@@ -79,7 +36,7 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
   const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.user.role);
   const balance = useSelector((state: RootState) => state.user.balance);
-  const newBalance = (balance ?? 0) + 100 * 100;
+  const newBalance = (balance ?? 0) + amount * 100;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [lockButton, setLockButton] = useState(false);
@@ -132,6 +89,49 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
     };
   }, [loading, navigation, lockButton]);
 
+  async function fetchPaymentSheetParams(amount: string, user: UserRoleType) {
+    const token = await getToken();
+  
+    if (!token) {
+      Alert.alert("Token failed", "unable to get token");
+      throw new Error("Unable to get token");
+    }
+  
+    let url = "";
+  
+    if (user === "Passenger") {
+      url = `${process.env.EXPO_PUBLIC_API_URL}/passengerBank/createPaymentIntentForAddingBalanceByUserId`;
+    } else if (user === "Ridder") {
+      url = `${process.env.EXPO_PUBLIC_API_URL}/ridderBank/createPaymentIntentForAddingBalanceByUserId`;
+    }
+  
+    try {
+      const response = await axios.post(
+        url,
+        {
+          amount: amount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // 放在 headers 中
+          },
+        }
+      );
+  
+      const { paymentIntent, ephemeralKey, customer } = response.data;
+      return { paymentIntent, ephemeralKey, customer };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        Alert.alert("錯誤", JSON.stringify(error.response?.data.message));
+      } else {
+        console.log("An unexpected error occurred:", error);
+        Alert.alert("錯誤", "伺服器錯誤");
+      }
+      throw error;
+    }
+  }
+
   const initializePaymentSheet = async () => {
     const paymentSheetParams = await fetchPaymentSheetParams(amountReal, user);
     const { paymentIntent, ephemeralKey, customer } = paymentSheetParams;
@@ -172,7 +172,7 @@ export default function CheckOutScreen({ amount }: CheckOutFormProps) {
 
   useEffect(() => {
     initializePaymentSheet();
-  }, []);
+  }, [amount]);
 
   return !loading ? (
     <CheckOutButton onPress={openPaymentSheet} disabled={!loading || lockButton} title="Loading..." />

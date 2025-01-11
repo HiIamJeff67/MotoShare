@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigation, CommonActions, useRoute } from "@react-navigation/native";
+import { useNavigation, CommonActions, useRoute, useTheme } from "@react-navigation/native";
 import {
   TextInput,
   Text,
@@ -22,11 +22,19 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { handleRegister, handleGoogleReg } from "./HandleReg";
 import { useTranslation } from "react-i18next";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
+import { Theme } from "@/theme/theme";
+import { RegisterStyles } from "./Register.style";
 
 const PassengerReg = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const translateY = useRef(new Animated.Value(0)).current;
+  const theme = useTheme() as Theme;
+  const { colors } = theme;
+  const route = useRoute();
+  const { role } = route.params as { role: UserRoleType };
+  const { t } = useTranslation();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,9 +42,7 @@ const PassengerReg = () => {
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
-  const route = useRoute();
-  const { role } = route.params as { role: UserRoleType };
-  const { t } = useTranslation();
+  const styles = RegisterStyles(theme);
 
   const handleRegisterClick = () => {
     handleRegister({
@@ -140,14 +146,14 @@ const PassengerReg = () => {
     <Animated.View
       style={{
         flex: 1,
-        backgroundColor: "#ffffff",
+        backgroundColor: colors.background, 
         transform: [{ translateY }],
       }}
     >
       <ScrollView
         contentContainerStyle={{
           flex: 1,
-          backgroundColor: "#ffffff",
+          backgroundColor: colors.background,
           paddingTop: verticalScale(insets.top),
           paddingBottom: verticalScale(insets.bottom),
           paddingHorizontal: scale(20), // 設置水平間距
@@ -164,12 +170,11 @@ const PassengerReg = () => {
         </View>
         <View style={styles.inputWrapper}>
           <Image
-            source={require("../../../assets/images/user.png")} // 修改為你自己的圖片
             style={styles.icon}
+            source={require("../../../assets/images/user.png")}
           />
           <TextInput
             style={styles.textInput}
-            className="rounded-lg bg-[#f1f4ff]"
             placeholder={t("userName")}
             value={username}
             onChangeText={setUsername}
@@ -179,12 +184,11 @@ const PassengerReg = () => {
 
         <View style={styles.inputWrapper}>
           <Image
-            source={require("../../../assets/images/email.png")} // 修改為你自己的圖片
             style={styles.icon}
+            source={require("../../../assets/images/email.png")}
           />
           <TextInput
             style={styles.textInput}
-            className="rounded-lg bg-[#f1f4ff]"
             placeholder={t("email")}
             value={email}
             onChangeText={setEmail}
@@ -195,12 +199,11 @@ const PassengerReg = () => {
 
         <View style={styles.inputWrapper}>
           <Image
-            source={require("../../../assets/images/password.png")} // 修改為你自己的圖片
             style={styles.icon}
+            source={require("../../../assets/images/password.png")}
           />
           <TextInput
             style={styles.textInput}
-            className="rounded-lg bg-[#f1f4ff]"
             placeholder={t("password")}
             secureTextEntry={true}
             value={password}
@@ -211,12 +214,11 @@ const PassengerReg = () => {
 
         <View style={styles.inputWrapper}>
           <Image
-            source={require("../../../assets/images/password.png")} // 修改為你自己的圖片
             style={styles.icon}
+            source={require("../../../assets/images/password.png")}
           />
           <TextInput
             style={styles.textInput}
-            className="rounded-lg bg-[#f1f4ff]"
             placeholder={t("confirmPassword")}
             secureTextEntry={true}
             value={conPassword}
@@ -248,90 +250,5 @@ const PassengerReg = () => {
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  textInput: {
-    flex: 1,
-    height: "100%",
-    borderWidth: scale(0),
-    color: "#000",
-    paddingLeft: scale(5),
-  },
-  icon: {
-    width: scale(18),
-    height: verticalScale(15),
-    marginRight: scale(10),
-  },
-  inputWrapper: {
-    marginTop: verticalScale(15),
-    flexDirection: "row",
-    alignItems: "center",
-    height: verticalScale(40),
-    backgroundColor: "#f1f4ff",
-    borderRadius: moderateScale(10),
-    paddingHorizontal: scale(10),
-  },
-  imageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  image: {
-    width: scale(150),
-    height: verticalScale(150),
-  },
-  headerContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: verticalScale(10),
-  },
-  headerText: {
-    fontSize: moderateScale(28),
-    fontWeight: "bold",
-    color: "#3498db",
-  },
-  centerAlign: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  registerButton: {
-    width: "100%",
-    marginTop: verticalScale(20),
-    height: verticalScale(40),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#3498db",
-    borderRadius: moderateScale(10),
-    shadowOpacity: 0.4,
-    shadowRadius: moderateScale(10),
-    shadowOffset: { width: scale(0), height: verticalScale(4) },
-    shadowColor: "#000",
-  },
-  registerButtonText: {
-    fontSize: moderateScale(18),
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  forgotPasswordText: {
-    marginTop: verticalScale(20),
-    fontSize: moderateScale(16),
-  },
-  otherRegisterText: {
-    marginTop: verticalScale(20),
-    fontSize: moderateScale(16),
-    color: "#3498db",
-  },
-  socialContainer: {
-    width: "100%",
-    paddingHorizontal: scale(100),
-    paddingTop: verticalScale(20),
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  socialIcon: {
-    width: scale(30),
-    height: verticalScale(30),
-    resizeMode: "contain",
-  },
-});
 
 export default PassengerReg;

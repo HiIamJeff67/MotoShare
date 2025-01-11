@@ -12,7 +12,6 @@ import { SearchUserPreferencesInterface } from '@/interfaces/userPreferences.int
 import { isExist } from '@/app/methods/isExist';
 import { FlashList } from '@shopify/flash-list';
 import AnimatedCheckMessage from '@/app/component/CheckMessage/AnimatedCheckMessage';
-import UserCard from '@/app/component/UserCard/UserCard';
 import UserDetail from '@/app/component/UserDetail/UserDetail';
 
 const MyPreferences = () => {

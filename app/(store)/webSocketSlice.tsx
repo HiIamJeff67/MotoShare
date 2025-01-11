@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface Notification {
   id: string;
   title: string;
-  description: string;
+  description: string | undefined;
   notificationType: string;
   isRead: boolean;
   createdAt: Date;
@@ -27,26 +27,33 @@ const webSocketSlice = createSlice({
   reducers: {
     connectToSocket(state) {
       state.isConnected = true;
-    },
+    }, 
     disconnectToSocket(state) {
+      state.notifications = [];
+      state.newMessage = 0;
       state.isConnected = false;
-    },
+    }, 
     addNotification(state, action: PayloadAction<Notification>) {
       state.notifications.push(action.payload);
       state.newMessage += 1;
-      console.log(state.notifications);
-    },
-    clearNotificationNewMessage(state) {
-      state.newMessage = 0;
-    },
+      // console.log(state.notifications);
+    }, 
     setNotifications(state, action: PayloadAction<Notification[]>) {
-      state.notifications = [...state.notifications, ...action.payload];
-    },
+      state.notifications = [
+        ...state.notifications,
+        ...action.payload.filter(
+          (newNotification) =>
+            !state.notifications.some((existing) => existing.id === newNotification.id)
+        ),
+      ];
+      state.newMessage = state.notifications.filter(notification => !notification.isRead).length;
+    }, 
     clearNotifications(state) {
       state.notifications = [];
-    },
+      state.newMessage = 0;
+    }, 
   },
 });
 
-export const { connectToSocket, disconnectToSocket, addNotification, clearNotifications, clearNotificationNewMessage } = webSocketSlice.actions;
+export const { connectToSocket, disconnectToSocket, addNotification, clearNotifications, setNotifications } = webSocketSlice.actions;
 export default webSocketSlice.reducer;

@@ -17,6 +17,8 @@ import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
 import { useTranslation } from "react-i18next";
+import { MyOrderHisStyles } from "./MyOrderHis.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -37,15 +39,31 @@ interface OrderType {
 }
 
 const MyOrderHistory = () => {
+  const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
-  const [order, setOrder] = useState<OrderType[]>([]);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
-  const { t } = useTranslation();
+  const [order, setOrder] = useState<OrderType[]>([]);
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    setOffset(0);
+    setIsMax(false); // 重置 isMax 狀態
+    SearchOrder(0); // 傳入 0，確保從頭開始加載
+  }, []);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MyOrderHisStyles(theme, insets));
+    }
+  }, [theme]);
 
   const getToken = async () => {
     try {
@@ -120,12 +138,6 @@ const MyOrderHistory = () => {
     }, 2000);
   };
 
-  useEffect(() => {
-    setOffset(0);
-    setIsMax(false); // 重置 isMax 狀態
-    SearchOrder(0); // 傳入 0，確保從頭開始加載
-  }, []);
-
   const loadMoreOrders = debounce(() => {
     const newOffset = offset + 10;
     setOffset(newOffset); // 更新 offset 狀態
@@ -134,9 +146,13 @@ const MyOrderHistory = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
+      {isLoading || !styles || !theme ? (
+        <View style={{
+          flex: 1, 
+          justifyContent: "center", 
+          alignItems: "center", 
+        }}>
+          <ActivityIndicator size="large" color={theme?.colors.text} />
         </View>
       ) : (
           <FlashList
@@ -200,46 +216,5 @@ const MyOrderHistory = () => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingBottom: verticalScale(15),
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5,
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-});
 
 export default MyOrderHistory;

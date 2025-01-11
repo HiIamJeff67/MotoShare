@@ -1,8 +1,9 @@
 import { Theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
+import { EdgeInsets } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
-export const Styles = (theme: Theme) => {
+export const UserCardStyles = (theme: Theme, insets?: EdgeInsets) => {
   const [_colors, _fonts] = [theme.colors, theme.fonts];
 
   return StyleSheet.create({
@@ -12,9 +13,11 @@ export const Styles = (theme: Theme) => {
     },
     card: {
       marginBottom: verticalScale(15),
-      backgroundColor: "white",
+      borderWidth: moderateScale(1.5), 
+      borderColor: _colors.border, 
+      backgroundColor: _colors.card, 
       borderRadius: moderateScale(10),
-      shadowColor: "#000",
+      shadowColor: "#000", 
       shadowOffset: { width: scale(0), height: verticalScale(2) },
       shadowOpacity: 0.2,
       shadowRadius: moderateScale(4),
@@ -50,7 +53,7 @@ export const Styles = (theme: Theme) => {
       marginBottom: verticalScale(5),
       fontSize: moderateScale(15),
       fontWeight: "600",
-      color: "#333",
+      color: _colors.text, 
     },
     title2: {
       alignItems: "center",
@@ -58,20 +61,22 @@ export const Styles = (theme: Theme) => {
       marginBottom: verticalScale(5),
       fontSize: moderateScale(15),
       fontWeight: "600",
-      color: "#333",
+      color: _colors.text, 
     },
     button: {
       marginTop: verticalScale(10),
       height: verticalScale(40),
-      backgroundColor: "#000",
+      backgroundColor: _colors.background, 
       borderRadius: scale(5),
       alignItems: "center",
       justifyContent: "center",
     },
     buttonText: {
-      color: "#fff",
+      color: _colors.text, 
       fontSize: moderateScale(16),
       fontWeight: "bold",
     },
   });
 };
+
+export const __styles = StyleSheet.create({});

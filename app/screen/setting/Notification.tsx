@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { Alert, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../../(store)";
-import { ScaledSheet, scale, verticalScale, moderateScale } from "react-native-size-matters";
-import { FlashList } from "@shopify/flash-list";
 import { useDispatch } from "react-redux";
 import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
-import { clearNotificationNewMessage } from "@/app/(store)/webSocketSlice";
 import { NotificationStyles } from "./Notification.style";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationInfoCard from "@/app/component/NotificationInfoCard/NotificationDetailCard";
 import { NotificationInterface } from "@/interfaces/userNotifications.interface";
+import { setNotifications } from "../../(store)/webSocketSlice";
 
 const Notification = () => {
   const dispatch = useDispatch();
@@ -24,7 +22,7 @@ const Notification = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const [notifications, setNotifications] = useState<NotificationInterface[]>([]);
+  const [localNotifications, setLocalNotifications] = useState<NotificationInterface[]>([]);
   const [selectedNotificationInfo, setSelectedNotificationInfo] = useState<any>(null);
   const [styles, setStyles] = useState<any>(null);
 
@@ -35,12 +33,7 @@ const Notification = () => {
   }, [theme]);
 
   useEffect(() => {
-    setNotifications((prev) => {
-      const merged = [...prev, ...websocketClient.notifications];
-      return merged.filter(
-        (item, index, array) => array.findIndex((i) => i.id === item.id) !== index
-      );
-    });
+    setLocalNotifications(websocketClient.notifications);
   }, [websocketClient.notifications]);
 
   useEffect(() => {
@@ -49,13 +42,7 @@ const Notification = () => {
       setToken(userToken);
     }
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      dispatch(clearNotificationNewMessage());
-    }, 1000);
-
     fetchToken();
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -82,7 +69,8 @@ const Notification = () => {
               }
             }
         )
-        setNotifications((prev) => [...prev, ...response.data]);
+        
+        dispatch(setNotifications(response.data));
       } catch (error) {
         console.log(error);
       } finally {
@@ -129,9 +117,12 @@ const Notification = () => {
               }
             }
           )
-          setNotifications(prev => {
-            const updatedNotifications = prev;
-            updatedNotifications[index].isRead = true;
+          setLocalNotifications((prev) => {
+            const updatedNotifications = [...prev];
+            updatedNotifications[index] = {
+              ...updatedNotifications[index],
+              isRead: true,
+            };
             return updatedNotifications;
           });
         }
@@ -157,9 +148,9 @@ const Notification = () => {
               style={styles.container} 
               showsVerticalScrollIndicator={false}
             >
-              {notifications.map((item, index) => (
+              {localNotifications.map((item, index) => (
                 <TouchableOpacity
-                  key={item.id}
+                  key={index}
                   style={[styles.container, item.isRead ? styles.readedCard : null]}
                   onPress={() => getUserNotificationInfo(item, index)}
                 >

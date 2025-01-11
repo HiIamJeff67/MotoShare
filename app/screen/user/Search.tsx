@@ -43,19 +43,12 @@ const SearchUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const { t } = useTranslation();
-  let roleText = "載入中...";
 
   useEffect(() => {
     if (theme) {
       setStyles(Styles(theme));
     }
   }, [theme]);
-
-  if (user.role == "Ridder") {
-    roleText = t("pure passenger");
-  } else if (user.role == "Passenger") {
-    roleText = t("pure rider");
-  }
 
   const getToken = async () => {
     try {
@@ -76,7 +69,7 @@ const SearchUser = () => {
     }
   };
 
-  const SearchUser = async () => {
+  const SearchUsers = async () => {
     const token = await getToken();
 
     let response: { data: UserType[] },
@@ -100,8 +93,7 @@ const SearchUser = () => {
         },
       });
 
-      console.log(response.data);
-      SearchUserInfo(response.data[0].userName);
+      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -137,7 +129,6 @@ const SearchUser = () => {
         },
       });
 
-      //console.log(response.data);
       setUserInfo(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -195,7 +186,7 @@ const SearchUser = () => {
   const handleSearchInputChange = debounce(() => {
     const regex = /^[a-zA-Z0-9_]+$/;
     if (regex.test(searchInput)) {
-      SearchUser();
+      SearchUserInfo(searchInput);
       setIsLoading(true);
     }
   }, 500);
@@ -205,29 +196,37 @@ const SearchUser = () => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={{ flex: 1, paddingHorizontal: scale(20), paddingVertical: verticalScale(15) }}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBox}>
-            <Feather name="search" size={moderateScale(24)} color="black" />
-            <TextInput
-              placeholder={t("userName")}
-              style={styles.searchInput}
-              placeholderTextColor="gray"
-              value={searchInput}
-              onChangeText={(text) => setSearchInput(text)}
-              onSubmitEditing={handleSearchInputChange}
-            />
-          </View>
-        </View>
-
-        {isLoading ? (
-          <LoadingWrapper />
-        ) : (
-          userInfo && <UserCard userInfo={userInfo} isButtonLoading={isButtonLoading} onClicked={createMyPreference} />
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+    !styles || !theme
+      ? <LoadingWrapper />
+      : ( <TouchableWithoutFeedback onPress={dismissKeyboard}>
+            <View style={{ flex: 1, paddingHorizontal: scale(20), paddingVertical: verticalScale(15) }}>
+              <View style={styles.searchContainer}>
+                <View style={styles.searchBox}>
+                  <Feather name="search" size={moderateScale(24)} color="black" />
+                  <TextInput
+                    placeholder={t("userName")}
+                    style={styles.searchInput}
+                    placeholderTextColor={theme.colors.background} 
+                    value={searchInput}
+                    onChangeText={(text) => setSearchInput(text)}
+                    onSubmitEditing={handleSearchInputChange}
+                  />
+                </View>
+              </View>
+      
+              {isLoading ? (
+                <LoadingWrapper />
+              ) : (
+                userInfo && 
+                  <UserCard 
+                    userInfo={userInfo} 
+                    isButtonLoading={isButtonLoading} 
+                    theme={theme}
+                    onClicked={createMyPreference} 
+                  />
+              )}
+            </View>
+          </TouchableWithoutFeedback>)
   );
 };
 

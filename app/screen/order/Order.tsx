@@ -199,7 +199,7 @@ const Order = () => {
                   <TextInput
                     placeholder={t("userName")}
                     style={styles.searchInput}
-                    placeholderTextColor={theme?.colors.background}
+                    placeholderTextColor={theme.colors.background}
                     value={searchInput}
                     onChangeText={(text) => setSearchInput(text)}
                     onSubmitEditing={handleSearchInputChange}

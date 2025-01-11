@@ -37,6 +37,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import { MapStyles } from "./Map.style";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import { addMinutes } from "@/app/methods/timeCalculate";
 
 interface DataType {
   id: string;
@@ -60,7 +63,7 @@ const MapWithBottomSheet = () => {
     inviteNow: false,
     periodicOrder: false,
   });
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(addMinutes(10));
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [initialPrice, setinitialPrice] = useState("");
   const [orderDescription, setorderDescription] = useState("");
@@ -78,11 +81,12 @@ const MapWithBottomSheet = () => {
   const [showSetPage, setShowSetPage] = useState<boolean>(false);
   const [lockButton, setLockButton] = useState(false);
   const [showSearchOrderPage, setShowSearchOrderPage] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState<string | null>("1");
+  const [dropdownValue, setDropdownValue] = useState<string | null>("");
   const [isDropdownFocus, setIsDropdownFocus] = useState(false);
   const GOOGLE_MAPS_APIKEY: string = process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string;
   const mapRef = useRef<MapView>(null);
   const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [snapPoints, setSnapPoints] = useState(["25%", "50%", "85%"]); // 初始高度
   const navigation = useNavigation();
@@ -98,6 +102,15 @@ const MapWithBottomSheet = () => {
   };
   const [selectedDay, setSelectedDay] = useState<number>(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [autoCompleteInputOnFocus, setAutoCompleteInputOnFocus] = useState(false);
+  const [autocompleteInputOnFocus2, setAutocompleteInputOnFocus2] = useState(false);
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MapStyles(theme, insets));
+    }
+  }, [theme]);
 
   const lockHeight = useCallback((height: string) => {
     setSnapPoints([height]); // 鎖定到單一高度
@@ -520,6 +533,7 @@ const MapWithBottomSheet = () => {
   };
 
   return (
+    styles && theme && 
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <GestureHandlerRootView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
         <MapView ref={mapRef} style={styles.map} region={region || undefined}>
@@ -571,6 +585,9 @@ const MapWithBottomSheet = () => {
           enableHandlePanningGesture={true}
           enableContentPanningGesture={true}
           index={Platform.OS === "ios" ? 2 : 1} // 設置初始索引
+          backgroundStyle={{
+            backgroundColor: theme.colors.background, 
+          }}
         >
           {showSetPage ? (
             <>
@@ -601,7 +618,7 @@ const MapWithBottomSheet = () => {
                           })}
                     </Text>
                     <TouchableOpacity style={styles.bottomSheetDate} onPress={() => showDatePicker()}>
-                      <Entypo name="calendar" size={moderateScale(24)} color="black" />
+                      <Entypo name="calendar" size={moderateScale(24)} color={theme.colors.text} />
                     </TouchableOpacity>
                   </View>
                   {isSwitchTwoEnabled && (
@@ -615,7 +632,7 @@ const MapWithBottomSheet = () => {
                           toggleDropdown();
                         }}
                       >
-                        <Entypo name="calendar" size={moderateScale(24)} color="black" />
+                        <Entypo name="calendar" size={moderateScale(24)} color={theme.colors.text} />
                       </TouchableOpacity>
                     </View>
                   )}
@@ -640,7 +657,7 @@ const MapWithBottomSheet = () => {
                       <View style={styles.switchContainer}>
                         <Switch
                           trackColor={{ false: "#767577", true: "#81b0ff" }}
-                          thumbColor={isSwitchEnabled ? "#f5dd4b" : "#f4f3f4"}
+                          thumbColor={isSwitchEnabled ? "#f4f3f4" : "#f4f3f4"}
                           ios_backgroundColor="#3e3e3e"
                           onValueChange={toggleSwitch}
                           value={isSwitchEnabled}
@@ -653,7 +670,7 @@ const MapWithBottomSheet = () => {
                       <View style={styles.switchContainer}>
                         <Switch
                           trackColor={{ false: "#767577", true: "#81b0ff" }}
-                          thumbColor={isSwitchTwoEnabled ? "#f5dd4b" : "#f4f3f4"}
+                          thumbColor={isSwitchTwoEnabled ? "#f4f3f4" : "#f4f3f4"}
                           ios_backgroundColor="#3e3e3e"
                           onValueChange={toggleSwitchTwo}
                           value={isSwitchTwoEnabled}
@@ -731,10 +748,12 @@ const MapWithBottomSheet = () => {
                   >
                     <View style={styles.dropdowncontainer}>
                       <Dropdown
-                        style={[styles.dropdown, isDropdownFocus && { borderColor: "blue" }]}
+                        style={[styles.dropdown, isDropdownFocus && { borderColor: theme.colors.primary }]}
                         selectedTextStyle={styles.dropdownselectedTextStyle}
-                        placeholderStyle={styles.dropdownplaceholderStyle}
+                        placeholderStyle={{ ...styles.dropdownplaceholderStyle, ...(isDropdownFocus ? { color: theme.colors.primary } : { color: theme.colors.text }) }}
                         containerStyle={styles.dropdowncontainerStyle}
+                        itemContainerStyle={styles.dropdownitemcontainerStyle}
+                        itemTextStyle={styles.dropdownitemtextStyle}
                         iconStyle={styles.dropdowniconStyle}
                         dropdownPosition="bottom"
                         data={dropDownData}
@@ -751,15 +770,13 @@ const MapWithBottomSheet = () => {
                           searchOrderData(item.value);
                         }}
                         renderLeftIcon={() => (
-                          <AntDesign style={styles.dropdownicon} color={isDropdownFocus ? "blue" : "black"} name="Safety" size={20} />
+                          <AntDesign style={styles.dropdownicon} color={isDropdownFocus ? theme.colors.primary : theme.colors.text} name="Safety" size={20} />
                         )}
                       />
                     </View>
 
                     {loading.fetchData ? (
-                      <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color="black" />
-                      </View>
+                      <LoadingWrapper />
                     ) : (
                       <>
                         {searchData.map((item, index) => {
@@ -773,7 +790,7 @@ const MapWithBottomSheet = () => {
                                     {item.avatorUrl ? (
                                       <Image source={{ uri: item.avatorUrl }} style={styles.activeCardImage} />
                                     ) : (
-                                      <FontAwesome name="user" size={50} color="black" />
+                                      <FontAwesome name="user" size={50} color={theme.colors.primary} />
                                     )}
                                   </View>
 
@@ -842,7 +859,7 @@ const MapWithBottomSheet = () => {
                                       {item.avatorUrl ? (
                                         <Image source={{ uri: item.avatorUrl }} style={styles.cardImage} />
                                       ) : (
-                                        <FontAwesome name="user" size={50} color="black" style={styles.cardImage} />
+                                        <FontAwesome name="user" size={50} color={theme.colors.primary} style={styles.cardImage} />
                                       )}
                                       <View style={styles.cardTextContainer}>
                                         <Text style={styles.cardTitle}>
@@ -888,14 +905,25 @@ const MapWithBottomSheet = () => {
             >
               <View
                 style={{
-                  flex: 0.3,
+                  flex: autoCompleteInputOnFocus ? 0.5 : 0.1,
                 }}
               >
                 <GooglePlacesAutocomplete
                   placeholder={t("search starting point")}
                   textInputProps={{
                     placeholderTextColor: "#626262",
-                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                    onFocus: () => {
+                      // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      if (Platform.OS === "ios") handleSnapPress(3);
+                      else handleSnapPress(2);
+                    }, 
+                    onEndEditing: () => {
+                      console.log("submit text...")
+                      setAutoCompleteInputOnFocus(false);
+                    }, 
+                    onChange: () => {
+                      setAutoCompleteInputOnFocus(true);
+                    }, 
                   }}
                   fetchDetails={true}
                   onPress={(data, details = null) => handleLocationPress(data, details, "origin")}
@@ -909,23 +937,37 @@ const MapWithBottomSheet = () => {
                     Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
                   }}
                   styles={{
+                    description: styles.description, 
                     textInputContainer: styles.textInputContainer,
                     textInput: styles.textInput,
                     predefinedPlacesDescription: styles.predefinedPlacesDescription,
-                    listView: styles.listView,
+                    listView: { ...styles.listView, ...(autoCompleteInputOnFocus ? {} : { display: "none" }), }, 
+                    poweredContainer: styles.poweredContainer, 
+                    powered: styles.powered, 
+                    row: styles.row, 
                   }}
                 />
               </View>
               <View
                 style={{
-                  flex: 0.3,
+                  flex: autoCompleteInputOnFocus ? 0.1 : 0.5, 
                 }}
               >
                 <GooglePlacesAutocomplete
                   placeholder={t("search destination")}
                   textInputProps={{
                     placeholderTextColor: "#626262",
-                    onFocus: () => (Platform.OS === "ios" ? handleSnapPress(3) : handleSnapPress(2)), // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                    onFocus: () => {
+                      // 當用戶聚焦輸入框時，觸發 handleSnapPress(2)
+                      if (Platform.OS === "ios") handleSnapPress(3);
+                      else handleSnapPress(2);
+                    }, 
+                    onEndEditing: () => {
+                      setAutocompleteInputOnFocus2(false);
+                    }, 
+                    onChange: () => {
+                      setAutocompleteInputOnFocus2(true);
+                    }
                   }}
                   fetchDetails={true}
                   onPress={(data, details = null) => handleLocationPress(data, details, "destination")}
@@ -939,10 +981,14 @@ const MapWithBottomSheet = () => {
                     Alert.alert("錯誤", "無法載入地點。請檢查你的 API Key。");
                   }}
                   styles={{
+                    description: styles.description, 
                     textInputContainer: styles.textInputContainer,
                     textInput: styles.textInput,
                     predefinedPlacesDescription: styles.predefinedPlacesDescription,
-                    listView: styles.listView,
+                    listView: { ...styles.listView, ...(autocompleteInputOnFocus2 ? {} : { display: "none" }), }, 
+                    poweredContainer: styles.poweredContainer, 
+                    powered: styles.powered, 
+                    row: styles.row, 
                   }}
                 />
               </View>
@@ -953,255 +999,5 @@ const MapWithBottomSheet = () => {
     </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  textInputContainer: {
-    zIndex: 1,
-  },
-  textInput: {
-    height: verticalScale(40),
-    color: "#5d5d5d",
-    fontSize: moderateScale(16),
-    backgroundColor: "#f1f4ff",
-    borderRadius: moderateScale(10),
-    paddingLeft: scale(10),
-  },
-  predefinedPlacesDescription: {
-    color: "#1faadb",
-  },
-  listView: {
-    backgroundColor: "#fff",
-    borderRadius: moderateScale(5),
-    elevation: 5,
-    marginBottom: verticalScale(10),
-  },
-  bottomSheetTitle: {
-    fontSize: moderateScale(25),
-    fontWeight: "bold",
-  },
-  bottomSheetText: {
-    fontSize: moderateScale(15),
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(10),
-  },
-  bottomSheetDate: {
-    fontSize: moderateScale(15),
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(10),
-    marginLeft: scale(5),
-  },
-  input: {
-    height: verticalScale(40),
-    borderColor: "#ccc",
-    borderWidth: scale(1),
-    borderRadius: moderateScale(8),
-    paddingHorizontal: scale(10),
-    marginBottom: verticalScale(10),
-    backgroundColor: "#fff",
-  },
-  dateContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  button: {
-    height: verticalScale(40),
-    width: scale(120),
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOpacity: 0.5,
-    shadowRadius: moderateScale(5),
-    elevation: 5,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-  dropdowncontainer: {
-    width: "50%",
-    marginBlock: verticalScale(10),
-  },
-  dropdown: {
-    height: verticalScale(40),
-    borderColor: "gray",
-    borderWidth: scale(0.5),
-    borderRadius: moderateScale(8),
-    paddingHorizontal: scale(8),
-  },
-  dropdownicon: {
-    marginRight: scale(5),
-  },
-  dropdownplaceholderStyle: {
-    fontSize: moderateScale(16),
-  },
-  dropdownselectedTextStyle: {
-    fontSize: moderateScale(16),
-  },
-  dropdowniconStyle: {
-    width: scale(20),
-    height: verticalScale(20),
-  },
-  dropdowncontainerStyle: {
-    top: -verticalScale(70),
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: verticalScale(80),
-    marginVertical: verticalScale(1),
-    padding: moderateScale(15),
-    borderRadius: moderateScale(10),
-  },
-  activeCard: {
-    alignItems: "center",
-    height: "auto",
-    marginVertical: verticalScale(1),
-    padding: moderateScale(15),
-    borderWidth: scale(2),
-    borderRadius: moderateScale(10),
-  },
-  cardText: {
-    fontSize: scale(16),
-    color: "#fff",
-  },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cardLeftSection: {
-    flex: 5,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  cardImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    resizeMode: "cover",
-    marginRight: scale(10),
-  },
-  activeCardImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    resizeMode: "cover",
-  },
-  cardImageContainer: {
-    flexDirection: "column",
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  cardTextContainer: {
-    flexDirection: "column",
-  },
-  cardTitle: {
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-    color: "#000",
-  },
-  cardSubtitle: {
-    fontSize: moderateScale(14),
-    color: "#6D6D6D",
-    marginTop: verticalScale(5),
-  },
-  cardRightSection: {
-    flex: 1,
-    alignItems: "flex-end",
-    justifyContent: "center",
-  },
-  cardPrice: {
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-    color: "#000",
-  },
-  fixedFooter: {
-    paddingHorizontal: scale(20),
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#ccc",
-  },
-  footerButton: {
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(25),
-    height: verticalScale(50),
-    width: "100%",
-    backgroundColor: "#000",
-    borderRadius: scale(5),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footerButtonText: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-  inviteButton: {
-    marginTop: verticalScale(10),
-    height: verticalScale(40),
-    width: "45%",
-    backgroundColor: "#000",
-    borderRadius: scale(5),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inviteButtonText: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    fontWeight: "bold",
-  },
-  rowSwitch: {
-    flexDirection: "row",
-    justifyContent: "space-between", // 讓左右各自貼邊
-    alignItems: "center",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    // 可依需求在此調整左右間距
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dropdownListContainer: {
-    width: "60%",
-    backgroundColor: "#fff",
-    borderRadius: moderateScale(8),
-    padding: moderateScale(8),
-    // 下面是為了在 iOS 上讓內容不超出圓角
-    overflow: "hidden",
-  },
-  dropdownItem: {
-    paddingVertical: moderateScale(12),
-    paddingHorizontal: moderateScale(8),
-  },
-  dropdownItemText: {
-    fontSize: moderateScale(16),
-    color: "#333",
-  },
-});
 
 export default MapWithBottomSheet;

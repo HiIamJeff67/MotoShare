@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, Image, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Styles } from "./UserCard.style";
+import { UserCardStyles } from "./UserCard.style";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/(store)";
+import { Theme } from "@/theme/theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface UserInfoForUserCard {
   userName: string;
@@ -21,16 +23,17 @@ export interface UserInfoForUserCard {
   };
 }
 
-interface Props {
+interface UserCardProps {
   userInfo: UserInfoForUserCard;
   isButtonLoading: boolean;
+  theme: Theme;
   onClicked?: (userName: string) => void;
 }
 
-const UserCard: React.FC<Props> = ({ userInfo, isButtonLoading, onClicked = () => {} }) => {
+const UserCard: React.FC<UserCardProps> = ({ userInfo, isButtonLoading, theme, onClicked = () => {} }) => {
   const user = useSelector((state: RootState) => state.user);
-  const theme = user.theme;
-  const [styles, setStyles] = useState<any>(null);
+  const insets = useSafeAreaInsets();
+  const styles = UserCardStyles(theme, insets);
   const { t } = useTranslation();
   let roleText = "載入中...";
 
@@ -39,12 +42,6 @@ const UserCard: React.FC<Props> = ({ userInfo, isButtonLoading, onClicked = () =
   } else if (user.role == "Passenger") {
     roleText = t("pure rider");
   }
-
-  useEffect(() => {
-    if (theme) {
-      setStyles(Styles(theme));
-    }
-  }, [theme]);
 
   if (!userInfo || !styles) return null;
 

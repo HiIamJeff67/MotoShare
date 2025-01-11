@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigation, CommonActions, useRoute } from "@react-navigation/native";
+import { useNavigation, CommonActions, useRoute, useTheme } from "@react-navigation/native";
 import {
   TextInput,
   Text,
@@ -22,20 +22,27 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { HandleGoogleSignIn, HandleLogin } from "./HandleLogin";
 import { useTranslation } from "react-i18next";
 import { UserRoleType } from "@/app/(store)/interfaces/userState.interface";
+import { LoginStyles } from "./Login.style";
+import { Theme } from "@/theme/theme";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 const PassengerLogin = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const translateY = useRef(new Animated.Value(0)).current;
+  const route = useRoute();
+  const theme = useTheme() as Theme;
+  const { colors } = theme;
+  const { role } = route.params as { role: UserRoleType };
+  const { t } = useTranslation();
+  
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
   const [isGoogleInProgress, setIsGoogleInProgress] = useState(false);
-  const route = useRoute();
-  const { role } = route.params as { role: UserRoleType };
-  const { t } = useTranslation();
-
+  const styles = LoginStyles(theme, insets);
+  const translateY = useRef(new Animated.Value(0)).current;
+  
   // Regular login handler
   const { handleLoginSubmit } = HandleLogin({
     usernameOrEmail,
@@ -135,14 +142,14 @@ const PassengerLogin = () => {
     <Animated.View
       style={{
         flex: 1,
-        backgroundColor: "#ffffff",
+        backgroundColor: colors.background, 
         transform: [{ translateY }],
       }}
     >
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          backgroundColor: "#ffffff",
+          backgroundColor: colors.background, 
           paddingTop: verticalScale(insets.top),
           paddingBottom: verticalScale(insets.bottom),
           paddingHorizontal: scale(20), // 設置水平間距
@@ -184,7 +191,7 @@ const PassengerLogin = () => {
 
         <View style={styles.centerAlign}>
           <Pressable style={styles.loginButton} onPress={handleLoginSubmit} disabled={isGoogleInProgress || loading || lockButton}>
-            {loading ? <ActivityIndicator size="large" color="#ffffff" /> : <Text style={styles.loginButtonText}>{t("login")}</Text>}
+            {loading ? <LoadingWrapper /> : <Text style={styles.loginButtonText}>{t("login")}</Text>}
           </Pressable>
         </View>
 
@@ -211,90 +218,5 @@ const PassengerLogin = () => {
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  textInput: {
-    flex: 1,
-    height: "100%",
-    borderWidth: scale(0),
-    color: "#000",
-    paddingLeft: scale(5),
-  },
-  icon: {
-    width: scale(18),
-    height: verticalScale(15),
-    marginRight: scale(10),
-  },
-  inputWrapper: {
-    marginTop: verticalScale(15),
-    flexDirection: "row",
-    alignItems: "center",
-    height: verticalScale(40),
-    backgroundColor: "#f1f4ff",
-    borderRadius: moderateScale(10),
-    paddingHorizontal: scale(10),
-  },
-  imageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  image: {
-    width: scale(200),
-    height: verticalScale(200),
-  },
-  headerContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: verticalScale(10),
-  },
-  headerText: {
-    fontSize: moderateScale(28),
-    fontWeight: "bold",
-    color: "#3498db",
-  },
-  centerAlign: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loginButton: {
-    width: "100%",
-    marginTop: verticalScale(20),
-    height: verticalScale(40),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#3498db",
-    borderRadius: moderateScale(10),
-    shadowOpacity: 0.4,
-    shadowRadius: moderateScale(10),
-    shadowOffset: { width: scale(0), height: verticalScale(4) },
-    shadowColor: "#000",
-  },
-  loginButtonText: {
-    fontSize: moderateScale(18),
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  forgotPasswordText: {
-    marginTop: verticalScale(20),
-    fontSize: moderateScale(16),
-  },
-  otherLoginText: {
-    marginTop: verticalScale(20),
-    fontSize: moderateScale(16),
-    color: "#3498db",
-  },
-  socialContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: scale(100),
-    paddingTop: verticalScale(20),
-  },
-  socialIcon: {
-    width: scale(30),
-    height: verticalScale(30),
-    resizeMode: "contain",
-  },
-});
 
 export default PassengerLogin;

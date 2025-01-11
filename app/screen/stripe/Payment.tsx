@@ -7,16 +7,17 @@ import { Styles } from "./Payment.style";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/(store)";
 import { useTranslation } from "react-i18next";
+import { PaymentAmountType, PaymentAmountTypes } from "@/interfaces/userBank.interface";
 
 const PaymentPage = () => {
   const user = useSelector((state: RootState) => state.user);
   const theme = user.theme;
   const [styles, setStyles] = useState<any>(null);
-  const [selectedAmount, setSelectedAmount] = useState(100);
+  const [selectedAmount, setSelectedAmount] = useState<PaymentAmountType>(100);
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
-  const amounts: { value: number; color: string }[] = [
+  const amounts: { value: PaymentAmountType; color: string }[] = [
     { value: 1, color: "#4CD964" },
     { value: 5, color: "#5B9EFF" },
     { value: 10, color: "#FFA500" },
@@ -49,14 +50,24 @@ const PaymentPage = () => {
 
       <View style={styles.gridContainer}>
         {amounts.map((item, index) => (
-          <TouchableOpacity key={index} onPress={() => item.value && setSelectedAmount(item.value)} style={styles.gridItem}>
+          <TouchableOpacity 
+            key={index} 
+            style={styles.gridItem}
+            onPress={() => {
+              if (item.value) {
+                setSelectedAmount(item.value as PaymentAmountType);
+              }
+            }} 
+          >
             <View style={[styles.amountBox, { backgroundColor: item.color }]}>
               <Text style={styles.amountText}>{item.value}</Text>
             </View>
           </TouchableOpacity>
         ))}
       </View>
-      <CheckOutForm amount={selectedAmount} />
+      {PaymentAmountTypes.map((value, index) => (
+        selectedAmount == value && <CheckOutForm key={index} amount={value} />
+      ))}
     </View>
   );
 };

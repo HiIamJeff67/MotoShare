@@ -9,6 +9,8 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useTranslation } from "react-i18next";
+import { MyOrderDeStyles } from "./MyOrderDe.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -32,16 +34,20 @@ interface OrderType {
 }
 
 const MyOrderDetail = () => {
+  const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
-  const [order, setOrder] = useState<OrderType>();
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+  const route = useRoute();
+  const { orderid } = route.params as { orderid: string };
+  const { t } = useTranslation();
+  let roleText = "載入中...";
+
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [lockButton, setLockButton] = useState(false);
-  const route = useRoute();
-  const { orderid } = route.params as { orderid: string };
-  const navigation = useNavigation();
-  const { t } = useTranslation();
-  let roleText = "載入中...";
+  const [order, setOrder] = useState<OrderType>();
+  const [styles, setStyles] = useState<any>(null);
 
   if (user.role === "Ridder") {
     //home.tsx才正確
@@ -49,6 +55,12 @@ const MyOrderDetail = () => {
   } else if (user.role === "Passenger") {
     roleText = t("pure rider");
   }
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MyOrderDeStyles(theme, insets));
+    }
+  }, [theme])
 
   const getToken = async () => {
     try {
@@ -251,9 +263,13 @@ const MyOrderDetail = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
+      {isLoading || !styles || !theme ? (
+        <View style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+          <ActivityIndicator size="large" color={theme?.colors.text} />
         </View>
       ) : (
         <ScrollView>
@@ -325,65 +341,5 @@ const MyOrderDetail = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: scale(20), // 設置水平間距
-    paddingTop: verticalScale(15), // 設置垂直間距
-    paddingBottom: verticalScale(30), // 設置垂直間距
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5, // Android 的陰影
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-  actionButton: {
-    borderRadius: moderateScale(12),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.3,
-    shadowRadius: moderateScale(4),
-    backgroundColor: "#4CAF50", // green
-    elevation: 5,
-    height: verticalScale(40),
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  actionButtonText: {
-    fontSize: moderateScale(18),
-    fontWeight: "bold",
-    color: "white",
-  },
-});
 
 export default MyOrderDetail;

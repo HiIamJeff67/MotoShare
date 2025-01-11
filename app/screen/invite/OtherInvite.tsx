@@ -16,6 +16,9 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ScaledSheet } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
+import { OtherInviteStyles } from "./OtherInvite.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -29,14 +32,24 @@ interface OrderType {
 }
 
 const OtherOrder = () => {
+  const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+
   const [isLoading, setIsLoading] = useState(true);
-  const [invites, setInvites] = useState<OrderType[]>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
+  const [invites, setInvites] = useState<OrderType[]>([]);
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(OtherInviteStyles(theme, insets));
+    }
+  }, [theme]);
 
   const getToken = async () => {
     try {
@@ -124,10 +137,8 @@ const OtherOrder = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+      {isLoading || !styles || !theme ? (
+        <LoadingWrapper />
       ) : (
           <FlashList
             data={invites}
@@ -196,46 +207,5 @@ const OtherOrder = () => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingBottom: verticalScale(15),
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5,
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-});
 
 export default OtherOrder;

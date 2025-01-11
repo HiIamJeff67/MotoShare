@@ -5,11 +5,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../(store)/index";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
-import { ScaledSheet } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
 import { FlashList } from "@shopify/flash-list";
 import debounce from "lodash/debounce";
 import { useTranslation } from "react-i18next";
+import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
+import { MyInviteStyles } from "./MyInvite.style";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // 定義每個訂單的資料結構
 interface OrderType {
@@ -28,15 +30,31 @@ interface OrderType {
 }
 
 const MyInvite = () => {
+  const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
+  const theme = user.theme;
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
   const [isLoading, setIsLoading] = useState(true);
   const [invites, setInvites] = useState<OrderType[]>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [isMax, setIsMax] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
-  const { t } = useTranslation();
+  const [styles, setStyles] = useState<any>(null);
+
+  useEffect(() => {
+    setOffset(0);
+    setIsMax(false); // 重置 isMax 狀態
+    SearchOrder(0); // 傳入 0，確保從頭開始加載
+  }, []);
+
+  useEffect(() => {
+    if (theme) {
+      setStyles(MyInviteStyles(theme, insets));
+    }
+  }, [theme]);
 
   const getToken = async () => {
     try {
@@ -108,12 +126,6 @@ const MyInvite = () => {
     }, 2000);
   };
 
-  useEffect(() => {
-    setOffset(0);
-    setIsMax(false); // 重置 isMax 狀態
-    SearchOrder(0); // 傳入 0，確保從頭開始加載
-  }, []);
-
   const loadMoreOrders = debounce(() => {
     const newOffset = offset + 10;
     setOffset(newOffset); // 更新 offset 狀態
@@ -122,10 +134,8 @@ const MyInvite = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
+      {isLoading || !styles || !theme ? (
+        <LoadingWrapper />
       ) : (
         <FlashList
           data={invites}
@@ -173,51 +183,11 @@ const MyInvite = () => {
             paddingHorizontal: scale(20),
             paddingVertical: verticalScale(15),
           }}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    paddingBottom: verticalScale(15),
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: moderateScale(10),
-    shadowColor: "#000",
-    shadowOffset: { width: scale(0), height: verticalScale(2) },
-    shadowOpacity: 0.2,
-    shadowRadius: moderateScale(4),
-    elevation: 5,
-  },
-  header: {
-    borderBottomWidth: scale(2),
-    borderBottomColor: "#ddd",
-    paddingVertical: verticalScale(10),
-    paddingHorizontal: scale(16),
-  },
-  orderNumber: {
-    color: "#333",
-    fontWeight: "bold",
-    fontSize: moderateScale(16),
-  },
-  body: {
-    padding: moderateScale(16),
-  },
-  title: {
-    marginBottom: verticalScale(5),
-    fontSize: moderateScale(15),
-    fontWeight: "600",
-    color: "#333",
-  },
-});
 
 export default MyInvite;

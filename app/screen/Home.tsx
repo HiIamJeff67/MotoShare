@@ -15,19 +15,19 @@ import { SearchRecordInterface } from "@/interfaces/userRecords.interface";
 import { useTranslation } from "react-i18next";
 import LoadingWrapper from "../component/LoadingWrapper/LoadingWrapper";
 import MapView from "react-native-maps";
-import { addNotification, connectToSocket, disconnectToSocket } from "../(store)/webSocketSlice";
+import { addNotification, connectToSocket, disconnectToSocket, setNotifications } from "../(store)/webSocketSlice";
 import { io } from "socket.io-client";
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
-  const userRole = user.role;
   const theme = user.theme;
   const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
+  const insets = useSafeAreaInsets();
   let roleText = "載入中...";
 
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,6 @@ const Home = () => {
   const [userRecords, setUserRecords] = useState<SearchRecordInterface[]>([]);
   const { t } = useTranslation();
 
-  const insets = useSafeAreaInsets();
   const [styles, setStyles] = useState<any>(null);
 
   useEffect(() => {
@@ -53,37 +52,6 @@ const Home = () => {
   useEffect(() => {
     const fetchToken = async () => {
       const userToken = await SecureStore.getItemAsync("userToken");
-      if (userToken && user.role) {
-        console.log(userToken)
-        const socket = io(`${process.env.EXPO_PUBLIC_API_URL}/notifications`, {
-          extraHeaders: {
-            authorization: `Bearer ${userToken}`,
-            userrole: user.role,
-          },
-          transports: ['websocket'],
-        });
-
-        // Update connection status in Redux
-        socket.on('connect', () => {
-          console.log('connected to webSocket...')
-          dispatch(connectToSocket());
-        });
-
-        socket.on('disconnect', (reason) => {
-          console.log('disconnected from webSocket...', reason); // Log the reason for disconnection
-          dispatch(disconnectToSocket());
-        });
-  
-        socket.on('notification', (data) => {
-          console.log('Received notification:', data);
-          dispatch(addNotification(data));
-        });
-  
-        // Optional: Add error handling
-        socket.on('connect_error', (error) => {
-          console.error('Connection error:', error);
-        });
-      }
       setToken(userToken);
     };
 
@@ -92,17 +60,52 @@ const Home = () => {
       // 當所有互動完成後更新狀態
       setIsLoading(false);
     });
-  }, [userRole]);
+  }, []);
 
   useEffect(() => {
-    getUserRecords();
-  }, [token]);
+    const setUpRecordsAndNotifications = async () => {
+      if (token && user.role) {
+        const _socket = io(`${process.env.EXPO_PUBLIC_API_URL}/notifications`, {
+          extraHeaders: {
+              authorization: `Bearer ${token}`, 
+              userrole: user.role, 
+          }, 
+          transports: ['websocket'], 
+        });
+    
+        _socket.on('connect', () => {
+            console.log('connected to webSocket...')
+            dispatch(connectToSocket());
+        });
+    
+        _socket.on('disconnect', (reason) => {
+            console.log('disconnected from webSocket...', reason); // Log the reason for disconnection
+            dispatch(disconnectToSocket());
+        });
+    
+        _socket.on('notification', (data) => {
+            console.log('Received notification:', data);
+            dispatch(addNotification(data));
+        });
+        
+        _socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+        });
+
+        await getUserRecords();
+      }
+    }
+
+    setUpRecordsAndNotifications();
+  }, [token, user.role]);
 
   const getUserRecords = async () => {
     if (token && token.length !== 0) {
       try {
         const response = await api.get(
-          user.role === "Passenger" ? "/passengerRecord/getSearchRecordsByUserId" : "/ridderRecord/getSearchRecordsByUserId",
+          user.role === "Passenger" 
+            ? "/passengerRecord/getSearchRecordsByUserId" 
+            : "/ridderRecord/getSearchRecordsByUserId",
           {
             headers: {
               Authorization: `Bearer ${token}`,

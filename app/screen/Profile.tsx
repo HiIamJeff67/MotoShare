@@ -17,6 +17,7 @@ import AnimatedInputMessage from "../component/InputMessage/AnimatedInputMessage
 import { hideAbsoluteLoading, showAbsoluteLoading } from "../(store)/loadingSlice";
 import { numberOfAuths } from "../(store)/interfaces/userAuths.interface";
 import { useTranslation } from "react-i18next";
+import { setNotifications } from "../(store)/webSocketSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -82,6 +83,7 @@ const Profile = () => {
       if (userToken) {
         getUserAuths(userToken);
         getUserBank(userToken);
+        getUserNotifications(userToken);
       }
       setToken(userToken);
     };
@@ -120,6 +122,39 @@ const Profile = () => {
       }
     }
   };
+
+  const getUserNotifications = async (token: string) => {
+    if (token && token.length !== 0) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          user.role === "Passenger" 
+            ? `${process.env.EXPO_PUBLIC_API_URL}/passengerNotification/searchMyPaginationPassengerNotifications`
+            : `${process.env.EXPO_PUBLIC_API_URL}/ridderNotification/searchMyPaginationPassengerNotifications`, 
+            {
+              params: {
+                "limit": 50, 
+                "offset": 0, 
+              }, 
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded", 
+                "Authorization": `Bearer ${token}`, 
+              }
+            }
+        )
+        
+        console.log(response.data)
+        dispatch(setNotifications(response.data));
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response)
+        }
+        console.log("error on home.tsx", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
 
   const handleLogoutButtonOnClick = async () => {
     dispatch(showAbsoluteLoading());
@@ -209,7 +244,7 @@ const Profile = () => {
       label: `${t("preference")}${user.role === "Passenger" ? t("pure rider") : t("pure passenger")}`,
       callback: () => navigation.navigate("mypreferences" as never),
     },
-    { id: "4", icon: require("../../assets/images/notification.png"), label: t("notification"), badge: websocketClient.newMessage, callback: () => navigation.navigate("notification" as never) },
+    { id: "4", icon: require("../../assets/images/notification.png"), label: t("notification"), badge: websocketClient.newMessage ?? 1, callback: () => navigation.navigate("notification" as never) },
     { id: "5", icon: require("../../assets/images/pencil.png"), label: t("Update Profile"), callback: () => navigation.navigate("editprofile" as never) },
     {
       id: "6", 
