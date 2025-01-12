@@ -3,7 +3,6 @@ import { Text, View, Image, Pressable, Platform, StatusBar } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import * as Localization from 'expo-localization';
 import { useTranslation } from 'react-i18next';
 import { Theme } from '@/theme/theme';
 

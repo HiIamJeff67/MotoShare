@@ -4,7 +4,3 @@ export interface SearchUserPreferencesInterface {
     preferenceUserSelfIntroduction: string | null;
     isPreferenceUserOnline: boolean;
 }
-
-export interface UserPreferencesInterface {
-
-}

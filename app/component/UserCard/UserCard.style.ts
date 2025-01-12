@@ -34,8 +34,12 @@ export const UserCardStyles = (theme: Theme, insets?: EdgeInsets) => {
     avatar: {
       width: 100,
       height: 100,
-      borderRadius: moderateScale(40),
       marginBottom: moderateScale(8),
+      borderWidth: moderateScale(0.5), 
+      borderColor: _colors.border, 
+      borderRadius: "50%", 
+      tintColor: _colors.text, 
+      padding: moderateScale(4), 
     },
     motoPhoto: {
       width: 300,

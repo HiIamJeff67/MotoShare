@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TouchableWithoutFeedback, TextInput, Platform, Keyboard, Alert } from "react-native";
+import { View, TouchableWithoutFeedback, TextInput, Platform, Keyboard, Alert, Text, Image, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -11,19 +11,17 @@ import LoadingWrapper from "@/app/component/LoadingWrapper/LoadingWrapper";
 import { Styles } from "./Search.style";
 import { useTranslation } from "react-i18next";
 import UserCard from "@/app/component/UserCard/UserCard";
+import { FlashList } from "@shopify/flash-list";
+import { UserInfoInterface } from "@/interfaces/userInfo.interface";
+import { getLimitString } from "@/app/methods/getLimitString";
 
-interface UserType {
-  id: string;
-  userName: string;
-}
-
-interface UserInfoType {
+interface UserDetailInfoInterface {
   userName: string;
   email: string;
-  info: UserMoreInfo;
+  info: UserMoreDetailInfoInterface;
 }
 
-interface UserMoreInfo {
+interface UserMoreDetailInfoInterface {
   age: number | null;
   avatorUrl: string | null;
   isOnline: boolean;
@@ -38,8 +36,9 @@ const SearchUser = () => {
   const user = useSelector((state: RootState) => state.user);
   const theme = user.theme;
   const [styles, setStyles] = useState<any>(null);
-  const [userInfo, setUserInfo] = useState<UserInfoType>();
+  const [userInfo, setUserInfo] = useState<UserDetailInfoInterface>();
   const [searchInput, setSearchInput] = useState("");
+  const [searchResult, setSearchResult] = useState<UserInfoInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const { t } = useTranslation();
@@ -63,6 +62,10 @@ const SearchUser = () => {
     }
   };
 
+  useEffect(() => {
+    SearchUsers();
+  }, []);
+
   const dismissKeyboard = () => {
     if (Platform.OS !== "web") {
       Keyboard.dismiss();
@@ -72,7 +75,7 @@ const SearchUser = () => {
   const SearchUsers = async () => {
     const token = await getToken();
 
-    let response: { data: UserType[] },
+    let response: { data: any[] },
       url: string = "";
 
     if (user.role == "Ridder") {
@@ -85,7 +88,7 @@ const SearchUser = () => {
       response = await axios.get(url, {
         params: {
           userName: searchInput,
-          limit: 1,
+          limit: 10,
           offset: 0,
         },
         headers: {
@@ -93,7 +96,8 @@ const SearchUser = () => {
         },
       });
 
-      
+      console.log(response.data)
+      setSearchResult(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
@@ -200,19 +204,42 @@ const SearchUser = () => {
       ? <LoadingWrapper />
       : ( <TouchableWithoutFeedback onPress={dismissKeyboard}>
             <View style={{ flex: 1, paddingHorizontal: scale(20), paddingVertical: verticalScale(15) }}>
-              <View style={styles.searchContainer}>
-                <View style={styles.searchBox}>
-                  <Feather name="search" size={moderateScale(24)} color="black" />
-                  <TextInput
-                    placeholder={t("userName")}
-                    style={styles.searchInput}
-                    placeholderTextColor={theme.colors.background} 
-                    value={searchInput}
-                    onChangeText={(text) => setSearchInput(text)}
-                    onSubmitEditing={handleSearchInputChange}
-                  />
-                </View>
-              </View>
+              {!userInfo && <FlashList 
+                data={searchResult}
+                keyExtractor={(searchResult) => searchResult.userName}
+                renderItem={({ item, index }) => 
+                  <TouchableOpacity 
+                    key={index}
+                    style={styles.searchResultContainer}
+                    onPress={() => {
+                      setSearchInput(item.userName);
+                      SearchUserInfo(item.userName);
+                    }}
+                  >
+                    <Image style={styles.searchResultIcon} source={item.info.avatorUrl ? { uri: `${item.info.avatorUrl}` } : require("../../../assets/images/user.png")}></Image>
+                    <Text style={styles.searchResultUserName}>{getLimitString(item.userName, 30)}</Text>
+                    <View style={styles.searchResultOnlineContainer}>
+                      <View style={ item.info.isOnline ? styles.searchResultIsOnline : styles.searchResultIsOffline }></View>
+                    </View>
+                  </TouchableOpacity>
+                }
+                ListHeaderComponent={
+                <View style={styles.searchContainer}>
+                  <View style={styles.searchBox}>
+                    <Feather name="search" size={moderateScale(24)} color="black" />
+                    <TextInput
+                      placeholder={t("userName")}
+                      style={styles.searchInput}
+                      placeholderTextColor={theme.colors.background} 
+                      value={searchInput}
+                      onChangeText={(text) => setSearchInput(text)}
+                      onSubmitEditing={handleSearchInputChange}
+                    />
+                  </View>
+                </View>}
+                showsVerticalScrollIndicator={false}
+              >
+              </FlashList>}
       
               {isLoading ? (
                 <LoadingWrapper />

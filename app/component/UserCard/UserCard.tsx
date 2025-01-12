@@ -51,9 +51,7 @@ const UserCard: React.FC<UserCardProps> = ({ userInfo, isButtonLoading, theme, o
         <View style={styles.card}>
           <View style={styles.photoContainer}>
             <Image
-              source={{
-                uri: userInfo.info.avatorUrl ?? "https://via.placeholder.com/100",
-              }}
+              source={userInfo.info.avatorUrl ? { uri: userInfo.info.avatorUrl } : require("../../../assets/images/user.png")}
               style={styles.avatar}
             />
           </View>

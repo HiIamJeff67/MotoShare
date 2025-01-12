@@ -64,6 +64,7 @@ export const MyInviteDeStyles = (theme: Theme, insets?: EdgeInsets) => {
             height: verticalScale(40),
             justifyContent: "center",
             alignItems: "center",
+            marginTop: verticalScale(6), 
         },
         inviteButtonText: {
             ...(_fonts.bold), 

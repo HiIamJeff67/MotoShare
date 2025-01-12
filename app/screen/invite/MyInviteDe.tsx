@@ -213,7 +213,7 @@ const MyInviteDetail = () => {
       {isLoading ? (
         <LoadingWrapper />
       ) : (
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.header}>
@@ -232,7 +232,7 @@ const MyInviteDetail = () => {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>{("price")}: {invite.suggestPrice}</Text>
+                    <Text style={styles.title}>{t("price")}: {invite.suggestPrice}</Text>
                     <Text style={styles.title}>
                       {t("update time")}:{" "}
                       {new Date(invite.inviteUdpatedAt).toLocaleString("en-GB", {
@@ -262,8 +262,8 @@ const MyInviteDetail = () => {
                         timeZone: "Asia/Taipei",
                       })}
                     </Text>
-                    <Text style={styles.title}>{("price")}: {invite.initPrice}</Text>
-                    <Text style={styles.title}>{("remark")}: {invite.description}</Text>
+                    <Text style={styles.title}>{t("price")}: {invite.initPrice}</Text>
+                    <Text style={styles.title}>{t("remark")}: {invite.description}</Text>
                   </>
                 ) : null}
               </View>
