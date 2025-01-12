@@ -48,7 +48,7 @@ export const Styles = (theme: Theme) => {
       height: moderateScale(36), 
       borderWidth: moderateScale(0.5), 
       borderColor: _colors.border, 
-      borderRadius: "50%", 
+      borderRadius: moderateScale(18), 
       tintColor: _colors.text, 
       overflow: "hidden", 
       padding: moderateScale(3), 
@@ -66,7 +66,7 @@ export const Styles = (theme: Theme) => {
       height: moderateScale(12), 
       borderWidth: moderateScale(0.5), 
       borderColor: _colors.border, 
-      borderRadius: "50%", 
+      borderRadius: moderateScale(6), 
       backgroundColor: "green", 
     }, 
     searchResultIsOffline: {
@@ -74,7 +74,7 @@ export const Styles = (theme: Theme) => {
       height: moderateScale(12), 
       borderWidth: moderateScale(0.5), 
       borderColor: _colors.border, 
-      borderRadius: "50%", 
+      borderRadius: moderateScale(6), 
       backgroundColor: "red", 
     }, 
   });

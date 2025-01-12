@@ -37,7 +37,7 @@ export const UserCardStyles = (theme: Theme, insets?: EdgeInsets) => {
       marginBottom: moderateScale(8),
       borderWidth: moderateScale(0.5), 
       borderColor: _colors.border, 
-      borderRadius: "50%", 
+      borderRadius: 50, 
       tintColor: _colors.text, 
       padding: moderateScale(4), 
     },

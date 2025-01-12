@@ -43,7 +43,7 @@ const WelcomeScreen = () => {
         }}
         style={{
           backgroundColor: colors.primary, 
-          borderRadius: "50%",
+          borderRadius: moderateScale(30),
           width: moderateScale(60),
           height: moderateScale(60),
           justifyContent: "center",

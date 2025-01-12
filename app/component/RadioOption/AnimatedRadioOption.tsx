@@ -17,7 +17,7 @@ const AnimatedRadioOption = (props: RadioOptionProps) => {
         <Animated.View
             style={{
                 borderWidth: scale(0), 
-                borderRadius: "50%", 
+                borderRadius: scale((props.outCircleWidth ?? 16) / 2), 
                 backgroundColor: props.outCircleColor ?? "#fff", 
                 width: scale(props.outCircleWidth ?? 16), 
                 height: scale(props.outCircleHeight ?? 16), // using scale here to make sure the width is equal to the height
@@ -29,7 +29,7 @@ const AnimatedRadioOption = (props: RadioOptionProps) => {
                 <Animated.View
                     style={{
                         borderWidth: scale(0), 
-                        borderRadius: "50%", 
+                        borderRadius: scale((props.innerCircleWidth ?? 12) / 2), 
                         backgroundColor: props.innerCircleColor ?? "#3498db", 
                         width: scale(props.innerCircleWidth ?? 12), 
                         height: scale(props.innerCircleHeight ?? 12), // using scale here to make sure the width is equal to the height
