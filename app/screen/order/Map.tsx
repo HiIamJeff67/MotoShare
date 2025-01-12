@@ -827,7 +827,7 @@ const MapWithBottomSheet = () => {
                                         onPress={() => createOrderData(3, item.id)}
                                       >
                                         <Text style={styles.inviteButtonText}>
-                                          {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
+                                          {loading.makeRequest ? <LoadingWrapper /> : t("make a request")}
                                         </Text>
                                       </Pressable>
                                       <Pressable
@@ -836,7 +836,7 @@ const MapWithBottomSheet = () => {
                                         onPress={() => createOrderData(2, item.id)}
                                       >
                                         <Text style={styles.inviteButtonText}>
-                                          {loading.inviteNow ? <ActivityIndicator size="large" /> : t("accept order")}
+                                          {loading.inviteNow ? <LoadingWrapper /> : t("accept order")}
                                         </Text>
                                       </Pressable>
                                     </View>
@@ -847,7 +847,7 @@ const MapWithBottomSheet = () => {
                                       onPress={() => createOrderData(3, item.id)}
                                     >
                                       <Text style={styles.inviteButtonText}>
-                                        {loading.makeRequest ? <ActivityIndicator size="large" /> : t("make a request")}
+                                        {loading.makeRequest ? <LoadingWrapper /> : t("make a request")}
                                       </Text>
                                     </Pressable>
                                   )}
@@ -888,7 +888,7 @@ const MapWithBottomSheet = () => {
                   <View style={[styles.fixedFooter, { marginBottom: insets.bottom }]}>
                     <Pressable style={styles.footerButton} onPress={() => createOrderData(1)} disabled={anyLoadingTrue || lockButton}>
                       <Text style={styles.footerButtonText}>
-                        {loading.createNewOrder ? <ActivityIndicator size="large" /> : t("Build it yourself")}
+                        {loading.createNewOrder ? <LoadingWrapper /> : t("Build it yourself")}
                       </Text>
                     </Pressable>
                   </View>

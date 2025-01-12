@@ -4,7 +4,7 @@ import { EdgeInsets } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 
 export const MapStyles = (theme: Theme, insets?: EdgeInsets) => {
-    const [_colors, _fonts] = [theme.colors, theme.fonts];
+    const [_isDark, _colors, _fonts] = [theme.dark, theme.colors, theme.fonts];
 
     return StyleSheet.create({
         map: {
@@ -237,28 +237,28 @@ export const MapStyles = (theme: Theme, insets?: EdgeInsets) => {
             marginBottom: verticalScale(25),
             height: verticalScale(50),
             width: "100%",
-            backgroundColor: "#000",
+            backgroundColor: _isDark ? "#fff" : "#000",
             borderRadius: scale(5),
             alignItems: "center",
             justifyContent: "center",
         },
         footerButtonText: {
             ...(_fonts.bold), 
-            color: _colors.text, 
+            color: _colors.background, 
             fontSize: moderateScale(16), 
         },
         inviteButton: {
             marginTop: verticalScale(10),
             height: verticalScale(40),
             width: "45%",
-            backgroundColor: "#000", 
+            backgroundColor: _isDark ? "#fff" : "#000", 
             borderRadius: scale(5),
             alignItems: "center",
             justifyContent: "center",
         },
         inviteButtonText: {
             ...(_fonts.bold), 
-            color: _colors.text, 
+            color: _colors.background, 
             fontSize: moderateScale(16),
         },
         rowSwitch: {
