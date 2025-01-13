@@ -63,6 +63,7 @@ This repository contains the backend services for the Motoshare application, whi
 ## Diagram & Other Docs
 
 麻煩請在 /docs 底下查看，那裡放了包含：
+- (`ErrorTypesDefinition`) Obsidian 裡用於記錄所有後端發送至前端的錯誤類型以分享給同組成員方便他們觀看並在偵錯時提供更詳細的資訊，跟 `/src/exceptions` 裡面的所有 Exception 是相呼應的，當初是透過 Obsidian 寫的，那麼輸出後自然是 `Markdown(.md)` 檔。
 - (`PostmanExports/`) Postman 測試用的所有 API，可以在 Postman 當中點擊 Import 然後加入你想要的版本的 json 檔。
 - (`SystemDiagrams/`) Class Diagram，後端與前端互動的詳細情況，以及後端所有模組等等。
 - (`database schema.drawio.png`, `database schema.drawio.xml`, `database schema(abandon).mdj`) Database Schema，有 StarUML 的檔案（但是是舊版），也有 png 檔跟 xml 檔（這是新版，透過 draw.io 製作）。
