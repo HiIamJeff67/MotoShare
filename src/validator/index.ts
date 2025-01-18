@@ -1,6 +1,6 @@
 export * from "./BetterFirstSearchFieldsValidation.validator"
 export * from "./CompareNumberString.validator"
-export * from "./CostomTextLength.validator"
+export * from "./CustomTextLength.validator"
 export * from "./IsAfterNow.validator"
 export * from "./IsEndAfterStart.validator"
 export * from "./IsIntString.validator"

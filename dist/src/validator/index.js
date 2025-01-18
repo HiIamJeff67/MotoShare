@@ -16,7 +16,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./BetterFirstSearchFieldsValidation.validator"), exports);
 __exportStar(require("./CompareNumberString.validator"), exports);
-__exportStar(require("./CostomTextLength.validator"), exports);
+__exportStar(require("./CustomTextLength.validator"), exports);
 __exportStar(require("./IsAfterNow.validator"), exports);
 __exportStar(require("./IsEndAfterStart.validator"), exports);
 __exportStar(require("./IsIntString.validator"), exports);
