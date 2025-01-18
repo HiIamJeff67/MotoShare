@@ -1,4 +1,4 @@
-# Motoshare Backend Documentation
+# Motoshare Backend README & Documentation
 <p align="center">
   <a herf="https://github.com/HiIamJeff67/MotoShare">
     <img src="https://wwlrotbiuxxgezibxngr.supabase.co/storage/v1/object/public/DecoratingPictures/motorbike.jpg" width="240" alt="MotoShare Logo" />
