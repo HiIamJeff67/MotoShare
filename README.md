@@ -146,9 +146,9 @@ This repository contains the backend services for the Motoshare application, whi
 
 ## Class Relationships
 
-- **Service 與 Database**: 每個 Service 通常會依賴於一個資料庫連接（`DrizzleDB`），用於執行 CRUD 操作。
-- **Service 與 Notification**: `PassengerNotificationService` 和 `RidderNotificationService` 負責處理通知的創建和更新，並且可能會被其他 Service 調用以發送通知。
-- **Service 與 Auth**: `PassengerAuthService` 和 `RidderAuthService` 負責處理身份驗證和授權，並且會與其他 Service 交互以驗證用戶的身份。
+- **Service 與 Database** : 每個 Service 通常會依賴於一個資料庫連接（`DrizzleDB`），用於執行 CRUD 操作。
+- **Service 與 Notification** : `PassengerNotificationService` 和 `RidderNotificationService` 負責處理通知的創建和更新，並且可能會被其他 Service 調用以發送通知。
+- **Service 與 Auth** : `PassengerAuthService` 和 `RidderAuthService` 負責處理身份驗證和授權，並且會與其他 Service 交互以驗證用戶的身份。
 
 ## Hightlight Technologies
 
@@ -178,13 +178,15 @@ This repository contains the backend services for the Motoshare application, whi
 
 ## Deployment
 
-- **Vercel**: https://motoshare-backend.vercel.app
+- **Vercel** : https://motoshare-backend.vercel.app
   - ✅ 具有較穩定連線狀況，平均 delay-time 在 500~2000 ms，若處理註冊可能會需要較長時間。
   - ✅ 免費版支援最多2個排程器，目前主要用於維護 database 中的資料。
   - ❌ 不支援 WebSocket，無法接收並傳遞即時訊息。
 
-- **Render**: https://motoshare-x7gp.onrender.com
-  - ❌ 伺服器有分兩種狀態，active 和 idle，為了節省資源，Render 常常會在 API 不頻繁呼叫時自主進到idle 狀態，而這個從 idle 狀態轉到 active 狀態的所需時間非常漫長，早成許久沒跑過 API 之後要登入或註冊，這個步驟所花的 delay-time 常常會來到分鐘級，造成 API 的不穩定。
+- **Render** : https://motoshare-x7gp.onrender.com
+  - ❌ 伺服器有分兩種狀態，active 和 idle，為了節省資源，Render 常常會在 API 不頻繁呼叫時自主進到 idle 狀態，而這個從 idle 狀態轉到 active 狀態的所需時間非常漫長，早成許久沒跑過 API 之後要登入或註冊，這個步驟所花的 delay-time 常常會來到分鐘級，造成 API 的不穩定。
   - ✅ 如前述，但是進入到 active 狀態後，平均 delay-time 大概只有 300 ~ 500 ms，非常快速。
   - ❌ 不支援排程器。
   - ✅ 支援 WebSocket，可以讓託管部署的伺服器有 WebSocket 的 Gateway 通道，使得我們可以指定特定通道監聽。
+
+- **Summary : 綜合上述，我們決定同時採用這兩個部署方式，但是礙於 JWT 的限制，如果使用 Vercel 登入就只能拿 Vercel 登入後給的 JWT token 來跑 API，如果使用 Render 登入就只能拿 Render 登入後給的 JWT token 來跑 API。因此我們使用 Render 部署後的連結提供給用戶使用，然後使用 Vercel 部署後的連結來維護資料庫（透過 Cron Job 排程器）**
