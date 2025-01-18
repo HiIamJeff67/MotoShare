@@ -98,7 +98,7 @@ let RidderNotificationService = class RidderNotificationService {
             createdAt: schema_1.RidderNotificationTable.createdAt,
         }).from(schema_1.RidderNotificationTable)
             .where((0, drizzle_orm_1.eq)(schema_1.RidderNotificationTable.userId, userId))
-            .orderBy((0, drizzle_orm_1.desc)(schema_1.RidderNotificationTable.isRead), (0, drizzle_orm_1.desc)(schema_1.RidderNotificationTable.createdAt))
+            .orderBy((0, drizzle_orm_1.asc)(schema_1.RidderNotificationTable.isRead), (0, drizzle_orm_1.desc)(schema_1.RidderNotificationTable.createdAt))
             .limit(limit)
             .offset(offset);
     }

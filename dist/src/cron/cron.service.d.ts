@@ -382,6 +382,8 @@ export declare class CronService {
         } | undefined;
     }[] | {
         [x: number]: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -398,14 +400,14 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         };
         length: number;
         toString(): string;
         toLocaleString(): string;
         toLocaleString(locales: string | string[], options?: Intl.NumberFormatOptions & Intl.DateTimeFormatOptions): string;
         pop(): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -422,10 +424,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         } | undefined;
         push(...items: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -442,10 +444,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]): number;
         concat(...items: ConcatArray<{
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -462,9 +464,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>[]): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -481,10 +483,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         concat(...items: ({
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -501,9 +503,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         } | ConcatArray<{
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -520,9 +522,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>)[]): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -539,11 +541,11 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         join(separator?: string): string;
         reverse(): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -560,10 +562,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         shift(): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -580,10 +582,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         } | undefined;
         slice(start?: number, end?: number): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -600,10 +602,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         sort(compareFn?: ((a: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -620,9 +622,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, b: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -639,9 +641,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }) => number) | undefined): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -658,10 +660,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         splice(start: number, deleteCount?: number): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -678,10 +680,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         splice(start: number, deleteCount: number, ...items: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -698,9 +700,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -717,10 +719,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         unshift(...items: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -737,10 +739,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]): number;
         indexOf(searchElement: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -757,10 +759,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, fromIndex?: number): number;
         lastIndexOf(searchElement: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -777,10 +779,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, fromIndex?: number): number;
         every<S extends {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -797,9 +799,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -816,9 +818,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -835,10 +837,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => value is S, thisArg?: any): this is S[];
         every(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -855,9 +857,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -874,10 +876,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => unknown, thisArg?: any): boolean;
         some(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -894,9 +896,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -913,10 +915,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => unknown, thisArg?: any): boolean;
         forEach(callbackfn: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -933,9 +935,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -952,10 +954,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => void, thisArg?: any): void;
         map<U>(callbackfn: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -972,9 +974,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -991,10 +993,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => U, thisArg?: any): U[];
         filter<S extends {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1011,9 +1013,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1030,9 +1032,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1049,10 +1051,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => value is S, thisArg?: any): S[];
         filter(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1069,9 +1071,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1088,9 +1090,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => unknown, thisArg?: any): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1107,10 +1109,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         reduce(callbackfn: (previousValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1127,9 +1129,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1146,9 +1148,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1165,9 +1167,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1184,9 +1186,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1203,10 +1205,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         };
         reduce(callbackfn: (previousValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1223,9 +1225,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1242,9 +1244,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1261,9 +1263,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1280,9 +1282,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, initialValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1299,9 +1301,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1318,10 +1320,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         };
         reduce<U>(callbackfn: (previousValue: U, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1338,9 +1340,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1357,10 +1359,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => U, initialValue: U): U;
         reduceRight(callbackfn: (previousValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1377,9 +1379,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1396,9 +1398,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1415,9 +1417,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1434,9 +1436,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1453,10 +1455,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         };
         reduceRight(callbackfn: (previousValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1473,9 +1475,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1492,9 +1494,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1511,9 +1513,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1530,9 +1532,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, initialValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1549,9 +1551,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1568,10 +1570,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         };
         reduceRight<U>(callbackfn: (previousValue: U, currentValue: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1588,9 +1590,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, currentIndex: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1607,10 +1609,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => U, initialValue: U): U;
         find<S extends {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1627,9 +1629,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1646,9 +1648,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, obj: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1665,10 +1667,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => value is S, thisArg?: any): S | undefined;
         find(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1685,9 +1687,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, obj: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1704,9 +1706,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => unknown, thisArg?: any): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1723,10 +1725,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         } | undefined;
         findIndex(predicate: (value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1743,9 +1745,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, obj: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1762,10 +1764,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => unknown, thisArg?: any): number;
         fill(value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1782,9 +1784,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, start?: number, end?: number): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1801,10 +1803,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         copyWithin(target: number, start: number, end?: number): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1821,10 +1823,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[];
         entries(): ArrayIterator<[number, {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1841,11 +1843,11 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }]>;
         keys(): ArrayIterator<number>;
         values(): ArrayIterator<{
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1862,10 +1864,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>;
         includes(searchElement: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1882,10 +1884,10 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, fromIndex?: number): boolean;
         flatMap<U, This = undefined>(callback: (this: This, value: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1902,9 +1904,9 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }, index: number, array: {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1921,11 +1923,11 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }[]) => U | readonly U[], thisArg?: This | undefined): U[];
         flat<A, D extends number = 1>(this: A, depth?: D | undefined): FlatArray<A, D>[];
         [Symbol.iterator](): ArrayIterator<{
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -1942,8 +1944,6 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         }>;
         [Symbol.unscopables]: {
             [x: number]: boolean | undefined;
@@ -1984,6 +1984,8 @@ export declare class CronService {
             at?: boolean | undefined;
         };
         at(index: number): {
+            startAfter: Date;
+            endedAt: Date;
             passengerId: string;
             ridderId: string;
             prevOrderId: string;
@@ -2000,8 +2002,6 @@ export declare class CronService {
             };
             finalStartAddress: string;
             finalEndAddress: string;
-            startAfter: Date;
-            endedAt: Date;
         } | undefined;
     }[]>;
     deleteExpiredPassengerNotifications(): Promise<{

@@ -19,4 +19,4 @@ exports.CustomTextLength = CustomTextLength;
 exports.CustomTextLength = CustomTextLength = __decorate([
     (0, class_validator_1.ValidatorConstraint)()
 ], CustomTextLength);
-//# sourceMappingURL=costomTextLength.validator.js.map
+//# sourceMappingURL=CostomTextLength.validator.js.map

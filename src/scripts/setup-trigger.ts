@@ -8,7 +8,7 @@ if (!triggerFileName) {
   process.exit(1);
 }
 
-// we should replace the ' ' characters to '\ ', and we should use double \\ two actually says we want to keep one '\'
+// we should replace the ' ' characters to '\ ', and we should use '\\' to actually say we want to keep one '\'
 const cur_dirname = __dirname.replaceAll(' ', '\\ ');
 const triggerFilePath = path.resolve(cur_dirname, '../triggers', triggerFileName);
 

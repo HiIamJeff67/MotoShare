@@ -12,8 +12,8 @@ export declare class PassengerInviteService {
     private updateExpiredPassengerInvites;
     createPassengerInviteByOrderId(inviterId: string, inviterName: string, orderId: string, createPassengerInviteDto: CreatePassengerInviteDto): Promise<{
         id: string;
-        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         orderId: string;
+        status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
         hasConflict: boolean;
     }[]>;
     getPassengerInviteById(id: string, userId: string): Promise<{
@@ -263,7 +263,7 @@ export declare class PassengerInviteService {
         finalEndAddress: string;
         startAfter: Date;
         endedAt: Date;
-        orderStatus: "UNSTARTED" | "STARTED" | "UNPAID" | "FINISHED";
+        orderStatus: "FINISHED" | "UNSTARTED" | "STARTED" | "UNPAID";
     }[] | {
         status: "CANCEL" | "ACCEPTED" | "REJECTED" | "CHECKING";
     }[] | undefined>;
